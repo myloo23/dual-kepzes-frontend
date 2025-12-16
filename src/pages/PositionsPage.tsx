@@ -508,9 +508,9 @@ function PositionsPage() {
                   key={p.id}
                   className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition"
                 >
-                  {/* LOGÓ + fejléck */}
+                  {/* LOGÓ + fejlécek */}
                   <header className="mb-3 flex items-start gap-3">
-                    <div className="h-9 w-9 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden">
+                    <div className="h-15 w-15 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden">
                       {p.logo ? (
                         <img
                           src={p.logo}
