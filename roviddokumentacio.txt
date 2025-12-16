@@ -1,0 +1,211 @@
+## 1. Technológiák
+
+* **React + TypeScript (Vite)**
+  Egyoldalas webalkalmazás (SPA), komponens alapú felépítéssel.
+* **React Router**
+  Több “oldal” kezelése: `/` (kezdőlap), `/positions` (álláslista), `/map` (térképes nézet).
+* **Tailwind CSS**
+  Modern, reszponzív dizájn utility class-ekkel (kártyák, grid-ek, gombok, színek).
+* **React Leaflet + Leaflet**
+  Interaktív térkép megjelenítésére (OpenStreetMap alapú).
+
+---
+
+## 2. `App.tsx` – keret + navigáció
+
+**Funkció:**
+
+* Az egész alkalmazás “váza”.
+* Itt van:
+
+  * **felső navbar** (desktop + mobil)
+  * **útvonalak (Routes)**:
+
+    * `/` → `HomePage`
+    * `/positions` → `PositionsPage`
+    * `/map` → `MapPage`
+  * **footer** (copyright szöveg).
+
+**Navbar:**
+
+* Desktopon (`sm` felett) vízszintes menü:
+
+  * Kezdőlap
+  * Elérhető állások
+  * Térképes nézet
+  * Hogyan működik?
+  * Kapcsolat
+* Mobilon (`sm` alatt) **hamburger menü**:
+
+  * gomb lenyit egy függőleges listát ugyanezekkel a menüpontokkal,
+  * kattintás után automatikusan bezár.
+
+---
+
+## 3. `HomePage.tsx` – landing + belépés
+
+**Fő blokkok:**
+
+1. **Hero rész**
+
+   * Cím: *“Duális képzési online rendszer”*
+   * Rövid leírás a rendszer céljáról (hallgató, cég, egyetem).
+   * Bullet list a fő funkciókról (jelentkezés, céges pozíciók, naplózás, értékelés).
+
+2. **Belépő panel (login box)**
+
+   * Szerepkör választó (Hallgató, Céges partner, Mentor, Egyetemi dolgozó, Admin).
+   * E-mail + jelszó mezők.
+   * “Belépés” gomb – jelenleg csak `alert`, később backend auth endpointot hív majd.
+   * “Hallgatói regisztráció” gomb – későbbi regisztrációs modulnak fenntartva.
+
+3. **“Hogyan működik?” szekció**
+
+   * 4 kártya, lépésről lépésre:
+
+     1. Jelentkezés
+     2. Céges kiválasztás
+     3. Szerződés és státusz
+     4. Naplózás és értékelés
+
+4. **Kapcsolat szekció**
+
+   * Rövid szöveg arról, hogy ez egy egyetemi pilot rendszer,
+   * kontakt: duális képzési koordinátor.
+
+**Cél:**
+A kezdőlap bemutatja a rendszert és biztosítja a belépési pontot a felhasználóknak.
+
+---
+
+## 4. `PositionsPage.tsx` – elérhető duális pozíciók listázása + szűrés
+
+**Adatmodell (mock, jelenleg frontendben tárolva):**
+
+Egy `Position` objektum tartalmazza többek között:
+
+* `title` – pozíció neve (pl. “Full-stack duális pozíció”)
+* `company` – cég neve
+* `location` – képzés helyszíne (város)
+* `major` – szak megnevezése (pl. Programtervező informatikus)
+* `degree` – szint (BSc / MSc)
+* `language` – nyelv (Magyar / Angol / Magyar & angol)
+* `industry` – cég iparága (Informatika, Járműipar, stb.)
+* `deadline` – jelentkezési határidő
+* `acceptsUpperYears` – fogad-e felsőbb évest
+* `tuitionLabel` – tandíj megjelenítése (pl. “Tandíjmentes”)
+* `logo` – céges logó (frontend assetből).
+
+**Szűrők (oldal bal oldalán):**
+
+Felhasználó az alábbiak szerint tud szűrni:
+
+1. **Keresőmező**
+
+   * Szöveg alapú keresés pozíció címére / cég nevére.
+
+2. **Szak megnevezése**
+
+   * Dinamikusan a mock adatokból összegyűjtött szakok (pl. Programtervező informatikus, Gazdaságinformatikus).
+   * “Bármely” gomb a szűrés törlésére.
+
+3. **Képzés helyszíne**
+
+   * Városokra lehet szűrni (Budapest, Győr, stb.).
+
+4. **Nyelv**
+
+   * Magyar / Angol / Magyar & angol / Bármely.
+
+5. **Jelentkezési határidő**
+
+   * Határidő dátumokra lehet szűrni.
+
+6. **Felsőbb évest fogad-e**
+
+   * Bármilyen
+   * Felsőbb évest is fogad
+   * Csak elsőéveseket fogad
+
+7. **Cég iparága**
+
+   * Iparágak listája (Informatika, Szoftverfejlesztés, stb.).
+
+8. **Cég neve**
+
+   * Cégnevek listája.
+
+**Kártyák (pozíciók megjelenítése):**
+
+* Fejléc:
+
+  * céges logó,
+  * cég neve + város,
+  * pozíció címe.
+* Címkék (chip-ek):
+
+  * BSc/MSc,
+  * nyelv,
+  * szak,
+  * iparág,
+  * helyszín.
+* Részletek:
+
+  * tandíj,
+  * jelentkezési határidő,
+  * fogad-e felsőbb évest.
+* Gomb:
+
+  * “Részletek és jelentkezés” – egyelőre `alert`, később pozíció-részletező oldalra visz.
+
+**Cél:**
+Ez az oldal mutatja be a hallgató felé az összes duális pozíciót, kényelmes szűrési lehetőségekkel.
+
+---
+
+## 5. `MapPage.tsx` – térképes megjelenítés
+
+**Technológia:**
+React Leaflet + Leaflet + OpenStreetMap.
+
+**Adat (jelenleg):**
+
+* `mockCompanies` tömb a frontenden:
+
+  * `name` – cég neve,
+  * `industry` – iparág,
+  * `city` + `addressLine` – cím,
+  * `latitude`, `longitude` – koordináták,
+  * `activePositionsCount` – hány duális pozíció kapcsolódik a céghez (most mock szám).
+
+**Megjelenítés:**
+
+* Magyarország középre állított térkép (`center: [47.1, 19.5], zoom: 7`).
+* Minden céghez egy **marker**.
+* Markerre kattintva **Popup**:
+
+  * cég neve,
+  * iparág,
+  * cím,
+  * aktív pozíciók száma.
+
+**Ikon kezelés:**
+
+* Leaflet alap marker ikon képei a `public/leaflet` mappából jönnek,
+* `L.Marker.prototype.options.icon = defaultIcon;` – globális default ikon beállítás.
+
+**Cél:**
+A hallgató és az egyetem számára térképen ábrázolni, hogy a duális partnerek földrajzilag hol találhatók.
+
+---
+
+## 6. Mi lesz később (backend integráció, röviden)
+
+* A jelenlegi mock adatok helyett:
+
+  * `PositionsPage` → backendről jönnek majd az elérhető pozíciók (pl. `/api/positions`).
+  * `MapPage` → backendről jönnek a cégek + koordináták (pl. `/api/companies/map`).
+* A most kialakított struktúra (típusok, komponensek, UI) direkt úgy lett felépítve, hogy:
+
+  * a **frontend logika változatlanul maradhat**,
+  * csak az adatforrást kell lecserélni `fetch` hívásra.
