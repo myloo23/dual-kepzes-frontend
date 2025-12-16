@@ -3,6 +3,8 @@ import { Link, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import PositionsPage from "./pages/PositionsPage";
 import MapPage from "./pages/MapPage";
+import StudentRegisterPage from "./pages/StudentRegisterPage";
+
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -100,6 +102,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/positions" element={<PositionsPage />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/register" element={<StudentRegisterPage />} />
         </Routes>
       </main>
 

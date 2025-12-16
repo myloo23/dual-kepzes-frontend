@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 type Role =
   | "STUDENT"
@@ -123,17 +124,10 @@ function HomePage() {
 
           <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
             <span>Még nincs fiókod?</span>
-            <button
-              type="button"
-              className="text-blue-600 font-medium hover:underline"
-              onClick={() =>
-                alert(
-                  "Itt majd a hallgatói regisztráció oldal / modul fog megnyílni."
-                )
-              }
-            >
-              Hallgatói regisztráció
-            </button>
+            <Link to="/register" className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition">
+            Hallgatói regisztráció
+            </Link>
+
           </div>
         </div>
       </section>
