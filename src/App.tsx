@@ -4,7 +4,14 @@ import HomePage from "./pages/HomePage";
 import PositionsPage from "./pages/PositionsPage";
 import MapPage from "./pages/MapPage";
 import StudentRegisterPage from "./pages/StudentRegisterPage";
-
+//admin imports
+import AdminLayout from "./pages/Admin/AdminLayout";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminUsers from "./pages/Admin/AdminUsers";
+import AdminCompanies from "./pages/Admin/AdminCompanies";
+import AdminPositions from "./pages/Admin/AdminPositions.tsx";
+import AdminTags from "./pages/Admin/AdminTags";
+import AdminSettings from "./pages/Admin/AdminSettings";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -35,7 +42,7 @@ function App() {
             <Link to="/map" className="hover:text-slate-900">
               Térképes nézet
             </Link>
-            
+            <Link to="/admin" className="hover:text-slate-900">Admin</Link>
           </nav>
 
           {/* Mobile hamburger */}
@@ -90,7 +97,13 @@ function App() {
               >
                 Térképes nézet
               </Link>
-              
+              <Link
+                to="/admin"
+                className="py-1"
+                onClick={closeMobileMenu}
+              >
+                Admin
+              </Link>
             </div>
           </nav>
         )}
@@ -103,6 +116,15 @@ function App() {
           <Route path="/positions" element={<PositionsPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/register" element={<StudentRegisterPage />} />
+          {/* Admin routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="companies" element={<AdminCompanies />} />
+          <Route path="positions" element={<AdminPositions />} />
+          <Route path="tags" element={<AdminTags />} />
+          <Route path="settings" element={<AdminSettings />} />
+          </Route>
         </Routes>
       </main>
 
