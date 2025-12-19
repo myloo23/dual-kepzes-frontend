@@ -1,15 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-type Role =
-  | "STUDENT"
-  | "COMPANY_ADMIN"
-  | "MENTOR"
-  | "UNI_STAFF"
-  | "UNI_ADMIN";
 
 function HomePage() {
-  const [role, setRole] = useState<Role>("STUDENT");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -58,31 +51,6 @@ function HomePage() {
             onSubmit={handleLoginSubmit}
             className="space-y-3 text-sm"
           >
-            <div className="space-y-1">
-              <label className="font-medium text-slate-700">
-                Szerepkör
-              </label>
-              <select
-                value={role}
-                onChange={(e) =>
-                  setRole(e.target.value as Role)
-                }
-                required
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="STUDENT">Hallgató</option>
-                <option value="COMPANY_ADMIN">
-                  Céges partner
-                </option>
-                <option value="MENTOR">Mentor</option>
-                <option value="UNI_STAFF">
-                  Egyetemi dolgozó
-                </option>
-                <option value="UNI_ADMIN">
-                  Adminisztrátor
-                </option>
-              </select>
-            </div>
 
             <div className="space-y-1">
               <label className="font-medium text-slate-700">
@@ -123,9 +91,12 @@ function HomePage() {
           </form>
 
           <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
+            <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
+            Elfelejtetted a jelszavad?
+            </Link>
             <span>Még nincs fiókod?</span>
             <Link to="/register" className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition">
-            Hallgatói regisztráció
+            Regisztráció
             </Link>
 
           </div>

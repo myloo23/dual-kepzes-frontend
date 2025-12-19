@@ -12,7 +12,9 @@ import AdminCompanies from "./pages/Admin/AdminCompanies";
 import AdminPositions from "./pages/Admin/AdminPositions.tsx";
 import AdminTags from "./pages/Admin/AdminTags";
 import AdminSettings from "./pages/Admin/AdminSettings";
-
+//password reset
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -125,6 +127,9 @@ function App() {
           <Route path="tags" element={<AdminTags />} />
           <Route path="settings" element={<AdminSettings />} />
           </Route>
+          {/* Password reset routes */}
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Routes>
       </main>
 
