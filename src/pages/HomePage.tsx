@@ -1,15 +1,48 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { api } from "../lib/api";
+import { Eye, EyeOff } from "lucide-react";
+
 
 
 function HomePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Itt majd a /api/v1/auth/login endpointot hívjuk meg 🙂");
-  };
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoginError(null);
+  setLoading(true);
+
+  try {
+    const res = await api.login(email.trim(), password);
+
+    // token + user mentése
+    localStorage.setItem("token", res.token);
+    localStorage.setItem("user", JSON.stringify(res.user));
+    localStorage.setItem("role", res.user.role);
+
+    // role alapú navigáció (most még egyszerű)
+    const role = (res.user.role || "").toUpperCase();
+
+    if (role === "ADMIN") navigate("/admin");
+    else if (role === "STUDENT") navigate("/student");
+    else if (role === "TEACHER" || role === "INSTRUCTOR") navigate("/teacher");
+    else if (role === "MENTOR") navigate("/mentor");
+    else if (role === "HR" || role === "COMPANY_HR") navigate("/hr");
+    else navigate("/student");
+
+  } catch (err: any) {
+    setLoginError(err?.message || "Sikertelen bejelentkezés.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="max-w-6xl mx-auto px-4 lg:px-8">
@@ -51,6 +84,11 @@ function HomePage() {
             onSubmit={handleLoginSubmit}
             className="space-y-3 text-sm"
           >
+            {loginError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {loginError}
+              </div>
+            )}
 
             <div className="space-y-1">
               <label className="font-medium text-slate-700">
@@ -67,32 +105,37 @@ function HomePage() {
             </div>
 
             <div className="space-y-1">
-              <label className="font-medium text-slate-700">
-                Jelszó
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
-                required
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+          <label className="font-medium text-slate-700">Jelszó</label>
 
-            <button
-              type="submit"
-              className="mt-2 w-full rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:opacity-90 transition"
-            >
-              Belépés
+            <div className="relative">
+            <input
+             type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-10 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            aria-label={showPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+            title={showPassword ? "Elrejtés" : "Megjelenítés"}
+          >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+          </div>
+        </div>
+            <button type="submit" disabled={loading} className="mt-2 w-full rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:opacity-90 transition disabled:opacity-60">
+              {loading ? "Belépés..." : "Belépés"}
             </button>
           </form>
 
           <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
             <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
-            Elfelejtetted a jelszavad?
+            Elfelejtett jelszó?
             </Link>
             <span>Még nincs fiókod?</span>
             <Link to="/register" className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition">

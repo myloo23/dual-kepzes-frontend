@@ -4,6 +4,13 @@ import HomePage from "./pages/HomePage";
 import PositionsPage from "./pages/PositionsPage";
 import MapPage from "./pages/MapPage";
 import StudentRegisterPage from "./pages/StudentRegisterPage";
+import StudentDashboardPage from "./pages/StudentDashboardPage";
+import PlaceholderPage from "./pages/PlaceholderPage";
+//layouts
+import StudentLayout from "./pages/student/StudentLayout";
+import TeacherLayout from "./pages/teacher/TeacherLayout";
+import MentorLayout from "./pages/mentor/MentorLayout";
+import HrLayout from "./pages/hr/HrLayout";
 //admin imports
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -118,6 +125,7 @@ function App() {
           <Route path="/positions" element={<PositionsPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/register" element={<StudentRegisterPage />} />
+          <Route path="/student" element={<StudentDashboardPage />} />
           {/* Admin routes */}
           <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
@@ -130,6 +138,42 @@ function App() {
           {/* Password reset routes */}
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          {/* Layout routes */}
+          <Route path="/student" element={<StudentLayout />}>
+            <Route index element={<PlaceholderPage title="Hallgatói kezdőlap" />} />
+            <Route path="jobs" element={<PlaceholderPage title="Állások" />} />
+            <Route path="profile" element={<PlaceholderPage title="Saját adataim" />} />
+            <Route path="applications" element={<PlaceholderPage title="Megpályázott állások" />} />
+            <Route path="faq" element={<PlaceholderPage title="Q&A / Útmutató" />} />
+            <Route path="progress" element={<PlaceholderPage title="Haladási napló" />} />
+            <Route path="chat" element={<PlaceholderPage title="Chat" />} />
+            <Route path="survey" element={<PlaceholderPage title="Elégedettségi kérdőív" />} />
+          </Route>
+
+          <Route path="/teacher" element={<TeacherLayout />}>
+            <Route index element={<PlaceholderPage title="Oktatói kezdőlap" />} />
+            <Route path="students" element={<PlaceholderPage title="Hallgatók" />} />
+            <Route path="companies" element={<PlaceholderPage title="Cégek" />} />
+            <Route path="stats" element={<PlaceholderPage title="Statisztika" />} />
+          </Route>
+
+          <Route path="/mentor" element={<MentorLayout />}>
+            <Route index element={<PlaceholderPage title="Mentori kezdőlap" />} />
+            <Route path="messages" element={<PlaceholderPage title="Üzenetek" />} />
+            <Route path="progress" element={<PlaceholderPage title="Haladási napló" />} />
+            <Route path="reviews" element={<PlaceholderPage title="Hallgatók értékelése" />} />
+            <Route path="profile" element={<PlaceholderPage title="Profil" />} />
+          </Route>
+
+          <Route path="/hr" element={<HrLayout />}>
+            <Route index element={<PlaceholderPage title="HR kezdőlap" />} />
+            <Route path="job-postings" element={<PlaceholderPage title="Álláshirdetések" />} />
+            <Route path="messages" element={<PlaceholderPage title="Üzenetek" />} />
+            <Route path="applications" element={<PlaceholderPage title="Jelentkezések" />} />
+            <Route path="mentors" element={<PlaceholderPage title="Mentorok kezelése" />} />
+            <Route path="profile" element={<PlaceholderPage title="Profil" />} />
+          </Route>
+
         </Routes>
       </main>
 
