@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { Eye, EyeOff } from "lucide-react";
-
+import { useEffect } from "react";
 
 
 function HomePage() {
@@ -21,21 +21,12 @@ function HomePage() {
   try {
     const res = await api.login(email.trim(), password);
 
-    // token + user mentése
     localStorage.setItem("token", res.token);
     localStorage.setItem("user", JSON.stringify(res.user));
     localStorage.setItem("role", res.user.role);
 
-    // role alapú navigáció (most még egyszerű)
-    const role = (res.user.role || "").toUpperCase();
-
-    if (role === "ADMIN") navigate("/admin");
-    else if (role === "STUDENT") navigate("/student");
-    else if (role === "TEACHER" || role === "INSTRUCTOR") navigate("/teacher");
-    else if (role === "MENTOR") navigate("/mentor");
-    else if (role === "HR" || role === "COMPANY_HR") navigate("/hr");
-    else navigate("/student");
-
+    const target = roleToPath[res.user.role] ?? "/"; // fallback
+    navigate(target);
   } catch (err: any) {
     setLoginError(err?.message || "Sikertelen bejelentkezés.");
   } finally {
@@ -43,6 +34,23 @@ function HomePage() {
   }
 };
 
+const roleToPath: Record<string, string> = {
+  STUDENT: "/student",
+  TEACHER: "/teacher",
+  MENTOR: "/mentor",
+  HR: "/hr",
+  ADMIN: "/admin",
+};
+
+
+
+useEffect(() => {
+  const role = localStorage.getItem("role");
+  if (!role) return;
+
+  const target = roleToPath[role];
+  if (target) navigate(target);
+}, [navigate]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 lg:px-8">

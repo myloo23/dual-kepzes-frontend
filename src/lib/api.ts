@@ -1,14 +1,37 @@
 const API_URL = import.meta.env.VITE_API_URL;
-
+//LOGIN, REGISTRATION API
 type LoginResponse = {
   message: string;
   token: string;
-  user: {
-    id: number | string;
-    email: string;
-    role: string; // "STUDENT" | "ADMIN" | ...
-  };
+  user: { id: number | string; email: string; role: string };
 };
+
+export type RegisterResponse = {
+  message: string;
+  userId?: number | string;
+  role?: string;
+};
+export type StudentRegisterPayload = {
+  email: string;
+  password: string;
+  fullName: string;
+  phoneNumber: string;
+  role: "STUDENT";
+
+  mothersName: string;
+  dateOfBirth: string; // "YYYY-MM-DD"
+  country: string;
+  zipCode: string;
+  city: string;
+  streetAddress: string;
+  highSchool: string;
+  graduationYear: number;
+  neptunCode?: string;
+  currentMajor: string;
+  studyMode: "NAPPALI" | "LEVELEZŐ";
+  hasLanguageCert: boolean;
+};
+
 
 async function apiPost<T>(path: string, body: unknown, token?: string): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
@@ -20,17 +43,13 @@ async function apiPost<T>(path: string, body: unknown, token?: string): Promise<
     body: JSON.stringify(body),
   });
 
-  // próbáljuk JSON-ként olvasni a hibaüzenetet is
   let data: any = null;
   try {
     data = await res.json();
-  } catch {
-    // ha nem JSON
-  }
+  } catch {}
 
   if (!res.ok) {
-    const msg = data?.message || `HTTP ${res.status} hiba`;
-    throw new Error(msg);
+    throw new Error(data?.message || `HTTP ${res.status} hiba`);
   }
 
   return data as T;
@@ -38,8 +57,9 @@ async function apiPost<T>(path: string, body: unknown, token?: string): Promise<
 
 export const api = {
   login: (email: string, password: string) =>
-    apiPost<LoginResponse>("/auth/login", { email, password }),
-
-  // később:
-  // register: (payload) => apiPost("/auth/register", payload),
+    apiPost<LoginResponse>("/api/auth/login", { email, password }),
+  registerStudent: (payload: StudentRegisterPayload) =>
+    apiPost<RegisterResponse>("/api/auth/register", payload),
 };
+
+//REGISTRATION API

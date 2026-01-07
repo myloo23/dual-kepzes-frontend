@@ -1,359 +1,370 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { api } from "../lib/api";
+import type { StudentRegisterPayload } from "../lib/api";
+import { Eye, EyeOff } from "lucide-react";
 
-type StudyMode = "Nappali" | "Levelező";
-
-type FormState = {
-  // User (auth)
-  email: string;
-  password: string;
-  confirmPassword: string;
-
-  // StudentProfile
-  fullName: string;
-  mothersName: string;
-  birthDate: string; // yyyy-mm-dd (input date)
-  address: string;
-
-  highSchool: string;
-  graduationYear: string; // input text/number
-  neptunCode: string; // optional
-  currentMajor: string;
-  studyMode: StudyMode;
-  hasLanguageCert: boolean;
-};
-
-type FormErrors = Partial<Record<keyof FormState, string>>;
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
-function StudentRegisterPage() {
+function normalizeNeptun(code: string) {
+  return code.trim().toUpperCase();
+}
+
+function validateNeptunOptional(code: string) {
+  const c = normalizeNeptun(code);
+  if (!c) return null; // üres => ok
+  if (!/^[A-Z0-9]{6}$/.test(c)) return "A Neptun kód pontosan 6 karakter (A–Z, 0–9).";
+  return null;
+}
+
+export default function StudentRegisterPage() {
   const navigate = useNavigate();
-  const currentYear = useMemo(() => new Date().getFullYear(), []);
 
-  const [form, setForm] = useState<FormState>({
-    email: "",
-    password: "",
-    confirmPassword: "",
+  // fiók
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-    fullName: "",
-    mothersName: "",
-    birthDate: "",
-    address: "",
+  // profil
+  const [mothersName, setMothersName] = useState("");
+  const [birthDate, setBirthDate] = useState(""); // YYYY-MM-DD
+  const [country, setCountry] = useState("Magyarország");
+  const [zipCode, setZipCode] = useState("");
+  const [city, setCity] = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
+  const [highSchool, setHighSchool] = useState("");
+  const [graduationYear, setGraduationYear] = useState<number | "">("");
+  const [neptunCode, setNeptunCode] = useState("");
+  const [currentMajor, setCurrentMajor] = useState("");
+  const [studyMode, setStudyMode] = useState<"NAPPALI" | "LEVELEZŐ">("NAPPALI");
+  const [hasLanguageCert, setHasLanguageCert] = useState(false);
 
-    highSchool: "",
-    graduationYear: "",
-    neptunCode: "",
-    currentMajor: "",
-    studyMode: "Nappali",
-    hasLanguageCert: false,
-  });
+  const [error, setError] = useState<string | null>(null);
+  const [okMsg, setOkMsg] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  //jelszó megjelenés
+  const [showPassword, setShowPassword] = useState(false);
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setOkMsg(null);
 
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success">("idle");
+    // validálás (alap)
+    if (!isValidEmail(email)) return setError("Érvénytelen e-mail cím.");
+    if (password.length < 12) return setError("A jelszó legyen legalább 12 karakter.");
+    if (!fullName.trim()) return setError("A teljes név megadása kötelező.");
+    if (!phoneNumber.trim()) return setError("Telefonszám megadása kötelező.");
 
-  const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => ({ ...prev, [key]: undefined }));
-  };
+    if (!mothersName.trim()) return setError("Anyja neve megadása kötelező.");
+    if (!birthDate) return setError("Születési dátum megadása kötelező.");
 
-  const validate = (): FormErrors => {
-    const e: FormErrors = {};
+    if (!country.trim()) return setError("Ország megadása kötelező.");
+    if (!zipCode.trim()) return setError("Irányítószám megadása kötelező.");
+    if (!city.trim()) return setError("Település megadása kötelező.");
+    if (!streetAddress.trim()) return setError("Utca/házszám megadása kötelező.");
 
-    if (!form.email.trim()) e.email = "Email megadása kötelező.";
-    else if (!isValidEmail(form.email)) e.email = "Érvénytelen email formátum.";
-
-    if (!form.password) e.password = "Jelszó megadása kötelező.";
-    else if (form.password.length < 8) e.password = "A jelszó legalább 8 karakter legyen.";
-
-    if (!form.confirmPassword) e.confirmPassword = "Jelszó megerősítése kötelező.";
-    else if (form.confirmPassword !== form.password) e.confirmPassword = "A két jelszó nem egyezik.";
-
-    if (!form.fullName.trim()) e.fullName = "Teljes név megadása kötelező.";
-    if (!form.mothersName.trim()) e.mothersName = "Anyja neve megadása kötelező.";
-    if (!form.birthDate) e.birthDate = "Születési dátum megadása kötelező.";
-    if (!form.address.trim()) e.address = "Lakcím megadása kötelező.";
-
-    if (!form.highSchool.trim()) e.highSchool = "Középiskola megadása kötelező.";
-
-    if (!form.graduationYear.trim()) {
-      e.graduationYear = "Érettségi év megadása kötelező.";
-    } else {
-      const y = Number(form.graduationYear);
-      if (Number.isNaN(y)) e.graduationYear = "Érettségi év csak szám lehet.";
-      else if (y < 1950 || y > currentYear + 1) e.graduationYear = "Érettségi év nem tűnik valósnak.";
+    if (!highSchool.trim()) return setError("Középiskola megadása kötelező.");
+    if (graduationYear === "") return setError("Érettségi éve megadása kötelező.");
+    if (typeof graduationYear === "number" && (graduationYear < 1950 || graduationYear > 2100)) {
+      return setError("Érettségi éve nem tűnik helyesnek.");
     }
 
-    // Neptun: opcionális, de ha megadja, legyen 6 karakter alfanumerikus (gyakori)
-    if (form.neptunCode.trim()) {
-      const v = form.neptunCode.trim().toUpperCase();
-      if (!/^[A-Z0-9]{6}$/.test(v)) e.neptunCode = "Neptun kód formátuma: 6 karakter (betű/szám).";
-    }
+    const neptunErr = validateNeptunOptional(neptunCode);
+    if (neptunErr) return setError(neptunErr);
 
-    if (!form.currentMajor.trim()) e.currentMajor = "Szak megadása kötelező.";
+    if (!currentMajor.trim()) return setError("Szak megnevezése kötelező.");
 
-    return e;
-  };
+    const neptun = normalizeNeptun(neptunCode);
 
-  const onSubmit = (ev: React.FormEvent) => {
-    ev.preventDefault();
-    const e = validate();
-    setErrors(e);
-
-    if (Object.keys(e).length > 0) return;
-
-    // Később ez megy majd a backendbe:
-    // POST /auth/register (User + StudentProfile)
-    // A séma alapján: User(email,password,role=STUDENT) + StudentProfile mezők
-    const payload = {
-      email: form.email.trim(),
-      password: form.password,
+    const payload: StudentRegisterPayload = {
+      email: email.trim(),
+      password,
+      fullName: fullName.trim(),
+      phoneNumber: phoneNumber.trim(),
       role: "STUDENT",
-      studentProfile: {
-        fullName: form.fullName.trim(),
-        mothersName: form.mothersName.trim(),
-        birthDate: form.birthDate, // backend oldalon DateTime-re alakítjátok
-        address: form.address.trim(),
-        highSchool: form.highSchool.trim(),
-        graduationYear: Number(form.graduationYear),
-        neptunCode: form.neptunCode.trim() ? form.neptunCode.trim().toUpperCase() : null,
-        currentMajor: form.currentMajor.trim(),
-        studyMode: form.studyMode,
-        hasLanguageCert: form.hasLanguageCert,
-      },
+
+      mothersName: mothersName.trim(),
+      dateOfBirth: birthDate, // "YYYY-MM-DD"
+      country: country.trim(),
+      zipCode: zipCode.trim(),
+      city: city.trim(),
+      streetAddress: streetAddress.trim(),
+      highSchool: highSchool.trim(),
+      graduationYear: Number(graduationYear),
+      currentMajor: currentMajor.trim(),
+      studyMode,
+      hasLanguageCert: !!hasLanguageCert,
+
+      ...(neptun ? { neptunCode: neptun } : {}),
     };
 
-    console.log("REGISTER PAYLOAD (mock):", payload);
-
-    setSubmitStatus("success");
-    // opcionálisan vissza a kezdőlapra
-    setTimeout(() => navigate("/"), 900);
+    setLoading(true);
+    try {
+      const res = await api.registerStudent(payload);
+      setOkMsg(res?.message || "Sikeres regisztráció!");
+      setTimeout(() => navigate("/"), 800);
+    } catch (err: any) {
+      setError(err?.message || "Sikertelen regisztráció.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 lg:px-8 py-10">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">
-            Hallgatói regisztráció
-          </h1>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="max-w-3xl mx-auto px-4 lg:px-8 py-10">
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold">Hallgatói regisztráció</h1>
           <p className="text-sm text-slate-600">
-            Add meg a szükséges adatokat a fiók létrehozásához.
+            Töltsd ki a kötelező mezőket. A Neptun kód opcionális.
           </p>
         </div>
-        <Link to="/" className="text-sm text-blue-600 hover:underline">
-          Vissza a kezdőlapra
-        </Link>
+
+        {error && (
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+        {okMsg && (
+          <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+            {okMsg}
+          </div>
+        )}
+
+        <form onSubmit={onSubmit} className="space-y-6">
+          {/* Fiók adatok */}
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-sm font-semibold text-slate-900 mb-4">Fiók adatok</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">E-mail *</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="diak@student.com"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+  <label className="text-xs font-medium text-slate-700">Jelszó *</label>
+
+  <div className="relative">
+    <input
+      type={showPassword ? "text" : "password"}
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="Minimum 12 karakter"
+      className="w-full rounded-lg border border-slate-300 px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword((v) => !v)}
+      className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-slate-700"
+      aria-label={showPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+</div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Teljes név *</label>
+                <input
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Példa Diák"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Telefonszám *</label>
+                <input
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="+36301234567"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <p className="mt-3 text-[11px] text-slate-500">
+              Szerepkör automatikusan: <span className="font-mono">STUDENT</span>
+            </p>
+          </section>
+
+          {/* Személyes adatok */}
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-sm font-semibold text-slate-900 mb-4">Személyes adatok</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Anyja neve *</label>
+                <input
+                  value={mothersName}
+                  onChange={(e) => setMothersName(e.target.value)}
+                  placeholder="Példa Anya"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Születési dátum *</label>
+                <input
+                  type="date"
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Lakcím */}
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-sm font-semibold text-slate-900 mb-4">Lakcím</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Ország *</label>
+                <input
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Irányítószám *</label>
+                <input
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value)}
+                  placeholder="4028"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Település *</label>
+                <input
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="Debrecen"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1 md:col-span-2">
+                <label className="text-xs font-medium text-slate-700">Utca, házszám *</label>
+                <input
+                  value={streetAddress}
+                  onChange={(e) => setStreetAddress(e.target.value)}
+                  placeholder="Kassai út 26."
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Tanulmányok */}
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-sm font-semibold text-slate-900 mb-4">Tanulmányok</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1 md:col-span-2">
+                <label className="text-xs font-medium text-slate-700">Középiskola *</label>
+                <input
+                  value={highSchool}
+                  onChange={(e) => setHighSchool(e.target.value)}
+                  placeholder="Tóth Árpád Gimnázium"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Érettségi éve *</label>
+                <input
+                  type="number"
+                  value={graduationYear}
+                  onChange={(e) => setGraduationYear(e.target.value ? Number(e.target.value) : "")}
+                  placeholder="2019"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">
+                  Neptun kód <span className="text-slate-400">(opcionális)</span>
+                </label>
+                <input
+                  value={neptunCode}
+                  onChange={(e) => setNeptunCode(e.target.value)}
+                  placeholder="ABC123"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <p className="text-[11px] text-slate-500">Ha megadod: 6 karakter (A–Z, 0–9).</p>
+              </div>
+
+              <div className="space-y-1 md:col-span-2">
+                <label className="text-xs font-medium text-slate-700">Szak megnevezése *</label>
+                <input
+                  value={currentMajor}
+                  onChange={(e) => setCurrentMajor(e.target.value)}
+                  placeholder="Mérnökinformatikus BSc"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Képzési forma *</label>
+                <select
+                  value={studyMode}
+                  onChange={(e) => setStudyMode(e.target.value as "NAPPALI" | "LEVELEZŐ")}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="NAPPALI">NAPPALI</option>
+                  <option value="LEVELEZŐ">LEVELEZŐ</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-3 md:pt-6">
+                <input
+                  id="langCert"
+                  type="checkbox"
+                  checked={hasLanguageCert}
+                  onChange={(e) => setHasLanguageCert(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                <label htmlFor="langCert" className="text-sm text-slate-700">
+                  Van nyelvvizsgám
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <div className="flex items-center justify-between">
+            <Link to="/" className="text-sm text-slate-600 hover:text-slate-900">
+              Vissza a belépéshez
+            </Link>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+            >
+              {loading ? "Regisztráció..." : "Regisztráció"}
+            </button>
+          </div>
+        </form>
       </div>
-
-      {submitStatus === "success" && (
-        <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          Sikeres (mock) regisztráció! Átirányítás...
-        </div>
-      )}
-
-      <form onSubmit={onSubmit} className="space-y-6">
-        {/* Fiók adatok */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-slate-900 mb-3">
-            Fiók adatok
-          </h2>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field
-              label="Email"
-              value={form.email}
-              onChange={(v) => setField("email", v)}
-              placeholder="pl. milan@gmail.com"
-              error={errors.email}
-              type="email"
-            />
-            <div />
-            <Field
-              label="Jelszó"
-              value={form.password}
-              onChange={(v) => setField("password", v)}
-              placeholder="Minimum 8 karakter"
-              error={errors.password}
-              type="password"
-            />
-            <Field
-              label="Jelszó megerősítése"
-              value={form.confirmPassword}
-              onChange={(v) => setField("confirmPassword", v)}
-              placeholder="Ugyanaz, mint a jelszó"
-              error={errors.confirmPassword}
-              type="password"
-            />
-          </div>
-        </section>
-
-        {/* Személyes adatok */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-slate-900 mb-3">
-            Személyes adatok
-          </h2>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field
-              label="Teljes név"
-              value={form.fullName}
-              onChange={(v) => setField("fullName", v)}
-              placeholder="pl. Kovács Milán"
-              error={errors.fullName}
-            />
-            <Field
-              label="Anyja neve"
-              value={form.mothersName}
-              onChange={(v) => setField("mothersName", v)}
-              placeholder="pl. Kiss Andrea"
-              error={errors.mothersName}
-            />
-            <Field
-              label="Születési dátum"
-              value={form.birthDate}
-              onChange={(v) => setField("birthDate", v)}
-              error={errors.birthDate}
-              type="date"
-            />
-            <Field
-              label="Lakcím"
-              value={form.address}
-              onChange={(v) => setField("address", v)}
-              placeholder="pl. 6000 Kecskemét, Fő utca 12."
-              error={errors.address}
-            />
-          </div>
-        </section>
-
-        {/* Oktatási adatok */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-slate-900 mb-3">
-            Oktatási adatok
-          </h2>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field
-              label="Középiskola"
-              value={form.highSchool}
-              onChange={(v) => setField("highSchool", v)}
-              placeholder="pl. Katona József Gimnázium"
-              error={errors.highSchool}
-            />
-            <Field
-              label="Érettségi éve"
-              value={form.graduationYear}
-              onChange={(v) => setField("graduationYear", v)}
-              placeholder="pl. 2024"
-              error={errors.graduationYear}
-              inputMode="numeric"
-            />
-            <Field
-              label="Neptun kód (opcionális)"
-              value={form.neptunCode}
-              onChange={(v) => setField("neptunCode", v)}
-              placeholder="pl. ABC123"
-              error={errors.neptunCode}
-            />
-            <Field
-              label="Jelenlegi szak"
-              value={form.currentMajor}
-              onChange={(v) => setField("currentMajor", v)}
-              placeholder="pl. Mérnökinformatikus"
-              error={errors.currentMajor}
-            />
-
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
-                Tagozat
-              </label>
-              <select
-                value={form.studyMode}
-                onChange={(e) => setField("studyMode", e.target.value as StudyMode)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="Nappali">Nappali</option>
-                <option value="Levelező">Levelező</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-3 pt-6">
-              <input
-                id="langCert"
-                type="checkbox"
-                checked={form.hasLanguageCert}
-                onChange={(e) => setField("hasLanguageCert", e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300"
-              />
-              <label htmlFor="langCert" className="text-sm text-slate-700">
-                Van nyelvvizsgám
-              </label>
-            </div>
-          </div>
-        </section>
-
-        {/* Gombok */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-          
-
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition">
-            Regisztráció
-          </button>
-
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-lg text-sm font-semibold">
-            Mégsem, vissza a belépéshez
-          </Link>
-        </div>
-
-        <p className="text-[11px] text-slate-500">
-        Megjegyzés: ez most mock (backend nélkül). Később ugyanezeket az adatokat
-        küldjük a backend <code className="font-mono">/auth/register</code> végpontjára,
-        ahol létrejön a <code className="font-mono">User</code> és a{" "}
-        <code className="font-mono">StudentProfile</code>.
-        </p>
-
-      </form>
     </div>
   );
 }
-
-function Field(props: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  error?: string;
-  type?: string;
-  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
-}) {
-  return (
-    <div className="space-y-1">
-      <label className="text-xs font-medium text-slate-700">
-        {props.label}
-      </label>
-      <input
-        type={props.type ?? "text"}
-        value={props.value}
-        onChange={(e) => props.onChange(e.target.value)}
-        placeholder={props.placeholder}
-        inputMode={props.inputMode}
-        className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:border-blue-500 ${
-          props.error
-            ? "border-red-300 focus:ring-red-500"
-            : "border-slate-300 focus:ring-blue-500"
-        }`}
-      />
-      {props.error && (
-        <div className="text-xs text-red-600">{props.error}</div>
-      )}
-    </div>
-  );
-}
-
-export default StudentRegisterPage;
