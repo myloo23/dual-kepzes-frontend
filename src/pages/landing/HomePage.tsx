@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Eye, EyeOff } from "lucide-react";
-import { useEffect } from "react";
 
-
+// Definiáljuk az útvonalakat a szerepkörökhöz
+// Az '/admin' útvonal az App.tsx alapján az AdminDashboard-ra visz (index route)
+const roleToPath: Record<string, string> = {
+  STUDENT: "/student",
+  TEACHER: "/teacher",
+  MENTOR: "/mentor",
+  HR: "/hr",
+  COMPANY_ADMIN: "/hr",
+  ADMIN: "/admin",
+  SYSTEM_ADMIN: "/admin",
+  SUPER_ADMIN: "/admin",
+};
 function HomePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,43 +24,56 @@ function HomePage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoginError(null);
-  setLoading(true);
+    e.preventDefault();
+    setLoginError(null);
+    setLoading(true);
 
-  try {
-    const res = await api.login(email.trim(), password);
+    try {
+      const res = await api.login(email.trim(), password);
 
-    localStorage.setItem("token", res.token);
-    localStorage.setItem("user", JSON.stringify(res.user));
-    localStorage.setItem("role", res.user.role);
+      // --- DEBUG START: Nézd meg a böngésző konzolját (F12) ---
+      console.log("API Válasz:", res);
+      console.log("Kapott role:", res.user.role);
+      // --------------------------------------------------------
 
-    const target = roleToPath[res.user.role] ?? "/"; // fallback
-    navigate(target);
-  } catch (err: any) {
-    setLoginError(err?.message || "Sikertelen bejelentkezés.");
-  } finally {
-    setLoading(false);
-  }
-};
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("user", JSON.stringify(res.user));
+      
+      // BIZTOSÍTÁS: Nagybetűsítjük és levágjuk a szóközöket, 
+      // hogy biztosan egyezzen a roleToPath kulcsaival.
+      const normalizedRole = res.user.role.trim().toUpperCase();
+      
+      localStorage.setItem("role", normalizedRole);
 
-const roleToPath: Record<string, string> = {
-  STUDENT: "/student",
-  TEACHER: "/teacher",
-  MENTOR: "/mentor",
-  HR: "/hr",
-  ADMIN: "/admin",
-};
+      const target = roleToPath[normalizedRole];
 
+      console.log("Számított útvonal:", target); // Lássuk, hova akar menni
 
+      if (target) {
+        navigate(target, { replace: true });
+      } else {
+      console.warn(`Ismeretlen szerepkör: ${normalizedRole}, visszatérés a főoldalra.`);
+      navigate("/", { replace: true });
+    }
 
-useEffect(() => {
+    } catch (err: any) {
+      console.error("Login hiba:", err);
+      setLoginError(err?.message || "Sikertelen bejelentkezés.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Ha már be van jelentkezve (pl. oldalfrissítésnél), átirányítjuk
+  useEffect(() => {
   const role = localStorage.getItem("role");
   if (!role) return;
 
-  const target = roleToPath[role];
-  if (target) navigate(target);
-}, [navigate]);
+  const userRole = role.trim().toUpperCase();
+  const target = roleToPath[userRole];
+  if (target) navigate(target, { replace: true });
+  }, [navigate]);
+
 
   return (
     <div className="max-w-6xl mx-auto px-4 lg:px-8">
@@ -113,29 +136,29 @@ useEffect(() => {
             </div>
 
             <div className="space-y-1">
-          <label className="font-medium text-slate-700">Jelszó</label>
+              <label className="font-medium text-slate-700">Jelszó</label>
 
-            <div className="relative">
-            <input
-             type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-10 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-10 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
 
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
-            aria-label={showPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
-            title={showPassword ? "Elrejtés" : "Megjelenítés"}
-          >
-          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-          </div>
-        </div>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+                  aria-label={showPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+                  title={showPassword ? "Elrejtés" : "Megjelenítés"}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
             <button type="submit" disabled={loading} className="mt-2 w-full rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:opacity-90 transition disabled:opacity-60">
               {loading ? "Belépés..." : "Belépés"}
             </button>
@@ -143,11 +166,11 @@ useEffect(() => {
 
           <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
             <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
-            Elfelejtett jelszó?
+              Elfelejtett jelszó?
             </Link>
             <span>Még nincs fiókod?</span>
             <Link to="/register" className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition">
-            Regisztráció
+              Regisztráció
             </Link>
 
           </div>

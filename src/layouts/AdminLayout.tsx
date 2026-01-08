@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate} from "react-router-dom";
 import { useState } from "react";
 
 const navItemBase =
@@ -8,7 +8,13 @@ const navItemActive = "bg-blue-50 text-blue-700 border border-blue-100";
 
 function AdminLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const navigate = useNavigate();
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    navigate("/");
+  };
   return (
     <div className="min-h-[calc(100vh-56px)] bg-slate-50">
       <div className="max-w-6xl mx-auto px-4 lg:px-8 py-6">
@@ -102,6 +108,15 @@ function AdminLayout() {
                 Beállítások
               </NavLink>
             </nav>
+                
+                <div className="mt-4 border-t border-slate-200 pt-3 px-2">
+              <button
+                onClick={logout}
+                className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+              >
+                Kijelentkezés
+              </button>
+            </div>
 
             <div className="mt-4 px-2 py-2 text-[11px] text-slate-500">
               Megjegyzés: később role alapú védelem (ADMIN).

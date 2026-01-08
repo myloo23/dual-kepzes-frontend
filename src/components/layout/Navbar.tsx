@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+
   const closeMobileMenu = () => setMobileOpen(false);
 
   return (
@@ -51,7 +52,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile dropdown */}
+      {/* Mobile nav dropdown */}
       {mobileOpen && (
         <nav className="sm:hidden border-t border-slate-200 bg-white">
           <div className="max-w-6xl mx-auto px-4 lg:px-8 py-3 flex flex-col gap-2 text-sm text-slate-700">

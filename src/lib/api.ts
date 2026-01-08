@@ -50,11 +50,13 @@ async function apiRequest<T>(
 
   if (!res.ok) {
     const body: ApiErrorBody = data;
+
     const msg =
+      body?.error ||                                  // ✅ először a részletes error
       body?.message ||
-      body?.error ||
       (Array.isArray(body?.errors) && body.errors[0]?.message) ||
       `HTTP ${res.status} hiba`;
+
     throw new Error(msg);
   }
 
