@@ -2,30 +2,27 @@ import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 
-import HomePage from "./pages/landing/HomePage.tsx";
-import PositionsPage from "./pages/landing/PositionsPage.tsx";
-import MapPage from "./pages/landing/MapPage.tsx";
-import StudentRegisterPage from "./pages/auth/StudentRegisterPage.tsx";
+import HomePage from "./pages/landing/HomePage";
+import PositionsPage from "./pages/landing/PositionsPage";
+import MapPage from "./pages/landing/MapPage";
+import StudentRegisterPage from "./pages/auth/StudentRegisterPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
-// layouts
-import StudentLayout from "./layouts/StudentLayout.tsx";
-import TeacherLayout from "./layouts/TeacherLayout.tsx";
-import MentorLayout from "./layouts/MentorLayout.tsx";
-import HrLayout from "./layouts/HrLayout.tsx";
+import StudentLayout from "./layouts/StudentLayout";
+import TeacherLayout from "./layouts/TeacherLayout";
+import MentorLayout from "./layouts/MentorLayout";
+import HrLayout from "./layouts/HrLayout";
 
-// admin
-import AdminLayout from "./layouts/AdminLayout.tsx";
-import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
-import AdminUsers from "./pages/admin/AdminUsers.tsx";
-import AdminCompanies from "./pages/admin/AdminCompanies.tsx";
-import AdminPositions from "./pages/admin/AdminPositions.tsx";
-import AdminTags from "./pages/admin/AdminTags.tsx";
-import AdminSettings from "./pages/admin/AdminSettings.tsx";
+import AdminLayout from "./layouts/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminCompanies from "./pages/admin/AdminCompanies";
+import AdminPositions from "./pages/admin/AdminPositions";
+import AdminTags from "./pages/admin/AdminTags";
+import AdminSettings from "./pages/admin/AdminSettings";
 
-// password reset
-import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.tsx";
-import ResetPasswordPage from "./pages/auth/ResetPasswordPage.tsx";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 function App() {
   return (
@@ -39,7 +36,6 @@ function App() {
           <Route path="/map" element={<MapPage />} />
           <Route path="/register" element={<StudentRegisterPage />} />
 
-          {/* Admin routes */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<AdminUsers />} />
@@ -49,11 +45,9 @@ function App() {
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 
-          {/* Password reset routes */}
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-          {/* Layout routes */}
           <Route path="/student" element={<StudentLayout />}>
             <Route index element={<PlaceholderPage title="Hallgatói kezdőlap" />} />
             <Route path="jobs" element={<PlaceholderPage title="Állások" />} />
