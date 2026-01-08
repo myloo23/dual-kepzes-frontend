@@ -1,4 +1,4 @@
-import DashboardLayout, { type NavItem } from "../../components/DashboardLayout";
+import DashboardLayout, { type NavItem } from "../components/layout/DashboardLayout";
 
 export default function TeacherLayout() {
   const navItems: NavItem[] = [

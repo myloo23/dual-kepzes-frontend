@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api } from "../lib/api";
+import { api } from "../../lib/api";
 import { Eye, EyeOff } from "lucide-react";
 import { useEffect } from "react";
 

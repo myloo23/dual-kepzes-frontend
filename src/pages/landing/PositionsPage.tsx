@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 // LOGÓK
-import logoAbcTech from "../assets/logos/abc-tech.jpg";
-import logoBusinessIt from "../assets/logos/business-it.jpg";
+import logoAbcTech from "../../assets/logos/abc-tech.jpg";
+import logoBusinessIt from "../../assets/logos/business-it.jpg";
 
 type StudyMode = "On-site" | "Online" | "Hybrid";
 type LanguageLabel = "Magyar" | "Angol" | "Magyar & angol";

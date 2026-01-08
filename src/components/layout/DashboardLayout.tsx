@@ -1,5 +1,6 @@
 import { type ReactNode, useMemo, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { cn } from "../../lib/cn";
 
 export type NavItem = {
   to: string;
@@ -7,9 +8,6 @@ export type NavItem = {
   hint?: string;
 };
 
-function cls(...parts: Array<string | false | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export default function DashboardLayout(props: {
   roleLabel: string;
@@ -61,7 +59,7 @@ export default function DashboardLayout(props: {
         <div className="grid gap-6 lg:grid-cols-[280px,minmax(0,1fr)]">
           {/* Sidebar */}
           <aside
-            className={cls(
+            className={cn(
               "rounded-2xl border border-slate-200 bg-white p-3 shadow-sm",
               mobileOpen ? "block" : "hidden",
               "lg:block"
@@ -87,7 +85,7 @@ export default function DashboardLayout(props: {
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
-                    cls(
+                    cn(
                       "block rounded-lg px-3 py-2 text-sm transition",
                       isActive
                         ? "bg-blue-50 text-blue-700 border border-blue-100"

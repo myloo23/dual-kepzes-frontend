@@ -2,7 +2,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 // --- token kezelés (igazítsd a kulcshoz, amit a login ment) ---
 export const auth = {
-  getToken: () => localStorage.getItem("token") || localStorage.getItem("auth_token") || "",
+  getToken: () =>
+    localStorage.getItem("token") ||
+    localStorage.getItem("auth_token") ||
+    "",
   setToken: (t: string) => localStorage.setItem("token", t),
   clearToken: () => {
     localStorage.removeItem("token");
@@ -13,7 +16,11 @@ export const auth = {
 type Id = string | number;
 
 type ApiErrorBody =
-  | { message?: string; error?: string; errors?: Array<{ field?: string; message?: string }> }
+  | {
+      message?: string;
+      error?: string;
+      errors?: Array<{ field?: string; message?: string }>;
+    }
   | any;
 
 async function apiRequest<T>(
@@ -22,6 +29,7 @@ async function apiRequest<T>(
   token?: string
 ): Promise<T> {
   const jwt = token ?? auth.getToken();
+
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
     headers: {
@@ -37,8 +45,7 @@ async function apiRequest<T>(
     if (contentType.includes("application/json")) data = await res.json();
     else data = await res.text();
   } catch {
-    // pl. 204 No Content
-    data = null;
+    data = null; // pl. 204 No Content
   }
 
   if (!res.ok) {
@@ -51,7 +58,6 @@ async function apiRequest<T>(
     throw new Error(msg);
   }
 
-  // 204 esetén legyen egy üres objektum
   return (data ?? ({} as any)) as T;
 }
 
@@ -69,6 +75,7 @@ function apiPost<T>(path: string, body: unknown, token?: string) {
     token
   );
 }
+void apiPatch;
 function apiPatch<T>(path: string, body: unknown, token?: string) {
   return apiRequest<T>(
     path,
@@ -94,9 +101,6 @@ function apiPut<T>(path: string, body: unknown, token?: string) {
 function apiDelete<T>(path: string, token?: string) {
   return apiRequest<T>(path, { method: "DELETE" }, token);
 }
-
-// ✅ TS6133 fix: apiPut ne legyen "unused" a tsc buildben (nem fut, nem változtat logikát)
-void apiPut;
 
 // ----------------- AUTH -----------------
 type LoginResponse = {
@@ -132,16 +136,32 @@ export type StudentRegisterPayload = {
 };
 
 // ----------------- ADMIN modellek (lazán, backendhez igazítható) -----------------
-export type Company = Record<string, any> & { id: Id; name?: string; companyName?: string };
-export type Position = Record<string, any> & { id: Id; title?: string; name?: string; companyId?: Id };
-export type StudentProfile = Record<string, any> & { id: Id; userId?: Id; fullName?: string; email?: string };
+export type Company = Record<string, any> & {
+  id: Id;
+  name?: string;
+  companyName?: string;
+};
 
-// ----------------- ENDPOINT konstansok (ha változik, csak itt írd át) -----------------
+export type Position = Record<string, any> & {
+  id: Id;
+  title?: string;
+  name?: string;
+  companyId?: Id;
+};
+
+export type StudentProfile = Record<string, any> & {
+  id: Id;
+  userId?: Id;
+  fullName?: string;
+  email?: string;
+};
+
+// ----------------- ENDPOINT konstansok -----------------
 const PATHS = {
   companies: "/api/jobs/companies",
-  positions: "/api/jobs/positions", // ha nálatok csak "/positions", írd át erre: "/positions"
-  students: "/api/students",        // ha más: pl. "/api/student-profiles" akkor itt cseréld
-  me: "/api/users/me",              // ha más: pl. "/api/auth/me" akkor itt cseréld
+  positions: "/api/jobs/positions",
+  students: "/api/students",
+  me: "/api/students/me",
 };
 
 export const api = {
@@ -157,9 +177,13 @@ export const api = {
     list: () => apiGet<Company[]>(PATHS.companies),
     get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${id}`),
     create: (payload: Partial<Company>) => apiPost<Company>(PATHS.companies, payload),
-    update: (id: Id, patch: Partial<Company>) => apiPatch<Company>(`${PATHS.companies}/${id}`, patch),
-    // ha a backend PUT-ot vár: cseréld apiPatch -> apiPut
-    remove: (id: Id) => apiDelete<{ message?: string }>(`${PATHS.companies}/${id}`),
+
+    // ✅ PUT
+    update: (id: Id, body: Partial<Company>) =>
+      apiPut<Company>(`${PATHS.companies}/${id}`, body),
+
+    remove: (id: Id) =>
+      apiDelete<{ message?: string }>(`${PATHS.companies}/${id}`),
   },
 
   // positions CRUD
@@ -167,23 +191,35 @@ export const api = {
     list: () => apiGet<Position[]>(PATHS.positions),
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
     create: (payload: Partial<Position>) => apiPost<Position>(PATHS.positions, payload),
-    update: (id: Id, patch: Partial<Position>) => apiPatch<Position>(`${PATHS.positions}/${id}`, patch),
-    remove: (id: Id) => apiDelete<{ message?: string }>(`${PATHS.positions}/${id}`),
+
+    // ✅ PUT
+    update: (id: Id, body: Partial<Position>) =>
+      apiPut<Position>(`${PATHS.positions}/${id}`, body),
+
+    remove: (id: Id) =>
+      apiDelete<{ message?: string }>(`${PATHS.positions}/${id}`),
   },
 
-  // students / hallgatói profilok CRUD
+  // ✅ students / hallgatói profilok CRUD  (PUT a backend szerint)
   students: {
     list: () => apiGet<StudentProfile[]>(PATHS.students),
     get: (id: Id) => apiGet<StudentProfile>(`${PATHS.students}/${id}`),
-    update: (id: Id, patch: Partial<StudentProfile>) =>
-      apiPatch<StudentProfile>(`${PATHS.students}/${id}`, patch),
+
+    // ✅ PATCH helyett PUT
+    update: (id: Id, body: Partial<StudentProfile>) =>
+      apiPut<StudentProfile>(`${PATHS.students}/${id}`, body),
+
     remove: (id: Id) => apiDelete<{ message?: string }>(`${PATHS.students}/${id}`),
   },
 
-  // saját profil
-  me: {
+  // ✅ saját profil: /api/students/me (PUT)
+ me: {
     get: () => apiGet<Record<string, any>>(PATHS.me),
-    update: (patch: Record<string, any>) => apiPatch<Record<string, any>>(PATHS.me, patch),
+
+    // (ha a backend PUT-ot csinált ide is)
+    update: (body: Record<string, any>) => apiPut<Record<string, any>>(PATHS.me, body),
+
+    // ✅ DELETE /api/students/me
     remove: () => apiDelete<{ message?: string }>(PATHS.me),
   },
 };

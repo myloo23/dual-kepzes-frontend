@@ -117,6 +117,7 @@ export default function AdminSettings() {
           className="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
         >
           Saját profil törlése
+          
         </button>
       </section>
     </div>
