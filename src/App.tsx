@@ -6,7 +6,7 @@ import HomePage from "./pages/landing/HomePage";
 import PositionsPage from "./pages/landing/PositionsPage";
 import MapPage from "./pages/landing/MapPage";
 import StudentRegisterPage from "./pages/auth/StudentRegisterPage";
-import PlaceholderPage from "./pages/PlaceholderPage";
+import PlaceholderPage from "./components/layout/PlaceholderPage";
 
 import StudentLayout from "./layouts/StudentLayout";
 import TeacherLayout from "./layouts/TeacherLayout";
