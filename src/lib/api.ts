@@ -95,6 +95,9 @@ function apiDelete<T>(path: string, token?: string) {
   return apiRequest<T>(path, { method: "DELETE" }, token);
 }
 
+// ✅ TS6133 fix: apiPut ne legyen "unused" a tsc buildben (nem fut, nem változtat logikát)
+void apiPut;
+
 // ----------------- AUTH -----------------
 type LoginResponse = {
   message: string;
