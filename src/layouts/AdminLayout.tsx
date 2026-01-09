@@ -17,7 +17,7 @@ function AdminLayout() {
   };
   return (
     <div className="min-h-[calc(100vh-56px)] bg-slate-50">
-      <div className="max-w-6xl mx-auto px-4 lg:px-8 py-6">
+      <div className="max-w-7xl 2xl:max-w-[1536px] mx-auto px-4 lg:px-8 py-6">
         {/* Mobil: menü gomb */}
         <div className="lg:hidden mb-4 flex items-center justify-between">
           <div className="text-sm font-semibold text-slate-900">Admin felület</div>
@@ -30,7 +30,7 @@ function AdminLayout() {
           </button>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[260px,minmax(0,1fr)]">
+        <div className="grid gap-6 lg:grid-cols-[280px,minmax(0,1fr)]">
           {/* Sidebar */}
           <aside
             className={`rounded-2xl border border-slate-200 bg-white p-3 shadow-sm ${
