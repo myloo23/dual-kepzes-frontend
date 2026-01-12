@@ -264,32 +264,32 @@ export default function AdminCompanies() {
               </div>
               
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Ország</label>
+                <label className="text-xs font-medium text-slate-700">Ország*</label>
                 <input name="hqCountry" value={formData.hqCountry} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Irányítószám</label>
+                <label className="text-xs font-medium text-slate-700">Irányítószám*</label>
                 <input name="hqZipCode" value={formData.hqZipCode} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
               </div>
               
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Város</label>
+                <label className="text-xs font-medium text-slate-700">Város*</label>
                 <input name="hqCity" value={formData.hqCity} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
               </div>
 
               <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-medium text-slate-700">Cím</label>
+                <label className="text-xs font-medium text-slate-700">Cím*</label>
                 <input name="hqAddress" value={formData.hqAddress} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
               </div>
               
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Kapcsolattartó neve</label>
+                <label className="text-xs font-medium text-slate-700">Kapcsolattartó neve*</label>
                 <input name="contactName" value={formData.contactName} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Kapcsolattartó e-mail</label>
+                <label className="text-xs font-medium text-slate-700">Kapcsolattartó e-mail*</label>
                 <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
               </div>
             </div>
