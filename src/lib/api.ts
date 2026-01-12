@@ -69,9 +69,51 @@ async function apiRequest<T>(
   return (data ?? ({} as any)) as T;
 }
 
+async function apiRequestWithUrl<T>(
+  url: string,
+  init: RequestInit,
+  token?: string
+): Promise<T> {
+  const jwt = token ?? auth.getToken();
+
+  const res = await fetch(url, {
+    ...init,
+    headers: {
+      ...(init.headers || {}),
+      ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),
+    },
+  });
+
+  const contentType = res.headers.get("content-type") || "";
+  let data: any = null;
+
+  try {
+    if (contentType.includes("application/json")) data = await res.json();
+    else data = await res.text();
+  } catch {
+    data = null;
+  }
+
+  if (!res.ok) {
+    const body: ApiErrorBody = data;
+    const msg =
+      body?.error ||
+      body?.message ||
+      (Array.isArray(body?.errors) && body.errors[0]?.message) ||
+      `HTTP ${res.status} hiba`;
+    throw new Error(msg);
+  }
+
+  return (data ?? ({} as any)) as T;
+}
+
 // --- Helper metódusok ---
 function apiGet<T>(path: string, token?: string) {
   return apiRequest<T>(path, { method: "GET" }, token);
+}
+
+function apiGetWithUrl<T>(url: string, token?: string) {
+  return apiRequestWithUrl<T>(url, { method: "GET" }, token);
 }
 
 function apiPost<T>(path: string, body: unknown, token?: string) {
@@ -243,23 +285,33 @@ export const api = {
   positions: {
     list: () => apiGet<Position[]>(PATHS.positions),
     listPublic: async () => {
-      try {
-        return await apiGet<Position[]>(PATHS.positions, "");
-      } catch (error) {
-        const fallbackPaths = [
-          `${PATHS.positions}/public`,
-          `${PATHS.positions}/active`,
-        ];
-        let lastError = error;
-        for (const path of fallbackPaths) {
-          try {
-            return await apiGet<Position[]>(path, "");
-          } catch (fallbackError) {
-            lastError = fallbackError;
-          }
+      const apiUrl = (API_URL ?? "").replace(/\/$/, "");
+      const apiBase = apiUrl.replace(/\/api$/, "");
+      const baseUrls = Array.from(new Set([apiUrl, apiBase].filter(Boolean)));
+      const paths = [
+        PATHS.positions,
+        `${PATHS.positions}/public`,
+        `${PATHS.positions}/active`,
+        "/api/public/jobs/positions",
+        "/api/positions",
+        "/jobs/positions",
+      ];
+      const candidates: string[] = [];
+      for (const base of baseUrls) {
+        for (const path of paths) {
+          candidates.push(`${base}${path}`);
         }
-        throw lastError;
       }
+
+      let lastError: unknown = new Error("Ismeretlen hiba a pozíciók lekérésénél.");
+      for (const url of candidates) {
+        try {
+          return await apiGetWithUrl<Position[]>(url, "");
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      throw lastError;
     },
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
     create: (payload: Omit<Position, "id">) =>
