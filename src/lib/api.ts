@@ -69,9 +69,51 @@ async function apiRequest<T>(
   return (data ?? ({} as any)) as T;
 }
 
+async function apiRequestWithUrl<T>(
+  url: string,
+  init: RequestInit,
+  token?: string
+): Promise<T> {
+  const jwt = token ?? auth.getToken();
+
+  const res = await fetch(url, {
+    ...init,
+    headers: {
+      ...(init.headers || {}),
+      ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),
+    },
+  });
+
+  const contentType = res.headers.get("content-type") || "";
+  let data: any = null;
+
+  try {
+    if (contentType.includes("application/json")) data = await res.json();
+    else data = await res.text();
+  } catch {
+    data = null;
+  }
+
+  if (!res.ok) {
+    const body: ApiErrorBody = data;
+    const msg =
+      body?.error ||
+      body?.message ||
+      (Array.isArray(body?.errors) && body.errors[0]?.message) ||
+      `HTTP ${res.status} hiba`;
+    throw new Error(msg);
+  }
+
+  return (data ?? ({} as any)) as T;
+}
+
 // --- Helper metódusok ---
 function apiGet<T>(path: string, token?: string) {
   return apiRequest<T>(path, { method: "GET" }, token);
+}
+
+function apiGetWithUrl<T>(url: string, token?: string) {
+  return apiRequestWithUrl<T>(url, { method: "GET" }, token);
 }
 
 function apiPost<T>(path: string, body: unknown, token?: string) {
@@ -91,6 +133,18 @@ function apiPut<T>(path: string, body: unknown, token?: string) {
     path,
     {
       method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+    token
+  );
+}
+
+function apiPatch<T>(path: string, body: unknown, token?: string) {
+  return apiRequest<T>(
+    path,
+    {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     },
@@ -214,33 +268,58 @@ export const api = {
   },
 
   // companies CRUD
-  // companies CRUD
   companies: {
-  list: () => apiGet<Company[]>(PATHS.companies),
+    list: () => apiGet<Company[]>(PATHS.companies),
+    get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
+    create: (payload: Omit<Company, "id">) =>
+      apiPost<Company>(PATHS.companies, payload),
 
-  get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
+    update: (id: Id, body: Partial<Omit<Company, "id">>) =>
+      apiPatch<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`, body),
 
-  create: (payload: Omit<Company, "id">) =>
-    apiPost<Company>(PATHS.companies, payload),
-
-  update: (id: Id, body: Partial<Omit<Company, "id">>) =>
-    apiPut<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`, body),
-
-  remove: (id: Id) =>
-    apiDelete<{ message?: string }>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
+    remove: (id: Id) =>
+      apiDelete<{ message?: string }>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
   },
-
 
   // positions CRUD
   positions: {
     list: () => apiGet<Position[]>(PATHS.positions),
+    listPublic: async () => {
+      const apiUrl = (API_URL ?? "").replace(/\/$/, "");
+      const apiBase = apiUrl.replace(/\/api$/, "");
+      const baseUrls = Array.from(new Set([apiUrl, apiBase].filter(Boolean)));
+      const paths = [
+        PATHS.positions,
+        `${PATHS.positions}/public`,
+        `${PATHS.positions}/active`,
+        "/api/public/jobs/positions",
+        "/api/positions",
+        "/jobs/positions",
+      ];
+      const candidates: string[] = [];
+      for (const base of baseUrls) {
+        for (const path of paths) {
+          candidates.push(`${base}${path}`);
+        }
+      }
+
+      let lastError: unknown = new Error("Ismeretlen hiba a pozíciók lekérésénél.");
+      for (const url of candidates) {
+        try {
+          return await apiGetWithUrl<Position[]>(url, "");
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      throw lastError;
+    },
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
     create: (payload: Omit<Position, "id">) =>
       apiPost<Position>(PATHS.positions, payload),
 
-    // ✅ PUT
+    // ✅ PATCH
     update: (id: Id, body: Partial<Omit<Position, "id">>) =>
-      apiPut<Position>(`${PATHS.positions}/${id}`, body),
+      apiPatch<Position>(`${PATHS.positions}/${id}`, body),
 
     remove: (id: Id) =>
       apiDelete<{ message?: string }>(`${PATHS.positions}/${id}`),
