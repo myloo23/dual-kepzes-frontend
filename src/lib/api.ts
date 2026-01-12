@@ -244,7 +244,7 @@ export const api = {
   // positions CRUD
   positions: {
     list: () => apiGet<Position[]>(PATHS.positions),
-        listPublic: () => apiGet<Position[]>(PATHS.positions, ""),
+        listPublic: () => apiGet<Position[]>(PATHS.positions),
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
     create: (payload: Omit<Position, "id">) =>
       apiPost<Position>(PATHS.positions, payload),
