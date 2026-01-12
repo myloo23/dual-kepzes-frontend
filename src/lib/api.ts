@@ -242,7 +242,25 @@ export const api = {
   // positions CRUD
   positions: {
     list: () => apiGet<Position[]>(PATHS.positions),
-    listPublic: () => apiGet<Position[]>(PATHS.positions, ""),
+    listPublic: async () => {
+      try {
+        return await apiGet<Position[]>(PATHS.positions, "");
+      } catch (error) {
+        const fallbackPaths = [
+          `${PATHS.positions}/public`,
+          `${PATHS.positions}/active`,
+        ];
+        let lastError = error;
+        for (const path of fallbackPaths) {
+          try {
+            return await apiGet<Position[]>(path, "");
+          } catch (fallbackError) {
+            lastError = fallbackError;
+          }
+        }
+        throw lastError;
+      }
+    },
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
     create: (payload: Omit<Position, "id">) =>
       apiPost<Position>(PATHS.positions, payload),
