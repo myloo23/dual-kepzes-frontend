@@ -108,7 +108,7 @@ export default function PositionsPage() {
       try {
         setLoading(true);
         setError(null);
-        const res = await api.positions.list();
+        const res = await api.positions.listPublic();
         setPositions(Array.isArray(res) ? (res as Position[]) : []);
       } catch (e) {
         console.error(e);

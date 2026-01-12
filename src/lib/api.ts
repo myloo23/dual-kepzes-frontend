@@ -98,6 +98,18 @@ function apiPut<T>(path: string, body: unknown, token?: string) {
   );
 }
 
+function apiPatch<T>(path: string, body: unknown, token?: string) {
+  return apiRequest<T>(
+    path,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+    token
+  );
+}
+
 function apiDelete<T>(path: string, token?: string) {
   return apiRequest<T>(path, { method: "DELETE" }, token);
 }
@@ -214,33 +226,30 @@ export const api = {
   },
 
   // companies CRUD
-  // companies CRUD
   companies: {
-  list: () => apiGet<Company[]>(PATHS.companies),
+    list: () => apiGet<Company[]>(PATHS.companies),
+    get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
+    create: (payload: Omit<Company, "id">) =>
+      apiPost<Company>(PATHS.companies, payload),
 
-  get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
+    update: (id: Id, body: Partial<Omit<Company, "id">>) =>
+      apiPatch<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`, body),
 
-  create: (payload: Omit<Company, "id">) =>
-    apiPost<Company>(PATHS.companies, payload),
-
-  update: (id: Id, body: Partial<Omit<Company, "id">>) =>
-    apiPut<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`, body),
-
-  remove: (id: Id) =>
-    apiDelete<{ message?: string }>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
+    remove: (id: Id) =>
+      apiDelete<{ message?: string }>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
   },
-
 
   // positions CRUD
   positions: {
     list: () => apiGet<Position[]>(PATHS.positions),
+    listPublic: () => apiGet<Position[]>(PATHS.positions, ""),
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
     create: (payload: Omit<Position, "id">) =>
       apiPost<Position>(PATHS.positions, payload),
 
-    // ✅ PUT
+    // ✅ PATCH
     update: (id: Id, body: Partial<Omit<Position, "id">>) =>
-      apiPut<Position>(`${PATHS.positions}/${id}`, body),
+      apiPatch<Position>(`${PATHS.positions}/${id}`, body),
 
     remove: (id: Id) =>
       apiDelete<{ message?: string }>(`${PATHS.positions}/${id}`),
