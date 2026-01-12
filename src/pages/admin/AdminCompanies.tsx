@@ -3,6 +3,12 @@ import { api, type Company } from "../../lib/api";
 
 type Id = string | number;
 
+const ensureCompanyId = (id: Id | null) => {
+  const s = String(id ?? "").trim();
+  if (!s) throw new Error("Hiányzó companyId (nincs kiválasztott cég / üres ID).");
+  return s;
+};
+
 // The initial state for the form, matching the new Company shape (excluding id)
 const INITIAL_FORM_STATE: Omit<Company, "id"> = {
   name: "",
@@ -110,12 +116,13 @@ export default function AdminCompanies() {
     setLoading(true);
     try {
       if (editingId != null) {
-        await api.companies.update(editingId, payload);
-        setMsg("Cég frissítve.");
-      } else {
-        await api.companies.create(payload);
-        setMsg("Cég létrehozva.");
-      }
+      const safeId = ensureCompanyId(editingId);
+      await api.companies.update(safeId, payload);
+      setMsg("Cég frissítve.");
+    } else {
+  await api.companies.create(payload);
+  setMsg("Cég létrehozva.");
+}
       await load();
       resetForm();
     } catch (e: any) {

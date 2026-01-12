@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-// --- token kezelés (igazítsd a kulcshoz, amit a login ment) ---
+// --- Token kezelés ---
 export const auth = {
   getToken: () =>
     localStorage.getItem("token") ||
@@ -14,6 +14,12 @@ export const auth = {
 };
 
 type Id = string | number;
+
+function ensureId(id: Id, label = "id") {
+  const s = String(id ?? "").trim();
+  if (!s) throw new Error(`Hiányzó ${label}.`);
+  return s;
+}
 
 type ApiErrorBody =
   | {
@@ -52,7 +58,7 @@ async function apiRequest<T>(
     const body: ApiErrorBody = data;
 
     const msg =
-      body?.error ||                                  // ✅ először a részletes error
+      body?.error ||                                      // ✅ részletes error
       body?.message ||
       (Array.isArray(body?.errors) && body.errors[0]?.message) ||
       `HTTP ${res.status} hiba`;
@@ -63,9 +69,11 @@ async function apiRequest<T>(
   return (data ?? ({} as any)) as T;
 }
 
+// --- Helper metódusok ---
 function apiGet<T>(path: string, token?: string) {
   return apiRequest<T>(path, { method: "GET" }, token);
 }
+
 function apiPost<T>(path: string, body: unknown, token?: string) {
   return apiRequest<T>(
     path,
@@ -77,18 +85,7 @@ function apiPost<T>(path: string, body: unknown, token?: string) {
     token
   );
 }
-void apiPatch;
-function apiPatch<T>(path: string, body: unknown, token?: string) {
-  return apiRequest<T>(
-    path,
-    {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-    token
-  );
-}
+
 function apiPut<T>(path: string, body: unknown, token?: string) {
   return apiRequest<T>(
     path,
@@ -100,11 +97,14 @@ function apiPut<T>(path: string, body: unknown, token?: string) {
     token
   );
 }
+
 function apiDelete<T>(path: string, token?: string) {
   return apiRequest<T>(path, { method: "DELETE" }, token);
 }
 
-// ----------------- AUTH -----------------
+// ----------------- MODELLEK -----------------
+
+// Auth
 type LoginResponse = {
   message: string;
   token: string;
@@ -137,7 +137,7 @@ export type StudentRegisterPayload = {
   hasLanguageCert: boolean;
 };
 
-// ----------------- ADMIN modellek (lazán, backendhez igazítható) -----------------
+// Admin / Cégek
 export type Company = {
   id: Id;
   name: string;
@@ -179,17 +179,6 @@ export type UsersByRole = {
   count: number;
 };
 
-export type Stats = {
-  totals: {
-    users: number;
-    companies: number;
-    positions: number;
-    applications: number;
-    activePartnerships: number;
-  };
-  usersByRole: UsersByRole[];
-};
-
 export type StatsResponse = {
   totals: {
     users: number;
@@ -210,6 +199,7 @@ const PATHS = {
   stats: "/api/stats",
 };
 
+// ----------------- API OBJEKTUM -----------------
 export const api = {
   // auth
   login: (email: string, password: string) =>
@@ -219,24 +209,27 @@ export const api = {
     apiPost<RegisterResponse>("/api/auth/register", payload),
 
   // stats
-    stats: {
+  stats: {
     get: () => apiGet<StatsResponse>(PATHS.stats),
   },
 
   // companies CRUD
+  // companies CRUD
   companies: {
-    list: () => apiGet<Company[]>(PATHS.companies),
-    get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${id}`),
-    create: (payload: Omit<Company, "id">) =>
-      apiPost<Company>(PATHS.companies, payload),
+  list: () => apiGet<Company[]>(PATHS.companies),
 
-    // ✅ PUT
-    update: (id: Id, body: Partial<Omit<Company, "id">>) =>
-      apiPut<Company>(`${PATHS.companies}/${id}`, body),
+  get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
 
-    remove: (id: Id) =>
-      apiDelete<{ message?: string }>(`${PATHS.companies}/${id}`),
+  create: (payload: Omit<Company, "id">) =>
+    apiPost<Company>(PATHS.companies, payload),
+
+  update: (id: Id, body: Partial<Omit<Company, "id">>) =>
+    apiPut<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`, body),
+
+  remove: (id: Id) =>
+    apiDelete<{ message?: string }>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
   },
+
 
   // positions CRUD
   positions: {
@@ -253,26 +246,22 @@ export const api = {
       apiDelete<{ message?: string }>(`${PATHS.positions}/${id}`),
   },
 
-  // ✅ students / hallgatói profilok CRUD  (PUT a backend szerint)
+  // students / hallgatói profilok CRUD
   students: {
     list: () => apiGet<StudentProfile[]>(PATHS.students),
     get: (id: Id) => apiGet<StudentProfile>(`${PATHS.students}/${id}`),
 
-    // ✅ PATCH helyett PUT
+    // ✅ PATCH helyett PUT a backend igény szerint
     update: (id: Id, body: Partial<StudentProfile>) =>
       apiPut<StudentProfile>(`${PATHS.students}/${id}`, body),
 
     remove: (id: Id) => apiDelete<{ message?: string }>(`${PATHS.students}/${id}`),
   },
 
-  // ✅ saját profil: /api/students/me (PUT)
- me: {
+  // saját profil
+  me: {
     get: () => apiGet<Record<string, any>>(PATHS.me),
-
-    // (ha a backend PUT-ot csinált ide is)
     update: (body: Record<string, any>) => apiPut<Record<string, any>>(PATHS.me, body),
-
-    // ✅ DELETE /api/students/me
     remove: () => apiDelete<{ message?: string }>(PATHS.me),
   },
 };
