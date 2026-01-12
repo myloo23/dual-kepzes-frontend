@@ -138,17 +138,33 @@ export type StudentRegisterPayload = {
 };
 
 // ----------------- ADMIN modellek (lazán, backendhez igazítható) -----------------
-export type Company = Record<string, any> & {
+export type Company = {
   id: Id;
-  name?: string;
-  companyName?: string;
+  name: string;
+  taxId: string;
+  hqCountry: string;
+  hqZipCode: string;
+  hqCity: string;
+  hqAddress: string;
+  contactName: string;
+  contactEmail: string;
 };
 
-export type Position = Record<string, any> & {
+export type Tag = {
+  name: string;
+  category?: string;
+};
+
+export type Position = {
   id: Id;
-  title?: string;
-  name?: string;
-  companyId?: Id;
+  companyId: string;
+  title: string;
+  description: string;
+  zipCode: string;
+  city: string;
+  address: string;
+  deadline: string; // "yyyy-MM-ddTHH:mm:ssZ"
+  tags: Tag[];
 };
 
 export type StudentProfile = Record<string, any> & {
@@ -158,12 +174,40 @@ export type StudentProfile = Record<string, any> & {
   email?: string;
 };
 
+export type UsersByRole = {
+  role: string;
+  count: number;
+};
+
+export type Stats = {
+  totals: {
+    users: number;
+    companies: number;
+    positions: number;
+    applications: number;
+    activePartnerships: number;
+  };
+  usersByRole: UsersByRole[];
+};
+
+export type StatsResponse = {
+  totals: {
+    users: number;
+    companies: number;
+    positions: number;
+    applications: number;
+    activePartnerships: number;
+  };
+  usersByRole: Array<{ role: string; count: number }>;
+};
+
 // ----------------- ENDPOINT konstansok -----------------
 const PATHS = {
   companies: "/api/jobs/companies",
   positions: "/api/jobs/positions",
   students: "/api/students",
   me: "/api/students/me",
+  stats: "/api/stats",
 };
 
 export const api = {
@@ -174,14 +218,20 @@ export const api = {
   registerStudent: (payload: StudentRegisterPayload) =>
     apiPost<RegisterResponse>("/api/auth/register", payload),
 
+  // stats
+    stats: {
+    get: () => apiGet<StatsResponse>(PATHS.stats),
+  },
+
   // companies CRUD
   companies: {
     list: () => apiGet<Company[]>(PATHS.companies),
     get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${id}`),
-    create: (payload: Partial<Company>) => apiPost<Company>(PATHS.companies, payload),
+    create: (payload: Omit<Company, "id">) =>
+      apiPost<Company>(PATHS.companies, payload),
 
     // ✅ PUT
-    update: (id: Id, body: Partial<Company>) =>
+    update: (id: Id, body: Partial<Omit<Company, "id">>) =>
       apiPut<Company>(`${PATHS.companies}/${id}`, body),
 
     remove: (id: Id) =>
@@ -192,10 +242,11 @@ export const api = {
   positions: {
     list: () => apiGet<Position[]>(PATHS.positions),
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
-    create: (payload: Partial<Position>) => apiPost<Position>(PATHS.positions, payload),
+    create: (payload: Omit<Position, "id">) =>
+      apiPost<Position>(PATHS.positions, payload),
 
     // ✅ PUT
-    update: (id: Id, body: Partial<Position>) =>
+    update: (id: Id, body: Partial<Omit<Position, "id">>) =>
       apiPut<Position>(`${PATHS.positions}/${id}`, body),
 
     remove: (id: Id) =>
