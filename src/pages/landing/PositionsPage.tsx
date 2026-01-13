@@ -267,7 +267,7 @@ export default function PositionsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
       {/* fejléc */}
       <header className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
@@ -282,7 +282,7 @@ export default function PositionsPage() {
 
       <div className="grid gap-8 lg:grid-cols-[320px,minmax(0,1fr)]">
         {/* SZŰRŐK (régi hangulat + skálázható) */}
-        <aside className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-5">
+        <aside className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-5">
           <div className="flex items-center justify-between">
             <div className="text-sm font-semibold text-slate-900">Szűrők</div>
             <button type="button" onClick={resetFilters} className="text-xs text-blue-600 hover:underline">
@@ -486,7 +486,7 @@ export default function PositionsPage() {
               Nincs a szűrési feltételeknek megfelelő pozíció.
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-2">
               {filtered.map((p) => {
                 const companyName = norm(p.company?.name || p.company?.companyName) || "Ismeretlen cég";
                 const title = norm(p.title) || "Névtelen pozíció";
