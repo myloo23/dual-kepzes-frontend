@@ -1,6 +1,5 @@
 // src/pages/hr/CompanyProfilePage.tsx
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { api, type Company } from "../../lib/api";
 
 export default function CompanyProfilePage() {
@@ -19,8 +18,6 @@ export default function CompanyProfilePage() {
     contactEmail: '',
     description: ''
   });
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const loadCompanyProfile = async () => {
