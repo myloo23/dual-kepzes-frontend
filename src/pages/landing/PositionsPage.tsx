@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../../lib/api";
+import CompanyInfoModal from "../../components/CompanyInfoModal";
 
 // ideiglenes logók
 import abcTechLogo from "../../assets/logos/abc-tech.jpg";
@@ -7,7 +8,7 @@ import businessItLogo from "../../assets/logos/business-it.jpg";
 
 type TagLike = { name?: string; category?: string } | string;
 
-type Position = Record<string, any> & {
+type Position = {
   id?: string | number;
   title?: string;
   description?: string;
@@ -18,6 +19,11 @@ type Position = Record<string, any> & {
   tags?: TagLike[];
   companyId?: string | number;
   company?: { id?: string | number; name?: string; companyName?: string };
+  createdAt?: string;
+  updatedAt?: string;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: any; // Allow additional properties
 };
 
 type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
@@ -103,12 +109,31 @@ export default function PositionsPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("NEWEST");
 
+  // Company modal state - használjuk a position-ből elérhető adatokat vagy API-ból lekért teljes adatokat
+  const [selectedCompanyInfo, setSelectedCompanyInfo] = useState<{
+    name: string;
+    logoUrl?: string | null;
+    hqCity?: string;
+    description?: string;
+    contactName?: string;
+    contactEmail?: string;
+    website?: string;
+  } | null>(null);
+
   useEffect(() => {
     const run = async () => {
       try {
         setLoading(true);
         setError(null);
         const res = await api.positions.listPublic();
+        console.log("📦 Positions API response:", res);
+        if (Array.isArray(res) && res.length > 0) {
+          console.log("📦 First position structure:", res[0]);
+          console.log("📦 First position JSON:", JSON.stringify(res[0], null, 2));
+          console.log("📦 First position companyId:", res[0]?.companyId);
+          console.log("📦 First position company:", (res[0] as any)?.company);
+          console.log("📦 All keys in position:", Object.keys(res[0]));
+        }
         setPositions(Array.isArray(res) ? (res as Position[]) : []);
       } catch (e) {
         console.error(e);
@@ -119,6 +144,75 @@ export default function PositionsPage() {
     };
     run();
   }, []);
+
+  // Show company info from position data or fetch from API by name
+  const showCompanyInfo = async (companyData: { id?: string | number; name?: string; logoUrl?: string | null; hqCity?: string } | undefined) => {
+    console.log("🏢 showCompanyInfo called with:", companyData);
+
+    if (!companyData || !companyData.name) {
+      console.error("❌ No company data available");
+      alert("Nincs elérhető céginformáció.");
+      return;
+    }
+
+    // Ha van company ID, lekérjük ID alapján
+    if (companyData.id) {
+      console.log("📡 Fetching full company details with ID:", companyData.id);
+      try {
+        const fullCompany = await api.companies.get(companyData.id);
+        console.log("✅ Full company data received:", fullCompany);
+        setSelectedCompanyInfo({
+          name: fullCompany.name,
+          logoUrl: fullCompany.logoUrl ?? undefined,
+          hqCity: fullCompany.hqCity,
+          description: fullCompany.description,
+          contactName: fullCompany.contactName,
+          contactEmail: fullCompany.contactEmail,
+          website: fullCompany.website ?? undefined
+        });
+        return;
+      } catch (error) {
+        console.error("❌ Failed to fetch full company data:", error);
+      }
+    }
+
+    // Nincs ID - próbáljuk név alapján
+    console.log("⚠️ No company ID, trying to fetch by name:", companyData.name);
+    try {
+      const allCompanies = await api.companies.list();
+      console.log("📋 Fetched all companies, searching for:", companyData.name);
+
+      const matchingCompany = allCompanies.find(
+        (c) => c.name.trim().toLowerCase() === companyData.name!.trim().toLowerCase()
+      );
+
+      if (matchingCompany) {
+        console.log("✅ Found matching company:", matchingCompany);
+        setSelectedCompanyInfo({
+          name: matchingCompany.name,
+          logoUrl: matchingCompany.logoUrl ?? undefined,
+          hqCity: matchingCompany.hqCity,
+          description: matchingCompany.description,
+          contactName: matchingCompany.contactName,
+          contactEmail: matchingCompany.contactEmail,
+          website: matchingCompany.website ?? undefined
+        });
+        return;
+      } else {
+        console.warn("⚠️ No matching company found by name");
+      }
+    } catch (error) {
+      console.error("❌ Failed to fetch companies list:", error);
+    }
+
+    // Fallback: csak a position-ből elérhető adatokat használjuk
+    console.log("⚠️ Using limited data from position");
+    setSelectedCompanyInfo({
+      name: companyData.name,
+      logoUrl: companyData.logoUrl,
+      hqCity: companyData.hqCity
+    });
+  };
 
   const derived = useMemo(() => {
     const citySet = new Set<string>();
@@ -513,13 +607,29 @@ export default function PositionsPage() {
                     <div className="p-5 flex-grow">
                       {/* felső sor */}
                       <div className="flex items-start gap-4">
-                        <div className="h-20 w-20 rounded-2xl border border-slate-200 bg-white flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <button
+                          onClick={() => {
+                            console.log("🖱️ Logo clicked! company data:", p.company);
+                            showCompanyInfo(p.company);
+                          }}
+                          className="h-20 w-20 rounded-2xl border border-slate-200 bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-blue-500 hover:shadow-md transition cursor-pointer"
+                          title={`${companyName} információi`}
+                        >
                           <img src={logo} alt={`${companyName} logó`} className="h-full w-full object-contain" />
-                        </div>
+                        </button>
 
                         <div className="min-w-0">
                           <div className="text-xs text-slate-500 mb-1">
-                            {companyName}
+                            <button
+                              onClick={() => {
+                                console.log("🖱️ Company name clicked! company data:", p.company);
+                                showCompanyInfo(p.company);
+                              }}
+                              className="hover:text-blue-600 hover:underline transition cursor-pointer"
+                              title={`${companyName} információi`}
+                            >
+                              {companyName}
+                            </button>
                             {" • "}
                             {cityText}
                           </div>
@@ -589,12 +699,12 @@ export default function PositionsPage() {
                     </div>
                     {/* CTA */}
                     <div className="p-5 pt-0">
-                        <button
-                          type="button"
-                          className="w-full rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
-                        >
-                          Részletek és jelentkezés
-                        </button>
+                      <button
+                        type="button"
+                        className="w-full rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
+                      >
+                        Részletek és jelentkezés
+                      </button>
                     </div>
                   </article>
                 );
@@ -603,6 +713,24 @@ export default function PositionsPage() {
           )}
         </section>
       </div>
+
+      {/* Company Info Modal */}
+      {(() => {
+        console.log("📊 Modal render check:", {
+          selectedCompanyInfo,
+          isOpen: !!selectedCompanyInfo
+        });
+        return (
+          <CompanyInfoModal
+            companyInfo={selectedCompanyInfo}
+            isOpen={!!selectedCompanyInfo}
+            onClose={() => {
+              console.log("🚪 Modal closing");
+              setSelectedCompanyInfo(null);
+            }}
+          />
+        );
+      })()}
     </div>
   );
 }

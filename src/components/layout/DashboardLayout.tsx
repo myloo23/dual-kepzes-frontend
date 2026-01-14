@@ -32,6 +32,10 @@ export default function DashboardLayout(props: {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("role");
+
+    // Értesítjük a Navbar-t a változásról
+    window.dispatchEvent(new Event("localStorageUpdated"));
+
     navigate("/");
   };
 

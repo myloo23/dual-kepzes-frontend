@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate} from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const navItemBase =
@@ -13,6 +13,10 @@ function AdminLayout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("role");
+
+    // Értesítjük a Navbar-t a változásról
+    window.dispatchEvent(new Event("localStorageUpdated"));
+
     navigate("/");
   };
   return (
@@ -33,9 +37,8 @@ function AdminLayout() {
         <div className="grid gap-6 lg:grid-cols-[280px,minmax(0,1fr)]">
           {/* Sidebar */}
           <aside
-            className={`rounded-2xl border border-slate-200 bg-white p-3 shadow-sm ${
-              mobileOpen ? "block" : "hidden"
-            } lg:block`}
+            className={`rounded-2xl border border-slate-200 bg-white p-3 shadow-sm ${mobileOpen ? "block" : "hidden"
+              } lg:block`}
           >
             <div className="px-2 py-2">
               <div className="text-xs text-slate-500">ADMIN</div>
@@ -86,6 +89,14 @@ function AdminLayout() {
                 Pozíciók
               </NavLink>
 
+              <NavLink to="/admin/news" className={({ isActive }) =>
+                `${navItemBase} ${isActive ? navItemActive : navItemInactive}`
+              }
+                onClick={() => setMobileOpen(false)}
+              >
+                Hírek
+              </NavLink>
+
               <NavLink
                 to="/admin/tags"
                 className={({ isActive }) =>
@@ -108,8 +119,8 @@ function AdminLayout() {
                 Beállítások
               </NavLink>
             </nav>
-                
-                <div className="mt-4 border-t border-slate-200 pt-3 px-2">
+
+            <div className="mt-4 border-t border-slate-200 pt-3 px-2">
               <button
                 onClick={logout}
                 className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"

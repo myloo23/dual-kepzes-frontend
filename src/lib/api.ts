@@ -23,10 +23,10 @@ function ensureId(id: Id, label = "id") {
 
 type ApiErrorBody =
   | {
-      message?: string;
-      error?: string;
-      errors?: Array<{ field?: string; message?: string }>;
-    }
+    message?: string;
+    error?: string;
+    errors?: Array<{ field?: string; message?: string }>;
+  }
   | any;
 
 async function apiRequest<T>(
@@ -160,6 +160,9 @@ export type Company = {
   hqAddress: string;
   contactName: string;
   contactEmail: string;
+  description?: string;
+  logoUrl?: string | null;
+  website?: string | null;
 };
 
 export type Tag = {
@@ -202,6 +205,24 @@ export type StatsResponse = {
   usersByRole: Array<{ role: string; count: number }>;
 };
 
+export type NewsAudience = "students" | "all";
+
+export type NewsItem = {
+  id: Id;
+  title: string;
+  body: string;
+  tags: string[]; // pl. ["fontos", "félév záró értékelés"]
+  audience: NewsAudience;
+  important?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type NewsCreatePayload = Omit<
+  NewsItem,
+  "id" | "createdAt" | "updatedAt"
+>;
+
 // ----------------- ENDPOINT konstansok -----------------
 const PATHS = {
   companies: "/api/jobs/companies",
@@ -209,6 +230,7 @@ const PATHS = {
   students: "/api/students",
   me: "/api/students/me",
   stats: "/api/stats",
+  news: "/api/news"
 };
 
 // ----------------- API OBJEKTUM -----------------
@@ -228,7 +250,7 @@ export const api = {
   // companies CRUD
   // companies CRUD
   companies: {
-      list: () => apiGet<Company[]>(PATHS.companies),
+    list: () => apiGet<Company[]>(PATHS.companies),
     get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
     create: (payload: Omit<Company, "id">) =>
       apiPost<Company>(PATHS.companies, payload),
@@ -244,7 +266,7 @@ export const api = {
   // positions CRUD
   positions: {
     list: () => apiGet<Position[]>(PATHS.positions),
-        listPublic: () => apiGet<Position[]>(PATHS.positions),
+    listPublic: () => apiGet<Position[]>(PATHS.positions),
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
     create: (payload: Omit<Position, "id">) =>
       apiPost<Position>(PATHS.positions, payload),
@@ -273,5 +295,22 @@ export const api = {
     get: () => apiGet<Record<string, any>>(PATHS.me),
     update: (body: Record<string, any>) => apiPut<Record<string, any>>(PATHS.me, body),
     remove: () => apiDelete<{ message?: string }>(PATHS.me),
+  },
+
+  // news
+  news: {
+    list: (audience?: NewsAudience) => {
+      const q = audience ? `?audience=${encodeURIComponent(audience)}` : "";
+      return apiGet<NewsItem[]>(`${PATHS.news}${q}`);
+    },
+    get: (id: Id) => apiGet<NewsItem>(`${PATHS.news}/${id}`),
+    create: (payload: NewsCreatePayload) => apiPost<NewsItem>(PATHS.news, payload),
+
+    // PATCH ajánlott (ha nálatok PUT van, cseréld apiPatch -> apiPut)
+    update: (id: Id, body: Partial<NewsCreatePayload>) =>
+      apiPatch<NewsItem>(`${PATHS.news}/${id}`, body),
+
+    remove: (id: Id) =>
+      apiDelete<{ message?: string }>(`${PATHS.news}/${id}`),
   },
 };

@@ -38,12 +38,15 @@ function HomePage() {
 
       localStorage.setItem("token", res.token);
       localStorage.setItem("user", JSON.stringify(res.user));
-      
+
       // BIZTOSÍTÁS: Nagybetűsítjük és levágjuk a szóközöket, 
       // hogy biztosan egyezzen a roleToPath kulcsaival.
       const normalizedRole = res.user.role.trim().toUpperCase();
-      
+
       localStorage.setItem("role", normalizedRole);
+
+      // Értesítjük a Navbar-t a változásról
+      window.dispatchEvent(new Event("localStorageUpdated"));
 
       const target = roleToPath[normalizedRole];
 
@@ -52,9 +55,9 @@ function HomePage() {
       if (target) {
         navigate(target, { replace: true });
       } else {
-      console.warn(`Ismeretlen szerepkör: ${normalizedRole}, visszatérés a főoldalra.`);
-      navigate("/", { replace: true });
-    }
+        console.warn(`Ismeretlen szerepkör: ${normalizedRole}, visszatérés a főoldalra.`);
+        navigate("/", { replace: true });
+      }
 
     } catch (err: any) {
       console.error("Login hiba:", err);
@@ -66,12 +69,12 @@ function HomePage() {
 
   // Ha már be van jelentkezve (pl. oldalfrissítésnél), átirányítjuk
   useEffect(() => {
-  const role = localStorage.getItem("role");
-  if (!role) return;
+    const role = localStorage.getItem("role");
+    if (!role) return;
 
-  const userRole = role.trim().toUpperCase();
-  const target = roleToPath[userRole];
-  if (target) navigate(target, { replace: true });
+    const userRole = role.trim().toUpperCase();
+    const target = roleToPath[userRole];
+    if (target) navigate(target, { replace: true });
   }, [navigate]);
 
 

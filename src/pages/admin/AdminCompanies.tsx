@@ -19,6 +19,7 @@ const INITIAL_FORM_STATE: Omit<Company, "id"> = {
   hqAddress: "",
   contactName: "",
   contactEmail: "",
+  description: ""
 };
 
 export default function AdminCompanies() {
@@ -33,7 +34,7 @@ export default function AdminCompanies() {
   // ID alapú lekéréshez
   const [lookupId, setLookupId] = useState("");
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -77,6 +78,7 @@ export default function AdminCompanies() {
         hqAddress: c.hqAddress,
         contactName: c.contactName,
         contactEmail: c.contactEmail,
+        description: c.description || "",
       });
       setMsg("Betöltve szerkesztéshez.");
     } catch (e: any) {
@@ -260,46 +262,60 @@ export default function AdminCompanies() {
 
               <div className="space-y-1">
                 <label className="text-xs font-medium text-slate-700">Adószám *</label>
-                <input name="taxId" value={formData.taxId} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-              </div>
-              
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Ország*</label>
-                <input name="hqCountry" value={formData.hqCountry} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                <input name="taxId" value={formData.taxId} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Irányítószám*</label>
-                <input name="hqZipCode" value={formData.hqZipCode} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                <label className="text-xs font-medium text-slate-700">Ország *</label>
+                <input name="hqCountry" value={formData.hqCountry} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
               </div>
-              
+
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Város*</label>
-                <input name="hqCity" value={formData.hqCity} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                <label className="text-xs font-medium text-slate-700">Irányítószám *</label>
+                <input name="hqZipCode" value={formData.hqZipCode} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-700">Város *</label>
+                <input name="hqCity" value={formData.hqCity} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
               </div>
 
               <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-medium text-slate-700">Cím*</label>
-                <input name="hqAddress" value={formData.hqAddress} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-              </div>
-              
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Kapcsolattartó neve*</label>
-                <input name="contactName" value={formData.contactName} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                <label className="text-xs font-medium text-slate-700">Cím *</label>
+                <input name="hqAddress" value={formData.hqAddress} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Kapcsolattartó e-mail*</label>
-                <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+              <div className="space-y-1 md:col-span-2">
+                <label className="text-xs font-medium text-slate-700">Kapcsolattartó neve *</label>
+                <input name="contactName" value={formData.contactName} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
               </div>
-            </div>
 
-            <button
-              disabled={loading}
-              className="w-full rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
-            >
-              {editingId != null ? "Módosítás mentése" : "Cég létrehozása"}
-            </button>
+              <div className="space-y-1 md:col-span-2">
+                <label className="text-xs font-medium text-slate-700">Kapcsolattartó e-mail *</label>
+                <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
+              </div>
+
+              <div className="space-y-1 md:col-span-2">
+                <label className="text-xs font-medium text-slate-700">Leírás</label>
+                <textarea
+                  name="description"
+                  value={formData.description || ''}
+                  onChange={handleFormChange}
+                  rows={3}
+                  className="w-full p-2 border border-slate-300 rounded-lg"
+                />
+              </div>
+              </div>
+
+              <div className="flex justify-end md:col-span-2 pt-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {editingId != null ? "Módosítás mentése" : "Cég létrehozása"}
+                </button>
+              </div>
           </form>
         </section>
       </div>

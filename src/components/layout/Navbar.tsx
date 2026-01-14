@@ -1,10 +1,81 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [newsLink, setNewsLink] = useState<string | null>(null);
+
+  // Számítsa ki a newsLink-et a localStorage alapján
+  const calculateNewsLink = () => {
+    const token = localStorage.getItem("token") || localStorage.getItem("auth_token") || "";
+    const role = localStorage.getItem("role") || "";
+
+    // DEBUG: Nézd meg a konzolban
+    console.log("🔍 Navbar Debug:");
+    console.log("  Token:", token ? `${token.substring(0, 20)}...` : "NINCS");
+    console.log("  Role:", role || "NINCS");
+
+    if (!token || !role) {
+      console.log("  ❌ Nincs token vagy role - newsLink = null");
+      return null;
+    }
+
+    const roleUpper = role.trim().toUpperCase();
+    console.log("  Role (uppercase):", roleUpper);
+
+    // Student role-ok
+    if (roleUpper === "STUDENT") {
+      console.log("  ✅ STUDENT role - newsLink = /student/news");
+      return "/student/news";
+    }
+
+    // Admin role-ok
+    if (roleUpper === "ADMIN" || roleUpper === "SYSTEM_ADMIN" || roleUpper === "SUPER_ADMIN") {
+      console.log("  ✅ ADMIN role - newsLink = /admin/news");
+      return "/admin/news";
+    }
+
+    // További role-ok később bővíthetők
+    // if (roleUpper === "TEACHER") return "/teacher/news";
+    // if (roleUpper === "MENTOR") return "/mentor/news";
+    // if (roleUpper === "HR" || roleUpper === "COMPANY_ADMIN") return "/hr/news";
+
+    console.log("  ⚠️ Ismeretlen role - newsLink = null");
+    return null;
+  };
+
+  // Kezdeti betöltés és localStorage változások figyelése
+  useEffect(() => {
+    // Kezdeti érték beállítása
+    setNewsLink(calculateNewsLink());
+
+    // Storage event listener (más tab-ok változásaihoz)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "token" || e.key === "auth_token" || e.key === "role") {
+        console.log("🔄 localStorage változás észlelve (másik tab)");
+        setNewsLink(calculateNewsLink());
+      }
+    };
+
+    // Custom event listener (ugyanazon tab változásaihoz)
+    const handleCustomStorageChange = () => {
+      console.log("🔄 localStorage változás észlelve (ugyanez a tab)");
+      setNewsLink(calculateNewsLink());
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("localStorageUpdated", handleCustomStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("localStorageUpdated", handleCustomStorageChange);
+    };
+  }, []);
 
   const closeMobileMenu = () => setMobileOpen(false);
+
+  // DEBUG: Végső ellenőrzés
+  console.log("📊 Navbar render - newsLink:", newsLink);
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur">
@@ -22,7 +93,9 @@ export default function Navbar() {
           <Link to="/" className="hover:text-slate-900">Kezdőlap</Link>
           <Link to="/positions" className="hover:text-slate-900">Elérhető állások</Link>
           <Link to="/map" className="hover:text-slate-900">Térképes nézet</Link>
-          <Link to="/admin" className="hover:text-slate-900">Admin</Link>
+          {newsLink && (
+            <Link to={newsLink} className="hover:text-slate-900">Hírek</Link>
+          )}
         </nav>
 
         {/* Mobile hamburger */}
@@ -34,19 +107,16 @@ export default function Navbar() {
         >
           <div className="space-y-1">
             <span
-              className={`block h-0.5 w-5 rounded bg-slate-700 transition-transform ${
-                mobileOpen ? "translate-y-[5px] rotate-45" : ""
-              }`}
+              className={`block h-0.5 w-5 rounded bg-slate-700 transition-transform ${mobileOpen ? "translate-y-[5px] rotate-45" : ""
+                }`}
             />
             <span
-              className={`block h-0.5 w-5 rounded bg-slate-700 transition-opacity ${
-                mobileOpen ? "opacity-0" : "opacity-100"
-              }`}
+              className={`block h-0.5 w-5 rounded bg-slate-700 transition-opacity ${mobileOpen ? "opacity-0" : "opacity-100"
+                }`}
             />
             <span
-              className={`block h-0.5 w-5 rounded bg-slate-700 transition-transform ${
-                mobileOpen ? "-translate-y-[5px] -rotate-45" : ""
-              }`}
+              className={`block h-0.5 w-5 rounded bg-slate-700 transition-transform ${mobileOpen ? "-translate-y-[5px] -rotate-45" : ""
+                }`}
             />
           </div>
         </button>
@@ -59,7 +129,9 @@ export default function Navbar() {
             <Link to="/" className="py-1" onClick={closeMobileMenu}>Kezdőlap</Link>
             <Link to="/positions" className="py-1" onClick={closeMobileMenu}>Elérhető állások</Link>
             <Link to="/map" className="py-1" onClick={closeMobileMenu}>Térképes nézet</Link>
-            <Link to="/admin" className="py-1" onClick={closeMobileMenu}>Admin</Link>
+            {newsLink && (
+              <Link to={newsLink} className="py-1" onClick={closeMobileMenu}>Hírek</Link>
+            )}
           </div>
         </nav>
       )}
