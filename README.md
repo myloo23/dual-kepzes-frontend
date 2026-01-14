@@ -1,93 +1,302 @@
-# Duális Képzés Platform - Frontend
+# 🎓 Dual Képzés Frontend
 
-## Projekt Címe és Rövid Leírása
+Ez a repository a **Dual Képzési Rendszer frontend alkalmazását** tartalmazza.
+A projekt célja egy modern, szerepkör-alapú webalkalmazás megvalósítása, amely lehetővé teszi a duális képzésben részt vevő **hallgatók**, **adminisztrátorok** és később **cégek / mentorok** számára az együttműködést.
 
-Ez a projekt a Duális Képzés Platform frontend alkalmazása, amely egy React-alapú webes felületet biztosít. A platform célja, hogy összekösse a duális képzésben részt vevő diákokat, a képzőhelyeket kínáló cégeket, valamint az oktatási intézmények képviselőit (tanárokat, mentorokat). A rendszer különböző szerepköröket kezel (admin, diák, céges HR, mentor, tanár), és lehetővé teszi a cégek számára, hogy pozíciókat hirdessenek, a diákoknak pedig, hogy jelentkezzenek ezekre.
+Az alkalmazás **React + TypeScript + Vite** alapokon nyugszik, **Tailwind CSS**-sel stilizálva, és **REST API-n** keresztül kommunikál a backenddel.
 
-## Technológiai Stack
+---
 
-A projekt az alábbi technológiákra épül:
+## 🧰 Tech Stack
 
--   **Nyelv:** TypeScript
--   **Keretrendszer:** React (v19)
--   **Build eszköz:** Vite
--   **Routing:** React Router DOM
--   **Stílusozás:** Tailwind CSS
--   **Térképmegjelenítés:** Leaflet & React-Leaflet
--   **Ikonok:** Lucide React
--   **Linting:** ESLint
+* **React 19**
+* **TypeScript**
+* **Vite**
+* **React Router DOM**
+* **Tailwind CSS**
+* **Leaflet / React-Leaflet**
+* **Lucide React (ikonok)**
+* **ESLint**
+* **Vercel** (deploy)
 
-## Előfeltételek
+---
 
-A projekt futtatásához az alábbiakra van szükség:
+## 📦 Telepítés és futtatás
 
--   **Node.js:** v20.x vagy újabb
--   **Csomagkezelő:** npm (a `package-lock.json` miatt)
+### 1️⃣ Repository klónozása
 
-## Telepítés és Futtatás
-
-1.  **Repository klónozása:**
-    ```bash
-    git clone <repository-url>
-    cd dual-kepzes-frontend
-    ```
-
-2.  **Függőségek telepítése:**
-    ```bash
-    npm install
-    ```
-
-3.  **Környezeti változók beállítása:**
-    Hozzon létre egy `.env` fájlt a projekt gyökérkönyvtárában a `.env.example` (ha létezik) vagy az alábbi minta alapján, és adja meg a backend API elérhetőségét.
-    ```env
-    VITE_API_URL=http://localhost:8000/api
-    ```
-
-4.  **Fejlesztői szerver indítása:**
-    ```bash
-    npm run dev
-    ```
-    Az alkalmazás alapértelmezetten a `http://localhost:5173` címen lesz elérhető.
-
-## Projekt Struktúra
-
-A projekt főbb mappái és fájljai a `src` könyvtáron belül helyezkednek el:
-
-```
-src/
-├── assets/         # Statikus erőforrások (képek, logók)
-├── components/     # Újrafelhasználható UI komponensek
-│   ├── layout/     # Oldalelrendezési komponensek (Navbar, Footer, stb.)
-│   └── ui/         # Alapvető UI elemek (Button, Card, Input)
-├── layouts/        # Szerepkör-specifikus oldalelrendezések (Admin, Student, stb.)
-├── lib/            # Segédfüggvények és API hívások
-│   ├── api.ts      # Backend API kommunikáció
-│   └── cn.ts       # Tailwind class-nevek összefűzésére szolgáló segédfüggvény
-├── pages/          # Az egyes oldalak komponensei, szerepkörök szerint csoportosítva
-│   ├── admin/      # Adminisztrátori felület oldalai
-│   ├── auth/       # Authentikációs oldalak (regisztráció, jelszó-emlékeztető)
-│   ├── landing/    # Főoldal, pozíciók listázása, térképes kereső
-│   └── ...         # További szerepkörök (hr, mentor, student, teacher)
-├── App.tsx         # A fő alkalmazás komponens, itt történik a routing
-├── main.tsx        # Az alkalmazás belépési pontja
-└── index.css       # Globális stílusok és Tailwind importok
+```bash
+git clone https://github.com/myloo23/dual-kepzes-frontend.git
+cd dual-kepzes-frontend
 ```
 
-## Konfiguráció
+### 2️⃣ Függőségek telepítése
 
-A projekt egyetlen környezeti változót használ, amelyet a `.env` fájlban kell definiálni:
+```bash
+npm install
+```
 
--   `VITE_API_URL`: A backend API végpontjának címe. Ez az a cím, ahol a frontend megpróbálja elérni a szerveroldali logikát.
+### 3️⃣ Környezeti változók
 
-Példa `.env` fájl:
+Hozz létre egy `.env` fájlt a projekt gyökerében:
+
 ```env
 VITE_API_URL=http://localhost:8000/api
 ```
 
-## Főbb Funkciók
+### 4️⃣ Fejlesztői szerver indítása
 
--   **Szerepkör-alapú hozzáférés:** A rendszer megkülönbözteti az adminisztrátorokat, cégek képviselőit (HR), mentorokat, diákokat és tanárokat. Minden szerepkör a saját, személyre szabott felületét látja.
--   **Pozíciók Böngészése:** A látogatók és diákok böngészhetnek a cégek által meghirdetett duális képzési pozíciók között.
--   **Térképes Kereső:** A `MapPage` lehetővé teszi a pozíciók földrajzi hely alapján történő keresését egy interaktív térképen (Leaflet implementáció).
--   **Adminisztrációs Felület:** Az adminisztrátorok kezelhetik a felhasználókat, cégeket, pozíciókat és egyéb rendszerbeállításokat.
--   **Dinamikus Oldalelrendezés:** A `layouts` mappában definiált komponensek biztosítják, hogy az egyes szerepkörök csak a számukra releváns menüpontokat és funkciókat érjék el.
+```bash
+npm run dev
+```
+
+---
+
+## 🗂️ Projektstruktúra – Áttekintés
+
+```
+dual-kepzes-frontend/
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── lib/
+│   ├── pages/
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── index.css
+│   └── App.css
+├── index.html
+├── vite.config.ts
+├── tailwind.config.js
+├── postcss.config.js
+├── tsconfig*.json
+├── eslint.config.js
+├── vercel.json
+└── package.json
+```
+
+---
+
+## 🌍 `public/`
+
+Statikus, build során nem feldolgozott fájlok.
+
+```
+public/
+├── leaflet/
+│   ├── marker-icon.png
+│   ├── marker-icon-2x.png
+│   └── marker-shadow.png
+└── vite.svg
+```
+
+A `leaflet` mappa a **MapPage.tsx** által használt térképes ikonokat tartalmazza.
+
+---
+
+## 🚀 Alkalmazás belépési pontjai
+
+### `src/main.tsx`
+
+* React alkalmazás inicializálása
+* `<App />` komponens renderelése
+
+### `src/App.tsx`
+
+* **Globális routing**
+* Publikus és dashboard oldalak elkülönítése
+* Layoutok betöltése
+
+Ez az alkalmazás **irányító központja**.
+
+---
+
+## 🎨 `src/assets/`
+
+Statikus erőforrások (képek, logók).
+
+```
+assets/
+├── react.svg
+└── logos/
+    ├── abc-tech.jpg
+    └── business-it.jpg
+```
+
+A logók megjelennek:
+
+* landing oldalon
+* pozíciók listájában
+* térképes nézeten
+
+---
+
+## 🧩 `src/components/`
+
+Újrafelhasználható UI és layout komponensek.
+
+```
+components/
+└── layout/
+    ├── DashboardLayout.tsx
+    ├── Navbar.tsx
+    ├── Footer.tsx
+    └── PlaceholderPage.tsx
+```
+
+### 🔹 DashboardLayout.tsx
+
+* Admin és Student oldalak közös kerete
+* Tartalmazza:
+
+  * Navbar
+  * oldal tartalom
+  * Footer
+
+### 🔹 Navbar.tsx
+
+* Fő navigációs sáv
+* Később szerepkör-alapú menükre bővíthető
+
+### 🔹 Footer.tsx
+
+* Alsó információs sáv
+
+### 🔹 PlaceholderPage.tsx
+
+* Ideiglenes oldal még nem implementált funkciókhoz
+
+---
+
+## 🧠 `src/lib/` – Logikai réteg
+
+```
+lib/
+├── api.ts
+└── cn.ts
+```
+
+### 🔹 api.ts
+
+Az **egyetlen hely**, ahol a frontend a backenddel kommunikál.
+
+Feladata:
+
+* API base URL kezelése (`VITE_API_URL`)
+* REST hívások
+* később: token, auth header, error handling
+
+### 🔹 cn.ts
+
+Tailwind utility:
+
+* feltételes `className` összefűzés
+* tisztább JSX
+
+---
+
+## 📄 `src/pages/` – Oldalak (role-alapú)
+
+```
+pages/
+├── landing/
+├── auth/
+├── admin/
+└── student/
+```
+
+---
+
+### 🌍 `pages/landing/` – Publikus oldalak
+
+```
+HomePage.tsx
+PositionsPage.tsx
+MapPage.tsx
+```
+
+| Oldal         | Funkció                      |
+| ------------- | ---------------------------- |
+| HomePage      | Landing / bemutatkozás       |
+| PositionsPage | Elérhető gyakorlati helyek   |
+| MapPage       | Cégek térképes megjelenítése |
+
+---
+
+### 🔐 `pages/auth/` – Autentikáció
+
+```
+StudentRegisterPage.tsx
+ForgotPasswordPage.tsx
+ResetPasswordPage.tsx
+```
+
+Feladatuk:
+
+* diák regisztráció
+* jelszó visszaállítás
+
+---
+
+### 👑 `pages/admin/` – Admin felület
+
+```
+AdminDashboard.tsx
+AdminPositions.tsx
+AdminUsers.tsx
+AdminTags.tsx
+AdminSettings.tsx
+```
+
+| Oldal     | Funkció                    |
+| --------- | -------------------------- |
+| Dashboard | Áttekintés                 |
+| Positions | Gyakorlati helyek kezelése |
+| Users     | Felhasználók               |
+| Tags      | Címkék                     |
+| Settings  | Rendszerbeállítások        |
+
+Minden admin oldal a **DashboardLayout**-be van ágyazva.
+
+---
+
+### 🎓 `pages/student/`
+
+```
+StudentDashboardPage.tsx
+```
+
+A bejelentkezett hallgatók fő oldala.
+
+---
+
+## 🧭 Architektúra – Kapcsolatok
+
+```
+main.tsx
+  ↓
+App.tsx
+  ├─ Landing pages
+  ├─ Auth pages
+  └─ DashboardLayout
+        ├─ Admin pages
+        └─ Student pages
+```
+
+* `App.tsx` → routing
+* `DashboardLayout` → közös keret
+* `api.ts` → backend kommunikáció
+* `pages` → üzleti logika
+
+---
+
+## 🚀 Deploy
+
+A projekt **Vercelre optimalizált** (`vercel.json`).
+
+Ajánlott:
+
+* Environment variable beállítása Vercelben:
+
+  * `VITE_API_URL`
