@@ -1,5 +1,4 @@
 // src/components/landing/LoginCard.tsx
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import PasswordInput from "../shared/PasswordInput";
 
