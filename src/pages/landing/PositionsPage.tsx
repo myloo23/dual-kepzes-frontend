@@ -1,12 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../../lib/api";
 import CompanyInfoModal from "../../components/CompanyInfoModal";
+import FilterSidebar from "../../components/positions/FilterSidebar";
+import PositionCard from "../../components/positions/PositionCard";
+import {
+  norm,
+  lower,
+  parseDate,
+  toTagName,
+  toTagCategory,
+  isExpired,
+  pickLogo,
+  type TagLike,
+} from "../../lib/positions-utils";
 
 // ideiglenes logók
 import abcTechLogo from "../../assets/logos/abc-tech.jpg";
 import businessItLogo from "../../assets/logos/business-it.jpg";
-
-type TagLike = { name?: string; category?: string } | string;
 
 type Position = {
   id?: string | number;
@@ -27,72 +37,7 @@ type Position = {
 };
 
 type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
-
 type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
-
-function toTagName(t: TagLike): string {
-  if (typeof t === "string") return t;
-  return t?.name ?? "";
-}
-function toTagCategory(t: TagLike): string {
-  if (typeof t === "string") return "Technology";
-  return t?.category ?? "Technology";
-}
-function norm(s: unknown) {
-  return String(s ?? "").trim();
-}
-function lower(s: unknown) {
-  return norm(s).toLowerCase();
-}
-function parseDate(s?: string): Date | null {
-  if (!s) return null;
-  const d = new Date(s);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-function formatHuDate(s?: string) {
-  const d = parseDate(s);
-  if (!d) return "—";
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}.${mm}.${dd}.`;
-}
-function isExpired(deadline?: string) {
-  const d = parseDate(deadline);
-  if (!d) return false;
-  const now = new Date();
-  return d.getTime() < now.getTime();
-}
-
-function pickLogo(companyKey: string) {
-  // determinisztikusan válassz a 2 logó közül
-  let sum = 0;
-  for (let i = 0; i < companyKey.length; i++) sum += companyKey.charCodeAt(i);
-  return sum % 2 === 0 ? abcTechLogo : businessItLogo;
-}
-
-function ChipButton(props: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick: () => void;
-  title?: string;
-}) {
-  return (
-    <button
-      type="button"
-      title={props.title}
-      onClick={props.onClick}
-      className={[
-        "rounded-full border px-3 py-1 text-[11px] transition-colors",
-        props.active
-          ? "border-blue-600 bg-blue-50 text-blue-700"
-          : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
-      ].join(" ")}
-    >
-      {props.children}
-    </button>
-  );
-}
 
 export default function PositionsPage() {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -109,7 +54,7 @@ export default function PositionsPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("NEWEST");
 
-  // Company modal state - használjuk a position-ből elérhető adatokat vagy API-ból lekért teljes adatokat
+  // Company modal state
   const [selectedCompanyInfo, setSelectedCompanyInfo] = useState<{
     name: string;
     logoUrl?: string | null;
@@ -240,7 +185,6 @@ export default function PositionsPage() {
     const tags = Array.from(tagSet).sort((a, b) => a.localeCompare(b, "hu"));
     const categories = Array.from(categorySet).sort((a, b) => a.localeCompare(b, "hu"));
 
-    // “régi” chip-es élmény: ha kevés opció van, mutatunk chipet, ha sok → dropdown.
     const showCityChips = cities.length > 0 && cities.length <= 10;
     const showCompanyChips = companies.length > 0 && companies.length <= 10;
 
@@ -281,7 +225,6 @@ export default function PositionsPage() {
     const matchesSelectedTagsAND = (p: Position) => {
       if (selectedTags.length === 0) return true;
       const tags = (Array.isArray(p.tags) ? p.tags : []).map((t) => lower(toTagName(t))).filter(Boolean);
-      // AND: mindegyik kiválasztott tag szerepeljen
       return selectedTags.every((t) => tags.includes(lower(t)));
     };
 
@@ -375,205 +318,30 @@ export default function PositionsPage() {
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[320px,minmax(0,1fr)]">
-        {/* SZŰRŐK (régi hangulat + skálázható) */}
-        <aside className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-5">
-          <div className="flex items-center justify-between">
-            <div className="text-sm font-semibold text-slate-900">Szűrők</div>
-            <button type="button" onClick={resetFilters} className="text-xs text-blue-600 hover:underline">
-              Alaphelyzet
-            </button>
-          </div>
+        {/* SZŰRŐK */}
+        <FilterSidebar
+          search={search}
+          city={city}
+          company={company}
+          tagCategory={tagCategory}
+          deadlineFilter={deadlineFilter}
+          activeOnly={activeOnly}
+          selectedTags={selectedTags}
+          sortKey={sortKey}
+          setSearch={setSearch}
+          setCity={setCity}
+          setCompany={setCompany}
+          setTagCategory={setTagCategory}
+          setDeadlineFilter={setDeadlineFilter}
+          setActiveOnly={setActiveOnly}
+          setSelectedTags={setSelectedTags}
+          setSortKey={setSortKey}
+          derived={derived}
+          onResetFilters={resetFilters}
+          onToggleTag={toggleTag}
+        />
 
-          {/* keresés */}
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Keresés cím vagy cég alapján</label>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Pl. szoftverfejlesztő, rendszer…"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* város */}
-          <div className="space-y-2">
-            <div className="text-xs font-medium text-slate-700">Képzés helyszíne</div>
-
-            {derived.showCityChips ? (
-              <div className="flex flex-wrap gap-1.5">
-                <ChipButton active={city === "ALL"} onClick={() => setCity("ALL")}>
-                  Bármely
-                </ChipButton>
-                {derived.cities.map((c) => (
-                  <ChipButton key={c} active={city === c} onClick={() => setCity(c)}>
-                    {c}
-                  </ChipButton>
-                ))}
-              </div>
-            ) : (
-              <select
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="ALL">Bármely</option>
-                {derived.cities.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-
-          {/* cég */}
-          <div className="space-y-2">
-            <div className="text-xs font-medium text-slate-700">Cég neve</div>
-
-            {derived.showCompanyChips ? (
-              <div className="flex flex-wrap gap-1.5">
-                <ChipButton active={company === "ALL"} onClick={() => setCompany("ALL")}>
-                  Bármely
-                </ChipButton>
-                {derived.companies.map((c) => (
-                  <ChipButton key={c} active={company === c} onClick={() => setCompany(c)} title={c}>
-                    {c.length > 22 ? c.slice(0, 22) + "…" : c}
-                  </ChipButton>
-                ))}
-              </div>
-            ) : (
-              <select
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="ALL">Bármely</option>
-                {derived.companies.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-
-          {/* határidő */}
-          <div className="space-y-2">
-            <div className="text-xs font-medium text-slate-700">Jelentkezési határidő</div>
-            <div className="flex flex-wrap gap-1.5">
-              <ChipButton active={deadlineFilter === "ALL"} onClick={() => setDeadlineFilter("ALL")}>
-                Bármely
-              </ChipButton>
-              <ChipButton active={deadlineFilter === "7D"} onClick={() => setDeadlineFilter("7D")}>
-                7 napon belül
-              </ChipButton>
-              <ChipButton active={deadlineFilter === "30D"} onClick={() => setDeadlineFilter("30D")}>
-                30 napon belül
-              </ChipButton>
-              <ChipButton active={deadlineFilter === "90D"} onClick={() => setDeadlineFilter("90D")}>
-                90 napon belül
-              </ChipButton>
-              <ChipButton
-                active={deadlineFilter === "NO_DEADLINE"}
-                onClick={() => setDeadlineFilter("NO_DEADLINE")}
-              >
-                Nincs megadva
-              </ChipButton>
-            </div>
-          </div>
-
-          {/* tag kategória */}
-          <div className="space-y-2">
-            <div className="text-xs font-medium text-slate-700">Tag kategória</div>
-            <select
-              value={tagCategory}
-              onChange={(e) => setTagCategory(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="ALL">Bármely</option>
-              {derived.categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* csak aktív */}
-          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-            <div>
-              <div className="text-xs font-semibold text-slate-900">Csak aktív</div>
-              <div className="text-[11px] text-slate-500">Lejárt határidő ne látszódjon</div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setActiveOnly((p) => !p)}
-              className={[
-                "relative inline-flex h-6 w-11 items-center rounded-full transition",
-                activeOnly ? "bg-blue-600" : "bg-slate-300",
-              ].join(" ")}
-              aria-label="Csak aktív kapcsoló"
-            >
-              <span
-                className={[
-                  "inline-block h-5 w-5 transform rounded-full bg-white transition",
-                  activeOnly ? "translate-x-5" : "translate-x-1",
-                ].join(" ")}
-              />
-            </button>
-          </div>
-
-          {/* rendezés */}
-          <div className="space-y-2">
-            <div className="text-xs font-medium text-slate-700">Rendezés</div>
-            <select
-              value={sortKey}
-              onChange={(e) => setSortKey(e.target.value as SortKey)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="NEWEST">Legújabb elöl</option>
-              <option value="DEADLINE_ASC">Határidő (hamarabb)</option>
-              <option value="DEADLINE_DESC">Határidő (később)</option>
-              <option value="TITLE_ASC">Cím (A–Z)</option>
-            </select>
-          </div>
-
-          {/* címkék (multi AND) */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="text-xs font-medium text-slate-700">Címkék</div>
-              {selectedTags.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setSelectedTags([])}
-                  className="text-[11px] text-blue-600 hover:underline"
-                >
-                  Törlés
-                </button>
-              )}
-            </div>
-
-            {derived.tags.length === 0 ? (
-              <div className="text-xs text-slate-500">Nincsenek címkék.</div>
-            ) : (
-              <div className="flex flex-wrap gap-1.5 max-h-40 overflow-auto pr-1">
-                {derived.tags.map((t) => {
-                  const active = selectedTags.some((x) => lower(x) === lower(t));
-                  return (
-                    <ChipButton key={t} active={active} onClick={() => toggleTag(t)}>
-                      {t}
-                    </ChipButton>
-                  );
-                })}
-              </div>
-            )}
-
-            <div className="text-[11px] text-slate-500">Tipp: több címke is kiválasztható (AND).</div>
-          </div>
-        </aside>
-
-        {/* KÁRTYÁK (régi feeling) */}
+        {/* KÁRTYÁK */}
         <section className="min-w-0">
           {filtered.length === 0 ? (
             <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-600">
@@ -582,131 +350,16 @@ export default function PositionsPage() {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-2">
               {filtered.map((p) => {
-                const companyName = norm(p.company?.name || p.company?.companyName) || "Ismeretlen cég";
-                const title = norm(p.title) || "Névtelen pozíció";
-                const cityText = norm(p.city) || "—";
-                const deadlineText = formatHuDate(p.deadline);
-
-                const companyKey = norm(p.company?.id ?? p.companyId ?? companyName);
-                const logo = pickLogo(companyKey);
-
-                const tags = (Array.isArray(p.tags) ? p.tags : [])
-                  .map((t) => norm(toTagName(t)))
-                  .filter(Boolean);
-
-                const previewTags = tags.slice(0, 6);
-                const hiddenCount = tags.length - previewTags.length;
-
-                const expired = isExpired(p.deadline);
+                const companyKey = norm(p.company?.id ?? p.companyId ?? p.company?.name ?? p.company?.companyName);
+                const logo = pickLogo(companyKey, { logo1: abcTechLogo, logo2: businessItLogo });
 
                 return (
-                  <article
-                    key={String(p.id ?? `${companyName}-${title}-${cityText}`)}
-                    className="h-full rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col"
-                  >
-                    <div className="p-5 flex-grow">
-                      {/* felső sor */}
-                      <div className="flex items-start gap-4">
-                        <button
-                          onClick={() => {
-                            console.log("🖱️ Logo clicked! company data:", p.company);
-                            showCompanyInfo(p.company);
-                          }}
-                          className="h-20 w-20 rounded-2xl border border-slate-200 bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-blue-500 hover:shadow-md transition cursor-pointer"
-                          title={`${companyName} információi`}
-                        >
-                          <img src={logo} alt={`${companyName} logó`} className="h-full w-full object-contain" />
-                        </button>
-
-                        <div className="min-w-0">
-                          <div className="text-xs text-slate-500 mb-1">
-                            <button
-                              onClick={() => {
-                                console.log("🖱️ Company name clicked! company data:", p.company);
-                                showCompanyInfo(p.company);
-                              }}
-                              className="hover:text-blue-600 hover:underline transition cursor-pointer"
-                              title={`${companyName} információi`}
-                            >
-                              {companyName}
-                            </button>
-                            {" • "}
-                            {cityText}
-                          </div>
-
-                          <h3 className="text-base font-semibold text-slate-900 leading-snug break-words">
-                            {title}
-                          </h3>
-                        </div>
-                      </div>
-
-                      {/* meta chip sor */}
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-700">
-                          📍 {cityText}
-                        </span>
-
-                        <span
-                          className={[
-                            "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium",
-                            expired
-                              ? "bg-red-50 text-red-700"
-                              : "bg-amber-50 text-amber-800",
-                          ].join(" ")}
-                        >
-                          ⏳ Határidő: {deadlineText}
-                        </span>
-                      </div>
-
-                      {/* tagek */}
-                      {previewTags.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {previewTags.map((t) => (
-                            <span
-                              key={t}
-                              className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-700"
-                            >
-                              {t}
-                            </span>
-                          ))}
-                          {hiddenCount > 0 && (
-                            <span className="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
-                              +{hiddenCount}
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* leírás */}
-                      {norm(p.description) && (
-                        <p className="mt-4 text-sm text-slate-600 leading-relaxed">
-                          {String(p.description).length > 140
-                            ? String(p.description).slice(0, 140) + "…"
-                            : String(p.description)}
-                        </p>
-                      )}
-
-                      {/* alsó meta */}
-                      <div className="mt-4 space-y-1 text-xs text-slate-600">
-                        {norm(p.address) && (
-                          <div>📌 {norm(p.address)}</div>
-                        )}
-                        {(norm(p.zipCode) || norm(p.city)) && (
-                          <div>🏷️ {norm(p.zipCode)} {norm(p.city)}</div>
-                        )}
-                      </div>
-
-                    </div>
-                    {/* CTA */}
-                    <div className="p-5 pt-0">
-                      <button
-                        type="button"
-                        className="w-full rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
-                      >
-                        Részletek és jelentkezés
-                      </button>
-                    </div>
-                  </article>
+                  <PositionCard
+                    key={String(p.id ?? `${p.company?.name}-${p.title}-${p.city}`)}
+                    position={p}
+                    logo={logo}
+                    onCompanyClick={showCompanyInfo}
+                  />
                 );
               })}
             </div>

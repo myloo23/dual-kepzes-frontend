@@ -2,23 +2,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import type { StudentRegisterPayload } from "../../lib/api";
-import { Eye, EyeOff } from "lucide-react";
-
-
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-}
-
-function normalizeNeptun(code: string) {
-  return code.trim().toUpperCase();
-}
-
-function validateNeptunOptional(code: string) {
-  const c = normalizeNeptun(code);
-  if (!c) return null; // üres => ok
-  if (!/^[A-Z0-9]{6}$/.test(c)) return "A Neptun kód pontosan 6 karakter (A–Z, 0–9).";
-  return null;
-}
+import PasswordInput from "../../components/shared/PasswordInput";
+import {
+  isValidEmail,
+  normalizeNeptun,
+  validateNeptunOptional,
+  validatePassword,
+  validateRequired,
+  validateYear,
+} from "../../lib/validation-utils";
 
 export default function StudentRegisterPage() {
   const navigate = useNavigate();
@@ -46,37 +38,42 @@ export default function StudentRegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [okMsg, setOkMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  //jelszó megjelenés
-  const [showPassword, setShowPassword] = useState(false);
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setOkMsg(null);
 
-    // validálás (alap)
+    // validálás
     if (!isValidEmail(email)) return setError("Érvénytelen e-mail cím.");
-    if (password.length < 12) return setError("A jelszó legyen legalább 12 karakter.");
-    if (!fullName.trim()) return setError("A teljes név megadása kötelező.");
-    if (!phoneNumber.trim()) return setError("Telefonszám megadása kötelező.");
 
-    if (!mothersName.trim()) return setError("Anyja neve megadása kötelező.");
+    const passwordError = validatePassword(password, 12);
+    if (passwordError) return setError(passwordError);
+
+    const requiredFields = [
+      { value: fullName, name: "Teljes név" },
+      { value: phoneNumber, name: "Telefonszám" },
+      { value: mothersName, name: "Anyja neve" },
+      { value: country, name: "Ország" },
+      { value: zipCode, name: "Irányítószám" },
+      { value: city, name: "Település" },
+      { value: streetAddress, name: "Utca/házszám" },
+      { value: highSchool, name: "Középiskola" },
+      { value: currentMajor, name: "Szak megnevezése" },
+    ];
+
+    for (const field of requiredFields) {
+      const err = validateRequired(field.value, field.name);
+      if (err) return setError(err);
+    }
+
     if (!birthDate) return setError("Születési dátum megadása kötelező.");
 
-    if (!country.trim()) return setError("Ország megadása kötelező.");
-    if (!zipCode.trim()) return setError("Irányítószám megadása kötelező.");
-    if (!city.trim()) return setError("Település megadása kötelező.");
-    if (!streetAddress.trim()) return setError("Utca/házszám megadása kötelező.");
-
-    if (!highSchool.trim()) return setError("Középiskola megadása kötelező.");
-    if (graduationYear === "") return setError("Érettségi éve megadása kötelező.");
-    if (typeof graduationYear === "number" && (graduationYear < 1950 || graduationYear > 2100)) {
-      return setError("Érettségi éve nem tűnik helyesnek.");
-    }
+    const yearError = validateYear(graduationYear, "Érettségi éve");
+    if (yearError) return setError(yearError);
 
     const neptunErr = validateNeptunOptional(neptunCode);
     if (neptunErr) return setError(neptunErr);
-
-    if (!currentMajor.trim()) return setError("Szak megnevezése kötelező.");
 
     const neptun = normalizeNeptun(neptunCode);
 
@@ -152,28 +149,10 @@ export default function StudentRegisterPage() {
                 />
               </div>
 
-              <div className="space-y-1">
-  <label className="text-xs font-medium text-slate-700">Jelszó *</label>
-
-  <div className="relative">
-    <input
-      type={showPassword ? "text" : "password"}
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      placeholder="Minimum 12 karakter"
-      className="w-full rounded-lg border border-slate-300 px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-
-    <button
-      type="button"
-      onClick={() => setShowPassword((v) => !v)}
-      className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-slate-700"
-      aria-label={showPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
-    >
-      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-    </button>
-  </div>
-</div>
+              <PasswordInput
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
               <div className="space-y-1">
                 <label className="text-xs font-medium text-slate-700">Teljes név *</label>
