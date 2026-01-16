@@ -7,6 +7,7 @@ import PositionsPage from "./pages/landing/PositionsPage";
 import MapPage from "./pages/landing/MapPage";
 import StudentRegisterPage from "./pages/auth/StudentRegisterPage";
 import PlaceholderPage from "./components/layout/PlaceholderPage";
+import StudentDashboardPage from "./pages/student/StudentDashboardPage";
 
 import StudentLayout from "./layouts/StudentLayout";
 import TeacherLayout from "./layouts/TeacherLayout";
@@ -55,7 +56,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           <Route path="/student" element={<StudentLayout />}>
-            <Route index element={<PlaceholderPage title="Hallgatói kezdőlap" />} />
+            <Route index element={<StudentDashboardPage />} />
             <Route path="jobs" element={<PlaceholderPage title="Állások" />} />
             <Route path="profile" element={<PlaceholderPage title="Saját adataim" />} />
             <Route path="applications" element={<PlaceholderPage title="Megpályázott állások" />} />

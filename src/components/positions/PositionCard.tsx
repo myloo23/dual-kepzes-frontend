@@ -19,9 +19,10 @@ interface PositionCardProps {
     position: Position;
     logo: string;
     onCompanyClick: (company: any) => void;
+    onApply?: (positionId: string | number) => void;
 }
 
-export default function PositionCard({ position: p, logo, onCompanyClick }: PositionCardProps) {
+export default function PositionCard({ position: p, logo, onCompanyClick, onApply }: PositionCardProps) {
     const companyName = norm(p.company?.name || p.company?.companyName) || "Ismeretlen cég";
     const title = norm(p.title) || "Névtelen pozíció";
     const cityText = norm(p.city) || "—";
@@ -138,9 +139,16 @@ export default function PositionCard({ position: p, logo, onCompanyClick }: Posi
             <div className="p-5 pt-0">
                 <button
                     type="button"
-                    className="w-full rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (onApply && p.id) {
+                            onApply(p.id);
+                        }
+                    }}
+                    disabled={expired || !onApply}
+                    className="w-full rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Részletek és jelentkezés
+                    {expired ? "Lejárt" : "Jelentkezés"}
                 </button>
             </div>
         </article>

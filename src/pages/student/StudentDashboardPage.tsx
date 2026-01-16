@@ -1,8 +1,10 @@
 import { useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import ApplicationsList from "../../components/applications/ApplicationsList";
 
 export default function StudentDashboardPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const user = useMemo(() => {
     try {
@@ -19,6 +21,9 @@ export default function StudentDashboardPage() {
     localStorage.removeItem("role");
     navigate("/");
   };
+
+  // Determine active tab from URL hash
+  const activeTab = location.hash === "#applications" ? "applications" : "overview";
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -55,107 +60,141 @@ export default function StudentDashboardPage() {
 
       {/* CONTENT */}
       <main className="mx-auto max-w-6xl px-4 lg:px-8 py-8 space-y-6">
-        {/* HERO CARD */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-semibold text-slate-900">
-            Kezdjük el a jelentkezést!
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Itt fogod látni a jelentkezéseidet, státuszokat, határidőket és a mentett pozíciókat.
-          </p>
-
-          <div className="mt-4 flex flex-col sm:flex-row gap-3">
+        {/* TAB NAVIGATION */}
+        <div className="border-b border-slate-200">
+          <nav className="flex gap-8">
             <Link
-              to="/positions"
-              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+              to="/student"
+              className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "overview"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-slate-600 hover:text-slate-900"
+                }`}
             >
-              Elérhető pozíciók megtekintése
+              Áttekintés
             </Link>
-
-            <button
-              onClick={() => alert("Később: profil kitöltése oldal")}
-              className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+            <Link
+              to="/student#applications"
+              className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "applications"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-slate-600 hover:text-slate-900"
+                }`}
             >
-              Profil kitöltése
-            </button>
-          </div>
+              Jelentkezéseim
+            </Link>
+          </nav>
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* My applications */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="text-sm font-semibold text-slate-900">Jelentkezéseim</div>
-            <p className="mt-1 text-sm text-slate-600">
-              (Mock) Itt listázzuk majd a beadott jelentkezéseket és státuszukat.
-            </p>
+        {/* TAB CONTENT */}
+        {activeTab === "overview" && (
+          <>
+            {/* HERO CARD */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h1 className="text-2xl font-semibold text-slate-900">
+                Kezdjük el a jelentkezést!
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Itt fogod látni a jelentkezéseidet, státuszokat, határidőket és a mentett pozíciókat.
+              </p>
 
-            <div className="mt-4 space-y-2">
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
-                <div className="font-medium text-slate-900">Nincs még jelentkezés</div>
-                <div className="text-slate-600">Böngéssz a pozíciók között és jelentkezz.</div>
+              <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                <Link
+                  to="/positions"
+                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                >
+                  Elérhető pozíciók megtekintése
+                </Link>
+
+                <button
+                  onClick={() => alert("Később: profil kitöltése oldal")}
+                  className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                >
+                  Profil kitöltése
+                </button>
               </div>
             </div>
-          </div>
 
-          {/* Deadlines */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="text-sm font-semibold text-slate-900">Határidők</div>
-            <p className="mt-1 text-sm text-slate-600">
-              (Mock) Később ide jönnek a leadási / jelentkezési határidők.
-            </p>
+            {/* GRID */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* My applications */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="text-sm font-semibold text-slate-900">Jelentkezéseim</div>
+                <p className="mt-1 text-sm text-slate-600">
+                  Gyors áttekintés a jelentkezéseidről.
+                </p>
 
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-3 text-sm">
-                <span className="text-slate-700">Önéletrajz frissítése</span>
-                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
-                  jövő hét
-                </span>
+                <div className="mt-4 space-y-2">
+                  <Link
+                    to="/student#applications"
+                    className="block w-full text-left rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm hover:bg-slate-100 transition"
+                  >
+                    <div className="font-medium text-slate-900">Jelentkezések megtekintése →</div>
+                    <div className="text-slate-600">Kattints ide a részletekért</div>
+                  </Link>
+                </div>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-3 text-sm">
-                <span className="text-slate-700">Mentett pozíciók átnézése</span>
-                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
-                  ma
-                </span>
+
+              {/* Deadlines */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="text-sm font-semibold text-slate-900">Határidők</div>
+                <p className="mt-1 text-sm text-slate-600">
+                  (Mock) Később ide jönnek a leadási / jelentkezési határidők.
+                </p>
+
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                    <span className="text-slate-700">Önéletrajz frissítése</span>
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+                      jövő hét
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                    <span className="text-slate-700">Mentett pozíciók átnézése</span>
+                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+                      ma
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick actions */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="text-sm font-semibold text-slate-900">Gyors műveletek</div>
+                <p className="mt-1 text-sm text-slate-600">
+                  Hasznos linkek és műveletek.
+                </p>
+
+                <div className="mt-4 grid grid-cols-1 gap-2">
+                  <Link
+                    to="/positions"
+                    className="rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                  >
+                    Állások böngészése →
+                  </Link>
+
+                  <Link
+                    to="/student#applications"
+                    className="block text-left rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                  >
+                    Jelentkezéseim →
+                  </Link>
+
+                  <button
+                    onClick={() => alert("Később: beállítások oldal")}
+                    className="text-left rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                  >
+                    Beállítások →
+                  </button>
+                </div>
               </div>
             </div>
+          </>
+        )}
+
+        {activeTab === "applications" && (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <ApplicationsList />
           </div>
-
-          {/* Quick actions */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="text-sm font-semibold text-slate-900">Gyors műveletek</div>
-            <p className="mt-1 text-sm text-slate-600">
-              (Mock) Ezek később igazi funkciók lesznek.
-            </p>
-
-            <div className="mt-4 grid grid-cols-1 gap-2">
-              <Link
-                to="/positions"
-                className="rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-              >
-                Állások böngészése →
-              </Link>
-
-              <button
-                onClick={() => alert("Később: jelentkezéseim oldal")}
-                className="text-left rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-              >
-                Jelentkezéseim →
-              </button>
-
-              <button
-                onClick={() => alert("Később: beállítások oldal")}
-                className="text-left rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-              >
-                Beállítások →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-xs text-slate-500">
-          Megjegyzés: ez most sablon (mock). Később a backendből jönnek a jelentkezések, státuszok, határidők.
-        </div>
+        )}
       </main>
     </div>
   );

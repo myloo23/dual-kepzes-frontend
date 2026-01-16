@@ -28,6 +28,7 @@ export default function StudentLayout() {
     <DashboardLayout
       roleLabel="Hallgató"
       title="Hallgatói felület"
+      homeLink="/student"
       navItems={navItems}
       sidebarTop={
         <label className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">

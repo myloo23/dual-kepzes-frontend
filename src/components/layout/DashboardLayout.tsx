@@ -14,6 +14,7 @@ export default function DashboardLayout(props: {
   title?: string;
   navItems: NavItem[];
   sidebarTop?: ReactNode;
+  homeLink?: string; // Link for clicking the title
 }) {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -69,7 +70,10 @@ export default function DashboardLayout(props: {
               "lg:block"
             )}
           >
-            <div className="px-2 py-2">
+            <NavLink
+              to={props.homeLink || "/"}
+              className="block px-2 py-2 hover:bg-slate-50 rounded-lg transition cursor-pointer"
+            >
               <div className="text-xs text-slate-500">{props.roleLabel}</div>
               <div className="text-sm font-semibold text-slate-900">
                 {props.title ?? "Vezérlőpult"}
@@ -77,7 +81,7 @@ export default function DashboardLayout(props: {
               {userEmail && (
                 <div className="mt-1 text-xs text-slate-500">{userEmail}</div>
               )}
-            </div>
+            </NavLink>
 
             {props.sidebarTop && (
               <div className="mt-2 px-2">{props.sidebarTop}</div>

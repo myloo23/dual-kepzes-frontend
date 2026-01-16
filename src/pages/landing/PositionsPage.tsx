@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type Position } from "../../lib/api";
 import CompanyInfoModal from "../../components/CompanyInfoModal";
+import ApplicationModal from "../../components/applications/ApplicationModal";
 import FilterSidebar from "../../components/positions/FilterSidebar";
 import PositionCard from "../../components/positions/PositionCard";
 import {
@@ -45,6 +46,13 @@ export default function PositionsPage() {
     contactEmail?: string;
     website?: string;
   } | null>(null);
+
+  // Application modal state
+  const [applicationModal, setApplicationModal] = useState<{
+    isOpen: boolean;
+    position: Position | null;
+  }>({ isOpen: false, position: null });
+  const [applicationSuccess, setApplicationSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     const run = async () => {
@@ -138,6 +146,34 @@ export default function PositionsPage() {
       logoUrl: companyData.logoUrl,
       hqCity: companyData.hqCity
     });
+  };
+
+  // Handle apply button click
+  const handleApply = (positionId: string | number) => {
+    const position = positions.find(p => String(p.id) === String(positionId));
+    if (!position) return;
+
+    setApplicationModal({ isOpen: true, position });
+  };
+
+  // Handle application submission
+  const handleSubmitApplication = async (note: string) => {
+    if (!applicationModal.position?.id) return;
+
+    try {
+      await api.applications.submit({
+        positionId: String(applicationModal.position.id),
+        studentNote: note || undefined,
+      });
+
+      setApplicationSuccess("Sikeres jelentkezés! Hamarosan értesítünk a válaszról.");
+      setApplicationModal({ isOpen: false, position: null });
+
+      // Clear success message after 5 seconds
+      setTimeout(() => setApplicationSuccess(null), 5000);
+    } catch (err: any) {
+      throw new Error(err.message || "Hiba történt a jelentkezés során.");
+    }
   };
 
   const derived = useMemo(() => {
@@ -340,6 +376,7 @@ export default function PositionsPage() {
                     position={p}
                     logo={logo}
                     onCompanyClick={showCompanyInfo}
+                    onApply={handleApply}
                   />
                 );
               })}
@@ -365,6 +402,31 @@ export default function PositionsPage() {
           />
         );
       })()}
+
+      {/* Application Modal */}
+      {applicationModal.position && (
+        <ApplicationModal
+          isOpen={applicationModal.isOpen}
+          position={{
+            id: String(applicationModal.position.id),
+            title: applicationModal.position.title || "Pozíció",
+            company: applicationModal.position.company,
+          }}
+          onClose={() => setApplicationModal({ isOpen: false, position: null })}
+          onSubmit={handleSubmitApplication}
+        />
+      )}
+
+      {/* Success Message */}
+      {applicationSuccess && (
+        <div className="fixed bottom-4 right-4 z-50 max-w-md">
+          <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 shadow-lg">
+            <p className="text-sm font-medium text-green-800">
+              ✅ {applicationSuccess}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -233,6 +233,32 @@ export type NewsCreatePayload = Omit<
   "id" | "createdAt" | "updatedAt"
 >;
 
+// Applications
+export type ApplicationStatus = "SUBMITTED" | "ACCEPTED" | "REJECTED" | "NO_RESPONSE";
+
+export type Application = {
+  id: string;
+  positionId: string;
+  studentId: string;
+  status: ApplicationStatus;
+  studentNote?: string;
+  companyNote?: string;
+  createdAt: string;
+  position?: {
+    id: string;
+    title: string;
+    company: {
+      name: string;
+      logoUrl?: string | null;
+    };
+  };
+};
+
+export type ApplicationCreatePayload = {
+  positionId: string;
+  studentNote?: string; // max 500 chars
+};
+
 // ----------------- ENDPOINT konstansok -----------------
 const PATHS = {
   companies: "/api/jobs/companies",
@@ -322,5 +348,14 @@ export const api = {
 
     remove: (id: Id) =>
       apiDelete<{ message?: string }>(`${PATHS.news}/${id}`),
+  },
+
+  // applications
+  applications: {
+    submit: (payload: ApplicationCreatePayload) =>
+      apiPost<{ message: string; application: Application }>("/api/applications", payload),
+
+    list: () =>
+      apiGet<Application[]>("/api/applications"),
   },
 };
