@@ -312,6 +312,9 @@ export const api = {
       apiPatch<Position>(`${PATHS.positions}/${id}`, body),
     remove: (id: Id) =>
       apiDelete<{ message?: string }>(`${PATHS.positions}/${id}`),
+
+    deactivate: (id: Id) =>
+      apiPatch<{ message: string; position: Position }>(`${PATHS.positions}/${id}/deactivate`, {}),
   },
 
   // students / hallgatói profilok CRUD

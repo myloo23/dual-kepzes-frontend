@@ -121,6 +121,22 @@ export default function AdminPositions() {
     }
   };
 
+  const onDeactivate = async (id: Id) => {
+    if (!confirm("Biztosan deaktiválod ezt a pozíciót?\n\nA pozíció nem törlődik, csak inaktívvá válik.")) return;
+    setLoading(true);
+    setErr(null);
+    setMsg(null);
+    try {
+      await api.positions.deactivate(id);
+      setMsg("Pozíció sikeresen deaktiválva.");
+      await load();
+    } catch (e: any) {
+      setErr(e.message || "Deaktiválás sikertelen.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
@@ -186,42 +202,61 @@ export default function AdminPositions() {
       {err && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{err}</div>}
       {msg && <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{msg}</div>}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section className="rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold">Összes pozíció</h2>
-            <button onClick={load} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-bold text-slate-800">Összes pozíció</h2>
+            <button onClick={load} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50 transition-colors">
               Frissítés
             </button>
           </div>
 
-          <div className="flex gap-2 mb-3">
-            <input value={lookupId} onChange={(e) => setLookupId(e.target.value)} placeholder="Pozíció ID..." className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-            <button type="button" onClick={onLookup} className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:opacity-90">
+          <div className="flex gap-2 mb-4">
+            <input value={lookupId} onChange={(e) => setLookupId(e.target.value)} placeholder="Keresés ID alapján..." className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition" />
+            <button type="button" onClick={onLookup} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900 transition shadow-sm">
               Lekérés
             </button>
           </div>
 
-          <div className="overflow-auto rounded-xl border border-slate-200">
-            <table className="min-w-full text-sm">
+          <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
+            <table className="min-w-full text-sm divide-y divide-slate-200">
               <thead className="bg-slate-50 text-slate-600">
                 <tr>
-                  <th className="px-3 py-2 text-left">ID</th>
-                  <th className="px-3 py-2 text-left">Megnevezés</th>
-                  <th className="px-3 py-2 text-right">Művelet</th>
+                  <th className="px-4 py-3 text-left font-semibold">ID</th>
+                  <th className="px-4 py-3 text-left font-semibold">Megnevezés</th>
+                  <th className="px-4 py-3 text-center font-semibold">Státusz</th>
+                  <th className="px-4 py-3 text-right font-semibold">Művelet</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((p) => (
-                  <tr key={String(p.id)} className="border-t">
-                    <td className="px-3 py-2">{String(p.id)}</td>
-                    <td className="px-3 py-2 font-medium">{p.title}</td>
-                    <td className="px-3 py-2">
+                  <tr key={String(p.id)} className={`hover:bg-slate-50 transition-colors ${p.isActive === false ? 'bg-slate-50/50' : ''}`}>
+                    <td className="px-4 py-3 text-slate-500 font-mono text-xs">{String(p.id).slice(0, 8)}...</td>
+                    <td className="px-4 py-3 font-medium text-slate-900">{p.title}</td>
+                    <td className="px-4 py-3 text-center">
+                      {p.isActive === false ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 border border-slate-200">
+                          <span className="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+                          Inaktív
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 border border-emerald-200 shadow-sm">
+                          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                          Aktív
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
-                        <button onClick={() => onEdit(p.id)} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50">
+                        <button onClick={() => onEdit(p.id)} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
                           Szerkesztés
                         </button>
-                        <button onClick={() => onDelete(p.id)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100">
+                        {p.isActive !== false && (
+                          <button onClick={() => onDeactivate(p.id)} className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100 transition-colors">
+                            Deaktiválás
+                          </button>
+                        )}
+                        <button onClick={() => onDelete(p.id)} className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors">
                           Törlés
                         </button>
                       </div>
@@ -230,7 +265,7 @@ export default function AdminPositions() {
                 ))}
                 {!loading && rows.length === 0 && (
                   <tr>
-                    <td className="px-3 py-6 text-center text-slate-500" colSpan={3}>Nincs adat.</td>
+                    <td className="px-3 py-6 text-center text-slate-500" colSpan={4}>Nincs adat.</td>
                   </tr>
                 )}
               </tbody>
