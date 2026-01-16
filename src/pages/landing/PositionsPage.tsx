@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { api } from "../../lib/api";
+import { api, type Position } from "../../lib/api";
 import CompanyInfoModal from "../../components/CompanyInfoModal";
 import FilterSidebar from "../../components/positions/FilterSidebar";
 import PositionCard from "../../components/positions/PositionCard";
@@ -11,30 +11,11 @@ import {
   toTagCategory,
   isExpired,
   pickLogo,
-  type TagLike,
 } from "../../lib/positions-utils";
 
 // ideiglenes logók
 import abcTechLogo from "../../assets/logos/abc-tech.jpg";
 import businessItLogo from "../../assets/logos/business-it.jpg";
-
-type Position = {
-  id?: string | number;
-  title?: string;
-  description?: string;
-  city?: string;
-  zipCode?: string;
-  address?: string;
-  deadline?: string; // ISO
-  tags?: TagLike[];
-  companyId?: string | number;
-  company?: { id?: string | number; name?: string; companyName?: string };
-  createdAt?: string;
-  updatedAt?: string;
-  created_at?: string;
-  updated_at?: string;
-  [key: string]: any; // Allow additional properties
-};
 
 type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
 type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
@@ -169,7 +150,7 @@ export default function PositionsPage() {
       const c = norm(p.city);
       if (c) citySet.add(c);
 
-      const companyName = norm(p.company?.name || p.company?.companyName);
+      const companyName = norm(p.company?.name || "");
       if (companyName) companySet.add(companyName);
 
       const tags = Array.isArray(p.tags) ? p.tags : [];
@@ -245,7 +226,7 @@ export default function PositionsPage() {
 
     const q = lower(search);
     const out = positions.filter((p) => {
-      const companyName = norm(p.company?.name || p.company?.companyName || "");
+      const companyName = norm(p.company?.name || "");
       const cty = norm(p.city);
       const title = norm(p.title);
       const addr = norm(p.address);
@@ -272,7 +253,7 @@ export default function PositionsPage() {
     });
 
     const getCreatedLikeTs = (p: Position) => {
-      const s = p.createdAt ?? p.updatedAt ?? p.created_at ?? p.updated_at;
+      const s = p.createdAt ?? p.updatedAt;
       const d = parseDate(s);
       return d ? d.getTime() : 0;
     };
@@ -350,7 +331,7 @@ export default function PositionsPage() {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-2">
               {filtered.map((p) => {
-                const companyKey = norm(p.company?.id ?? p.companyId ?? p.company?.name ?? p.company?.companyName);
+                const companyKey = norm(p.company?.id ?? p.companyId ?? p.company?.name);
                 const logo = pickLogo(companyKey, { logo1: abcTechLogo, logo2: businessItLogo });
 
                 return (

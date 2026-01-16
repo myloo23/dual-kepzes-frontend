@@ -56,7 +56,12 @@ export default function CompanyProfilePage() {
 
     try {
       setLoading(true);
-      await api.companies.update(company.id, formData);
+      // Convert hqZipCode to number for backend
+      const payload = {
+        ...formData,
+        hqZipCode: formData.hqZipCode ? Number(formData.hqZipCode) : formData.hqZipCode
+      };
+      await api.companies.update(company.id, payload);
       setCompany({ ...company, ...formData });
       setIsEditing(false);
     } catch (err: any) {

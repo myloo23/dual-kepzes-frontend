@@ -113,18 +113,22 @@ export default function AdminCompanies() {
     if (!formData.name.trim()) return setErr("A cég neve kötelező.");
     if (!formData.taxId.trim()) return setErr("Az adószám kötelező.");
 
-    const payload = { ...formData };
+    // Convert hqZipCode to number for backend
+    const payload = {
+      ...formData,
+      hqZipCode: formData.hqZipCode ? Number(formData.hqZipCode) : formData.hqZipCode
+    };
 
     setLoading(true);
     try {
       if (editingId != null) {
-      const safeId = ensureCompanyId(editingId);
-      await api.companies.update(safeId, payload);
-      setMsg("Cég frissítve.");
-    } else {
-  await api.companies.create(payload);
-  setMsg("Cég létrehozva.");
-}
+        const safeId = ensureCompanyId(editingId);
+        await api.companies.update(safeId, payload);
+        setMsg("Cég frissítve.");
+      } else {
+        await api.companies.create(payload);
+        setMsg("Cég létrehozva.");
+      }
       await load();
       resetForm();
     } catch (e: any) {
@@ -305,17 +309,17 @@ export default function AdminCompanies() {
                   className="w-full p-2 border border-slate-300 rounded-lg"
                 />
               </div>
-              </div>
+            </div>
 
-              <div className="flex justify-end md:col-span-2 pt-4">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {editingId != null ? "Módosítás mentése" : "Cég létrehozása"}
-                </button>
-              </div>
+            <div className="flex justify-end md:col-span-2 pt-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {editingId != null ? "Módosítás mentése" : "Cég létrehozása"}
+              </button>
+            </div>
           </form>
         </section>
       </div>

@@ -138,7 +138,7 @@ export type StudentRegisterPayload = {
   mothersName: string;
   dateOfBirth: string; // "YYYY-MM-DD"
   country: string;
-  zipCode: string;
+  zipCode: number; // Backend expects number
   city: string;
   streetAddress: string;
   highSchool: string;
@@ -155,7 +155,7 @@ export type Company = {
   name: string;
   taxId: string;
   hqCountry: string;
-  hqZipCode: string;
+  hqZipCode: string | number; // Backend expects number, but we accept both for flexibility
   hqCity: string;
   hqAddress: string;
   contactName: string;
@@ -179,7 +179,17 @@ export type Position = {
   city: string;
   address: string;
   deadline: string; // "yyyy-MM-ddTHH:mm:ssZ"
+  isDual?: boolean; // Backend field for dual training positions
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
   tags: Tag[];
+  company?: {
+    id: string;
+    name: string;
+    logoUrl?: string | null;
+    hqCity: string;
+  };
 };
 
 export type StudentProfile = Record<string, any> & {
