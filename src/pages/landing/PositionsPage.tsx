@@ -79,6 +79,24 @@ export default function PositionsPage() {
     run();
   }, []);
 
+  // Check if we should auto-open a position from map navigation
+  useEffect(() => {
+    if (positions.length === 0) return;
+
+    const openPositionId = sessionStorage.getItem('openPositionId');
+    if (openPositionId) {
+      // Clear the flag
+      sessionStorage.removeItem('openPositionId');
+
+      // Find and open the position
+      const position = positions.find(p => String(p.id) === openPositionId);
+      if (position) {
+        console.log("🗺️ Auto-opening position from map:", position.title);
+        setApplicationModal({ isOpen: true, position });
+      }
+    }
+  }, [positions]);
+
   // Show company info from position data or fetch from API by name
   const showCompanyInfo = async (companyData: { id?: string | number; name?: string; logoUrl?: string | null; hqCity?: string } | undefined) => {
     console.log("🏢 showCompanyInfo called with:", companyData);
@@ -411,6 +429,8 @@ export default function PositionsPage() {
             id: String(applicationModal.position.id),
             title: applicationModal.position.title || "Pozíció",
             company: applicationModal.position.company,
+            city: applicationModal.position.city,
+            address: applicationModal.position.address,
           }}
           onClose={() => setApplicationModal({ isOpen: false, position: null })}
           onSubmit={handleSubmitApplication}

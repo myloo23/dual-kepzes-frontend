@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LocationMap from "./LocationMap";
 
 interface ApplicationModalProps {
     isOpen: boolean;
@@ -7,6 +8,8 @@ interface ApplicationModalProps {
         id: string;
         title: string;
         company?: { name: string };
+        city?: string;
+        address?: string;
     };
     onSubmit: (note: string) => Promise<void>;
 }
@@ -101,8 +104,8 @@ export default function ApplicationModal({
                             rows={8}
                             disabled={loading}
                             className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed ${isOverLimit
-                                    ? "border-red-300 focus:ring-red-500"
-                                    : "border-slate-300 focus:ring-blue-500"
+                                ? "border-red-300 focus:ring-red-500"
+                                : "border-slate-300 focus:ring-blue-500"
                                 }`}
                         />
                         <div className="flex justify-between items-center text-xs">
@@ -121,6 +124,15 @@ export default function ApplicationModal({
                             milyen releváns tapasztalataid vagy készségeid vannak, és miért érdekel ez a lehetőség.
                         </p>
                     </div>
+
+                    {/* Location Map */}
+                    {position.company?.name && position.city && position.address && (
+                        <LocationMap
+                            companyName={position.company.name}
+                            companyCity={position.city}
+                            companyAddress={position.address}
+                        />
+                    )}
                 </div>
 
                 {/* Footer */}
