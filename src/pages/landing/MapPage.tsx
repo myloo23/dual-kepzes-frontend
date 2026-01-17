@@ -5,7 +5,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { api, type Position } from "../../lib/api";
 import { isExpired } from "../../lib/positions-utils";
-import { getCityCoordinates } from "../../lib/city-coordinates";
+import { useGeocoding } from "../../hooks/useGeocoding";
 
 // Default blue marker for positions
 const defaultIcon = L.icon({
@@ -35,11 +35,6 @@ const userIcon = L.divIcon({
 
 L.Marker.prototype.options.icon = defaultIcon;
 
-interface PositionWithCoords extends Position {
-  latitude?: number;
-  longitude?: number;
-}
-
 interface UserLocation {
   lat: number;
   lng: number;
@@ -48,229 +43,41 @@ interface UserLocation {
 function MapPage() {
   const navigate = useNavigate();
   const [positions, setPositions] = useState<Position[]>([]);
-  const [positionsWithCoords, setPositionsWithCoords] = useState<PositionWithCoords[]>([]);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [geocodingProgress, setGeocodingProgress] = useState({ current: 0, total: 0 });
   const [error, setError] = useState<string | null>(null);
+
+  // Use custom geocoding hook
+  const { positionsWithCoords, loading, progress } = useGeocoding(positions);
 
   // Fetch positions from API
   useEffect(() => {
     const fetchPositions = async () => {
       try {
-        setLoading(true);
         setError(null);
         console.log("🔄 Fetching positions from API...");
         const res = await api.positions.listPublic();
 
         console.log("📦 API Response:", res);
-        console.log("📦 Response type:", Array.isArray(res) ? "Array" : typeof res);
 
-        // Filter to only active positions
         const activePositions = Array.isArray(res)
           ? res.filter(p => !isExpired(p.deadline))
           : [];
 
-        console.log(`✅ Loaded ${activePositions.length} active positions (${Array.isArray(res) ? res.length : 0} total)`);
-
-        if (activePositions.length > 0) {
-          console.log("📍 First position sample:", activePositions[0]);
-        }
+        console.log(`✅ Loaded ${activePositions.length} active positions`);
 
         setPositions(activePositions);
       } catch (e) {
         console.error("❌ Failed to fetch positions:", e);
         setError("A pozíciók betöltése sikertelen volt.");
-        setLoading(false);
       }
     };
 
     fetchPositions();
   }, []);
 
-  // Geocode positions
-  useEffect(() => {
-    if (positions.length === 0) {
-      setLoading(false);
-      return;
-    }
-
-    const geocodePositions = async () => {
-      const geocoded: PositionWithCoords[] = [];
-      setGeocodingProgress({ current: 0, total: positions.length });
-
-      console.log(`🗺️ Starting geocoding for ${positions.length} positions`);
-
-      // Load cache from localStorage
-      const cacheKey = 'geocoding_cache';
-      let cache: Record<string, { lat: number; lng: number }> = {};
-      try {
-        const cached = localStorage.getItem(cacheKey);
-        if (cached) {
-          cache = JSON.parse(cached);
-          console.log(`📦 Loaded geocoding cache with ${Object.keys(cache).length} entries`);
-        }
-      } catch (e) {
-        console.warn('Failed to load geocoding cache:', e);
-      }
-
-      for (let i = 0; i < positions.length; i++) {
-        const position = positions[i];
-        setGeocodingProgress({ current: i + 1, total: positions.length });
-
-        console.log(`📍 Geocoding position ${i + 1}/${positions.length}:`, {
-          id: position.id,
-          title: position.title,
-          city: position.city,
-          address: position.address,
-        });
-
-        // Skip if no city or address
-        if (!position.city || !position.address) {
-          console.warn(`⚠️ Skipping position ${position.id} - missing city or address`);
-          continue;
-        }
-
-        // Check cache first
-        const cacheKeyForPosition = `${position.city}|${position.address}`;
-        console.log(`🔍 Checking cache for: "${cacheKeyForPosition}"`);
-        console.log(`📦 Cache has key?`, cache.hasOwnProperty(cacheKeyForPosition));
-
-        if (cache[cacheKeyForPosition]) {
-          console.log(`💾 Using cached coordinates for: ${cacheKeyForPosition}`, cache[cacheKeyForPosition]);
-          geocoded.push({
-            ...position,
-            latitude: cache[cacheKeyForPosition].lat,
-            longitude: cache[cacheKeyForPosition].lng,
-          });
-          continue;
-        }
-
-        // Try pre-geocoded city coordinates
-        const cityCoords = getCityCoordinates(position.city);
-        if (cityCoords) {
-          console.log(`🏙️ Using pre-geocoded coordinates for city: ${position.city}`, cityCoords);
-          geocoded.push({
-            ...position,
-            latitude: cityCoords.lat,
-            longitude: cityCoords.lng,
-          });
-          cache[cacheKeyForPosition] = cityCoords;
-          continue;
-        }
-
-        console.log(`🌐 No cache or pre-geocoded data found, geocoding from Photon API...`);
-
-        try {
-          const fullAddress = `${position.address}, ${position.city}, Hungary`;
-          const encodedAddress = encodeURIComponent(fullAddress);
-
-          console.log(`🔍 Trying full address with Photon: ${fullAddress}`);
-
-          // Using Photon API (more lenient than Nominatim)
-          const response = await fetch(
-            `https://photon.komoot.io/api/?q=${encodedAddress}&limit=1`
-          );
-
-          if (!response.ok) {
-            console.error(`❌ Photon API error: ${response.status} ${response.statusText}`);
-            // Try city-only fallback
-            const cityResponse = await fetch(
-              `https://photon.komoot.io/api/?q=${encodeURIComponent(`${position.city}, Hungary`)}&limit=1`
-            );
-
-            if (cityResponse.ok) {
-              const cityData = await cityResponse.json();
-              if (cityData.features && cityData.features.length > 0) {
-                const coords = {
-                  lat: cityData.features[0].geometry.coordinates[1],
-                  lng: cityData.features[0].geometry.coordinates[0],
-                };
-                console.log(`✅ City geocoded with Photon:`, coords);
-                geocoded.push({
-                  ...position,
-                  latitude: coords.lat,
-                  longitude: coords.lng,
-                });
-                cache[cacheKeyForPosition] = coords;
-              }
-            }
-            continue;
-          }
-
-          const data = await response.json();
-
-          if (data.features && data.features.length > 0) {
-            // Photon returns GeoJSON format: coordinates are [lng, lat]
-            const coords = {
-              lat: data.features[0].geometry.coordinates[1],
-              lng: data.features[0].geometry.coordinates[0],
-            };
-            console.log(`✅ Geocoded successfully with Photon:`, coords);
-            geocoded.push({
-              ...position,
-              latitude: coords.lat,
-              longitude: coords.lng,
-            });
-            cache[cacheKeyForPosition] = coords;
-          } else {
-            // Fallback: try city only
-            console.log(`🔄 Full address failed, trying city only: ${position.city}`);
-            const cityResponse = await fetch(
-              `https://photon.komoot.io/api/?q=${encodeURIComponent(`${position.city}, Hungary`)}&limit=1`
-            );
-
-            if (cityResponse.ok) {
-              const cityData = await cityResponse.json();
-              if (cityData.features && cityData.features.length > 0) {
-                const coords = {
-                  lat: cityData.features[0].geometry.coordinates[1],
-                  lng: cityData.features[0].geometry.coordinates[0],
-                };
-                console.log(`✅ City geocoded with Photon:`, coords);
-                geocoded.push({
-                  ...position,
-                  latitude: coords.lat,
-                  longitude: coords.lng,
-                });
-                cache[cacheKeyForPosition] = coords;
-              } else {
-                console.warn(`❌ City geocoding also failed for: ${position.city}`);
-              }
-            }
-          }
-
-          // Reduced rate limiting: Photon is more lenient, 200ms should be enough
-          if (i < positions.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-          }
-        } catch (error) {
-          console.error(`❌ Failed to geocode position ${position.id}:`, error);
-          // Continue with next position
-        }
-      }
-
-      // Save cache to localStorage
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify(cache));
-        console.log(`💾 Saved geocoding cache with ${Object.keys(cache).length} entries`);
-      } catch (e) {
-        console.warn('Failed to save geocoding cache:', e);
-      }
-
-      console.log(`🎉 Geocoding complete! ${geocoded.length} positions geocoded successfully`);
-      setPositionsWithCoords(geocoded);
-      setLoading(false);
-    };
-
-    geocodePositions();
-  }, [positions]);
-
   // Get user location
   useEffect(() => {
-    if (!navigator.geolocation) {
-      return;
-    }
+    if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -281,7 +88,6 @@ function MapPage() {
       },
       (error) => {
         console.error("Geolocation error:", error);
-        // Silently fail - user location is optional
       },
       {
         enableHighAccuracy: true,
@@ -342,8 +148,8 @@ function MapPage() {
         <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
           <p className="text-sm text-slate-600">
-            {geocodingProgress.total > 0
-              ? `Címek feldolgozása... ${geocodingProgress.current} / ${geocodingProgress.total}`
+            {progress.total > 0
+              ? `Címek feldolgozása... ${progress.current} / ${progress.total}`
               : "Pozíciók betöltése..."}
           </p>
         </div>
