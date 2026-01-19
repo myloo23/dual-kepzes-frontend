@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import logoImage from "../../assets/logos/dkk_logos/logó.png";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -78,23 +79,27 @@ export default function Navbar() {
   console.log("📊 Navbar render - newsLink:", newsLink);
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-dkk-gray/30 bg-white/80 backdrop-blur">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 lg:px-8 py-3">
         <Link
           to="/"
-          className="font-semibold tracking-tight text-slate-900"
+          className="flex items-center gap-3"
           onClick={closeMobileMenu}
         >
-          Duális képzési rendszer
+          <img
+            src={logoImage}
+            alt="Duális Képzési Központ"
+            className="h-10 object-contain"
+          />
         </Link>
 
         {/* Desktop nav */}
         <nav className="hidden sm:flex gap-6 text-sm text-slate-600">
-          <Link to="/" className="hover:text-slate-900">Kezdőlap</Link>
-          <Link to="/positions" className="hover:text-slate-900">Elérhető állások</Link>
-          <Link to="/map" className="hover:text-slate-900">Térképes nézet</Link>
+          <Link to="/" className="hover:text-dkk-blue">Kezdőlap</Link>
+          <Link to="/positions" className="hover:text-dkk-blue">Elérhető állások</Link>
+          <Link to="/map" className="hover:text-dkk-blue">Térképes nézet</Link>
           {newsLink && (
-            <Link to={newsLink} className="hover:text-slate-900">Hírek</Link>
+            <Link to={newsLink} className="hover:text-dkk-blue">Hírek</Link>
           )}
         </nav>
 
@@ -124,7 +129,7 @@ export default function Navbar() {
 
       {/* Mobile nav dropdown */}
       {mobileOpen && (
-        <nav className="sm:hidden border-t border-slate-200 bg-white">
+        <nav className="sm:hidden border-t border-dkk-gray/30 bg-white">
           <div className="max-w-6xl mx-auto px-4 lg:px-8 py-3 flex flex-col gap-2 text-sm text-slate-700">
             <Link to="/" className="py-1" onClick={closeMobileMenu}>Kezdőlap</Link>
             <Link to="/positions" className="py-1" onClick={closeMobileMenu}>Elérhető állások</Link>

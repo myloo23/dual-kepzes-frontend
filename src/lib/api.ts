@@ -34,7 +34,9 @@ async function apiRequest<T>(
   init: RequestInit,
   token?: string
 ): Promise<T> {
-  const jwt = token ?? auth.getToken();
+  // If token is explicitly provided (even as empty string), use it
+  // Otherwise, get token from storage
+  const jwt = token !== undefined ? token : auth.getToken();
 
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
@@ -302,7 +304,21 @@ export const api = {
   // positions CRUD
   positions: {
     list: () => apiGet<Position[]>(PATHS.positions),
-    listPublic: () => apiGet<Position[]>(PATHS.positions),
+
+    // Public endpoint - no authentication required
+    listPublic: () => apiGet<Position[]>(PATHS.positions, ""), // Empty string = no token
+
+    // Helper methods for filtering by isDual flag
+    listDualPositions: async () => {
+      const positions = await apiGet<Position[]>(PATHS.positions);
+      return positions.filter((p) => p.isDual === true);
+    },
+
+    listNonDualPositions: async () => {
+      const positions = await apiGet<Position[]>(PATHS.positions);
+      return positions.filter((p) => p.isDual === false);
+    },
+
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
     create: (payload: Omit<Position, "id">) =>
       apiPost<Position>(PATHS.positions, payload),

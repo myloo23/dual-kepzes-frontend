@@ -21,13 +21,13 @@ const steps = [
 
 export default function HowItWorksSection() {
     return (
-        <section id="how-it-works" className="py-10 border-t border-slate-200">
+        <section id="how-it-works" className="py-10 border-t border-dkk-gray/30">
             <h2 className="text-xl lg:text-2xl font-semibold text-slate-900 mb-4">
                 Hogyan működik a duális rendszer?
             </h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-sm">
                 {steps.map((step) => (
-                    <div key={step.title} className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div key={step.title} className="rounded-2xl border border-dkk-gray/30 bg-white p-4">
                         <h3 className="font-semibold mb-1">{step.title}</h3>
                         <p className="text-slate-600">{step.description}</p>
                     </div>

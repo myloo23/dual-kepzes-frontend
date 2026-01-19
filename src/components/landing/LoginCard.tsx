@@ -47,7 +47,7 @@ export default function LoginCard({
                         value={email}
                         onChange={(e) => onEmailChange(e.target.value)}
                         required
-                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-dkk-blue focus:border-dkk-blue"
                     />
                 </div>
 
@@ -62,14 +62,14 @@ export default function LoginCard({
                 <button
                     type="submit"
                     disabled={loading}
-                    className="mt-2 w-full rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:opacity-90 transition disabled:opacity-60"
+                    className="mt-2 w-full rounded-xl bg-gradient-to-r from-dkk-blue to-dkk-green px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:opacity-90 transition disabled:opacity-60"
                 >
                     {loading ? "Belépés..." : "Belépés"}
                 </button>
             </form>
 
             <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
-                <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                <Link to="/forgot-password" className="text-sm text-dkk-blue hover:underline">
                     Elfelejtett jelszó?
                 </Link>
                 <span>Még nincs fiókod?</span>

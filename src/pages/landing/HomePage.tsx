@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import LoginCard from "../../components/landing/LoginCard";
 import HowItWorksSection from "../../components/landing/HowItWorksSection";
+import JobSlider from "../../components/landing/JobSlider";
+import logoImage from "../../assets/logos/dkk_logos/logó.png";
 
 // Definiáljuk az útvonalakat a szerepkörökhöz
 const roleToPath: Record<string, string> = {
@@ -70,6 +72,12 @@ function HomePage() {
     if (target) navigate(target, { replace: true });
   }, [navigate]);
 
+  const handleViewJobDetails = (positionId: string | number) => {
+    // Navigate to positions page and scroll to the specific position
+    sessionStorage.setItem("highlightPositionId", String(positionId));
+    navigate("/positions");
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 lg:px-8">
       {/* HERO + LOGIN */}
@@ -78,7 +86,12 @@ function HomePage() {
         className="py-10 lg:py-16 grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center"
       >
         <div>
-          <p className="text-sm font-medium text-blue-600 mb-2">
+          <img
+            src={logoImage}
+            alt="Duális Képzési Központ"
+            className="h-16 lg:h-20 mb-6 object-contain"
+          />
+          <p className="text-sm font-medium text-dkk-blue mb-2">
             Duális képzések online felülete
           </p>
           <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 mb-4">
@@ -108,10 +121,35 @@ function HomePage() {
         />
       </section>
 
+      {/* ÁLLÁSAJÁNLATOK SZEKCIÓ */}
+      <section id="jobs" className="py-10 border-t border-dkk-gray/30">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3">
+            Aktuális Állásajánlatok
+          </h2>
+          <p className="text-sm text-slate-600 max-w-2xl mx-auto">
+            Partnercégeink által meghirdetett teljes munkaidős álláslehetőségek.
+            Ezek az állások függetlenek a duális képzési programtól, és bárki
+            számára elérhetőek.
+          </p>
+        </div>
+
+        <JobSlider onViewDetails={handleViewJobDetails} />
+
+        <div className="text-center mt-6">
+          <button
+            onClick={() => navigate("/positions")}
+            className="inline-flex items-center gap-2 text-sm font-medium text-dkk-blue hover:text-dkk-blue/80 hover:underline transition"
+          >
+            Összes állás megtekintése →
+          </button>
+        </div>
+      </section>
+
       <HowItWorksSection />
 
       {/* KAPCSOLAT */}
-      <section id="contact" className="py-10 border-t border-slate-200">
+      <section id="contact" className="py-10 border-t border-dkk-gray/30">
         <h2 className="text-xl lg:text-2xl font-semibold text-slate-900 mb-3">
           Kapcsolat
         </h2>
