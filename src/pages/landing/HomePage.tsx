@@ -4,7 +4,9 @@ import { api } from "../../lib/api";
 import LoginCard from "../../components/landing/LoginCard";
 import HowItWorksSection from "../../components/landing/HowItWorksSection";
 import JobSlider from "../../components/landing/JobSlider";
+import MaterialsGallery from "../../components/landing/MaterialsGallery";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
+import njeLogoImage from "../../assets/logos/nje_logos/nje_logo2.png";
 
 // Definiáljuk az útvonalakat a szerepkörökhöz
 const roleToPath: Record<string, string> = {
@@ -86,11 +88,18 @@ function HomePage() {
         className="py-10 lg:py-16 grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center"
       >
         <div>
-          <img
-            src={logoImage}
-            alt="Duális Képzési Központ"
-            className="h-16 lg:h-20 mb-6 object-contain"
-          />
+          <div className="flex items-center gap-4 mb-6">
+            <img
+              src={logoImage}
+              alt="Duális Képzési Központ"
+              className="h-16 lg:h-20 object-contain"
+            />
+            <img
+              src={njeLogoImage}
+              alt="Neumann János Egyetem"
+              className="h-24 lg:h-28 object-contain"
+            />
+          </div>
           <p className="text-sm font-medium text-dkk-blue mb-2">
             Duális képzések online felülete
           </p>
@@ -147,6 +156,8 @@ function HomePage() {
       </section>
 
       <HowItWorksSection />
+
+      <MaterialsGallery />
 
       {/* KAPCSOLAT */}
       <section id="contact" className="py-10 border-t border-dkk-gray/30">
