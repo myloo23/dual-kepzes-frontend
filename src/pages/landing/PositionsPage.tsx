@@ -365,7 +365,7 @@ export default function PositionsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
       {/* Térkép */}
-      {!loading && filtered.length > 0 && (
+      {!loading && filtered.length > 0 && !selectedCompanyInfo && !applicationModal.isOpen && (
         <div className="mb-8">
           <PositionsMap
             positions={filtered}
