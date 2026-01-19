@@ -136,7 +136,8 @@ export default function PositionsPage() {
       console.log("📡 Fetching full company details with ID:", companyData.id);
       try {
         const fullCompany = await api.companies.get(companyData.id);
-        console.log("✅ Full company data received:", fullCompany);
+        // console.log("✅ Full company data received:", fullCompany);
+
         setSelectedCompanyInfo({
           name: fullCompany.name,
           logoUrl: fullCompany.logoUrl ?? undefined,
@@ -163,15 +164,20 @@ export default function PositionsPage() {
       );
 
       if (matchingCompany) {
-        console.log("✅ Found matching company:", matchingCompany);
+        console.log("✅ Found matching company ID:", matchingCompany.id);
+
+        // Fetch full details using the ID from the matched company
+        const fullCompany = await api.companies.get(matchingCompany.id);
+        console.log("✅ Full company data fetched via name-lookup:", fullCompany);
+
         setSelectedCompanyInfo({
-          name: matchingCompany.name,
-          logoUrl: matchingCompany.logoUrl ?? undefined,
-          hqCity: matchingCompany.hqCity,
-          description: matchingCompany.description,
-          contactName: matchingCompany.contactName,
-          contactEmail: matchingCompany.contactEmail,
-          website: matchingCompany.website ?? undefined
+          name: fullCompany.name,
+          logoUrl: fullCompany.logoUrl ?? undefined,
+          hqCity: fullCompany.hqCity,
+          description: fullCompany.description,
+          contactName: fullCompany.contactName,
+          contactEmail: fullCompany.contactEmail,
+          website: fullCompany.website ?? undefined
         });
         return;
       } else {

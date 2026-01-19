@@ -51,7 +51,7 @@ export default function CompanyInfoModal({ companyInfo, isOpen, onClose }: Compa
                     {companyInfo.description && (
                         <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                             <h4 className="text-sm font-semibold text-slate-700 mb-2">Leírás</h4>
-                            <p className="text-sm text-slate-600 whitespace-pre-line leading-relaxed">
+                            <p className="text-base text-slate-700 whitespace-pre-line leading-relaxed">
                                 {companyInfo.description}
                             </p>
                         </div>

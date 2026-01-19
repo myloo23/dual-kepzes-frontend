@@ -57,8 +57,13 @@ export default function CompanyProfilePage() {
     try {
       setLoading(true);
       // Convert hqZipCode to number for backend
+      // Create clean payload by removing null values
+      const cleanFormData = Object.fromEntries(
+        Object.entries(formData).filter(([_, v]) => v !== null)
+      );
+
       const payload = {
-        ...formData,
+        ...cleanFormData,
         hqZipCode: formData.hqZipCode ? Number(formData.hqZipCode) : formData.hqZipCode
       };
       await api.companies.update(company.id, payload);

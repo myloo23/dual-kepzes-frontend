@@ -46,9 +46,15 @@ export default function PositionCard({ position: p, logo, onCompanyClick, onAppl
                 {/* felső sor */}
                 <div className="flex items-start gap-4">
                     <button
-                        onClick={() => {
-                            console.log("🖱️ Logo clicked! company data:", p.company);
-                            onCompanyClick(p.company);
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            const companyData = {
+                                ...p.company,
+                                id: p.company?.id ?? p.companyId,
+                                name: companyName
+                            };
+                            console.log("🖱️ Logo clicked! company data:", companyData);
+                            onCompanyClick(companyData);
                         }}
                         className="h-20 w-20 rounded-2xl border border-slate-200 bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-blue-500 hover:shadow-md transition cursor-pointer"
                         title={`${companyName} információi`}
@@ -59,9 +65,15 @@ export default function PositionCard({ position: p, logo, onCompanyClick, onAppl
                     <div className="min-w-0">
                         <div className="text-xs text-slate-500 mb-1">
                             <button
-                                onClick={() => {
-                                    console.log("🖱️ Company name clicked! company data:", p.company);
-                                    onCompanyClick(p.company);
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const companyData = {
+                                        ...p.company,
+                                        id: p.company?.id ?? p.companyId,
+                                        name: companyName
+                                    };
+                                    console.log("🖱️ Company name clicked! company data:", companyData);
+                                    onCompanyClick(companyData);
                                 }}
                                 className="hover:text-blue-600 hover:underline transition cursor-pointer"
                                 title={`${companyName} információi`}
