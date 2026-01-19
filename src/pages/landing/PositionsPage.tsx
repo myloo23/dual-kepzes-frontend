@@ -4,6 +4,7 @@ import CompanyInfoModal from "../../components/CompanyInfoModal";
 import ApplicationModal from "../../components/applications/ApplicationModal";
 import FilterSidebar from "../../components/positions/FilterSidebar";
 import PositionCard from "../../components/positions/PositionCard";
+import PositionsMap from "../../components/positions/PositionsMap";
 import {
   norm,
   lower,
@@ -25,6 +26,7 @@ export default function PositionsPage() {
   const [positions, setPositions] = useState<Position[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   // szűrők
   const [search, setSearch] = useState("");
@@ -96,6 +98,28 @@ export default function PositionsPage() {
       }
     }
   }, [positions]);
+
+  // Get user location for map
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  }, []);
 
   // Show company info from position data or fetch from API by name
   const showCompanyInfo = async (companyData: { id?: string | number; name?: string; logoUrl?: string | null; hqCity?: string } | undefined) => {
@@ -340,6 +364,17 @@ export default function PositionsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
+      {/* Térkép */}
+      {!loading && filtered.length > 0 && (
+        <div className="mb-8">
+          <PositionsMap
+            positions={filtered}
+            userLocation={userLocation}
+            onPositionClick={handleApply}
+          />
+        </div>
+      )}
+
       {/* fejléc */}
       <header className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>

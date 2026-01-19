@@ -97,7 +97,6 @@ export default function Navbar() {
         <nav className="hidden sm:flex gap-6 text-sm text-slate-600">
           <Link to="/" className="hover:text-dkk-blue">Kezdőlap</Link>
           <Link to="/positions" className="hover:text-dkk-blue">Elérhető állások</Link>
-          <Link to="/map" className="hover:text-dkk-blue">Térképes nézet</Link>
           {newsLink && (
             <Link to={newsLink} className="hover:text-dkk-blue">Hírek</Link>
           )}
@@ -133,7 +132,6 @@ export default function Navbar() {
           <div className="max-w-6xl mx-auto px-4 lg:px-8 py-3 flex flex-col gap-2 text-sm text-slate-700">
             <Link to="/" className="py-1" onClick={closeMobileMenu}>Kezdőlap</Link>
             <Link to="/positions" className="py-1" onClick={closeMobileMenu}>Elérhető állások</Link>
-            <Link to="/map" className="py-1" onClick={closeMobileMenu}>Térképes nézet</Link>
             {newsLink && (
               <Link to={newsLink} className="py-1" onClick={closeMobileMenu}>Hírek</Link>
             )}
