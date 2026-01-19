@@ -263,7 +263,7 @@ export type ApplicationCreatePayload = {
 
 // ----------------- ENDPOINT konstansok -----------------
 const PATHS = {
-  companies: "/api/jobs/companies",
+  companies: "/api/companies",
   positions: "/api/jobs/positions",
   students: "/api/students",
   me: "/api/students/me",
