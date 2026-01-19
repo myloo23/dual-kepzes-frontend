@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import LoginCard from "../../components/landing/LoginCard";
@@ -64,15 +64,7 @@ function HomePage() {
     }
   };
 
-  // Ha már be van jelentkezve, átirányítjuk
-  useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (!role) return;
 
-    const userRole = role.trim().toUpperCase();
-    const target = roleToPath[userRole];
-    if (target) navigate(target, { replace: true });
-  }, [navigate]);
 
   const handleViewJobDetails = (positionId: string | number) => {
     // Navigate to positions page and scroll to the specific position
