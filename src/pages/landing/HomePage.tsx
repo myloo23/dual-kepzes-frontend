@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import LoginCard from "../../components/landing/LoginCard";
@@ -25,7 +25,32 @@ function HomePage() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+
+  // Ellenőrizzük, hogy be van-e jelentkezve a felhasználó
+  useEffect(() => {
+    const checkAuthStatus = () => {
+      const token = localStorage.getItem("token") || localStorage.getItem("auth_token");
+      setIsLoggedIn(!!token);
+    };
+
+    // Kezdeti ellenőrzés
+    checkAuthStatus();
+
+    // Figyeljük a localStorage változásokat
+    const handleStorageChange = () => {
+      checkAuthStatus();
+    };
+
+    window.addEventListener("localStorageUpdated", handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("localStorageUpdated", handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,9 +97,34 @@ function HomePage() {
     navigate("/positions");
   };
 
+  // Felhasználó adatainak lekérése
+  const getUserInfo = () => {
+    const userStr = localStorage.getItem("user");
+    const role = localStorage.getItem("role") || "";
+
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        return {
+          name: user.name || user.email || "Felhasználó",
+          role: role,
+          dashboardPath: roleToPath[role.trim().toUpperCase()] || "/"
+        };
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const userInfo = isLoggedIn ? getUserInfo() : null;
+
+  // Szerepkör szép megjelenítése
+  // (Eltávolítva)
+
   return (
     <div className="max-w-6xl mx-auto px-4 lg:px-8">
-      {/* HERO + LOGIN */}
+      {/* HERO + LOGIN/WELCOME */}
       <section
         id="home"
         className="py-10 lg:py-16 grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center"
@@ -111,15 +161,37 @@ function HomePage() {
           </ul>
         </div>
 
-        <LoginCard
-          email={email}
-          password={password}
-          loginError={loginError}
-          loading={loading}
-          onEmailChange={setEmail}
-          onPasswordChange={setPassword}
-          onSubmit={handleLoginSubmit}
-        />
+        {!isLoggedIn ? (
+          <LoginCard
+            email={email}
+            password={password}
+            loginError={loginError}
+            loading={loading}
+            onEmailChange={setEmail}
+            onPasswordChange={setPassword}
+            onSubmit={handleLoginSubmit}
+          />
+        ) : userInfo ? (
+          <div className="bg-slate-50 rounded-2xl shadow-xl p-8 text-slate-900 border border-slate-200 transition-all duration-300 hover:shadow-2xl">
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-3xl font-bold text-dkk-blue border-2 border-slate-200 mx-auto mb-4 shadow-sm">
+                {userInfo.name.charAt(0).toUpperCase()}
+              </div>
+              <h3 className="text-3xl font-bold mb-2 break-words leading-tight text-slate-900">{userInfo.name}</h3>
+              <p className="text-slate-600 font-medium text-lg">Üdvözöljük a rendszerben!</p>
+            </div>
+
+            <button
+              onClick={() => navigate(userInfo.dashboardPath)}
+              className="w-full bg-dkk-blue text-white font-bold py-3.5 px-4 rounded-xl hover:bg-blue-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            >
+              <span>Irányítópult megnyitása</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </div>
+        ) : null}
       </section>
 
       {/* ÁLLÁSAJÁNLATOK SZEKCIÓ */}
