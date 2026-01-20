@@ -86,11 +86,21 @@ export default function ApplicationsList() {
             <div className="grid gap-4">
                 {applications.map((app) => {
                     const statusConfig = STATUS_CONFIG[app.status];
-                    const createdDate = new Date(app.createdAt).toLocaleDateString("hu-HU", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                    });
+                    let createdDate = "Ismeretlen dátum";
+                    try {
+                        if (app.createdAt) {
+                            const date = new Date(app.createdAt);
+                            if (!isNaN(date.getTime())) {
+                                createdDate = date.toLocaleDateString("hu-HU", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                });
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Date parsing error:", e);
+                    }
 
                     return (
                         <div

@@ -129,13 +129,13 @@ export default function AdminUsers() {
             </button>
           </div>
 
-          <div className="overflow-auto rounded-xl border border-slate-200">
-            <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-slate-600">
+          <div className="overflow-y-auto max-h-[600px] rounded-xl border border-slate-200">
+            <table className="min-w-full text-sm relative">
+              <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
                 <tr>
-                  <th className="px-3 py-2 text-left">ID</th>
-                  <th className="px-3 py-2 text-left">Név / Email</th>
-                  <th className="px-3 py-2 text-right">Művelet</th>
+                  <th className="px-3 py-2 text-left bg-slate-50">ID</th>
+                  <th className="px-3 py-2 text-left bg-slate-50">Név / Email</th>
+                  <th className="px-3 py-2 text-right bg-slate-50">Művelet</th>
                 </tr>
               </thead>
               <tbody>
