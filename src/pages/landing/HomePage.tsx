@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import LoginCard from "../../components/landing/LoginCard";
-import HowItWorksSection from "../../components/landing/HowItWorksSection";
 import JobSlider from "../../components/landing/JobSlider";
 import MaterialsGallery from "../../components/landing/MaterialsGallery";
+import ReferencesSlider from "../../components/landing/ReferencesSlider";
+import DualInfoSection from "../../components/landing/DualInfoSection";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import njeLogoImage from "../../assets/logos/nje_logos/nje_logo2.png";
 
@@ -219,16 +220,22 @@ function HomePage() {
         </div>
       </section>
 
-      <HowItWorksSection />
+      <section className="border-t border-dkk-gray/30">
+        <DualInfoSection />
+      </section>
+
+      <section>
+        <ReferencesSlider />
+      </section>
 
       <MaterialsGallery />
 
       {/* KAPCSOLAT */}
-      <section id="contact" className="py-10 border-t border-dkk-gray/30">
+      <section id="contact" className="py-12 border-t border-dkk-gray/30 text-center">
         <h2 className="text-xl lg:text-2xl font-semibold text-slate-900 mb-3">
           Kapcsolat
         </h2>
-        <p className="text-sm text-slate-600 max-w-xl">
+        <p className="text-sm text-slate-600 max-w-xl mx-auto">
           A rendszer egyetemi pilot projekt részeként készül. Kérdés
           esetén forduljon az egyetem duális képzési koordinátorához.
         </p>

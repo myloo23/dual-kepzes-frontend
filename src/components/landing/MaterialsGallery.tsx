@@ -38,20 +38,20 @@ export default function MaterialsGallery() {
 
     return (
         <>
-            <section id="materials" className="py-10 border-t border-dkk-gray/30">
-                <h2 className="text-xl lg:text-2xl font-semibold text-slate-900 mb-3">
+            <section id="materials" className="py-16">
+                <h2 className="text-xl lg:text-2xl font-semibold text-slate-900 mb-3 text-center">
                     Információs anyagok
                 </h2>
-                <p className="text-sm text-slate-600 max-w-xl mb-6">
-                    Tudj meg többet a duális képzési programról! Kattints az anyagokra a nagyobb méretű megtekintéshez.
+                <p className="text-sm text-slate-600 max-w-xl mb-8 text-center mx-auto">
+                    Tudj meg többet a duális képzési programról!
                 </p>
 
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="flex flex-wrap justify-center gap-4">
                     {materials.map((material) => (
                         <button
                             key={material.id}
                             onClick={() => setSelectedMaterial(material)}
-                            className="group relative rounded-xl border border-dkk-gray/30 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 text-left"
+                            className="group relative rounded-lg border border-dkk-gray/30 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 text-left w-40 sm:w-48"
                         >
                             {/* Image preview */}
                             <div className="aspect-[3/4] overflow-hidden bg-slate-50">
@@ -63,19 +63,18 @@ export default function MaterialsGallery() {
                             </div>
 
                             {/* Overlay on hover */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                                <div className="p-4 text-white">
-                                    <p className="text-xs font-medium mb-1">{material.description}</p>
-                                    <p className="text-sm">Kattints a megtekintéshez →</p>
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <div className="p-2 text-white text-center">
+                                    <p className="text-xs font-semibold">Megtekintés</p>
                                 </div>
                             </div>
 
                             {/* Card footer */}
-                            <div className="p-3 border-t border-dkk-gray/20">
-                                <h3 className="text-sm font-semibold text-slate-900 group-hover:text-dkk-blue transition-colors">
+                            <div className="p-2 border-t border-dkk-gray/20">
+                                <h3 className="text-xs font-semibold text-slate-900 group-hover:text-dkk-blue transition-colors truncate">
                                     {material.title}
                                 </h3>
-                                <p className="text-xs text-slate-500 mt-0.5">{material.description}</p>
+                                <p className="text-[10px] text-slate-500 mt-0.5 truncate">{material.description}</p>
                             </div>
                         </button>
                     ))}
