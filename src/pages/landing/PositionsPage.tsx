@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api, type Position } from "../../lib/api";
-import CompanyInfoModal from "../../components/CompanyInfoModal";
 import ApplicationModal from "../../components/applications/ApplicationModal";
 import FilterSidebar from "../../components/positions/FilterSidebar";
 import PositionCard from "../../components/positions/PositionCard";
@@ -23,6 +23,7 @@ type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
 type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
 
 export default function PositionsPage() {
+  const navigate = useNavigate();
   const [positions, setPositions] = useState<Position[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,17 +39,6 @@ export default function PositionsPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("NEWEST");
 
-  // Company modal state
-  const [selectedCompanyInfo, setSelectedCompanyInfo] = useState<{
-    name: string;
-    logoUrl?: string | null;
-    hqCity?: string;
-    hqAddress?: string;
-    description?: string;
-    contactName?: string;
-    contactEmail?: string;
-    website?: string;
-  } | null>(null);
 
   // Application modal state
   const [applicationModal, setApplicationModal] = useState<{
@@ -122,7 +112,7 @@ export default function PositionsPage() {
     );
   }, []);
 
-  // Show company info from position data or fetch from API by name
+  // Navigate to company profile page
   const showCompanyInfo = async (companyData: { id?: string | number; name?: string; logoUrl?: string | null; hqCity?: string } | undefined) => {
     console.log("🏢 showCompanyInfo called with:", companyData);
 
@@ -132,81 +122,32 @@ export default function PositionsPage() {
       return;
     }
 
-    // Ha van company ID, lekérjük ID alapján
-    if (companyData.id) {
-      console.log("📡 Fetching full company details with ID:", companyData.id);
+    let targetId = companyData.id;
+
+    // If no ID, try to find it from the list of companies
+    if (!targetId) {
+      console.log("⚠️ No company ID, trying to fetch by name:", companyData.name);
       try {
-        const fullCompany = await api.companies.get(companyData.id);
-        // console.log("✅ Full company data received:", fullCompany);
+        const allCompanies = await api.companies.list();
+        const matchingCompany = allCompanies.find(
+          (c) => c.name.trim().toLowerCase() === companyData.name!.trim().toLowerCase()
+        );
 
-        // Check for locations array if hqCity/hqAddress are missing
-        const location = (fullCompany as any).locations?.[0];
-        const city = fullCompany.hqCity || location?.city;
-        const address = fullCompany.hqAddress || location?.address;
-
-        setSelectedCompanyInfo({
-          name: fullCompany.name,
-          logoUrl: fullCompany.logoUrl ?? undefined,
-          hqCity: city,
-          hqAddress: address,
-          description: fullCompany.description,
-          contactName: fullCompany.contactName,
-          contactEmail: fullCompany.contactEmail,
-          website: fullCompany.website ?? undefined
-        });
-        return;
+        if (matchingCompany) {
+          targetId = matchingCompany.id;
+        }
       } catch (error) {
-        console.error("❌ Failed to fetch full company data:", error);
+        console.error("❌ Failed to fetch companies list:", error);
       }
     }
 
-    // Nincs ID - próbáljuk név alapján
-    console.log("⚠️ No company ID, trying to fetch by name:", companyData.name);
-    try {
-      const allCompanies = await api.companies.list();
-      console.log("📋 Fetched all companies, searching for:", companyData.name);
-
-      const matchingCompany = allCompanies.find(
-        (c) => c.name.trim().toLowerCase() === companyData.name!.trim().toLowerCase()
-      );
-
-      if (matchingCompany) {
-        console.log("✅ Found matching company ID:", matchingCompany.id);
-
-        // Fetch full details using the ID from the matched company
-        const fullCompany = await api.companies.get(matchingCompany.id);
-        console.log("✅ Full company data fetched via name-lookup:", fullCompany);
-
-        // Check for locations array if hqCity/hqAddress are missing
-        const location = (fullCompany as any).locations?.[0];
-        const city = fullCompany.hqCity || location?.city;
-        const address = fullCompany.hqAddress || location?.address;
-
-        setSelectedCompanyInfo({
-          name: fullCompany.name,
-          logoUrl: fullCompany.logoUrl ?? undefined,
-          hqCity: city,
-          hqAddress: address,
-          description: fullCompany.description,
-          contactName: fullCompany.contactName,
-          contactEmail: fullCompany.contactEmail,
-          website: fullCompany.website ?? undefined
-        });
-        return;
-      } else {
-        console.warn("⚠️ No matching company found by name");
-      }
-    } catch (error) {
-      console.error("❌ Failed to fetch companies list:", error);
+    if (targetId) {
+      navigate(`/companies/${targetId}`);
+    } else {
+      console.warn("⚠️ Could not find company ID for navigation");
+      // Fallback or alert if absolutely necessary, but ideally we should always have an ID
+      alert("Nem található a cég profilja.");
     }
-
-    // Fallback: csak a position-ből elérhető adatokat használjuk
-    console.log("⚠️ Using limited data from position");
-    setSelectedCompanyInfo({
-      name: companyData.name,
-      logoUrl: companyData.logoUrl,
-      hqCity: companyData.hqCity
-    });
   };
 
   // Handle apply button click
@@ -384,7 +325,7 @@ export default function PositionsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
       {/* Térkép */}
-      {!loading && filtered.length > 0 && !selectedCompanyInfo && !applicationModal.isOpen && (
+      {!loading && filtered.length > 0 && !applicationModal.isOpen && (
         <div className="mb-8">
           <PositionsMap
             positions={filtered}
@@ -457,23 +398,7 @@ export default function PositionsPage() {
         </section>
       </div>
 
-      {/* Company Info Modal */}
-      {(() => {
-        console.log("📊 Modal render check:", {
-          selectedCompanyInfo,
-          isOpen: !!selectedCompanyInfo
-        });
-        return (
-          <CompanyInfoModal
-            companyInfo={selectedCompanyInfo}
-            isOpen={!!selectedCompanyInfo}
-            onClose={() => {
-              console.log("🚪 Modal closing");
-              setSelectedCompanyInfo(null);
-            }}
-          />
-        );
-      })()}
+
 
       {/* Application Modal */}
       {applicationModal.position && (

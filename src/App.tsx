@@ -4,6 +4,7 @@ import Footer from "./components/layout/Footer";
 
 import HomePage from "./pages/landing/HomePage";
 import PositionsPage from "./pages/landing/PositionsPage";
+import PublicCompanyProfilePage from "./pages/landing/PublicCompanyProfilePage";
 import StudentRegisterPage from "./pages/auth/StudentRegisterPage";
 import PlaceholderPage from "./components/layout/PlaceholderPage";
 import StudentDashboardPage from "./pages/student/StudentDashboardPage";
@@ -38,6 +39,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/positions" element={<PositionsPage />} />
+          <Route path="/companies/:id" element={<PublicCompanyProfilePage />} />
           <Route path="/register" element={<StudentRegisterPage />} />
 
           <Route path="/admin" element={<AdminLayout />}>

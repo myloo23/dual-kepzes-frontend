@@ -20,9 +20,10 @@ interface PositionCardProps {
     logo: string;
     onCompanyClick: (company: any) => void;
     onApply?: (positionId: string | number) => void;
+    hideCompanyInfo?: boolean;
 }
 
-export default function PositionCard({ position: p, logo, onCompanyClick, onApply }: PositionCardProps) {
+export default function PositionCard({ position: p, logo, onCompanyClick, onApply, hideCompanyInfo }: PositionCardProps) {
     const companyName = norm(p.company?.name || p.company?.companyName) || "Ismeretlen cég";
     const title = norm(p.title) || "Névtelen pozíció";
     const cityText = norm(p.city) || "—";
@@ -45,42 +46,48 @@ export default function PositionCard({ position: p, logo, onCompanyClick, onAppl
             <div className="p-5 flex-grow">
                 {/* felső sor */}
                 <div className="flex items-start gap-4">
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            const companyData = {
-                                ...p.company,
-                                id: p.company?.id ?? p.companyId,
-                                name: companyName
-                            };
-                            console.log("🖱️ Logo clicked! company data:", companyData);
-                            onCompanyClick(companyData);
-                        }}
-                        className="h-20 w-20 rounded-2xl border border-slate-200 bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-blue-500 hover:shadow-md transition cursor-pointer"
-                        title={`${companyName} információi`}
-                    >
-                        <img src={logo} alt={`${companyName} logó`} className="h-full w-full object-contain" />
-                    </button>
+                    {!hideCompanyInfo && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                const companyData = {
+                                    ...p.company,
+                                    id: p.company?.id ?? p.companyId,
+                                    name: companyName
+                                };
+                                console.log("🖱️ Logo clicked! company data:", companyData);
+                                onCompanyClick(companyData);
+                            }}
+                            className="h-20 w-20 rounded-2xl border border-slate-200 bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-blue-500 hover:shadow-md transition cursor-pointer"
+                            title={`${companyName} információi`}
+                        >
+                            <img src={logo} alt={`${companyName} logó`} className="h-full w-full object-contain" />
+                        </button>
+                    )}
 
                     <div className="min-w-0">
                         <div className="text-xs text-slate-500 mb-1">
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    const companyData = {
-                                        ...p.company,
-                                        id: p.company?.id ?? p.companyId,
-                                        name: companyName
-                                    };
-                                    console.log("🖱️ Company name clicked! company data:", companyData);
-                                    onCompanyClick(companyData);
-                                }}
-                                className="hover:text-blue-600 hover:underline transition cursor-pointer"
-                                title={`${companyName} információi`}
-                            >
-                                {companyName}
-                            </button>
-                            {" • "}
+                            {!hideCompanyInfo && (
+                                <>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            const companyData = {
+                                                ...p.company,
+                                                id: p.company?.id ?? p.companyId,
+                                                name: companyName
+                                            };
+                                            console.log("🖱️ Company name clicked! company data:", companyData);
+                                            onCompanyClick(companyData);
+                                        }}
+                                        className="hover:text-blue-600 hover:underline transition cursor-pointer"
+                                        title={`${companyName} információi`}
+                                    >
+                                        {companyName}
+                                    </button>
+                                    {" • "}
+                                </>
+                            )}
                             {cityText}
                         </div>
 
