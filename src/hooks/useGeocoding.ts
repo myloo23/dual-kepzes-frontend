@@ -55,21 +55,25 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
                 const position = positions[i];
                 setProgress({ current: i + 1, total: positions.length });
 
+                // Extract location data, handling both flat and nested structures
+                const city = position.city || (position as any).location?.city;
+                const address = position.address || (position as any).location?.address;
+
                 console.log(`📍 Geocoding position ${i + 1}/${positions.length}:`, {
                     id: position.id,
                     title: position.title,
-                    city: position.city,
-                    address: position.address,
+                    city,
+                    address,
                 });
 
                 // Skip if no city or address
-                if (!position.city || !position.address) {
+                if (!city || !address) {
                     console.warn(`⚠️ Skipping position ${position.id} - missing city or address`);
                     continue;
                 }
 
                 // Check cache first
-                const cacheKeyForPosition = `${position.city}|${position.address}`;
+                const cacheKeyForPosition = `${city}|${address}`;
                 if (cache[cacheKeyForPosition]) {
                     console.log(`💾 Using cached coordinates for: ${cacheKeyForPosition}`);
                     geocoded.push({
@@ -81,9 +85,9 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
                 }
 
                 // Try pre-geocoded city coordinates
-                const cityCoords = getCityCoordinates(position.city);
+                const cityCoords = getCityCoordinates(city);
                 if (cityCoords) {
-                    console.log(`🏙️ Using pre-geocoded coordinates for city: ${position.city}`);
+                    console.log(`🏙️ Using pre-geocoded coordinates for city: ${city}`);
                     geocoded.push({
                         ...position,
                         latitude: cityCoords.lat,
@@ -96,7 +100,7 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
                 console.log(`🌐 No cache or pre-geocoded data found, geocoding from Photon API...`);
 
                 try {
-                    const fullAddress = `${position.address}, ${position.city}, Hungary`;
+                    const fullAddress = `${address}, ${city}, Hungary`;
                     const encodedAddress = encodeURIComponent(fullAddress);
 
                     console.log(`🔍 Trying full address with Photon: ${fullAddress}`);
@@ -110,7 +114,7 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
                         console.error(`❌ Photon API error: ${response.status}`);
                         // Try city-only fallback
                         const cityResponse = await fetch(
-                            `https://photon.komoot.io/api/?q=${encodeURIComponent(`${position.city}, Hungary`)}&limit=1`
+                            `https://photon.komoot.io/api/?q=${encodeURIComponent(`${city}, Hungary`)}&limit=1`
                         );
 
                         if (cityResponse.ok) {
@@ -148,9 +152,9 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
                         cache[cacheKeyForPosition] = coords;
                     } else {
                         // Fallback: try city only
-                        console.log(`🔄 Full address failed, trying city only: ${position.city}`);
+                        console.log(`🔄 Full address failed, trying city only: ${city}`);
                         const cityResponse = await fetch(
-                            `https://photon.komoot.io/api/?q=${encodeURIComponent(`${position.city}, Hungary`)}&limit=1`
+                            `https://photon.komoot.io/api/?q=${encodeURIComponent(`${city}, Hungary`)}&limit=1`
                         );
 
                         if (cityResponse.ok) {
@@ -168,7 +172,7 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
                                 });
                                 cache[cacheKeyForPosition] = coords;
                             } else {
-                                console.warn(`❌ City geocoding also failed for: ${position.city}`);
+                                console.warn(`❌ City geocoding also failed for: ${city}`);
                             }
                         }
                     }

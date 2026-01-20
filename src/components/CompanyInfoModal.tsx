@@ -1,10 +1,12 @@
 import { X } from "lucide-react";
+import LocationMap from "./applications/LocationMap";
 
 type CompanyInfoModalProps = {
     companyInfo: {
         name: string;
         logoUrl?: string | null;
         hqCity?: string;
+        hqAddress?: string;
         description?: string;
         contactName?: string;
         contactEmail?: string;
@@ -57,6 +59,15 @@ export default function CompanyInfoModal({ companyInfo, isOpen, onClose }: Compa
                         </div>
                     )}
 
+                    {/* Térkép */}
+                    {companyInfo.hqCity && (
+                        <LocationMap
+                            companyName={companyInfo.name}
+                            companyCity={companyInfo.hqCity}
+                            companyAddress={companyInfo.hqAddress || ""}
+                        />
+                    )}
+
                     {/* Kapcsolattartó */}
                     {(companyInfo.contactName || companyInfo.contactEmail) && (
                         <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -87,7 +98,9 @@ export default function CompanyInfoModal({ companyInfo, isOpen, onClose }: Compa
                     {companyInfo.hqCity && (
                         <div className="rounded-xl border border-slate-200 bg-white p-4">
                             <h4 className="text-sm font-semibold text-slate-700 mb-2">Székhely</h4>
-                            <div className="text-sm text-slate-900">{companyInfo.hqCity}</div>
+                            <div className="text-sm text-slate-900">
+                                {companyInfo.hqCity}{companyInfo.hqAddress ? `, ${companyInfo.hqAddress}` : ''}
+                            </div>
                         </div>
                     )}
 

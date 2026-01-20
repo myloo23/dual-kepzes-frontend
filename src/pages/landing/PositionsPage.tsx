@@ -43,6 +43,7 @@ export default function PositionsPage() {
     name: string;
     logoUrl?: string | null;
     hqCity?: string;
+    hqAddress?: string;
     description?: string;
     contactName?: string;
     contactEmail?: string;
@@ -138,10 +139,16 @@ export default function PositionsPage() {
         const fullCompany = await api.companies.get(companyData.id);
         // console.log("✅ Full company data received:", fullCompany);
 
+        // Check for locations array if hqCity/hqAddress are missing
+        const location = (fullCompany as any).locations?.[0];
+        const city = fullCompany.hqCity || location?.city;
+        const address = fullCompany.hqAddress || location?.address;
+
         setSelectedCompanyInfo({
           name: fullCompany.name,
           logoUrl: fullCompany.logoUrl ?? undefined,
-          hqCity: fullCompany.hqCity,
+          hqCity: city,
+          hqAddress: address,
           description: fullCompany.description,
           contactName: fullCompany.contactName,
           contactEmail: fullCompany.contactEmail,
@@ -170,10 +177,16 @@ export default function PositionsPage() {
         const fullCompany = await api.companies.get(matchingCompany.id);
         console.log("✅ Full company data fetched via name-lookup:", fullCompany);
 
+        // Check for locations array if hqCity/hqAddress are missing
+        const location = (fullCompany as any).locations?.[0];
+        const city = fullCompany.hqCity || location?.city;
+        const address = fullCompany.hqAddress || location?.address;
+
         setSelectedCompanyInfo({
           name: fullCompany.name,
           logoUrl: fullCompany.logoUrl ?? undefined,
-          hqCity: fullCompany.hqCity,
+          hqCity: city,
+          hqAddress: address,
           description: fullCompany.description,
           contactName: fullCompany.contactName,
           contactEmail: fullCompany.contactEmail,
@@ -470,8 +483,8 @@ export default function PositionsPage() {
             id: String(applicationModal.position.id),
             title: applicationModal.position.title || "Pozíció",
             company: applicationModal.position.company,
-            city: applicationModal.position.city,
-            address: applicationModal.position.address,
+            city: applicationModal.position.city || (applicationModal.position as any).location?.city,
+            address: applicationModal.position.address || (applicationModal.position as any).location?.address,
           }}
           onClose={() => setApplicationModal({ isOpen: false, position: null })}
           onSubmit={handleSubmitApplication}
