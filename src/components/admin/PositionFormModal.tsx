@@ -99,9 +99,14 @@ export default function PositionFormModal({
 
         setLoading(true);
         try {
-            const payload: Omit<Position, "id"> = {
+            const payload: any = {
                 ...formData,
                 deadline: formatDeadlineForApi(formData.deadline),
+                location: {
+                    zipCode: formData.zipCode,
+                    city: formData.city,
+                    address: formData.address
+                },
                 tags: formData.tags
                     .map((tag) => ({
                         name: tag.name.trim(),
@@ -109,6 +114,10 @@ export default function PositionFormModal({
                     }))
                     .filter((tag) => tag.name),
             };
+            // Remove flat address fields to clean up payload
+            delete payload.zipCode;
+            delete payload.city;
+            delete payload.address;
             await onSave(payload);
             onClose();
         } catch (e: any) {

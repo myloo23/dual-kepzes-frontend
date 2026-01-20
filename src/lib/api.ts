@@ -217,23 +217,26 @@ export type StatsResponse = {
   usersByRole: Array<{ role: string; count: number }>;
 };
 
-export type NewsAudience = "students" | "all";
+export type NewsTargetGroup = "STUDENT" | "ALL";
 
 export type NewsItem = {
   id: Id;
   title: string;
-  body: string;
-  tags: string[]; // pl. ["fontos", "félév záró értékelés"]
-  audience: NewsAudience;
+  content: string; // Changed from body
+  tags: string[];
+  targetGroup: NewsTargetGroup; // Changed from audience
   important?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
 
-export type NewsCreatePayload = Omit<
-  NewsItem,
-  "id" | "createdAt" | "updatedAt"
->;
+export type NewsCreatePayload = {
+  title: string;
+  content: string;
+  tags: string[];
+  targetGroup: NewsTargetGroup;
+  important?: boolean;
+};
 
 // Applications
 export type ApplicationStatus = "SUBMITTED" | "ACCEPTED" | "REJECTED" | "NO_RESPONSE";
@@ -266,7 +269,11 @@ const PATHS = {
   companies: "/api/companies",
   positions: "/api/jobs/positions",
   students: "/api/students",
-  me: "/api/students/me",
+  me: "/api/students/me", // Default for students, others should use specific endpoints
+  systemAdmins: "/api/system-admins",
+  companyAdmins: "/api/company-admins",
+  universityUsers: "/api/university-users",
+  employees: "/api/employees",
   stats: "/api/stats",
   news: "/api/news"
 };
@@ -354,19 +361,26 @@ export const api = {
 
   // news
   news: {
-    list: (audience?: NewsAudience) => {
-      const q = audience ? `?audience=${encodeURIComponent(audience)}` : "";
-      return apiGet<NewsItem[]>(`${PATHS.news}${q}`);
-    },
+    // Public
+    list: () => apiGet<NewsItem[]>(PATHS.news),
     get: (id: Id) => apiGet<NewsItem>(`${PATHS.news}/${id}`),
-    create: (payload: NewsCreatePayload) => apiPost<NewsItem>(PATHS.news, payload),
 
-    // PATCH ajánlott (ha nálatok PUT van, cseréld apiPatch -> apiPut)
-    update: (id: Id, body: Partial<NewsCreatePayload>) =>
-      apiPatch<NewsItem>(`${PATHS.news}/${id}`, body),
+    // Admin
+    admin: {
+      list: () => apiGet<NewsItem[]>(PATHS.news),
+      listArchived: () => apiGet<NewsItem[]>(`${PATHS.news}/archived`),
+      get: (id: Id) => apiGet<NewsItem>(`${PATHS.news}/admin/${id}`),
+      create: (payload: NewsCreatePayload) => apiPost<NewsItem>(`${PATHS.news}/admin`, payload),
+      update: (id: Id, payload: Partial<NewsCreatePayload>) => apiPatch<NewsItem>(`${PATHS.news}/admin/${id}`, payload),
+      archive: (id: Id) => apiPatch<void>(`${PATHS.news}/admin/${id}/archive`, {}),
+      unarchive: (id: Id) => apiPatch<void>(`${PATHS.news}/admin/${id}/unarchive`, {}),
+      remove: (id: Id) => apiDelete<void>(`${PATHS.news}/admin/${id}`),
+    },
 
-    remove: (id: Id) =>
-      apiDelete<{ message?: string }>(`${PATHS.news}/${id}`),
+    // Legacy support for current AdminNews.tsx (will be updated shortly)
+    create: (payload: NewsCreatePayload) => apiPost<NewsItem>(`${PATHS.news}/admin`, payload),
+    update: (id: Id, payload: Partial<NewsCreatePayload>) => apiPatch<NewsItem>(`${PATHS.news}/admin/${id}`, payload),
+    remove: (id: Id) => apiDelete<void>(`${PATHS.news}/admin/${id}`),
   },
 
   // applications
@@ -377,4 +391,36 @@ export const api = {
     list: () =>
       apiGet<Application[]>("/api/applications"),
   },
+
+  // System Admins
+  systemAdmins: {
+    me: {
+      get: () => apiGet<Record<string, any>>(`${PATHS.systemAdmins}/me`),
+      update: (body: any) => apiPatch<Record<string, any>>(`${PATHS.systemAdmins}/me`, body),
+    }
+  },
+
+  // Company Admins
+  companyAdmins: {
+    me: {
+      get: () => apiGet<Record<string, any>>(`${PATHS.companyAdmins}/me`),
+      update: (body: any) => apiPatch<Record<string, any>>(`${PATHS.companyAdmins}/me`, body),
+    }
+  },
+
+  // University Users
+  universityUsers: {
+    me: {
+      get: () => apiGet<Record<string, any>>(`${PATHS.universityUsers}/me`),
+      update: (body: any) => apiPatch<Record<string, any>>(`${PATHS.universityUsers}/me`, body),
+    }
+  },
+
+  // Employees
+  employees: {
+    me: {
+      get: () => apiGet<Record<string, any>>(`${PATHS.employees}/me`),
+      update: (body: any) => apiPut<Record<string, any>>(`${PATHS.employees}/me`, body),
+    }
+  }
 };

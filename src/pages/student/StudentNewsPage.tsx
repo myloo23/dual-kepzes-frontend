@@ -16,7 +16,7 @@ export default function StudentNewsPage() {
     setLoading(true);
     setErr(null);
     try {
-      const list = await api.news.list("students");
+      const list = await api.news.list();
       setItems(Array.isArray(list) ? list : []);
     } catch (e: any) {
       setErr(e?.message || "Nem sikerült betölteni a híreket.");
@@ -43,7 +43,7 @@ export default function StudentNewsPage() {
       if (tag !== "ALL" && !(n.tags || []).includes(tag)) return false;
 
       if (!q) return true;
-      const hay = `${n.title} ${n.body} ${(n.tags || []).join(" ")}`.toLowerCase();
+      const hay = `${n.title} ${n.content} ${(n.tags || []).join(" ")}`.toLowerCase();
       return hay.includes(q);
     });
   }, [items, search, tag, onlyImportant]);

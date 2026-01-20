@@ -54,7 +54,7 @@ export default function NewsCard({ news }: NewsCardProps) {
             )}
 
             <p className="mt-3 whitespace-pre-line text-sm text-slate-700">
-                {news.body}
+                {news.content}
             </p>
         </article>
     );

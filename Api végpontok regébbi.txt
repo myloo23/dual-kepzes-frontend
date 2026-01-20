@@ -1,0 +1,949 @@
+API Végpontok Dokumentáció
+Ez a dokumentum tartalmazza az összes elérhető backend API végpontot részletes leírással, request/response formátumokkal és példákkal.
+
+Autentikáció
+A legtöbb végpont JWT (JSON Web Token) alapú autentikációt használ. A tokent a 
+login
+ végponton keresztül szerezheted meg, majd minden védett kéréshez a Authorization headerben kell elküldeni:
+
+Authorization: Bearer <your_jwt_token>
+1. Autentikációs Végpontok (/api/auth)
+1.1 Regisztráció
+Endpoint: POST /api/auth/register
+
+Leírás: Új felhasználó regisztrálása. A szerepkör alapján különböző mezők kötelezőek.
+
+Autentikáció: Nem szükséges
+
+Request Body (Hallgató):
+
+{
+  "role": "STUDENT",
+  "email": "student@example.com",
+  "password": "SecurePass123!",
+  "fullName": "Nagy János",
+  "phoneNumber": "+36301234567",
+  "mothersName": "Kiss Mária",
+  "dateOfBirth": "2000-05-15",
+  "country": "Magyarország",
+  "zipCode": 1234,
+  "city": "Budapest",
+  "streetAddress": "Fő utca 1",
+  "highSchool": "Petőfi Gimnázium",
+  "neptunCode": "ABC123",
+  "currentMajor": "Informatika",
+  "studyMode": "NAPPALI",
+  "graduationYear": 2018,
+  "hasLanguageCert": true
+}
+Request Body (Cég Admin):
+
+{
+  "role": "COMPANY_ADMIN",
+  "email": "admin@company.com",
+  "password": "SecurePass123!",
+  "fullName": "Kovács Péter",
+  "phoneNumber": "+36301234567",
+  "companyId": "uuid-of-company",
+  "jobTitle": "HR Manager"
+}
+Request Body (Mentor):
+
+{
+  "role": "MENTOR",
+  "email": "mentor@company.com",
+  "password": "SecurePass123!",
+  "fullName": "Szabó Anna",
+  "phoneNumber": "+36301234567",
+  "companyId": "uuid-of-company",
+  "jobTitle": "Senior Developer"
+}
+Request Body (Egyetemi Felhasználó):
+
+{
+  "role": "UNIVERSITY_USER",
+  "email": "uni@university.edu",
+  "password": "SecurePass123!",
+  "fullName": "Dr. Tóth Béla",
+  "phoneNumber": "+36301234567"
+}
+Request Body (Rendszer Admin):
+
+{
+  "role": "SYSTEM_ADMIN",
+  "email": "admin@system.com",
+  "password": "SecurePass123!",
+  "fullName": "Admin User",
+  "phoneNumber": "+36301234567"
+}
+Response (201 Created):
+
+{
+  "message": "Sikeres regisztráció",
+  "userId": "uuid-of-new-user",
+  "role": "STUDENT"
+}
+Validációs Szabályok:
+
+Email: Érvényes email formátum
+Jelszó: Min. 12 karakter, kis- és nagybetű, szám, speciális karakter
+Teljes név: Legalább egy szóköz (vezetéknév + keresztnév)
+Telefonszám: 7-15 számjegy, opcionális + előtag
+Születési dátum: Min. 18 éves
+Neptun kód: Pontosan 6 karakter
+1.2 Bejelentkezés
+Endpoint: POST /api/auth/login
+
+Leírás: Bejelentkezés és JWT token megszerzése
+
+Autentikáció: Nem szükséges
+
+Request Body:
+
+{
+  "email": "student@example.com",
+  "password": "SecurePass123!"
+}
+Response (200 OK):
+
+{
+  "message": "Sikeres bejelentkezés",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "user-uuid",
+    "email": "student@example.com",
+    "role": "STUDENT"
+  }
+}
+Hibák:
+
+400: Hibás email vagy jelszó
+500: Szerver hiba
+2. Hallgatói Végpontok (/api/students)
+2.1 Összes Hallgató Listázása
+Endpoint: GET /api/students
+
+Leírás: Összes aktív hallgató lekérése
+
+Autentikáció: Szükséges (JWT token)
+
+Response (200 OK):
+
+[
+  {
+    "id": "student-uuid",
+    "fullName": "Nagy János",
+    "email": "student@example.com",
+    "phoneNumber": "+36301234567",
+    "profile": {
+      "currentMajor": "Informatika",
+      "city": "Budapest",
+      "neptunCode": "ABC123",
+      "studyMode": "NAPPALI"
+    }
+  }
+]
+2.2 Saját Profil Lekérése
+Endpoint: GET /api/students/me
+
+Leírás: A bejelentkezett hallgató saját profiljának lekérése
+
+Autentikáció: Szükséges (STUDENT szerepkör)
+
+Response (200 OK):
+
+{
+  "id": "student-uuid",
+  "email": "student@example.com",
+  "fullName": "Nagy János",
+  "phoneNumber": "+36301234567",
+  "role": "STUDENT",
+  "profile": {
+    "mothersName": "Kiss Mária",
+    "birthDate": "2000-05-15T00:00:00.000Z",
+    "country": "Magyarország",
+    "zipCode": "1234",
+    "city": "Budapest",
+    "streetAddress": "Fő utca 1",
+    "highSchool": "Petőfi Gimnázium",
+    "graduationYear": 2018,
+    "neptunCode": "ABC123",
+    "currentMajor": "Informatika",
+    "studyMode": "NAPPALI",
+    "hasLanguageCert": true
+  }
+}
+2.3 Saját Profil Frissítése
+Endpoint: PUT /api/students/me
+
+Leírás: A bejelentkezett hallgató saját profiljának módosítása
+
+Autentikáció: Szükséges (STUDENT szerepkör)
+
+Request Body (minden mező opcionális):
+
+{
+  "fullName": "Nagy János Péter",
+  "phoneNumber": "+36309876543",
+  "currentMajor": "Szoftverfejlesztés",
+  "city": "Debrecen",
+  "neptunCode": "XYZ789",
+  "zipCode": "4032",
+  "streetAddress": "Kossuth utca 10"
+}
+Response (200 OK):
+
+{
+  "message": "Profil sikeresen frissítve",
+  "student": { /* frissített hallgató adatok */ }
+}
+2.4 Saját Profil Törlése
+Endpoint: DELETE /api/students/me
+
+Leírás: Soft delete - a hallgató fiókja inaktívvá válik
+
+Autentikáció: Szükséges (STUDENT szerepkör)
+
+Response (200 OK):
+
+{
+  "message": "Profil sikeresen törölve"
+}
+2.5 Hallgató Lekérése ID Alapján
+Endpoint: GET /api/students/:id
+
+Leírás: Adott hallgató adatainak lekérése
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+{
+  "id": "student-uuid",
+  "fullName": "Nagy János",
+  "email": "student@example.com",
+  "profile": { /* profil adatok */ }
+}
+2.6 Hallgató Frissítése ID Alapján
+Endpoint: PUT /api/students/:id
+
+Leírás: Adott hallgató adatainak módosítása (admin funkció)
+
+Autentikáció: Szükséges
+
+Request Body: Ugyanaz, mint a 2.3-nál
+
+2.7 Hallgató Törlése ID Alapján
+Endpoint: DELETE /api/students/:id
+
+Leírás: Adott hallgató törlése (admin funkció)
+
+Autentikáció: Szükséges
+
+3. Állás/Pozíció Végpontok (/api/jobs)
+3.1 Összes Cég Listázása
+Endpoint: GET /api/jobs/companies
+
+Leírás: Összes cég lekérése pozíciók számával
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+[
+  {
+    "id": "company-uuid",
+    "name": "Tech Kft.",
+    "taxId": "12345678-1-23",
+    "hqCountry": "Magyarország",
+    "hqZipCode": "1234",
+    "hqCity": "Budapest",
+    "hqAddress": "Váci út 100",
+    "contactName": "Kovács Péter",
+    "contactEmail": "contact@tech.com",
+    "website": "https://tech.com",
+    "logoUrl": "https://tech.com/logo.png",
+    "isActive": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "_count": {
+      "positions": 5
+    }
+  }
+]
+3.2 Cég Lekérése ID Alapján
+Endpoint: GET /api/jobs/companies/:id
+
+Leírás: Adott cég részletes adatai pozíciókkal és munkavállalókkal
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+{
+  "id": "company-uuid",
+  "name": "Tech Kft.",
+  "taxId": "12345678-1-23",
+  "hqCountry": "Magyarország",
+  "hqZipCode": "1234",
+  "hqCity": "Budapest",
+  "hqAddress": "Váci út 100",
+  "contactName": "Kovács Péter",
+  "contactEmail": "contact@tech.com",
+  "website": "https://tech.com",
+  "logoUrl": "https://tech.com/logo.png",
+  "isActive": true,
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "positions": [
+    {
+      "id": "position-uuid",
+      "title": "Junior Developer",
+      "description": "Keresünk junior fejlesztőt...",
+      "zipCode": "1234",
+      "city": "Budapest",
+      "address": "Váci út 100",
+      "deadline": "2024-12-31T00:00:00.000Z",
+      "isActive": true,
+      "tags": [
+        { "name": "Javascript", "category": "Technology" },
+        { "name": "React", "category": "Technology" }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "id": "employee-uuid",
+      "jobTitle": "HR Manager",
+      "user": {
+        "fullName": "Kovács Péter",
+        "email": "peter@tech.com"
+      }
+    }
+  ]
+}
+3.3 Új Cég Létrehozása
+Endpoint: POST /api/jobs/companies
+
+Leírás: Új cég regisztrálása a rendszerbe
+
+Autentikáció: Szükséges
+
+Request Body:
+
+{
+  "name": "Tech Kft.",
+  "taxId": "12345678-1-23",
+  "hqCountry": "Magyarország",
+  "hqZipCode": 1234,
+  "hqCity": "Budapest",
+  "hqAddress": "Váci út 100",
+  "contactName": "Kovács Péter",
+  "contactEmail": "contact@tech.com",
+  "description": "Szoftverfejlesztő cég",
+  "logoUrl": "https://tech.com/logo.png",
+  "website": "https://tech.com"
+}
+Response (201 Created):
+
+{
+  "message": "Sikeres cég létrehozás",
+  "company": { /* cég adatok */ }
+}
+3.4 Cég Frissítése
+Endpoint: PATCH /api/jobs/companies/:companyId
+
+Leírás: Cég adatainak módosítása
+
+Autentikáció: Szükséges
+
+Request Body (minden mező opcionális):
+
+{
+  "name": "Tech Solutions Kft.",
+  "website": "https://techsolutions.com",
+  "description": "Frissített leírás"
+}
+Response (200 OK):
+
+{
+  "message": "Cég adatai frissítve",
+  "company": { /* frissített cég adatok */ }
+}
+3.5 Cég Törlése
+Endpoint: DELETE /api/jobs/companies/:id
+
+Leírás: Cég soft delete - a cég, pozíciói és munkavállalói inaktívvá válnak
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+{
+  "message": "Cég és kapcsolódó pozíciói törölve."
+}
+3.6 Összes Pozíció Listázása
+Endpoint: GET /api/jobs/positions
+
+Leírás: Összes aktív pozíció lekérése (nyilvános, nincs autentikáció)
+
+Autentikáció: Nem szükséges
+
+Response (200 OK):
+
+[
+  {
+    "id": "position-uuid",
+    "title": "Junior Developer",
+    "description": "Keresünk junior fejlesztőt React és Node.js ismeretekkel...",
+    "zipCode": "1234",
+    "city": "Budapest",
+    "address": "Váci út 100",
+    "deadline": "2024-12-31T00:00:00.000Z",
+    "isActive": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z",
+    "tags": [
+      { "name": "Javascript", "category": "Technology" },
+      { "name": "React", "category": "Technology" },
+      { "name": "Node.js", "category": "Technology" }
+    ],
+    "company": {
+      "name": "Tech Kft.",
+      "logoUrl": "https://tech.com/logo.png",
+      "hqCity": "Budapest"
+    }
+  }
+]
+3.7 Pozíció Lekérése ID Alapján
+Endpoint: GET /api/jobs/positions/:id
+
+Leírás: Adott pozíció részletes adatai (nyilvános)
+
+Autentikáció: Nem szükséges
+
+Response (200 OK):
+
+{
+  "id": "position-uuid",
+  "title": "Junior Developer",
+  "description": "Részletes leírás...",
+  "zipCode": "1234",
+  "city": "Budapest",
+  "address": "Váci út 100",
+  "deadline": "2024-12-31T00:00:00.000Z",
+  "isActive": true,
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-15T00:00:00.000Z",
+  "tags": [
+    { "name": "Javascript", "category": "Technology" }
+  ],
+  "company": {
+    "id": "company-uuid",
+    "name": "Tech Kft.",
+    "taxId": "12345678-1-23",
+    "hqCountry": "Magyarország",
+    "hqZipCode": "1234",
+    "hqCity": "Budapest",
+    "hqAddress": "Váci út 100",
+    "contactName": "Kovács Péter",
+    "contactEmail": "contact@tech.com",
+    "website": "https://tech.com",
+    "logoUrl": "https://tech.com/logo.png",
+    "isActive": true,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+3.8 Új Pozíció Létrehozása
+Endpoint: POST /api/jobs/positions
+
+Leírás: Új álláshirdetés létrehozása
+
+Autentikáció: Szükséges
+
+Request Body:
+
+{
+  "companyId": "company-uuid",
+  "title": "Junior Developer",
+  "description": "Keresünk junior fejlesztőt...",
+  "zipCode": "1234",
+  "city": "Budapest",
+  "isDual": true,
+  "address": "Váci út 100",
+  "deadline": "2024-12-31",
+  "tags": [
+    { "name": "javascript", "category": "Technology" },
+    { "name": "react", "category": "Technology" }
+  ]
+}
+Megjegyzés: A tags tömb elemei automatikusan normalizálódnak (első betű nagybetű, többi kisbetű).
+
+Response (201 Created):
+
+{
+  "message": "Pozíció sikeresen meghirdetve",
+  "position": { /* pozíció adatok */ }
+}
+3.9 Pozíció Frissítése
+Endpoint: PATCH /api/jobs/positions/:id
+
+Leírás: Pozíció adatainak módosítása
+
+Autentikáció: Szükséges
+
+Request Body (minden mező opcionális):
+
+{
+  "title": "Mid-level Developer",
+  "description": "Frissített leírás",
+  "deadline": "2025-01-31",
+  "tagNames": ["Javascript", "React", "TypeScript"]
+}
+Response (200 OK):
+
+{
+  "message": "Pozíció adatai sikeresen frissítve",
+  "position": { /* frissített pozíció adatok */ }
+}
+3.10 Pozíció Törlése
+Endpoint: DELETE /api/jobs/positions/:id
+
+Leírás: Pozíció soft delete
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+{
+  "message": "Pozíció sikeresen törölve."
+}
+3.11 Pozíció Deaktiválása
+Endpoint: PATCH /api/jobs/positions/:id/deactivate
+
+Leírás: Pozíció inaktiválása (isActive=false, de nem törlés)
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+{
+  "message": "Pozíció sikeresen deaktiválva.",
+  "position": { /* deaktivált pozíció adatok */ }
+}
+4. Cég Végpontok (/api/companies)
+4.1 Inaktív Cégek Listázása
+Endpoint: GET /api/companies/inactive
+
+Leírás: Inaktív, de nem törölt cégek lekérése
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+[
+  {
+    "id": "company-uuid",
+    "name": "Inaktív Cég Kft.",
+    "isActive": false,
+    "deletedAt": null
+  }
+]
+4.2 Cég Újraaktiválása
+Endpoint: PATCH /api/companies/:id/reactivate
+
+Leírás: Inaktív cég újraaktiválása
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+{
+  "message": "Cég sikeresen újraaktiválva"
+}
+4.3 Cég Deaktiválása
+Endpoint: PATCH /api/companies/:id/deactivate
+
+Leírás: Cég deaktiválása (isActive=false)
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+{
+  "message": "Cég sikeresen deaktiválva"
+}
+5. Felhasználó Végpontok (/api/users)
+5.1 Inaktív Felhasználók Listázása
+Endpoint: GET /api/users/inactive
+
+Leírás: Inaktív, de nem törölt felhasználók lekérése
+
+Autentikáció: Szükséges
+
+5.2 Felhasználó Újraaktiválása
+Endpoint: PATCH /api/users/:id/reactivate
+
+Leírás: Inaktív felhasználó újraaktiválása
+
+Autentikáció: Szükséges
+
+5.3 Felhasználó Deaktiválása
+Endpoint: PATCH /api/users/:id/deactivate
+
+Leírás: Felhasználó deaktiválása
+
+Autentikáció: Szükséges
+
+6. Munkavállalói Végpontok (/api/employees)
+6.1 Saját Munkavállaló Profil Lekérése
+Endpoint: GET /api/employees/me
+
+Leírás: Bejelentkezett munkavállaló saját profiljának lekérése
+
+Autentikáció: Szükséges
+
+6.2 Saját Munkavállaló Profil Frissítése
+Endpoint: PUT /api/employees/me
+
+Leírás: Bejelentkezett munkavállaló profiljának módosítása
+
+Autentikáció: Szükséges
+
+Request Body:
+
+{
+  "jobTitle": "Senior Developer",
+  "fullName": "Szabó Anna Mária",
+  "phoneNumber": "+36309876543"
+}
+6.3 Saját Munkavállaló Profil Törlése
+Endpoint: DELETE /api/employees/me
+
+Leírás: Bejelentkezett munkavállaló profiljának törlése
+
+Autentikáció: Szükséges
+
+6.4 Cég Munkavállalóinak Listázása
+Endpoint: GET /api/employees
+
+Leírás: A bejelentkezett felhasználó cégéhez tartozó munkavállalók
+
+Autentikáció: Szükséges
+
+6.5 Munkavállaló Lekérése ID Alapján
+Endpoint: GET /api/employees/:id
+
+Leírás: Adott munkavállaló adatainak lekérése
+
+Autentikáció: Szükséges
+
+6.6 Munkavállaló Frissítése
+Endpoint: PUT /api/employees/:id
+
+Leírás: Adott munkavállaló adatainak módosítása
+
+Autentikáció: Szükséges
+
+6.7 Munkavállaló Törlése
+Endpoint: DELETE /api/employees/:id
+
+Leírás: Adott munkavállaló törlése
+
+Autentikáció: Szükséges
+
+7. Rendszer Admin Végpontok (/api/system-admins)
+7.1 Saját Admin Profil Lekérése
+Endpoint: GET /api/system-admins/me
+
+Autentikáció: Szükséges (SYSTEM_ADMIN)
+
+7.2 Saját Admin Profil Frissítése
+Endpoint: PATCH /api/system-admins/me
+
+Autentikáció: Szükséges (SYSTEM_ADMIN)
+
+7.3 Saját Admin Profil Törlése
+Endpoint: DELETE /api/system-admins/me
+
+Autentikáció: Szükséges (SYSTEM_ADMIN)
+
+7.4 Összes Rendszer Admin Listázása
+Endpoint: GET /api/system-admins
+
+Autentikáció: Szükséges
+
+7.5 Rendszer Admin Lekérése ID Alapján
+Endpoint: GET /api/system-admins/:id
+
+Autentikáció: Szükséges
+
+7.6 Rendszer Admin Frissítése
+Endpoint: PATCH /api/system-admins/:id
+
+Autentikáció: Szükséges
+
+7.7 Rendszer Admin Törlése
+Endpoint: DELETE /api/system-admins/:id
+
+Autentikáció: Szükséges
+
+8. Cég Admin Végpontok (/api/company-admins)
+8.1 Saját Cég Admin Profil Lekérése
+Endpoint: GET /api/company-admins/me
+
+Autentikáció: Szükséges (COMPANY_ADMIN)
+
+8.2 Saját Cég Admin Profil Frissítése
+Endpoint: PATCH /api/company-admins/me
+
+Autentikáció: Szükséges (COMPANY_ADMIN)
+
+8.3 Saját Cég Admin Profil Törlése
+Endpoint: DELETE /api/company-admins/me
+
+Autentikáció: Szükséges (COMPANY_ADMIN)
+
+8.4 Összes Cég Admin Listázása
+Endpoint: GET /api/company-admins
+
+Autentikáció: Szükséges
+
+8.5 Cég Admin Lekérése ID Alapján
+Endpoint: GET /api/company-admins/:id
+
+Autentikáció: Szükséges
+
+8.6 Cég Admin Frissítése
+Endpoint: PATCH /api/company-admins/:id
+
+Autentikáció: Szükséges
+
+8.7 Cég Admin Törlése
+Endpoint: DELETE /api/company-admins/:id
+
+Autentikáció: Szükséges
+
+9. Egyetemi Felhasználó Végpontok (/api/university-users)
+9.1 Saját Egyetemi Profil Lekérése
+Endpoint: GET /api/university-users/me
+
+Autentikáció: Szükséges (UNIVERSITY_USER)
+
+9.2 Saját Egyetemi Profil Frissítése
+Endpoint: PATCH /api/university-users/me
+
+Autentikáció: Szükséges (UNIVERSITY_USER)
+
+9.3 Saját Egyetemi Profil Törlése
+Endpoint: DELETE /api/university-users/me
+
+Autentikáció: Szükséges (UNIVERSITY_USER)
+
+9.4 Összes Egyetemi Felhasználó Listázása
+Endpoint: GET /api/university-users
+
+Autentikáció: Szükséges
+
+9.5 Egyetemi Felhasználó Lekérése ID Alapján
+Endpoint: GET /api/university-users/:id
+
+Autentikáció: Szükséges
+
+9.6 Egyetemi Felhasználó Frissítése
+Endpoint: PATCH /api/university-users/:id
+
+Autentikáció: Szükséges
+
+9.7 Egyetemi Felhasználó Törlése
+Endpoint: DELETE /api/university-users/:id
+
+Autentikáció: Szükséges
+
+10. Jelentkezési Végpontok (/api/applications)
+10.1 Jelentkezés Pozícióra
+Endpoint: POST /api/applications
+
+Leírás: Hallgató jelentkezése egy pozícióra
+
+Autentikáció: Szükséges (STUDENT)
+
+Request Body:
+
+{
+  "positionId": "position-uuid",
+  "studentNote": "Motivációs levél vagy megjegyzés (max 500 karakter)"
+}
+Response (201 Created):
+
+{
+  "message": "Sikeres jelentkezés",
+  "application": {
+    "id": "application-uuid",
+    "positionId": "position-uuid",
+    "studentId": "student-uuid",
+    "status": "SUBMITTED",
+    "studentNote": "...",
+    "createdAt": "2024-01-15T10:00:00.000Z"
+  }
+}
+10.2 Saját Jelentkezések Lekérése
+Endpoint: GET /api/applications
+
+Leírás: A bejelentkezett hallgató összes jelentkezésének lekérése
+
+Autentikáció: Szükséges (STUDENT)
+
+Response (200 OK):
+
+[
+  {
+    "id": "application-uuid",
+    "status": "SUBMITTED",
+    "studentNote": "Motivációs levél...",
+    "companyNote": null,
+    "createdAt": "2024-01-15T10:00:00.000Z",
+    "position": {
+      "id": "position-uuid",
+      "title": "Junior Developer",
+      "company": {
+        "name": "Tech Kft.",
+        "logoUrl": "https://tech.com/logo.png"
+      }
+    }
+  }
+]
+Státuszok:
+
+SUBMITTED: Beküldve
+ACCEPTED: Elfogadva
+REJECTED: Elutasítva
+NO_RESPONSE: Nincs válasz
+11. Statisztikai Végpontok (/api/stats)
+11.1 Rendszer Statisztikák
+Endpoint: GET /api/stats
+
+Leírás: Általános rendszer statisztikák lekérése
+
+Autentikáció: Szükséges
+
+Response (200 OK):
+
+{
+  "totalStudents": 150,
+  "totalCompanies": 25,
+  "totalPositions": 45,
+  "activePositions": 38,
+  "totalApplications": 320,
+  "applicationsByStatus": {
+    "SUBMITTED": 120,
+    "ACCEPTED": 80,
+    "REJECTED": 100,
+    "NO_RESPONSE": 20
+  }
+}
+Hibakezelés
+Minden végpont egységes hibakezelést használ. A hibák JSON formátumban térnek vissza:
+
+Példa hibára (400 Bad Request):
+
+{
+  "message": "Érvénytelen adatok",
+  "errors": [
+    {
+      "field": "email",
+      "message": "Érvénytelen email cím formátum"
+    }
+  ]
+}
+Gyakori HTTP státuszkódok:
+
+200 OK: Sikeres kérés
+201 Created: Sikeres létrehozás
+400 Bad Request: Érvénytelen adatok
+401 Unauthorized: Hiányzó vagy érvénytelen token
+403 Forbidden: Nincs jogosultság
+404 Not Found: Az erőforrás nem található
+500 Internal Server Error: Szerver hiba
+Rate Limiting
+Az API rate limiting védelmet használ:
+
+Auth végpontok (/api/auth/*): 5 kérés / 15 perc / IP
+Egyéb API végpontok: 100 kérés / 10 perc / IP
+Ha túlléped a limitet, 429 Too Many Requests választ kapsz.
+
+Példa Fetch Kérések (JavaScript)
+Bejelentkezés
+const login = async (email, password) => {
+  const response = await fetch('http://localhost:3000/api/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email, password })
+  });
+  
+  const data = await response.json();
+  
+  if (response.ok) {
+    // Token mentése
+    localStorage.setItem('token', data.token);
+    return data;
+  } else {
+    throw new Error(data.message);
+  }
+};
+Pozíciók Lekérése (Autentikáció Nélkül)
+const getPositions = async () => {
+  const response = await fetch('http://localhost:3000/api/jobs/positions');
+  return await response.json();
+};
+Pozíciók Lekérése (Autentikációval)
+const getPositionsAuth = async () => {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch('http://localhost:3000/api/jobs/positions', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  return await response.json();
+};
+Saját Profil Frissítése
+const updateProfile = async (profileData) => {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch('http://localhost:3000/api/students/me', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(profileData)
+  });
+  
+  return await response.json();
+};
+Jelentkezés Pozícióra
+const applyToPosition = async (positionId, note) => {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch('http://localhost:3000/api/applications', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      positionId,
+      studentNote: note
+    })
+  });
+  
+  return await response.json();
+};
+Megjegyzések
+UUID formátum: Minden ID UUID v4 formátumú (pl. 550e8400-e29b-41d4-a716-446655440000)
+Dátumok: ISO 8601 formátumban (pl. 2024-01-15T10:00:00.000Z)
+Soft Delete: A törlések nem fizikai törlések, hanem deletedAt timestamp beállítása és isActive: false
+Normalizáció: A tag nevek automatikusan normalizálódnak (első betű nagybetű, többi kisbetű)
+Opcionális mezők: A PATCH és PUT végpontoknál az opcionális mezők elhagyhatók

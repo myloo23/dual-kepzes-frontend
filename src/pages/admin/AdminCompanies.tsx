@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type Company } from "../../lib/api";
+import CompanyFormModal from "../../components/admin/CompanyFormModal";
 
 type Id = string | number;
 
@@ -9,40 +10,17 @@ const ensureCompanyId = (id: Id | null) => {
   return s;
 };
 
-// The initial state for the form, matching the new Company shape (excluding id)
-const INITIAL_FORM_STATE: Omit<Company, "id"> = {
-  name: "",
-  taxId: "",
-  hqCountry: "",
-  hqZipCode: "",
-  hqCity: "",
-  hqAddress: "",
-  contactName: "",
-  contactEmail: "",
-  description: ""
-};
-
 export default function AdminCompanies() {
   const [items, setItems] = useState<Company[]>([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
-  const [editingId, setEditingId] = useState<Id | null>(null);
-  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
 
   // ID alapú lekéréshez
   const [lookupId, setLookupId] = useState("");
-
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const resetForm = () => {
-    setEditingId(null);
-    setFormData(INITIAL_FORM_STATE);
-  };
 
   const load = async () => {
     setLoading(true);
@@ -61,26 +39,21 @@ export default function AdminCompanies() {
     load();
   }, []);
 
+  const handleCreateNew = () => {
+    setEditingCompany(null);
+    setIsModalOpen(true);
+    setMsg(null);
+    setErr(null);
+  };
+
   const onEdit = async (id: Id) => {
     setMsg(null);
     setErr(null);
     setLoading(true);
     try {
       const c = await api.companies.get(id);
-      setEditingId(id);
-      // Populate form with all fields from the fetched company
-      setFormData({
-        name: c.name,
-        taxId: c.taxId,
-        hqCountry: c.hqCountry,
-        hqZipCode: c.hqZipCode,
-        hqCity: c.hqCity,
-        hqAddress: c.hqAddress,
-        contactName: c.contactName,
-        contactEmail: c.contactEmail,
-        description: c.description || "",
-      });
-      setMsg("Betöltve szerkesztéshez.");
+      setEditingCompany(c);
+      setIsModalOpen(true);
     } catch (e: any) {
       setErr(e.message || "Nem sikerült betölteni a céget.");
     } finally {
@@ -97,7 +70,6 @@ export default function AdminCompanies() {
       await api.companies.remove(id);
       setMsg("Cég törölve.");
       await load();
-      if (editingId === id) resetForm();
     } catch (e: any) {
       setErr(e.message || "Törlés sikertelen.");
     } finally {
@@ -105,37 +77,16 @@ export default function AdminCompanies() {
     }
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErr(null);
-    setMsg(null);
-
-    if (!formData.name.trim()) return setErr("A cég neve kötelező.");
-    if (!formData.taxId.trim()) return setErr("Az adószám kötelező.");
-
-    // Convert hqZipCode to number for backend
-    const payload = {
-      ...formData,
-      hqZipCode: formData.hqZipCode ? Number(formData.hqZipCode) : formData.hqZipCode
-    };
-
-    setLoading(true);
-    try {
-      if (editingId != null) {
-        const safeId = ensureCompanyId(editingId);
-        await api.companies.update(safeId, payload);
-        setMsg("Cég frissítve.");
-      } else {
-        await api.companies.create(payload);
-        setMsg("Cég létrehozva.");
-      }
-      await load();
-      resetForm();
-    } catch (e: any) {
-      setErr(e.message || "Mentés sikertelen.");
-    } finally {
-      setLoading(false);
+  const handleSave = async (data: Omit<Company, "id">) => {
+    if (editingCompany) {
+      const safeId = ensureCompanyId(editingCompany.id);
+      await api.companies.update(safeId, data);
+      setMsg("Cég frissítve.");
+    } else {
+      await api.companies.create(data);
+      setMsg("Cég létrehozva.");
     }
+    await load();
   };
 
   const onLookup = async () => {
@@ -167,162 +118,96 @@ export default function AdminCompanies() {
       {err && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{err}</div>}
       {msg && <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{msg}</div>}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Bal: lista */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold">Összes cég</h2>
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <h2 className="text-base font-bold text-slate-800">Összes cég</h2>
             <button
-              onClick={load}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50"
+              onClick={handleCreateNew}
+              className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition"
             >
-              Frissítés
+              + Új cég
             </button>
           </div>
+          <button
+            onClick={load}
+            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50 transition"
+          >
+            Frissítés
+          </button>
+        </div>
 
-          <div className="flex gap-2 mb-3">
-            <input
-              value={lookupId}
-              onChange={(e) => setLookupId(e.target.value)}
-              placeholder="Cég ID..."
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-            />
-            <button
-              type="button"
-              onClick={onLookup}
-              className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:opacity-90"
-            >
-              Lekérés
-            </button>
-          </div>
+        <div className="flex gap-2 mb-4">
+          <input
+            value={lookupId}
+            onChange={(e) => setLookupId(e.target.value)}
+            placeholder="Cég keresése ID alapján..."
+            className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+          />
+          <button
+            type="button"
+            onClick={onLookup}
+            className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900 transition shadow-sm"
+          >
+            Lekérés
+          </button>
+        </div>
 
-          <div className="overflow-y-auto max-h-[600px] rounded-xl border border-slate-200">
-            <table className="min-w-full text-sm relative">
-              <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
-                <tr>
-                  <th className="px-3 py-2 text-left bg-slate-50">ID</th>
-                  <th className="px-3 py-2 text-left bg-slate-50">Név</th>
-                  <th className="px-3 py-2 text-right bg-slate-50">Művelet</th>
+        <div className="overflow-y-auto max-h-[600px] rounded-xl border border-slate-200 shadow-sm">
+          <table className="min-w-full text-sm relative">
+            <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">ID</th>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">Név</th>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">Kapcsolattartó</th>
+                <th className="px-4 py-3 text-right font-semibold bg-slate-50">Művelet</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {rows.map((c) => (
+                <tr key={String(c.id)} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-4 py-3 text-slate-500 font-mono text-xs">{String(c.id).slice(0, 8)}...</td>
+                  <td className="px-4 py-3 font-medium text-slate-900">{c.name}</td>
+                  <td className="px-4 py-3 text-slate-600">
+                    <div className="text-xs">{c.contactName}</div>
+                    <div className="text-[10px] text-slate-400">{c.contactEmail}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => onEdit(c.id)}
+                        className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition"
+                      >
+                        Szerkesztés
+                      </button>
+                      <button
+                        onClick={() => onDelete(c.id)}
+                        className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition"
+                      >
+                        Törlés
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {rows.map((c) => (
-                  <tr key={String(c.id)} className="border-t">
-                    <td className="px-3 py-2">{String(c.id)}</td>
-                    <td className="px-3 py-2 font-medium">{c.name}</td>
-                    <td className="px-3 py-2">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => onEdit(c.id)}
-                          className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50"
-                        >
-                          Szerkesztés
-                        </button>
-                        <button
-                          onClick={() => onDelete(c.id)}
-                          className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100"
-                        >
-                          Törlés
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {!loading && rows.length === 0 && (
-                  <tr>
-                    <td className="px-3 py-6 text-center text-slate-500" colSpan={3}>
-                      Nincs adat.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Jobb: create/edit */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold">
-              {editingId != null ? `Cég módosítása (ID: ${editingId})` : "Cég létrehozása"}
-            </h2>
-            {editingId != null && (
-              <button
-                type="button"
-                onClick={resetForm}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50"
-              >
-                Mégse
-              </button>
-            )}
-          </div>
-
-          <form onSubmit={onSubmit} className="space-y-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-medium text-slate-700">Cég neve *</label>
-                <input name="name" value={formData.name} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Adószám *</label>
-                <input name="taxId" value={formData.taxId} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Ország *</label>
-                <input name="hqCountry" value={formData.hqCountry} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Irányítószám *</label>
-                <input name="hqZipCode" value={formData.hqZipCode} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Város *</label>
-                <input name="hqCity" value={formData.hqCity} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
-              </div>
-
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-medium text-slate-700">Cím *</label>
-                <input name="hqAddress" value={formData.hqAddress} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
-              </div>
-
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-medium text-slate-700">Kapcsolattartó neve *</label>
-                <input name="contactName" value={formData.contactName} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
-              </div>
-
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-medium text-slate-700">Kapcsolattartó e-mail *</label>
-                <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleFormChange} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" required />
-              </div>
-
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-medium text-slate-700">Leírás</label>
-                <textarea
-                  name="description"
-                  value={formData.description || ''}
-                  onChange={handleFormChange}
-                  rows={3}
-                  className="w-full p-2 border border-slate-300 rounded-lg"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end md:col-span-2 pt-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-              >
-                {editingId != null ? "Módosítás mentése" : "Cég létrehozása"}
-              </button>
-            </div>
-          </form>
-        </section>
+              ))}
+              {!loading && rows.length === 0 && (
+                <tr>
+                  <td className="px-4 py-12 text-center text-slate-500" colSpan={5}>
+                    Nincs adat.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      <CompanyFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+        initialData={editingCompany}
+      />
     </div>
   );
 }
