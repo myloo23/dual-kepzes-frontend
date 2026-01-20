@@ -129,7 +129,7 @@ export default function Navbar() {
   console.log("📊 Navbar render - newsLink:", newsLink, "dashboardLink:", dashboardLink);
 
   return (
-    <header className="sticky top-0 z-20 border-b border-dkk-gray/30 bg-white/80 backdrop-blur">
+    <header className="sticky top-0 z-[1100] border-b border-dkk-gray/30 bg-white/80 backdrop-blur">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 lg:px-8 py-3">
         <Link
           to="/"

@@ -108,7 +108,7 @@ export default function PositionsMap({
                 )}
             </div>
 
-            <div className="h-[400px] w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+            <div className="relative z-0 h-[400px] w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
                 <MapContainer
                     center={mapCenter}
                     zoom={7}
