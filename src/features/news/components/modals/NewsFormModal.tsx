@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type NewsCreatePayload, type NewsItem, type NewsTargetGroup } from "../../lib/api";
+import { type NewsCreatePayload, type NewsItem, type NewsTargetGroup } from "../../../../lib/api";
 
 interface NewsFormModalProps {
     isOpen: boolean;

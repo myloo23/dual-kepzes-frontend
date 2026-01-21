@@ -1,5 +1,5 @@
 // src/components/student/NewsCard.tsx
-import type { NewsItem } from "../../lib/api";
+import type { NewsItem } from "../../../lib/api";
 
 function formatDate(iso?: string) {
     if (!iso) return "";

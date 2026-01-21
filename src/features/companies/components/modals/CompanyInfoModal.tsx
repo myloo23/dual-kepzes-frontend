@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import LocationMap from "./applications/LocationMap";
+import LocationMap from "../../../applications/components/LocationMap";
 
 type CompanyInfoModalProps = {
     companyInfo: {

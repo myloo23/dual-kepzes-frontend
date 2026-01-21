@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type Company, type Position, type Tag } from "../../lib/api";
+import { type Company, type Position, type Tag } from "../../../../lib/api";
 
 interface PositionFormModalProps {
     isOpen: boolean;

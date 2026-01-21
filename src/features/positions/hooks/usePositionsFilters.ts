@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Position } from "../lib/api";
+import type { Position } from "../../../lib/api";
 import {
     norm,
     lower,
@@ -7,7 +7,7 @@ import {
     toTagName,
     toTagCategory,
     isExpired,
-} from "../lib/positions-utils";
+} from "../../../lib/positions-utils";
 
 export type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
 export type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
