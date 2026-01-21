@@ -41,6 +41,8 @@ Statikus fájlok tárolója. Nem vesznek részt a fordítási logikában, de imp
 Ez a mappa tartalmazza az üzleti logikát és a kapcsolódó komponenseket témakörökre bontva. Ez a **"Single Source of Truth"** elv alapja.
 
 *   **`auth/`**: Hitelesítés.
+    *   `context/`: `AuthContext.tsx` (Autentikációs állapotkezelő).
+    *   `hooks/`: `useAuth` export.
     *   `components/`: `LoginCard.tsx`.
 *   **`applications/`**: Jelentkezések kezelése.
     *   `components/`: `ApplicationsList.tsx` (Jelentkezések listája), `ApplicationModal.tsx` (Jelentkezés részletei), `LocationMap.tsx` (Jelentkezés helyszíne).

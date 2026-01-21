@@ -130,7 +130,10 @@ Backend REST API
 A projekt gerincét a **features** mappa adja. Minden modul tartalmazza a saját komponenseit, hook-jait és logikáját.
 
 ### 🔐 **auth/**
-Bejelentkezési és regisztrációs folyamatok vizuális elemei (pl. `LoginCard`).
+Bejelentkezési logikát és a kapcsolódó komponenseket tartalmazza.
+- **Context**: `AuthContext` (Globális auth állapot).
+- **Hooks**: `useAuth` (Bejelentkezés, kijelentkezés, user adatok).
+- **Components**: `LoginCard`.
 
 ### 📋 **applications/**
 Hallgatói jelentkezések kezelése.
