@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Globe, MapPin, User, Building2 } from "lucide-react";
 import { api, type Company, type Position } from "../../lib/api";
-import PositionCard from "../../components/positions/PositionCard";
+import PositionCard from "../../features/positions/components/PositionCard";
 import { pickLogo } from "../../lib/positions-utils";
 import abcTechLogo from "../../assets/logos/abc-tech.jpg";
 import businessItLogo from "../../assets/logos/business-it.jpg";
-import LocationMap from "../../components/applications/LocationMap";
+import LocationMap from "../../features/applications/components/LocationMap";
 
 export default function PublicCompanyProfilePage() {
     const { id } = useParams<{ id: string }>();

@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { Id } from '../../types';
+import type { Id } from '../types';
 
 export interface UseCRUDOptions<T extends { id: Id }> {
     listFn: () => Promise<T[]>;

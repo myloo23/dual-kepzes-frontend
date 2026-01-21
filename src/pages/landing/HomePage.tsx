@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
-import LoginCard from "../../components/landing/LoginCard";
-import JobSlider from "../../components/landing/JobSlider";
-import MaterialsGallery from "../../components/landing/MaterialsGallery";
-import ReferencesSlider from "../../components/landing/ReferencesSlider";
-import DualInfoSection from "../../components/landing/DualInfoSection";
+import LoginCard from "../../features/auth/components/LoginCard";
+import JobSlider from "../../features/positions/components/JobSlider";
+import MaterialsGallery from "../../features/landing/components/MaterialsGallery";
+import ReferencesSlider from "../../features/landing/components/ReferencesSlider";
+import DualInfoSection from "../../features/landing/components/DualInfoSection";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import njeLogoImage from "../../assets/logos/nje_logos/nje_logo2.png";
 

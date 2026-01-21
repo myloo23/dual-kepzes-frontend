@@ -2,15 +2,15 @@ import { useRef, useState, useEffect } from "react";
 import { Mail, Briefcase, Info } from "lucide-react";
 
 // Import images
-import sariBenceImg from "../../assets/dkk_referensek_kepek/sari_bence_mugshot.png";
-import vinczeImreImg from "../../assets/dkk_referensek_kepek/VinczeI-V-199x300.jpg";
-import vajdaZsuzsannaImg from "../../assets/dkk_referensek_kepek/Vajda_Zs_1635.jpg";
-import ivanovicsGergelyImg from "../../assets/dkk_referensek_kepek/Ivanovics_G_446.jpg";
-import pappKlaudiaImg from "../../assets/dkk_referensek_kepek/Papp_K_1638.jpg";
-import kiralyIldikoImg from "../../assets/dkk_referensek_kepek/Kiraly_I.jpg";
-import borzakNikolettImg from "../../assets/dkk_referensek_kepek/Borzsak_N.jpg";
-import subaEdinaImg from "../../assets/dkk_referensek_kepek/Suba_E.jpg";
-import boldizsarAdriennImg from "../../assets/dkk_referensek_kepek/Adri-1-1-200x300.jpg";
+import sariBenceImg from "../../../assets/reference-images/sari_bence_mugshot.png";
+import vinczeImreImg from "../../../assets/reference-images/VinczeI-V-199x300.jpg";
+import vajdaZsuzsannaImg from "../../../assets/reference-images/Vajda_Zs_1635.jpg";
+import ivanovicsGergelyImg from "../../../assets/reference-images/Ivanovics_G_446.jpg";
+import pappKlaudiaImg from "../../../assets/reference-images/Papp_K_1638.jpg";
+import kiralyIldikoImg from "../../../assets/reference-images/Kiraly_I.jpg";
+import borzakNikolettImg from "../../../assets/reference-images/Borzsak_N.jpg";
+import subaEdinaImg from "../../../assets/reference-images/Suba_E.jpg";
+import boldizsarAdriennImg from "../../../assets/reference-images/Adri-1-1-200x300.jpg";
 
 // Data extracted from the user's provided text
 const REFERENCES = [

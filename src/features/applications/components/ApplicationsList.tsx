@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { api, type Application, type ApplicationStatus } from "../../../lib/api";
+import { api, type Application } from "../../../lib/api";
 
-const STATUS_CONFIG: Record<ApplicationStatus, { label: string; color: string; icon: string }> = {
+const STATUS_CONFIG = {
     SUBMITTED: {
         label: "Beküldve",
         color: "bg-blue-100 text-blue-800 border-blue-200",
@@ -85,7 +85,7 @@ export default function ApplicationsList() {
 
             <div className="grid gap-4">
                 {applications.map((app) => {
-                    const statusConfig = STATUS_CONFIG[app.status];
+                    const statusConfig = STATUS_CONFIG[app.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.SUBMITTED;
                     let createdDate = "Ismeretlen dátum";
                     try {
                         if (app.createdAt) {

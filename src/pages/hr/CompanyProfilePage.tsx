@@ -1,9 +1,9 @@
 // src/pages/hr/CompanyProfilePage.tsx
 import { useEffect, useState } from "react";
 import { api, type Company } from "../../lib/api";
-import ErrorAlert from "../../components/company-profile/ErrorAlert";
-import CompanyProfileForm from "../../components/company-profile/CompanyProfileForm";
-import CompanyProfileDisplay from "../../components/company-profile/CompanyProfileDisplay";
+import ErrorAlert from "../../features/companies/components/ErrorAlert";
+import CompanyProfileForm from "../../features/companies/components/CompanyProfileForm";
+import CompanyProfileDisplay from "../../features/companies/components/CompanyProfileDisplay";
 
 export default function CompanyProfilePage() {
   const [company, setCompany] = useState<Company | null>(null);

@@ -50,26 +50,14 @@ export default function PositionsMap({
     // Calculate map center
     const mapCenter: [number, number] = useMemo(() => {
         if (userLocation && positionsWithCoords.length > 0) {
-            const avgLat = positionsWithCoords.reduce<number>(
-                (sum, p) => sum + (p.latitude || 0),
-                0
-            ) / positionsWithCoords.length;
-            const avgLng = positionsWithCoords.reduce<number>(
-                (sum, p) => sum + (p.longitude || 0),
-                0
-            ) / positionsWithCoords.length;
+            const avgLat = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
+            const avgLng = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
             return [(userLocation.lat + avgLat) / 2, (userLocation.lng + avgLng) / 2];
         }
 
         if (positionsWithCoords.length > 0) {
-            const avgLat = positionsWithCoords.reduce<number>(
-                (sum, p) => sum + (p.latitude || 0),
-                0
-            ) / positionsWithCoords.length;
-            const avgLng = positionsWithCoords.reduce<number>(
-                (sum, p) => sum + (p.longitude || 0),
-                0
-            ) / positionsWithCoords.length;
+            const avgLat = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
+            const avgLng = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
             return [avgLat, avgLng];
         }
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type NewsCreatePayload, type NewsItem } from "../../lib/api";
-import NewsFormModal from "../../components/admin/NewsFormModal";
+import NewsFormModal from "../../features/news/components/modals/NewsFormModal";
 
 type Id = string | number;
 type Tab = "active" | "archived";

@@ -8,11 +8,11 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { usePositions } from '../../features/positions/hooks/usePositions';
 import usePositionsFilters from '../../hooks/usePositionsFilters';
-import { useModal } from '../../shared/hooks';
-import ApplicationModal from '../../components/applications/ApplicationModal';
-import FilterSidebar from '../../components/positions/FilterSidebar';
+import { useModal } from '../../hooks';
+import ApplicationModal from '../../features/applications/components/ApplicationModal';
+import FilterSidebar from '../../features/positions/components/FilterSidebar';
 import PositionsList from '../../features/positions/components/PositionsList';
-import PositionsMap from '../../components/positions/PositionsMap';
+import PositionsMap from '../../features/positions/components/PositionsMap';
 import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../constants';
 import type { Position } from '../../lib/api';
 

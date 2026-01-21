@@ -7,8 +7,8 @@ import { useState, useEffect } from 'react';
 import { Briefcase } from 'lucide-react';
 import { api } from '../../lib/api';
 import type { Position, Company } from '../../lib/api';
-import { useCRUD, useModal } from '../../shared/hooks';
-import PositionFormModal from '../../components/admin/PositionFormModal';
+import { useCRUD, useModal } from '../../hooks';
+import PositionFormModal from '../../features/positions/components/modals/PositionFormModal';
 import {
   PAGE_TITLES,
   LABELS,

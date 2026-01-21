@@ -6,8 +6,8 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../lib/api';
 import type { Company } from '../../lib/api';
-import { useCRUD, useModal } from '../../shared/hooks';
-import CompanyFormModal from '../../components/admin/CompanyFormModal';
+import { useCRUD, useModal } from '../../hooks';
+import CompanyFormModal from '../../features/companies/components/modals/CompanyFormModal';
 import {
   PAGE_TITLES,
   PAGE_DESCRIPTIONS,

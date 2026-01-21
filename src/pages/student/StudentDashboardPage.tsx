@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import ApplicationsList from "../../components/applications/ApplicationsList";
+import ApplicationsList from "../../features/applications/components/ApplicationsList";
 
 export default function StudentDashboardPage() {
   const navigate = useNavigate();
@@ -66,8 +66,8 @@ export default function StudentDashboardPage() {
             <Link
               to="/student"
               className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "overview"
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-slate-600 hover:text-slate-900"
                 }`}
             >
               Áttekintés
@@ -75,8 +75,8 @@ export default function StudentDashboardPage() {
             <Link
               to="/student#applications"
               className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "applications"
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-slate-600 hover:text-slate-900"
                 }`}
             >
               Jelentkezéseim

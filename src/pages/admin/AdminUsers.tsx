@@ -6,9 +6,9 @@
 import { useState } from 'react';
 import type { StudentProfile } from '../../lib/api';
 import { useUserManagement } from '../../features/users/hooks/useUserManagement';
-import { useModal } from '../../shared/hooks';
-import StudentFormModal from '../../components/admin/StudentFormModal';
-import AdminUserModal from '../../components/admin/AdminUserModal';
+import { useModal } from '../../hooks';
+import StudentFormModal from '../../features/users/components/modals/StudentFormModal';
+import AdminUserModal from '../../features/users/components/modals/AdminUserModal';
 import {
   PAGE_TITLES,
   PAGE_DESCRIPTIONS,
@@ -148,8 +148,8 @@ export default function AdminUsersPage() {
             key={tab}
             onClick={() => handleTabChange(tab)}
             className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${userManagement.activeTab === tab
-                ? 'bg-white border border-slate-200 border-b-white text-blue-600 -mb-px'
-                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+              ? 'bg-white border border-slate-200 border-b-white text-blue-600 -mb-px'
+              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
               }`}
           >
             {USER_TABS[tab]}

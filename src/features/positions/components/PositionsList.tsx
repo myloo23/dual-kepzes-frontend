@@ -4,7 +4,7 @@
  */
 
 import type { Position } from '../../../lib/api';
-import PositionCard from '../../../components/positions/PositionCard';
+import PositionCard from './PositionCard';
 import { pickLogo } from '../../../lib/positions-utils';
 import { norm } from '../../../lib/positions-utils';
 import { LABELS } from '../../../constants';

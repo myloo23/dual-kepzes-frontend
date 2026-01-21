@@ -21,7 +21,7 @@ export default function CompanyProfileDisplay({ company }: CompanyProfileDisplay
                     <div className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500">Telephelyek</dt>
                         <dd className="mt-1 text-sm text-gray-900 space-y-1">
-                            {company.locations?.map((loc: Company["locations"][number], i: number) => (
+                            {company.locations?.map((loc: any, i: number) => (
                                 <div key={i}>
                                     {[loc.zipCode, loc.city, loc.address].filter(Boolean).join(', ')}
                                 </div>

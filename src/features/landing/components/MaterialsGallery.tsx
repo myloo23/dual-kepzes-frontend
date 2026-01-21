@@ -1,9 +1,9 @@
 // src/components/landing/MaterialsGallery.tsx
 import { useState } from "react";
-import ImageModal from "../shared/ImageModal";
-import rollupImage from "../../assets/logos/dkk_logos/DKK roll-up_2024.png";
-import flyer1Image from "../../assets/logos/dkk_logos/Flyer front_1.png";
-import flyer2Image from "../../assets/logos/dkk_logos/Flyer front_2.png";
+import ImageModal from "../../../components/shared/ImageModal";
+import rollupImage from "../../../assets/logos/dkk_logos/DKK roll-up_2024.png";
+import flyer1Image from "../../../assets/logos/dkk_logos/Flyer front_1.png";
+import flyer2Image from "../../../assets/logos/dkk_logos/Flyer front_2.png";
 
 type Material = {
     id: string;

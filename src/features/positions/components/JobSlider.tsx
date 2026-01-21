@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import JobCard from "./JobCard";
-import { api } from "../../lib/api";
+import { api } from "../../../lib/api";
 
 type Position = {
     id?: string | number;

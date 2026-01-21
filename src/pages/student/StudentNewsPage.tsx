@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type NewsItem } from "../../lib/api";
-import NewsCard from "../../components/student/NewsCard";
-import NewsFilter from "../../components/student/NewsFilter";
+import NewsCard from "../../features/news/components/NewsCard";
+import NewsFilter from "../../features/news/components/NewsFilter";
 
 export default function StudentNewsPage() {
   const [items, setItems] = useState<NewsItem[]>([]);
