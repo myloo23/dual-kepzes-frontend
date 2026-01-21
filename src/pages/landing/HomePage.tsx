@@ -128,38 +128,50 @@ function HomePage() {
       {/* HERO + LOGIN/WELCOME */}
       <section
         id="home"
-        className="py-10 lg:py-16 grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center"
+        className="py-10 lg:py-16 grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center rounded-3xl bg-gradient-to-br from-white via-slate-50 to-dkk-blue/10 p-6 sm:p-8 lg:p-0 lg:bg-transparent lg:rounded-none"
       >
         <div>
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
             <img
               src={logoImage}
               alt="Duális Képzési Központ"
-              className="h-16 lg:h-20 object-contain"
+              className="h-14 sm:h-16 lg:h-20 object-contain"
             />
             <img
               src={njeLogoImage}
               alt="Neumann János Egyetem"
-              className="h-24 lg:h-28 object-contain"
+              className="h-20 sm:h-24 lg:h-28 object-contain"
             />
           </div>
-          <p className="text-sm font-medium text-dkk-blue mb-2">
+          <p className="text-sm font-semibold text-dkk-blue mb-2">
             Duális képzések online felülete
           </p>
-          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-4xl font-bold tracking-tight text-slate-900 mb-4 text-balance">
             Duális képzési online rendszer
           </h1>
-          <p className="text-slate-600 mb-4 max-w-xl">
+          <p className="text-base sm:text-sm lg:text-base text-slate-600 mb-6 max-w-xl">
             Egy egységes platform a hallgatók, céges partnerek és az
             egyetem számára a duális képzés jelentkezési, szerződéses
             és naplózási folyamatainak kezelésére.
           </p>
-          <ul className="space-y-1.5 text-sm text-slate-700">
-            <li>🎓 Hallgatói jelentkezés és dokumentumfeltöltés</li>
-            <li>🏢 Céges pozíciók és jelentkezéskezelés</li>
-            <li>📘 Haladási napló és mentor jóváhagyás</li>
-            <li>📝 Félév végi értékelések és admin felület</li>
-          </ul>
+          <div className="grid gap-3 sm:grid-cols-2 text-sm text-slate-700">
+            <div className="flex items-start gap-3 rounded-xl border border-slate-200/70 bg-white/80 p-3 shadow-sm">
+              <span className="text-lg">🎓</span>
+              <span>Hallgatói jelentkezés és dokumentumfeltöltés</span>
+            </div>
+            <div className="flex items-start gap-3 rounded-xl border border-slate-200/70 bg-white/80 p-3 shadow-sm">
+              <span className="text-lg">🏢</span>
+              <span>Céges pozíciók és jelentkezéskezelés</span>
+            </div>
+            <div className="flex items-start gap-3 rounded-xl border border-slate-200/70 bg-white/80 p-3 shadow-sm">
+              <span className="text-lg">📘</span>
+              <span>Haladási napló és mentor jóváhagyás</span>
+            </div>
+            <div className="flex items-start gap-3 rounded-xl border border-slate-200/70 bg-white/80 p-3 shadow-sm">
+              <span className="text-lg">📝</span>
+              <span>Félév végi értékelések és admin felület</span>
+            </div>
+          </div>
         </div>
 
         {!isLoggedIn ? (
@@ -173,7 +185,7 @@ function HomePage() {
             onSubmit={handleLoginSubmit}
           />
         ) : userInfo ? (
-          <div className="bg-slate-50 rounded-2xl shadow-xl p-8 text-slate-900 border border-slate-200 transition-all duration-300 hover:shadow-2xl">
+          <div className="bg-slate-50 rounded-2xl shadow-xl p-8 text-slate-900 border border-slate-200 transition-all duration-300 hover:shadow-2xl max-w-md w-full mx-auto lg:mx-0">
             <div className="text-center mb-8">
               <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-3xl font-bold text-dkk-blue border-2 border-slate-200 mx-auto mb-4 shadow-sm">
                 {userInfo.name.charAt(0).toUpperCase()}
