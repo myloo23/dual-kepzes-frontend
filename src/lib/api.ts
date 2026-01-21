@@ -205,6 +205,30 @@ export type StudentProfile = Record<string, any> & {
   email?: string;
 };
 
+export type CompanyAdminProfile = {
+  id: Id;
+  userId: Id;
+  companyId: Id;
+  // add other fields if known, e.g. from schema
+};
+
+export type UniversityUserProfile = {
+  id: Id;
+  userId: Id;
+  // add other fields if known
+};
+
+export type User = {
+  id: Id;
+  email: string;
+  role: string;
+  isActive: boolean;
+  deletedAt?: string | null;
+  student?: StudentProfile | null;
+  companyAdmin?: CompanyAdminProfile | null;
+  universityUser?: UniversityUserProfile | null;
+};
+
 export type UsersByRole = {
   role: string;
   count: number;
@@ -274,6 +298,7 @@ const PATHS = {
   positions: "/api/jobs/positions",
   students: "/api/students",
   me: "/api/students/me", // Default for students, others should use specific endpoints
+  users: "/api/users", // Generic user management
   systemAdmins: "/api/system-admins",
   companyAdmins: "/api/company-admins",
   universityUsers: "/api/university-users",
@@ -363,6 +388,13 @@ export const api = {
     remove: () => apiDelete<{ message?: string }>(PATHS.me),
   },
 
+  // generic users (admin)
+  users: {
+    listInactive: () => apiGet<User[]>(`${PATHS.users}/inactive`),
+    reactivate: (id: Id) => apiPatch<User>(`${PATHS.users}/${id}/reactivate`, {}),
+    deactivate: (id: Id) => apiPatch<User>(`${PATHS.users}/${id}/deactivate`, {}),
+  },
+
   // news
   news: {
     // Public
@@ -403,6 +435,10 @@ export const api = {
 
   // Company Admins
   companyAdmins: {
+    list: () => apiGet<any[]>(PATHS.companyAdmins),
+    get: (id: Id) => apiGet<any>(`${PATHS.companyAdmins}/${id}`),
+    update: (id: Id, body: any) => apiPatch<any>(`${PATHS.companyAdmins}/${id}`, body),
+    remove: (id: Id) => apiDelete<any>(`${PATHS.companyAdmins}/${id}`),
     me: {
       get: () => apiGet<Record<string, any>>(`${PATHS.companyAdmins}/me`),
       update: (body: any) => apiPatch<Record<string, any>>(`${PATHS.companyAdmins}/me`, body),
@@ -411,6 +447,10 @@ export const api = {
 
   // University Users
   universityUsers: {
+    list: () => apiGet<any[]>(PATHS.universityUsers),
+    get: (id: Id) => apiGet<any>(`${PATHS.universityUsers}/${id}`),
+    update: (id: Id, body: any) => apiPatch<any>(`${PATHS.universityUsers}/${id}`, body),
+    remove: (id: Id) => apiDelete<any>(`${PATHS.universityUsers}/${id}`),
     me: {
       get: () => apiGet<Record<string, any>>(`${PATHS.universityUsers}/me`),
       update: (body: any) => apiPatch<Record<string, any>>(`${PATHS.universityUsers}/me`, body),
