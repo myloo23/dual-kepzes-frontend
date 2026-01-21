@@ -1,5 +1,5 @@
 // src/components/student/NewsCard.tsx
-import type { NewsItem } from "../../lib/api";
+import type { NewsItem } from "../../../lib/api";
 
 function formatDate(iso?: string) {
     if (!iso) return "";
@@ -42,7 +42,7 @@ export default function NewsCard({ news }: NewsCardProps) {
 
             {(news.tags || []).length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1.5">
-                    {(news.tags || []).map((t) => (
+                    {(news.tags || []).map((t: string) => (
                         <span
                             key={t}
                             className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-700"

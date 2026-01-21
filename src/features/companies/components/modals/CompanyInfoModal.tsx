@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import LocationMap from "./applications/LocationMap";
+import LocationMap from "../../../applications/components/LocationMap";
 
 type CompanyInfoModalProps = {
     companyInfo: {
@@ -98,11 +98,13 @@ export default function CompanyInfoModal({ companyInfo, isOpen, onClose }: Compa
                         <div className="rounded-xl border border-slate-200 bg-white p-4">
                             <h4 className="text-sm font-semibold text-slate-700 mb-2">Telephelyek</h4>
                             <div className="space-y-1">
-                                {companyInfo.locations.map((loc, i) => (
+                                {companyInfo.locations.map(
+                                    (loc: { city: string; address?: string }, i: number) => (
                                     <div key={i} className="text-sm text-slate-900">
                                         {loc.city}{loc.address ? `, ${loc.address}` : ''}
                                     </div>
-                                ))}
+                                    )
+                                )}
                             </div>
                         </div>
                     )}

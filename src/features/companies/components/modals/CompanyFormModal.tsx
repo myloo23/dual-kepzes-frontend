@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type Company } from "../../lib/api";
+import { type Company } from "../../../../lib/api";
 
 interface CompanyFormModalProps {
     isOpen: boolean;

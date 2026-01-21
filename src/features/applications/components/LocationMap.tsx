@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { MapPin } from "lucide-react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useLocationGeocoding } from "../../hooks/useLocationGeocoding";
+import { useLocationGeocoding } from "../../../hooks/useLocationGeocoding";
 
 // Custom icons for company and user locations
 const companyIcon = L.icon({

@@ -357,6 +357,7 @@ export type {
   NewsCreatePayload,
   NewsTargetGroup,
   Application,
+  ApplicationStatus,
   ApplicationCreatePayload,
   Location,
   Tag,

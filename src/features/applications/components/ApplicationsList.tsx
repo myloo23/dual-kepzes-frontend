@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { api, type Application } from "../../lib/api";
+import { api, type Application, type ApplicationStatus } from "../../../lib/api";
 
-const STATUS_CONFIG = {
+const STATUS_CONFIG: Record<ApplicationStatus, { label: string; color: string; icon: string }> = {
     SUBMITTED: {
         label: "Beküldve",
         color: "bg-blue-100 text-blue-800 border-blue-200",

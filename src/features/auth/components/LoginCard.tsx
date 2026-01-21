@@ -1,6 +1,6 @@
 // src/components/landing/LoginCard.tsx
 import { Link } from "react-router-dom";
-import PasswordInput from "../shared/PasswordInput";
+import PasswordInput from "../../../components/shared/PasswordInput";
 
 interface LoginCardProps {
     email: string;
@@ -45,7 +45,9 @@ export default function LoginCard({
                         type="email"
                         placeholder="pelda@uni.hu"
                         value={email}
-                        onChange={(e) => onEmailChange(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            onEmailChange(e.target.value)
+                        }
                         required
                         className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-dkk-blue focus:border-dkk-blue"
                     />
@@ -53,7 +55,9 @@ export default function LoginCard({
 
                 <PasswordInput
                     value={password}
-                    onChange={(e) => onPasswordChange(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        onPasswordChange(e.target.value)
+                    }
                     label="Jelszó"
                     placeholder="••••••••"
                     required={true}
