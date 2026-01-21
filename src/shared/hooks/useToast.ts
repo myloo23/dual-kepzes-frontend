@@ -3,7 +3,7 @@
  * Provides toast notification functionality
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { ANIMATION_DURATIONS } from '../../constants/ui';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';

@@ -104,8 +104,10 @@ export interface UniversityUserProfile {
 export interface SystemAdminProfile {
     id: Id;
     userId: Id;
+    name?: string;
     fullName?: string;
     email?: string;
+    phoneNumber?: string;
 }
 
 export interface User {

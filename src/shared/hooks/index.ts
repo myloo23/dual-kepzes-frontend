@@ -2,11 +2,16 @@
  * Central export for all shared hooks
  */
 
-export * from './useCRUD';
-export * from './useModal';
-export * from './useToast';
+export { useCRUD } from './useCRUD';
+export type { UseCRUDReturn } from './useCRUD';
+
+export { useModal } from './useModal';
+export type { UseModalReturn } from './useModal';
+
+export { useToast } from './useToast';
+export type { UseToastReturn } from './useToast';
 
 // Re-export existing hooks
-export { default as useGeocoding } from '../../hooks/useGeocoding';
-export { default as useLocationGeocoding } from '../../hooks/useLocationGeocoding';
-export { default as usePositionsFilters } from '../../hooks/usePositionsFilters';
+export { useGeocoding } from '../../hooks/useGeocoding';
+export { useLocationGeocoding } from '../../hooks/useLocationGeocoding';
+// Note: usePositionsFilters moved to features/positions

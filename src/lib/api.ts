@@ -355,6 +355,7 @@ export type {
   StatsResponse,
   NewsItem,
   NewsCreatePayload,
+  NewsTargetGroup,
   Application,
   ApplicationCreatePayload,
   Location,
