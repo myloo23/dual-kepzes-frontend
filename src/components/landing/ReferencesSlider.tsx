@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Mail, Briefcase, Info } from "lucide-react";
 
 // Import images
-import sariBenceImg from "../../assets/dkk_referensek_kepek/SariB-V-199x300.jpg";
+import sariBenceImg from "../../assets/dkk_referensek_kepek/sari_bence_mugshot.png";
 import vinczeImreImg from "../../assets/dkk_referensek_kepek/VinczeI-V-199x300.jpg";
 import vajdaZsuzsannaImg from "../../assets/dkk_referensek_kepek/Vajda_Zs_1635.jpg";
 import ivanovicsGergelyImg from "../../assets/dkk_referensek_kepek/Ivanovics_G_446.jpg";
