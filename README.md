@@ -59,39 +59,35 @@ npm run preview
 
 ## 🗂️ Projektstruktúra
 
+A projekt **Feature-Based Architecture** (Funkció alapú architektúra) elvet követi.
+
 ```
 dual-kepzes-frontend/
-├── public/
-│   └── leaflet/              # Leaflet marker icons
+├── public/                   # Public assets (markers, etc.)
 ├── src/
-│   ├── assets/               # Static assets (logos, images)
-│   ├── components/           # Reusable UI components
-│   │   ├── applications/     # Application-related components
-│   │   ├── company-profile/  # Company profile components
-│   │   ├── landing/          # Landing page components
-│   │   ├── layout/           # Layout components
-│   │   ├── positions/        # Position listing components
-│   │   ├── shared/           # Shared utility components
-│   │   ├── student/          # Student-specific components
-│   │   └── ui/               # Base UI components
-│   ├── layouts/              # Page layouts for different roles
-│   ├── lib/                  # Utilities and API layer
-│   ├── pages/                # Page components (route targets)
-│   │   ├── admin/            # Admin dashboard pages
-│   │   ├── auth/             # Authentication pages
-│   │   ├── hr/               # HR dashboard pages
-│   │   ├── landing/          # Public landing pages
-│   │   ├── mentor/           # Mentor dashboard pages
-│   │   ├── student/          # Student dashboard pages
-│   │   └── teacher/          # Teacher dashboard pages
-│   ├── App.tsx               # Main app component with routing
-│   ├── main.tsx              # Application entry point
-│   └── index.css             # Global styles
-├── index.html
-├── vite.config.ts
-├── tailwind.config.js
-├── tsconfig.json
-└── package.json
+│   ├── assets/               # Statikus fájlok (képek, dokumentumok)
+│   │   └── reference-images/ # Referencia személyek fotói
+│   ├── components/           # Általános, megosztott UI komponensek
+│   │   ├── layout/           # Keret komponensek (Navbar, Footer)
+│   │   ├── shared/           # Újrafelhasználható elemek (Modals, Buttons)
+│   │   └── ui/               # Design System (Base UI)
+│   ├── config/               # App konfiguráció
+│   ├── context/              # React Context (Auth)
+│   ├── features/             # Üzleti logika témakörökre bontva (Single Source of Truth)
+│   │   ├── applications/     # Jelentkezések kezelése
+│   │   ├── auth/             # Hitelesítés
+│   │   ├── companies/        # Cégek
+│   │   ├── landing/          # Főoldali elemek
+│   │   ├── news/             # Hírek
+│   │   ├── positions/        # Álláshirdetések
+│   │   └── users/            # Felhasználók
+│   ├── hooks/                # Globális hook-ok (useCRUD, useToast)
+│   ├── layouts/              # Szerepkör alapú elrendezések
+│   ├── lib/                  # Könyvtárak és API réteg
+│   ├── pages/                # Route target oldalak
+│   ├── types/                # TypeScript definíciók
+│   ├── App.tsx               # Fő komponens / Routing
+│   └── main.tsx              # Belépési pont
 ```
 
 ---
@@ -121,7 +117,7 @@ App.tsx (Global Router)
 ### Data Flow
 
 ```
-Components
+Feature Components (src/features/*)
     ↓
 lib/api.ts (API Layer)
     ↓
@@ -130,412 +126,110 @@ Backend REST API
 
 ---
 
-## 📚 Komponens Dokumentáció
+## 📚 Funkcionális Modulok (`src/features/`)
 
-### 🧩 `src/components/`
+A projekt gerincét a **features** mappa adja. Minden modul tartalmazza a saját komponenseit, hook-jait és logikáját.
 
-#### **applications/**
-- `ApplicationModal.tsx` - Jelentkezési modal pozíciókra (motivációs levél + térkép)
-- `ApplicationsList.tsx` - Hallgatói jelentkezések listája
-- `LocationMap.tsx` - Interaktív térkép cég és felhasználó helyzetével
+### 🔐 **auth/**
+Bejelentkezési és regisztrációs folyamatok vizuális elemei (pl. `LoginCard`).
 
-#### **company-profile/**
-- `CompanyProfileDisplay.tsx` - Cég profil megjelenítése
-- `CompanyProfileForm.tsx` - Cég profil szerkesztő form
-- `ErrorAlert.tsx` - Hibaüzenet komponens
+### 📋 **applications/**
+Hallgatói jelentkezések kezelése.
+- **Components**: `ApplicationsList` (Jelentkezések listázása), `LocationMap` (Térkép).
 
-#### **landing/**
-- `HowItWorksSection.tsx` - "Hogyan működik" szekció
-- `LoginCard.tsx` - Bejelentkezési kártya
+### 🏢 **companies/**
+Céges profilok és adminisztráció.
+- **Components**: `CompanyProfileDisplay` (Adatlap), `CompanyFormModal` (Szerkesztés).
 
-#### **layout/**
-- `DashboardLayout.tsx` - Dashboard közös layout (navbar + content + footer)
-- `Navbar.tsx` - Fő navigációs sáv
-- `Footer.tsx` - Alsó lábléc
-- `PlaceholderPage.tsx` - Placeholder még nem implementált oldalakhoz
+### 🏠 **landing/**
+A publikus főoldal építőkockái.
+- **Components**: `HowItWorksSection`, `DualInfoSection`, `MaterialsGallery` (Szórólapok), `ReferencesSlider`.
 
-#### **positions/**
-- `FilterSidebar.tsx` - Pozíciók szűrő sidebar (város, cég, címkék, határidő)
-- `PositionCard.tsx` - Pozíció kártya komponens
+### 📰 **news/**
+Hírek és értesítések rendszere.
+- **Components**: `NewsCard`, `NewsFilter`, `NewsFormModal`.
 
-#### **shared/**
-- `ChipButton.tsx` - Chip/tag gomb komponens
-- `PasswordInput.tsx` - Jelszó input show/hide funkcióval
+### 💼 **positions/**
+Álláshirdetések böngészése és kezelése.
+- **Components**: `PositionsList`, `PositionsMap`, `PositionCard`, `FilterSidebar`, `JobSlider`.
+- **Utils**: Pozíció specifikus segédfüggvények.
 
-#### **student/**
-- `NewsCard.tsx` - Hír kártya komponens
-- `NewsFilter.tsx` - Hírek szűrő komponens
-
-#### **ui/**
-- `Button.tsx` - Alap gomb komponens
-- `Card.tsx` - Alap kártya komponens
-- `Input.tsx` - Alap input komponens
-
-#### **Root Components**
-- `CompanyInfoModal.tsx` - Cég információs modal
-- `CompanyProfileModal.tsx` - Cég profil modal
+### 👥 **users/**
+Felhasználói fiókok kezelése (Admin/HR).
+- **Components**: `AdminUserModal`, `StudentFormModal`.
 
 ---
 
-### 📄 `src/pages/`
+## 📄 Oldalak (`src/pages/`)
 
-#### **admin/** - Admin Dashboard
-- `AdminDashboard.tsx` - Admin főoldal (statisztikák)
-- `AdminPositions.tsx` - Pozíciók kezelése (CRUD, deaktiválás)
-- `AdminCompanies.tsx` - Cégek kezelése
-- `AdminUsers.tsx` - Felhasználók kezelése
-- `AdminNews.tsx` - Hírek kezelése
-- `AdminTags.tsx` - Címkék kezelése
-- `AdminSettings.tsx` - Rendszerbeállítások
+Az oldalak kötik össze a funkciókat a routing-gal.
 
-#### **auth/** - Autentikáció
-- `StudentRegisterPage.tsx` - Hallgatói regisztráció (részletes form)
-- `ForgotPasswordPage.tsx` - Elfelejtett jelszó
-- `ResetPasswordPage.tsx` - Jelszó visszaállítás
+### **admin/** - Admin Dashboard
+- `AdminDashboard.tsx` - Vezérlőpult
+- `AdminPositions.tsx`, `AdminCompanies.tsx`, `AdminUsers.tsx`, `AdminNews.tsx` - CRUD felületek
 
-#### **hr/** - HR Dashboard
-- `CompanyProfilePage.tsx` - Cég profil kezelése
+### **auth/** - Autentikáció
+- `StudentRegisterPage.tsx`, `ForgotPasswordPage.tsx`, `ResetPasswordPage.tsx`
 
-#### **landing/** - Publikus Oldalak
-- `HomePage.tsx` - Főoldal (landing page)
-- `PositionsPage.tsx` - Elérhető pozíciók listája (szűrés, jelentkezés)
-- `MapPage.tsx` - Pozíciók térképes megjelenítése
+### **hr/** - HR Dashboard
+- `CompanyProfilePage.tsx` - Saját cég adatainak kezelése
 
-#### **student/** - Hallgatói Dashboard
-- `StudentDashboardPage.tsx` - Hallgatói főoldal (hírek, jelentkezések)
+### **landing/** - Publikus Oldalak
+- `HomePage.tsx` - Főoldal
+- `PositionsPage.tsx` - Álláskereső
+- `PublicCompanyProfilePage.tsx` - Cég publikus adatlapja
 
-#### **mentor/** & **teacher/**
-- Placeholder oldalak (jövőbeli fejlesztés)
+### **student/** - Hallgatói Dashboard
+- `StudentDashboardPage.tsx` - Saját jelentkezések
+- `StudentNewsPage.tsx` - Hírek
 
 ---
 
-### 🎨 `src/layouts/`
+## 🧠 Utilitás és Hook-ok
 
-Szerepkör-specifikus layoutok:
+### `src/hooks/`
+- **`useCRUD`**: Általános adatkezelő hook (létrehozás, olvasás, frissítés, törlés).
+- **`useToast`**: Visszajelző üzenetek kezelése.
+- **`useModal`**: Modál ablakok vezérlése.
+- **`useGeocoding`**: Címek koordinátává alakítása.
 
-- `AdminLayout.tsx` - Admin felület layout
-- `StudentLayout.tsx` - Hallgatói felület layout
-- `HrLayout.tsx` - HR felület layout
-- `MentorLayout.tsx` - Mentor felület layout
-- `TeacherLayout.tsx` - Oktató felület layout
-
-Minden layout tartalmazza:
-- Navigációs menüt (szerepkör-specifikus)
-- Oldal tartalmat
-- Kijelentkezés funkciót
-
----
-
-### 🧠 `src/lib/` - Utilities
-
-#### **api.ts** - API Layer
-Központi API kommunikációs réteg:
-
-```typescript
-// Példa használat
-import { api } from './lib/api';
-
-// Pozíciók lekérése
-const positions = await api.positions.listPublic();
-
-// Jelentkezés
-await api.applications.submit({ positionId, studentNote });
-
-// Cégek lekérése
-const companies = await api.companies.list();
-```
-
-**Főbb API csoportok:**
-- `auth` - Bejelentkezés, regisztráció
-- `positions` - Pozíciók CRUD
-- `companies` - Cégek CRUD
-- `students` - Hallgatók kezelése
-- `applications` - Jelentkezések
-- `news` - Hírek
-- `stats` - Statisztikák
-
-#### **city-coordinates.ts** - Geocoding Cache
-62 magyar város előre geocoding-olt koordinátái:
-- Gyorsítja a térkép betöltést
-- Csökkenti az API hívásokat
-- Fallback Photon API előtt
-
-#### **positions-utils.ts** - Position Utilities
-Pozíció-specifikus helper függvények:
-- `isExpired()` - Határidő ellenőrzés
-- `parseDate()` - Dátum parsing
-- `toTagName()` - Címke név kinyerés
-- `norm()`, `lower()` - Szöveg normalizálás
-
-#### **validation-utils.ts** - Validation Helpers
-Form validációs függvények:
-- Email validáció
-- Jelszó erősség ellenőrzés
-- Telefonszám validáció
-
-#### **cn.ts** - Class Name Utility
-Tailwind className összefűzés:
-```typescript
-cn("base-class", condition && "conditional-class")
-```
-
----
-
-## 🗺️ Térképes Funkciók
-
-### Photon API Geocoding
-
-Az alkalmazás a **Photon API**-t használja geocoding-hoz:
-- **Ingyenes** - Nincs API key szükséges
-- **Gyors** - 200ms rate limiting
-- **Megbízható** - OpenStreetMap alapú
-
-### Geocoding Stratégia
-
-1. **localStorage cache** - Már geocoding-olt címek (azonnal)
-2. **Pre-geocoded cities** - 62 város koordinátái (azonnal)
-3. **Photon API** - Új címek geocoding-ja (200ms késleltetéssel)
-
-### Térképek
-
-#### MapPage (Pozíciók térképe)
-- Összes aktív pozíció megjelenítése
-- Felhasználó helyzete (piros marker)
-- Kattintható markerek popup-pal
-- "Megnézem az állást" gomb → jelentkezési modal
-
-#### LocationMap (Jelentkezési térkép)
-- Cég helyszíne (kék marker)
-- Felhasználó helyzete (piros marker)
-- Távolság számítás és megjelenítés
-- Automatikus térképközép és zoom
+### `src/lib/`
+- **`api.ts`**: Központi Axios példány beépített token kezeléssel és hibakezeléssel.
+- **`cn.ts`**: Tailwind osztályok dinamikus összefűzése (`clsx`, `tailwind-merge`).
 
 ---
 
 ## 🎨 Styling
 
 ### Tailwind CSS
-
-Az alkalmazás **Tailwind CSS**-t használ:
-- Utility-first approach
-- Responsive design
-- Dark mode ready (jövőbeli)
-- Custom color palette
-
-### Design System
-
-**Színek:**
-- Primary: Blue (`blue-600`, `blue-700`)
-- Success: Green (`green-50`, `green-600`)
-- Warning: Amber (`amber-50`, `amber-800`)
-- Error: Red (`red-50`, `red-600`)
-- Neutral: Slate (`slate-50` - `slate-900`)
-
-**Komponensek:**
-- Rounded corners: `rounded-lg`, `rounded-xl`, `rounded-2xl`
-- Shadows: `shadow-sm`, `shadow-lg`
-- Borders: `border`, `border-2`
-- Spacing: `gap-*`, `space-y-*`, `p-*`, `m-*`
-
----
-
-## 🔐 Autentikáció
-
-### Token Kezelés
-
-```typescript
-// Token tárolás
-auth.setToken(token);
-
-// Token lekérés
-const token = auth.getToken();
-
-// Kijelentkezés
-auth.clearToken();
-```
-
-### Protected Routes
-
-A védett útvonalak layout-ok által vannak kezelve:
-- `AdminLayout` - Admin jogosultság szükséges
-- `StudentLayout` - Hallgatói jogosultság szükséges
-- `HrLayout` - HR jogosultság szükséges
-
----
-
-## 📊 State Management
-
-### Local State
-- `useState` - Komponens szintű state
-- `useEffect` - Side effects (API calls, subscriptions)
-- `useMemo` - Computed values (filtering, sorting)
-
-### Global State
-- `sessionStorage` - Pozíció ID tárolás (map → positions navigation)
-- `localStorage` - Geocoding cache, auth token
+Az alkalmazás **Tailwind CSS**-t használ a stílusozáshoz.
+- **Primary**: Blue (`blue-600`)
+- **Success**: Green (`green-600`)
+- **UI Elements**: `rounded-2xl`, `shadow-sm`, `border-slate-200`
 
 ---
 
 ## 🚀 Deployment
 
-### Vercel
-
-A projekt Vercelre optimalizált (`vercel.json`).
+A projekt Vercelre optimalizált.
 
 **Environment Variables:**
 ```
 VITE_API_URL=https://your-backend-api.com
 ```
 
-**Deploy:**
+**Build:**
 ```bash
-# Automatikus deploy git push-ra
-git push origin main
-
-# Vagy manuálisan
-vercel --prod
+npm run build
 ```
 
 ---
 
-## 🧪 Development Best Practices
-
-### Komponens Struktúra
-
-```tsx
-// 1. Imports
-import { useState } from "react";
-import { api } from "../../lib/api";
-
-// 2. Types/Interfaces
-interface MyComponentProps {
-  title: string;
-  onSubmit: () => void;
-}
-
-// 3. Component
-export default function MyComponent({ title, onSubmit }: MyComponentProps) {
-  // 4. State
-  const [loading, setLoading] = useState(false);
-  
-  // 5. Effects
-  useEffect(() => {
-    // ...
-  }, []);
-  
-  // 6. Handlers
-  const handleClick = () => {
-    // ...
-  };
-  
-  // 7. Render
-  return (
-    <div>
-      {/* ... */}
-    </div>
-  );
-}
-```
-
-### File Naming
-
-- Components: `PascalCase.tsx` (pl. `StudentDashboard.tsx`)
-- Utilities: `kebab-case.ts` (pl. `api-utils.ts`)
-- Styles: `kebab-case.css`
-
-### Code Organization
-
-- **Komponensek**: Kis, újrafelhasználható darabok
-- **Oldalak**: Üzleti logika, API hívások
-- **Layouts**: Közös szerkezet
-- **Lib**: Tiszta függvények, nincs UI
-
----
-
-## 📝 API Integration
-
-### Error Handling
-
-```typescript
-try {
-  const data = await api.positions.list();
-  // Success
-} catch (error) {
-  // Error message from backend
-  console.error(error.message);
-}
-```
-
-### Loading States
-
-```typescript
-const [loading, setLoading] = useState(true);
-
-useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const data = await api.positions.list();
-      setPositions(data);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchData();
-}, []);
-```
-
----
-
-## 🐛 Debugging
-
-### Console Logs
-
-Az alkalmazás részletes console log-okat használ:
-- 🔄 API hívások
-- 📦 Adatok betöltése
-- 🗺️ Geocoding folyamat
-- ✅ Sikeres műveletek
-- ❌ Hibák
-
-### Browser DevTools
-
-- **React DevTools** - Komponens hierarchia
-- **Network Tab** - API hívások
-- **Console** - Log üzenetek
-- **Application** - localStorage, sessionStorage
-
----
-
-## 🔮 Jövőbeli Fejlesztések
-
-- [ ] Dark mode támogatás
-- [ ] Többnyelvűség (i18n)
-- [ ] PWA funkciók
-- [ ] Real-time értesítések (WebSocket)
-- [ ] Advanced filtering (faceted search)
-- [ ] Export funkciók (PDF, Excel)
-- [ ] Analytics dashboard
-- [ ] Mobile app (React Native)
-
----
-
-## 📞 Support
-
-Ha kérdésed van vagy problémába ütközöl:
-
-1. Ellenőrizd a console log-okat
-2. Nézd meg a Network tab-ot
-3. Ellenőrizd a backend kapcsolatot
-4. Nézd meg a README-t
-
----
-
-## 📄 License
+##  License
 
 MIT License - Szabad felhasználás és módosítás.
 
 ---
 
 **Készítette:** Dual Képzés Fejlesztői Csapat  
-**Utolsó frissítés:** 2026-01-17
+**Utolsó frissítés:** 2026-01-21
