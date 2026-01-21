@@ -37,9 +37,6 @@ Statikus fájlok tárolója. Nem vesznek részt a fordítási logikában, de imp
 *   `messages.ts`: Felhasználónak megjelenő statikus üzenetek.
 *   `filters.ts`: Szűrő feltételek alapértelmezett értékei.
 
-### 📁 `context/`
-*   `AuthContext.tsx`: React Context a felhasználó hitelesítési állapotának (`user`, `isAuthenticated`) kezelésére.
-
 ### 📁 `features/` (Funkcionális modulok)
 Ez a mappa tartalmazza az üzleti logikát és a kapcsolódó komponenseket témakörökre bontva. Ez a **"Single Source of Truth"** elv alapja.
 

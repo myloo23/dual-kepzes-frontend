@@ -1,6 +1,7 @@
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/cn";
+import { useAuth } from "../../features/auth";
 
 export type NavItem = {
   to: string;
@@ -18,25 +19,12 @@ export default function DashboardLayout(props: {
 }) {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { logout, user } = useAuth();
 
-  const userEmail = useMemo(() => {
-    try {
-      const raw = localStorage.getItem("user");
-      const u = raw ? JSON.parse(raw) : null;
-      return u?.email ?? null;
-    } catch {
-      return null;
-    }
-  }, []);
+  const userEmail = user?.email ?? null;
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("role");
-
-    // Értesítjük a Navbar-t a változásról
-    window.dispatchEvent(new Event("localStorageUpdated"));
-
+  const handleLogout = () => {
+    logout();
     navigate("/");
   };
 
@@ -112,7 +100,7 @@ export default function DashboardLayout(props: {
 
             <div className="mt-4 border-t border-slate-200 pt-3 px-2">
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
               >
                 Kijelentkezés

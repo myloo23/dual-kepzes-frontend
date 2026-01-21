@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
+import { useAuth } from "../../features/auth";
 import LoginCard from "../../features/auth/components/LoginCard";
 import JobSlider from "../../features/positions/components/JobSlider";
 import MaterialsGallery from "../../features/landing/components/MaterialsGallery";
@@ -26,32 +27,8 @@ function HomePage() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-
-  // Ellenőrizzük, hogy be van-e jelentkezve a felhasználó
-  useEffect(() => {
-    const checkAuthStatus = () => {
-      const token = localStorage.getItem("token") || localStorage.getItem("auth_token");
-      setIsLoggedIn(!!token);
-    };
-
-    // Kezdeti ellenőrzés
-    checkAuthStatus();
-
-    // Figyeljük a localStorage változásokat
-    const handleStorageChange = () => {
-      checkAuthStatus();
-    };
-
-    window.addEventListener("localStorageUpdated", handleStorageChange);
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("localStorageUpdated", handleStorageChange);
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,15 +41,11 @@ function HomePage() {
       console.log("API Válasz:", res);
       console.log("Kapott role:", res.user.role);
 
-      localStorage.setItem("token", res.token);
-      localStorage.setItem("user", JSON.stringify(res.user));
+      console.log("Kapott role:", res.user.role);
 
-      const normalizedRole = res.user.role.trim().toUpperCase();
-      localStorage.setItem("role", normalizedRole);
+      login(res.token, res.user as any); // TODO: Ensure API response matches User type fully
 
-      // Értesítjük a Navbar-t a változásról
-      window.dispatchEvent(new Event("localStorageUpdated"));
-
+      const normalizedRole = res.user.role;
       const target = roleToPath[normalizedRole];
       console.log("Számított útvonal:", target);
 
@@ -99,26 +72,11 @@ function HomePage() {
   };
 
   // Felhasználó adatainak lekérése
-  const getUserInfo = () => {
-    const userStr = localStorage.getItem("user");
-    const role = localStorage.getItem("role") || "";
-
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        return {
-          name: user.name || user.email || "Felhasználó",
-          role: role,
-          dashboardPath: roleToPath[role.trim().toUpperCase()] || "/"
-        };
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  };
-
-  const userInfo = isLoggedIn ? getUserInfo() : null;
+  const userInfo = user ? {
+    name: user.email || "Felhasználó", // Note: API types might need full name check
+    role: user.role,
+    dashboardPath: roleToPath[user.role] || "/"
+  } : null;
 
   // Szerepkör szép megjelenítése
   // (Eltávolítva)
@@ -174,7 +132,7 @@ function HomePage() {
           </div>
         </div>
 
-        {!isLoggedIn ? (
+        {!isAuthenticated ? (
           <LoginCard
             email={email}
             password={password}

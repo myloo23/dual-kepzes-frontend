@@ -72,7 +72,6 @@ dual-kepzes-frontend/
 │   │   ├── shared/           # Újrafelhasználható elemek (Modals, Buttons)
 │   │   └── ui/               # Design System (Base UI)
 │   ├── config/               # App konfiguráció
-│   ├── context/              # React Context (Auth)
 │   ├── features/             # Üzleti logika témakörökre bontva (Single Source of Truth)
 │   │   ├── applications/     # Jelentkezések kezelése
 │   │   ├── auth/             # Hitelesítés
