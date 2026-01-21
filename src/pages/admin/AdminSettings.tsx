@@ -31,9 +31,14 @@ export default function AdminSettings() {
         res = await api.me.get();
       }
       setMe(res);
+      const fullName =
+        ("fullName" in res && res.fullName) ||
+        ("name" in res && res.name) ||
+        "";
+      const phoneNumber = "phoneNumber" in res ? res.phoneNumber || "" : "";
       setFormData({
-        fullName: res.fullName || res.name || "",
-        phoneNumber: res.phoneNumber || "",
+        fullName,
+        phoneNumber,
       });
       setMsg(null);
     } catch (e: any) {

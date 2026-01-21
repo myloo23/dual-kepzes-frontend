@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { type Position } from "../../lib/api";
-import { useGeocoding } from "../../hooks/useGeocoding";
+import { type Position } from "../../../lib/api";
+import { useGeocoding } from "../../../hooks/useGeocoding";
 
 // Default blue marker for positions
 const defaultIcon = L.icon({
@@ -50,14 +50,26 @@ export default function PositionsMap({
     // Calculate map center
     const mapCenter: [number, number] = useMemo(() => {
         if (userLocation && positionsWithCoords.length > 0) {
-            const avgLat = positionsWithCoords.reduce((sum, p) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
-            const avgLng = positionsWithCoords.reduce((sum, p) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
+            const avgLat = positionsWithCoords.reduce<number>(
+                (sum, p) => sum + (p.latitude || 0),
+                0
+            ) / positionsWithCoords.length;
+            const avgLng = positionsWithCoords.reduce<number>(
+                (sum, p) => sum + (p.longitude || 0),
+                0
+            ) / positionsWithCoords.length;
             return [(userLocation.lat + avgLat) / 2, (userLocation.lng + avgLng) / 2];
         }
 
         if (positionsWithCoords.length > 0) {
-            const avgLat = positionsWithCoords.reduce((sum, p) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
-            const avgLng = positionsWithCoords.reduce((sum, p) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
+            const avgLat = positionsWithCoords.reduce<number>(
+                (sum, p) => sum + (p.latitude || 0),
+                0
+            ) / positionsWithCoords.length;
+            const avgLng = positionsWithCoords.reduce<number>(
+                (sum, p) => sum + (p.longitude || 0),
+                0
+            ) / positionsWithCoords.length;
             return [avgLat, avgLng];
         }
 

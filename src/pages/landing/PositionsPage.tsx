@@ -5,16 +5,16 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../../lib/api';
-import { usePositions } from '../../../features/positions/hooks/usePositions';
-import usePositionsFilters from '../../../hooks/usePositionsFilters';
-import { useModal } from '../../../shared/hooks';
-import ApplicationModal from '../../../components/applications/ApplicationModal';
-import FilterSidebar from '../../../components/positions/FilterSidebar';
-import PositionsList from '../../../features/positions/components/PositionsList';
-import PositionsMap from '../../../components/positions/PositionsMap';
-import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../../constants';
-import type { Position } from '../../../lib/api';
+import { api } from '../../lib/api';
+import { usePositions } from '../../features/positions/hooks/usePositions';
+import usePositionsFilters from '../../hooks/usePositionsFilters';
+import { useModal } from '../../shared/hooks';
+import ApplicationModal from '../../components/applications/ApplicationModal';
+import FilterSidebar from '../../components/positions/FilterSidebar';
+import PositionsList from '../../features/positions/components/PositionsList';
+import PositionsMap from '../../components/positions/PositionsMap';
+import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../constants';
+import type { Position } from '../../lib/api';
 
 export default function PositionsPage() {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ export default function PositionsPage() {
     if (openPositionId) {
       sessionStorage.removeItem('openPositionId');
 
-      const position = positions.find(p => String(p.id) === openPositionId);
+      const position = positions.find((p: Position) => String(p.id) === openPositionId);
       if (position) {
         applicationModal.open(position);
       }
@@ -96,7 +96,7 @@ export default function PositionsPage() {
 
   // Handle apply button click
   const handleApply = useCallback((positionId: string | number) => {
-    const position = positions.find(p => String(p.id) === String(positionId));
+    const position = positions.find((p: Position) => String(p.id) === String(positionId));
     if (position) {
       applicationModal.open(position);
     }

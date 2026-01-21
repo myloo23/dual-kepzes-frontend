@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type NewsCreatePayload, type NewsItem, type NewsTargetGroup } from "../../lib/api";
+import { type NewsCreatePayload, type NewsItem, type NewsTargetGroup } from "../../../../lib/api";
 
 interface NewsFormModalProps {
     isOpen: boolean;
@@ -66,12 +66,12 @@ export default function NewsFormModal({
     const addTag = (raw: string) => {
         const t = raw.trim();
         if (!t) return;
-        if ((formData.tags || []).some((x) => x.toLowerCase() === t.toLowerCase())) return;
-        setFormData((p) => ({ ...p, tags: [...(p.tags || []), t] }));
+        if ((formData.tags || []).some((x: string) => x.toLowerCase() === t.toLowerCase())) return;
+        setFormData((p: NewsCreatePayload) => ({ ...p, tags: [...(p.tags || []), t] }));
     };
 
     const removeTag = (t: string) => {
-        setFormData((p) => ({ ...p, tags: (p.tags || []).filter((x) => x !== t) }));
+        setFormData((p: NewsCreatePayload) => ({ ...p, tags: (p.tags || []).filter((x: string) => x !== t) }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -129,7 +129,9 @@ export default function NewsFormModal({
                         <label className="text-xs font-medium text-slate-700">Cím *</label>
                         <input
                             value={formData.title}
-                            onChange={(e) => setFormData((p) => ({ ...p, title: e.target.value }))}
+                            onChange={(e) =>
+                                setFormData((p: NewsCreatePayload) => ({ ...p, title: e.target.value }))
+                            }
                             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             placeholder="Pl. Félév végi értékelés – határidő"
                         />
@@ -139,7 +141,9 @@ export default function NewsFormModal({
                         <label className="text-xs font-medium text-slate-700">Szöveg *</label>
                         <textarea
                             value={formData.content}
-                            onChange={(e) => setFormData((p) => ({ ...p, content: e.target.value }))}
+                            onChange={(e) =>
+                                setFormData((p: NewsCreatePayload) => ({ ...p, content: e.target.value }))
+                            }
                             rows={6}
                             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             placeholder="Hír részletei..."
@@ -152,7 +156,10 @@ export default function NewsFormModal({
                             <select
                                 value={formData.targetGroup}
                                 onChange={(e) =>
-                                    setFormData((p) => ({ ...p, targetGroup: e.target.value as NewsTargetGroup }))
+                                    setFormData((p: NewsCreatePayload) => ({
+                                        ...p,
+                                        targetGroup: e.target.value as NewsTargetGroup,
+                                    }))
                                 }
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             >
@@ -167,7 +174,10 @@ export default function NewsFormModal({
                                     type="checkbox"
                                     checked={!!formData.important}
                                     onChange={(e) =>
-                                        setFormData((p) => ({ ...p, important: e.target.checked }))
+                                        setFormData((p: NewsCreatePayload) => ({
+                                            ...p,
+                                            important: e.target.checked,
+                                        }))
                                     }
                                     className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 />
@@ -207,7 +217,7 @@ export default function NewsFormModal({
 
                         {(formData.tags || []).length > 0 ? (
                             <div className="flex flex-wrap gap-1.5 p-1">
-                                {(formData.tags || []).map((t) => (
+                                {(formData.tags || []).map((t: string) => (
                                     <Chip key={t} text={t} onRemove={() => removeTag(t)} />
                                 ))}
                             </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type Company, type Position, type Tag } from "../../lib/api";
+import { type Company, type Position, type Tag } from "../../../../lib/api";
 
 interface PositionFormModalProps {
     isOpen: boolean;
@@ -92,7 +92,7 @@ export default function PositionFormModal({
     const removeTag = (index: number) => {
         setFormData((prev) => ({
             ...prev,
-            tags: prev.tags.filter((_, i) => i !== index),
+            tags: prev.tags.filter((_: Tag, i: number) => i !== index),
         }));
     };
 
@@ -115,11 +115,11 @@ export default function PositionFormModal({
                 ...formData,
                 deadline: formatDeadlineForApi(formData.deadline),
                 tags: formData.tags
-                    .map((tag) => ({
+                    .map((tag: Tag) => ({
                         name: tag.name.trim(),
                         category: tag.category?.trim() || undefined,
                     }))
-                    .filter((tag) => tag.name),
+                    .filter((tag: Tag) => tag.name),
             };
             await onSave(payload);
             onClose();
@@ -268,7 +268,7 @@ export default function PositionFormModal({
                                 + Címke
                             </button>
                         </div>
-                        {formData.tags.map((tag, index) => (
+                        {formData.tags.map((tag: Tag, index: number) => (
                             <div key={index} className="flex items-center gap-2">
                                 <input
                                     placeholder="Név (pl. React)"

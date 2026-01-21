@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Position } from "../lib/api";
+import type { Position } from "../../../lib/api";
 import {
     norm,
     lower,
@@ -7,7 +7,8 @@ import {
     toTagName,
     toTagCategory,
     isExpired,
-} from "../lib/positions-utils";
+    type TagLike,
+} from "../../../lib/positions-utils";
 
 export type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
 export type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
@@ -55,7 +56,7 @@ export function usePositionsFilters({
     const tagCategories = useMemo(() => {
         const categorySet = new Set<string>();
         positions.forEach((p) => {
-            p.tags?.forEach((t) => {
+            p.tags?.forEach((t: TagLike) => {
                 const cat = toTagCategory(t);
                 if (cat) categorySet.add(cat);
             });
@@ -66,7 +67,7 @@ export function usePositionsFilters({
     const allTags = useMemo(() => {
         const tagSet = new Set<string>();
         positions.forEach((p) => {
-            p.tags?.forEach((t) => {
+            p.tags?.forEach((t: TagLike) => {
                 const name = toTagName(t);
                 if (name) tagSet.add(name);
             });
@@ -104,14 +105,14 @@ export function usePositionsFilters({
             // Tag category filter
             if (tagCategory !== "ALL") {
                 const hasCategory = p.tags?.some(
-                    (t) => toTagCategory(t) === tagCategory
+                    (t: TagLike) => toTagCategory(t) === tagCategory
                 );
                 if (!hasCategory) return false;
             }
 
             // Selected tags filter
             if (selectedTags.length > 0) {
-                const positionTags = p.tags?.map((t) => toTagName(t)) || [];
+                const positionTags = p.tags?.map((t: TagLike) => toTagName(t)) || [];
                 const hasAllTags = selectedTags.every((tag) =>
                     positionTags.includes(tag)
                 );
