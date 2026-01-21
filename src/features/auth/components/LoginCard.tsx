@@ -1,6 +1,6 @@
 // src/components/landing/LoginCard.tsx
 import { Link } from "react-router-dom";
-import PasswordInput from "../shared/PasswordInput";
+import PasswordInput from "../../../components/shared/PasswordInput";
 
 interface LoginCardProps {
     email: string;

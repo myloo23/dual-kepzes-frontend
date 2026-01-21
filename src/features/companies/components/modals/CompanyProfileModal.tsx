@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { type Company } from "../lib/api";
+import { type Company } from "../../../../lib/api";
 
 type CompanyProfileModalProps = {
     company: Company | null;

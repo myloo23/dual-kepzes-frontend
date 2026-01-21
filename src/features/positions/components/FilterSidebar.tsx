@@ -1,6 +1,6 @@
 // src/components/positions/FilterSidebar.tsx
-import ChipButton from "../shared/ChipButton";
-import { lower } from "../../lib/positions-utils";
+import ChipButton from "../../../components/shared/ChipButton";
+import { lower } from "../../../lib/positions-utils";
 
 type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
 type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";

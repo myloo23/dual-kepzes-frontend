@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type StudentProfile } from "../../lib/api";
+import { type StudentProfile } from "../../../../lib/api";
 
 interface StudentFormModalProps {
     isOpen: boolean;

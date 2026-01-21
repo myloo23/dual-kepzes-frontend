@@ -5,16 +5,16 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../../lib/api';
-import { usePositions } from '../../../features/positions/hooks/usePositions';
-import usePositionsFilters from '../../../hooks/usePositionsFilters';
-import { useModal } from '../../../shared/hooks';
-import ApplicationModal from '../../../components/applications/ApplicationModal';
-import FilterSidebar from '../../../components/positions/FilterSidebar';
-import PositionsList from '../../../features/positions/components/PositionsList';
-import PositionsMap from '../../../components/positions/PositionsMap';
-import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../../constants';
-import type { Position } from '../../../lib/api';
+import { api } from '../../lib/api';
+import { usePositions } from '../../features/positions/hooks/usePositions';
+import usePositionsFilters from '../../hooks/usePositionsFilters';
+import { useModal } from '../../shared/hooks';
+import ApplicationModal from '../../components/applications/ApplicationModal';
+import FilterSidebar from '../../components/positions/FilterSidebar';
+import PositionsList from '../../features/positions/components/PositionsList';
+import PositionsMap from '../../components/positions/PositionsMap';
+import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../constants';
+import type { Position } from '../../lib/api';
 
 export default function PositionsPage() {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
 // src/components/company-profile/CompanyProfileDisplay.tsx
-import { type Company } from "../../lib/api";
+import { type Company } from "../../../lib/api";
 
 interface CompanyProfileDisplayProps {
     company: Company;
