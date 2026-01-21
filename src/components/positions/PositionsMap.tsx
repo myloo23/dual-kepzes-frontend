@@ -135,7 +135,7 @@ export default function PositionsMap({
                                         <div className="text-slate-600">{p.company.name}</div>
                                     )}
                                     <div className="text-slate-500">
-                                        {p.address}, {p.city}
+                                        {p.location?.address}, {p.location?.city}
                                     </div>
                                     <button
                                         onClick={() => handleViewPosition(p.id)}

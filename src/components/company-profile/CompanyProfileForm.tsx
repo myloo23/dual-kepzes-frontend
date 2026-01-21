@@ -1,8 +1,20 @@
 // src/components/company-profile/CompanyProfileForm.tsx
-import { type Company } from "../../lib/api";
+
+
+interface CompanyProfileFormData {
+    name: string;
+    taxId: string;
+    hqCountry: string;
+    hqZipCode: string;
+    hqCity: string;
+    hqAddress: string;
+    contactName: string;
+    contactEmail: string;
+    description: string;
+}
 
 interface CompanyProfileFormProps {
-    formData: Omit<Company, 'id'>;
+    formData: CompanyProfileFormData;
     loading: boolean;
     onSubmit: (e: React.FormEvent) => void;
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;

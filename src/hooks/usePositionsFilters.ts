@@ -41,7 +41,7 @@ export function usePositionsFilters({
 }: UsePositionsFiltersProps) {
     // Extract unique values for filters
     const cities = useMemo(() => {
-        const citySet = new Set(positions.map((p) => p.city).filter(Boolean));
+        const citySet = new Set(positions.map((p) => p.location?.city).filter(Boolean));
         return Array.from(citySet).sort();
     }, [positions]);
 
@@ -87,12 +87,12 @@ export function usePositionsFilters({
                 const companyMatch = p.company?.name
                     ? lower(p.company.name).includes(s)
                     : false;
-                const cityMatch = lower(p.city).includes(s);
+                const cityMatch = p.location?.city ? lower(p.location.city).includes(s) : false;
                 if (!titleMatch && !companyMatch && !cityMatch) return false;
             }
 
             // City filter
-            if (city !== "ALL" && norm(p.city) !== norm(city)) return false;
+            if (city !== "ALL" && (!p.location?.city || norm(p.location.city) !== norm(city))) return false;
 
             // Company filter
             if (

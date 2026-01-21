@@ -23,7 +23,7 @@ interface JobCardProps {
 export default function JobCard({ position: p, onViewDetails }: JobCardProps) {
     const companyName = norm(p.company?.name) || "Ismeretlen cég";
     const title = norm(p.title) || "Névtelen pozíció";
-    const cityText = norm(p.city) || "—";
+    const cityText = norm(p.city) || norm(p.location?.city) || "—";
     const deadlineText = formatHuDate(p.deadline);
 
     const tags = (Array.isArray(p.tags) ? p.tags : [])

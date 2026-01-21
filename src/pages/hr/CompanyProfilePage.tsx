@@ -10,7 +10,7 @@ export default function CompanyProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<Omit<Company, 'id'>>({
+  const [formData, setFormData] = useState({
     name: '',
     taxId: '',
     hqCountry: '',
@@ -30,7 +30,17 @@ export default function CompanyProfilePage() {
         if (companies.length > 0) {
           const companyData = await api.companies.get(companies[0].id);
           setCompany(companyData);
-          setFormData(companyData);
+          setFormData({
+            name: companyData.name,
+            taxId: companyData.taxId,
+            hqCountry: companyData.locations?.[0]?.country || '',
+            hqZipCode: String(companyData.locations?.[0]?.zipCode || ''),
+            hqCity: companyData.locations?.[0]?.city || '',
+            hqAddress: companyData.locations?.[0]?.address || '',
+            contactName: companyData.contactName,
+            contactEmail: companyData.contactEmail,
+            description: companyData.description || ''
+          });
         }
       } catch (err: any) {
         setError(err.message || "Hiba a cégadatok betöltésekor");
@@ -57,17 +67,26 @@ export default function CompanyProfilePage() {
     try {
       setLoading(true);
       // Convert hqZipCode to number for backend
-      // Create clean payload by removing null values
-      const cleanFormData = Object.fromEntries(
-        Object.entries(formData).filter(([_, v]) => v !== null)
-      );
+
 
       const payload = {
-        ...cleanFormData,
-        hqZipCode: formData.hqZipCode ? Number(formData.hqZipCode) : formData.hqZipCode
+        name: formData.name,
+        taxId: formData.taxId,
+        description: formData.description,
+        contactName: formData.contactName,
+        contactEmail: formData.contactEmail,
+        locations: [{
+          country: formData.hqCountry,
+          zipCode: formData.hqZipCode ? Number(formData.hqZipCode) : 0, // Ensure number
+          city: formData.hqCity,
+          address: formData.hqAddress
+        }]
       };
       await api.companies.update(company.id, payload);
-      setCompany({ ...company, ...formData });
+      // We need to re-fetch or construct the full object manually if updating local state
+      // Simpler to just re-fetch or assume success and mix in new data
+      const updatedCompany = { ...company, ...payload, locations: payload.locations };
+      setCompany(updatedCompany as any); // Cast as quick fix if types mismatch slightly on complex nested objects
       setIsEditing(false);
     } catch (err: any) {
       setError(err.message || "Hiba a mentés során");
@@ -78,7 +97,17 @@ export default function CompanyProfilePage() {
 
   const handleCancel = () => {
     if (company) {
-      setFormData(company);
+      setFormData({
+        name: company.name,
+        taxId: company.taxId,
+        hqCountry: company.locations?.[0]?.country || '',
+        hqZipCode: String(company.locations?.[0]?.zipCode || ''),
+        hqCity: company.locations?.[0]?.city || '',
+        hqAddress: company.locations?.[0]?.address || '',
+        contactName: company.contactName,
+        contactEmail: company.contactEmail,
+        description: company.description || ''
+      });
     }
     setIsEditing(false);
   };

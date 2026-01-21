@@ -56,8 +56,9 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
                 setProgress({ current: i + 1, total: positions.length });
 
                 // Extract location data, handling both flat and nested structures
-                const city = position.city || (position as any).location?.city;
-                const address = position.address || (position as any).location?.address;
+                // Extract location data
+                const city = position.location?.city;
+                const address = position.location?.address;
 
                 console.log(`📍 Geocoding position ${i + 1}/${positions.length}:`, {
                     id: position.id,

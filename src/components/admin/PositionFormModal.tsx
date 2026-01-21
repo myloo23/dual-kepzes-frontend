@@ -13,9 +13,11 @@ const INITIAL_FORM_STATE: Omit<Position, "id"> = {
     companyId: "",
     title: "",
     description: "",
-    zipCode: "",
-    city: "",
-    address: "",
+    location: {
+        zipCode: "",
+        city: "",
+        address: "",
+    },
     deadline: "",
     isDual: false,
     tags: [],
@@ -59,9 +61,19 @@ export default function PositionFormModal({
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
         const { name, value, type } = e.target;
-        // Type assertion for checkbox
         const checked = (e.target as HTMLInputElement).checked;
-        setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+
+        if (name === "zipCode" || name === "city" || name === "address") {
+            setFormData((prev) => ({
+                ...prev,
+                location: {
+                    ...prev.location!,
+                    [name]: value
+                }
+            }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+        }
     };
 
     const handleTagChange = (index: number, field: keyof Tag, value: string) => {
@@ -102,11 +114,6 @@ export default function PositionFormModal({
             const payload: any = {
                 ...formData,
                 deadline: formatDeadlineForApi(formData.deadline),
-                location: {
-                    zipCode: formData.zipCode,
-                    city: formData.city,
-                    address: formData.address
-                },
                 tags: formData.tags
                     .map((tag) => ({
                         name: tag.name.trim(),
@@ -114,10 +121,6 @@ export default function PositionFormModal({
                     }))
                     .filter((tag) => tag.name),
             };
-            // Remove flat address fields to clean up payload
-            delete payload.zipCode;
-            delete payload.city;
-            delete payload.address;
             await onSave(payload);
             onClose();
         } catch (e: any) {
@@ -198,7 +201,7 @@ export default function PositionFormModal({
                             <label className="text-xs font-medium text-slate-700">Irányítószám *</label>
                             <input
                                 name="zipCode"
-                                value={formData.zipCode}
+                                value={formData.location?.zipCode || ""}
                                 onChange={handleFormChange}
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             />
@@ -207,7 +210,7 @@ export default function PositionFormModal({
                             <label className="text-xs font-medium text-slate-700">Város *</label>
                             <input
                                 name="city"
-                                value={formData.city}
+                                value={formData.location?.city || ""}
                                 onChange={handleFormChange}
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             />
@@ -218,7 +221,7 @@ export default function PositionFormModal({
                         <label className="text-xs font-medium text-slate-700">Cím *</label>
                         <input
                             name="address"
-                            value={formData.address}
+                            value={formData.location?.address || ""}
                             onChange={handleFormChange}
                             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                         />
