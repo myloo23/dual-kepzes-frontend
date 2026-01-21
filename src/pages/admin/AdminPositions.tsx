@@ -54,6 +54,14 @@ export default function AdminPositionsPage() {
 
   const handleEdit = async (id: string | number) => {
     positions.clearMessages();
+
+    // Try to find in local list first to avoid API call and potential missing relations
+    const localPosition = positions.items.find((p) => String(p.id) === String(id));
+    if (localPosition && localPosition.location) {
+      modal.open(localPosition);
+      return;
+    }
+
     const position = await positions.get(id);
     if (position) {
       modal.open(position);

@@ -60,6 +60,7 @@ async function apiRequest<T>(
 
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
+    cache: 'no-store', // Disable caching to ensure fresh data
     headers: {
       ...(init.headers || {}),
       ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),

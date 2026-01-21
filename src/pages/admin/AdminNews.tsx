@@ -21,6 +21,15 @@ export default function AdminNews() {
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
+  // Helper to extract list from response
+  const extractList = (response: any): NewsItem[] => {
+    if (Array.isArray(response)) return response;
+    if (response && Array.isArray(response.data)) return response.data;
+    if (response && Array.isArray(response.items)) return response.items;
+    if (response && Array.isArray(response.news)) return response.news; // Potential specific key
+    return [];
+  };
+
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
@@ -31,8 +40,11 @@ export default function AdminNews() {
 
     // Load active news
     try {
-      const actives = await api.news.admin.list();
-      setActiveItems(Array.isArray(actives) ? actives : []);
+      const activesResponse = await api.news.admin.list();
+      console.log('Raw active news response:', activesResponse);
+      const actives = extractList(activesResponse);
+      console.log('Extracted actives:', actives);
+      setActiveItems(actives);
     } catch (e: any) {
       console.error("Failed to load active news:", e);
       // We don't block everything if this fails, but we might want to show error
@@ -41,8 +53,11 @@ export default function AdminNews() {
 
     // Load archived news
     try {
-      const archives = await api.news.admin.listArchived();
-      setArchivedItems(Array.isArray(archives) ? archives : []);
+      const archivesResponse = await api.news.admin.listArchived();
+      console.log('Raw archived news response:', archivesResponse);
+      const archives = extractList(archivesResponse);
+      console.log('Extracted archives:', archives);
+      setArchivedItems(archives);
     } catch (e: any) {
       console.error("Failed to load archived news:", e);
     }
