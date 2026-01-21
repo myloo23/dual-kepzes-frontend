@@ -128,7 +128,7 @@ function HomePage() {
       {/* HERO + LOGIN/WELCOME */}
       <section
         id="home"
-        className="py-10 lg:py-16 grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center rounded-3xl bg-gradient-to-br from-white via-slate-50 to-dkk-blue/10 p-6 sm:p-8 lg:p-0 lg:bg-transparent lg:rounded-none"
+        className="py-10 lg:py-16 grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center"
       >
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
