@@ -7,7 +7,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { usePositions } from '../../features/positions/hooks/usePositions';
-import usePositionsFilters from '../../hooks/usePositionsFilters';
+import { usePositionsFilters } from '../../hooks/usePositionsFilters';
 import { useModal } from '../../shared/hooks';
 import ApplicationModal from '../../components/applications/ApplicationModal';
 import FilterSidebar from '../../components/positions/FilterSidebar';
