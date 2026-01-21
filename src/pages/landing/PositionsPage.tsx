@@ -3,25 +3,90 @@
  * Displays public positions with filtering, sorting, and map view
  */
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../lib/api';
 import { usePositions } from '../../../features/positions/hooks/usePositions';
-import usePositionsFilters from '../../../hooks/usePositionsFilters';
+import { usePositionsFilters } from '../../../hooks/usePositionsFilters';
 import { useModal } from '../../../shared/hooks';
 import ApplicationModal from '../../../components/applications/ApplicationModal';
 import FilterSidebar from '../../../components/positions/FilterSidebar';
 import PositionsList from '../../../features/positions/components/PositionsList';
 import PositionsMap from '../../../components/positions/PositionsMap';
 import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../../constants';
+import { lower } from '../../../lib/positions-utils';
 import type { Position } from '../../../lib/api';
+import type { DeadlineFilter, SortKey } from '../../../hooks/usePositionsFilters';
 
 export default function PositionsPage() {
   const navigate = useNavigate();
   const { positions, loading, error, applicationSuccess, submitApplication } = usePositions();
-  const filters = usePositionsFilters(positions);
   const applicationModal = useModal<Position>();
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [search, setSearch] = useState('');
+  const [city, setCity] = useState('ALL');
+  const [company, setCompany] = useState('ALL');
+  const [tagCategory, setTagCategory] = useState('ALL');
+  const [deadlineFilter, setDeadlineFilter] = useState<DeadlineFilter>('ALL');
+  const [activeOnly, setActiveOnly] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [sortKey, setSortKey] = useState<SortKey>('NEWEST');
+
+  const {
+    cities,
+    companies,
+    tagCategories,
+    allTags,
+    filteredPositions,
+  } = usePositionsFilters({
+    positions,
+    search,
+    city,
+    company,
+    tagCategory,
+    deadlineFilter,
+    activeOnly,
+    selectedTags,
+    sortKey,
+  });
+
+  const sanitizedCompanies = useMemo(
+    () => companies.filter((companyName): companyName is string => Boolean(companyName)),
+    [companies]
+  );
+
+  const derived = useMemo(() => {
+    const maxChips = 8;
+    return {
+      cities,
+      companies: sanitizedCompanies,
+      tags: allTags,
+      categories: tagCategories,
+      showCityChips: cities.length > 0 && cities.length <= maxChips,
+      showCompanyChips: sanitizedCompanies.length > 0 && sanitizedCompanies.length <= maxChips,
+    };
+  }, [cities, sanitizedCompanies, allTags, tagCategories]);
+
+  const resetFilters = useCallback(() => {
+    setSearch('');
+    setCity('ALL');
+    setCompany('ALL');
+    setTagCategory('ALL');
+    setDeadlineFilter('ALL');
+    setActiveOnly(false);
+    setSelectedTags([]);
+    setSortKey('NEWEST');
+  }, []);
+
+  const toggleTag = useCallback((name: string) => {
+    setSelectedTags((prev) => {
+      const exists = prev.some((tag) => lower(tag) === lower(name));
+      if (exists) {
+        return prev.filter((tag) => lower(tag) !== lower(name));
+      }
+      return [...prev, name];
+    });
+  }, []);
 
   // Get user location for map
   useEffect(() => {
@@ -133,10 +198,10 @@ export default function PositionsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
       {/* Map */}
-      {!loading && filters.filtered.length > 0 && !applicationModal.isOpen && (
+      {!loading && filteredPositions.length > 0 && !applicationModal.isOpen && (
         <div className="mb-8">
           <PositionsMap
-            positions={filters.filtered}
+            positions={filteredPositions}
             userLocation={userLocation}
             onPositionClick={handleApply}
           />
@@ -155,38 +220,38 @@ export default function PositionsPage() {
         </div>
         <div className="text-xs text-slate-500">
           Találatok:{' '}
-          <span className="font-semibold text-slate-800">{filters.filtered.length}</span> / {positions.length}
+          <span className="font-semibold text-slate-800">{filteredPositions.length}</span> / {positions.length}
         </div>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[320px,minmax(0,1fr)]">
         {/* Filters */}
         <FilterSidebar
-          search={filters.search}
-          city={filters.city}
-          company={filters.company}
-          tagCategory={filters.tagCategory}
-          deadlineFilter={filters.deadlineFilter}
-          activeOnly={filters.activeOnly}
-          selectedTags={filters.selectedTags}
-          sortKey={filters.sortKey}
-          setSearch={filters.setSearch}
-          setCity={filters.setCity}
-          setCompany={filters.setCompany}
-          setTagCategory={filters.setTagCategory}
-          setDeadlineFilter={filters.setDeadlineFilter}
-          setActiveOnly={filters.setActiveOnly}
-          setSelectedTags={filters.setSelectedTags}
-          setSortKey={filters.setSortKey}
-          derived={filters.derived}
-          onResetFilters={filters.resetFilters}
-          onToggleTag={filters.toggleTag}
+          search={search}
+          city={city}
+          company={company}
+          tagCategory={tagCategory}
+          deadlineFilter={deadlineFilter}
+          activeOnly={activeOnly}
+          selectedTags={selectedTags}
+          sortKey={sortKey}
+          setSearch={setSearch}
+          setCity={setCity}
+          setCompany={setCompany}
+          setTagCategory={setTagCategory}
+          setDeadlineFilter={setDeadlineFilter}
+          setActiveOnly={setActiveOnly}
+          setSelectedTags={setSelectedTags}
+          setSortKey={setSortKey}
+          derived={derived}
+          onResetFilters={resetFilters}
+          onToggleTag={toggleTag}
         />
 
         {/* Positions List */}
         <section className="min-w-0">
           <PositionsList
-            positions={filters.filtered}
+            positions={filteredPositions}
             onCompanyClick={showCompanyInfo}
             onApply={handleApply}
           />
