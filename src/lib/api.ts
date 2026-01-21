@@ -1,34 +1,54 @@
-const API_URL = import.meta.env.VITE_API_URL;
+/**
+ * API Client
+ * Centralized API communication layer with proper type safety
+ */
 
-// --- Token kezelés ---
+import { API_CONFIG, AUTH_CONFIG } from '../config/app.config';
+import type { ApiErrorBody, Id } from '../types/common.types';
+import type {
+  LoginResponse,
+  RegisterResponse,
+  StudentRegisterPayload,
+  Company,
+  Position,
+  StudentProfile,
+  CompanyAdminProfile,
+  UniversityUserProfile,
+  SystemAdminProfile,
+  User,
+  StatsResponse,
+  NewsItem,
+  NewsCreatePayload,
+  Application,
+  ApplicationCreatePayload,
+} from '../types/api.types';
+
+const API_URL = API_CONFIG.BASE_URL;
+
+// ============= Token Management =============
 export const auth = {
-  getToken: () =>
-    localStorage.getItem("token") ||
-    localStorage.getItem("auth_token") ||
-    "",
-  setToken: (t: string) => localStorage.setItem("token", t),
-  clearToken: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("auth_token");
+  getToken: (): string =>
+    localStorage.getItem(AUTH_CONFIG.TOKEN_KEY) ||
+    localStorage.getItem(AUTH_CONFIG.LEGACY_TOKEN_KEY) ||
+    '',
+
+  setToken: (token: string): void =>
+    localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, token),
+
+  clearToken: (): void => {
+    localStorage.removeItem(AUTH_CONFIG.TOKEN_KEY);
+    localStorage.removeItem(AUTH_CONFIG.LEGACY_TOKEN_KEY);
   },
 };
 
-type Id = string | number;
-
-function ensureId(id: Id, label = "id") {
-  const s = String(id ?? "").trim();
+// ============= Utility Functions =============
+function ensureId(id: Id, label = 'id'): string {
+  const s = String(id ?? '').trim();
   if (!s) throw new Error(`Hiányzó ${label}.`);
   return s;
 }
 
-type ApiErrorBody =
-  | {
-    message?: string;
-    error?: string;
-    errors?: Array<{ field?: string; message?: string }>;
-  }
-  | any;
-
+// ============= API Request Handler =============
 async function apiRequest<T>(
   path: string,
   init: RequestInit,
@@ -46,21 +66,24 @@ async function apiRequest<T>(
     },
   });
 
-  const contentType = res.headers.get("content-type") || "";
-  let data: any = null;
+  const contentType = res.headers.get('content-type') || '';
+  let data: unknown = null;
 
   try {
-    if (contentType.includes("application/json")) data = await res.json();
-    else data = await res.text();
+    if (contentType.includes('application/json')) {
+      data = await res.json();
+    } else {
+      data = await res.text();
+    }
   } catch {
-    data = null; // pl. 204 No Content
+    data = null; // e.g., 204 No Content
   }
 
   if (!res.ok) {
-    const body: ApiErrorBody = data;
+    const body = data as ApiErrorBody;
 
     const msg =
-      body?.error ||                                      // ✅ részletes error
+      body?.error ||
       body?.message ||
       (Array.isArray(body?.errors) && body.errors[0]?.message) ||
       `HTTP ${res.status} hiba`;
@@ -68,334 +91,172 @@ async function apiRequest<T>(
     throw new Error(msg);
   }
 
-  return (data ?? ({} as any)) as T;
+  return (data ?? {}) as T;
 }
 
-// --- Helper metódusok ---
-function apiGet<T>(path: string, token?: string) {
-  return apiRequest<T>(path, { method: "GET" }, token);
+// ============= HTTP Method Helpers =============
+function apiGet<T>(path: string, token?: string): Promise<T> {
+  return apiRequest<T>(path, { method: 'GET' }, token);
 }
 
-function apiPost<T>(path: string, body: unknown, token?: string) {
+function apiPost<T>(path: string, body: unknown, token?: string): Promise<T> {
   return apiRequest<T>(
     path,
     {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     },
     token
   );
 }
 
-function apiPut<T>(path: string, body: unknown, token?: string) {
+function apiPut<T>(path: string, body: unknown, token?: string): Promise<T> {
   return apiRequest<T>(
     path,
     {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     },
     token
   );
 }
 
-function apiPatch<T>(path: string, body: unknown, token?: string) {
+function apiPatch<T>(path: string, body: unknown, token?: string): Promise<T> {
   return apiRequest<T>(
     path,
     {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     },
     token
   );
 }
 
-function apiDelete<T>(path: string, token?: string) {
-  return apiRequest<T>(path, { method: "DELETE" }, token);
+function apiDelete<T>(path: string, token?: string): Promise<T> {
+  return apiRequest<T>(path, { method: 'DELETE' }, token);
 }
 
-// ----------------- MODELLEK -----------------
-
-// Auth
-type LoginResponse = {
-  message: string;
-  token: string;
-  user: { id: Id; email: string; role: string };
-};
-
-export type RegisterResponse = {
-  message: string;
-  userId?: Id;
-  role?: string;
-};
-
-export type StudentRegisterPayload = {
-  email: string;
-  password: string;
-  fullName: string;
-  phoneNumber: string;
-  role: "STUDENT";
-  mothersName: string;
-  dateOfBirth: string; // "YYYY-MM-DD"
-  country: string;
-  zipCode: number; // Backend expects number
-  city: string;
-  streetAddress: string;
-  highSchool: string;
-  graduationYear: number;
-  neptunCode?: string | null;
-  currentMajor: string;
-  studyMode: "NAPPALI" | "LEVELEZŐ";
-  hasLanguageCert: boolean;
-};
-
-// Admin / Cégek
-// Új Location típus
-export type Location = {
-  id?: Id;
-  country?: string; // Csak cégeknél van a példa szerint, de lehet opcionális
-  zipCode: string | number;
-  city: string;
-  address: string;
-};
-
-export type Company = {
-  id: Id;
-  name: string;
-  taxId: string;
-  // hq fields replaced by locations
-  locations: Location[];
-  contactName: string;
-  contactEmail: string;
-  description?: string;
-  logoUrl?: string | null;
-  website?: string | null;
-};
-
-export type Tag = {
-  name: string;
-  category?: string;
-};
-
-export type Position = {
-  id: Id;
-  companyId: string;
-  title: string;
-  description: string;
-  location: Location; // flat location fields replaced by nested location object
-  deadline: string; // "yyyy-MM-ddTHH:mm:ssZ"
-  isDual?: boolean; // Backend field for dual training positions
-  isActive?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  tags: Tag[];
-  company?: {
-    name: string;
-    logoUrl?: string | null;
-    locations: Location[]; // Company in position also has locations array
-  };
-};
-
-export type StudentProfile = Record<string, any> & {
-  id: Id;
-  userId?: Id;
-  fullName?: string;
-  email?: string;
-};
-
-export type CompanyAdminProfile = {
-  id: Id;
-  userId: Id;
-  companyId: Id;
-  // add other fields if known, e.g. from schema
-};
-
-export type UniversityUserProfile = {
-  id: Id;
-  userId: Id;
-  // add other fields if known
-};
-
-export type User = {
-  id: Id;
-  email: string;
-  role: string;
-  isActive: boolean;
-  deletedAt?: string | null;
-  student?: StudentProfile | null;
-  companyAdmin?: CompanyAdminProfile | null;
-  universityUser?: UniversityUserProfile | null;
-};
-
-export type UsersByRole = {
-  role: string;
-  count: number;
-};
-
-export type StatsResponse = {
-  totals: {
-    users: number;
-    companies: number;
-    positions: number;
-    applications: number;
-    activePartnerships: number;
-  };
-  usersByRole: Array<{ role: string; count: number }>;
-};
-
-export type NewsTargetGroup = "STUDENT" | "ALL";
-
-export type NewsItem = {
-  id: Id;
-  title: string;
-  content: string; // Changed from body
-  tags: string[];
-  targetGroup: NewsTargetGroup; // Changed from audience
-  important?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-};
-
-export type NewsCreatePayload = {
-  title: string;
-  content: string;
-  tags: string[];
-  targetGroup: NewsTargetGroup;
-  important?: boolean;
-};
-
-// Applications
-export type ApplicationStatus = "SUBMITTED" | "ACCEPTED" | "REJECTED" | "NO_RESPONSE";
-
-export type Application = {
-  id: string;
-  positionId: string;
-  studentId: string;
-  status: ApplicationStatus;
-  studentNote?: string;
-  companyNote?: string;
-  createdAt: string;
-  position?: {
-    id: string;
-    title: string;
-    company: {
-      name: string;
-      logoUrl?: string | null;
-    };
-  };
-};
-
-export type ApplicationCreatePayload = {
-  positionId: string;
-  studentNote?: string; // max 500 chars
-};
-
-// ----------------- ENDPOINT konstansok -----------------
+// ============= API Endpoint Constants =============
 const PATHS = {
-  companies: "/api/companies",
-  positions: "/api/jobs/positions",
-  students: "/api/students",
-  me: "/api/students/me", // Default for students, others should use specific endpoints
-  users: "/api/users", // Generic user management
-  systemAdmins: "/api/system-admins",
-  companyAdmins: "/api/company-admins",
-  universityUsers: "/api/university-users",
-  employees: "/api/employees",
-  stats: "/api/stats",
-  news: "/api/news"
-};
+  companies: '/api/companies',
+  positions: '/api/jobs/positions',
+  students: '/api/students',
+  me: '/api/students/me',
+  users: '/api/users',
+  systemAdmins: '/api/system-admins',
+  companyAdmins: '/api/company-admins',
+  universityUsers: '/api/university-users',
+  employees: '/api/employees',
+  stats: '/api/stats',
+  news: '/api/news',
+  applications: '/api/applications',
+} as const;
 
-// ----------------- API OBJEKTUM -----------------
+// ============= API Object =============
 export const api = {
-  // auth
+  // ============= Auth =============
   login: (email: string, password: string) =>
-    apiPost<LoginResponse>("/api/auth/login", { email, password }),
+    apiPost<LoginResponse>('/api/auth/login', { email, password }),
 
   registerStudent: (payload: StudentRegisterPayload) =>
-    apiPost<RegisterResponse>("/api/auth/register", payload),
+    apiPost<RegisterResponse>('/api/auth/register', payload),
 
-  // stats
+  // ============= Stats =============
   stats: {
     get: () => apiGet<StatsResponse>(PATHS.stats),
   },
 
-  // companies CRUD
-  // companies CRUD
+  // ============= Companies =============
   companies: {
     list: () => apiGet<Company[]>(PATHS.companies),
-    get: (id: Id) => apiGet<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
-    create: (payload: Omit<Company, "id">) =>
+
+    get: (id: Id) =>
+      apiGet<Company>(`${PATHS.companies}/${ensureId(id, 'companyId')}`),
+
+    create: (payload: Omit<Company, 'id'>) =>
       apiPost<Company>(PATHS.companies, payload),
 
-    update: (id: Id, body: Partial<Omit<Company, "id">>) =>
-      apiPatch<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`, body),
+    update: (id: Id, body: Partial<Omit<Company, 'id'>>) =>
+      apiPatch<Company>(`${PATHS.companies}/${ensureId(id, 'companyId')}`, body),
 
     remove: (id: Id) =>
-      apiDelete<{ message?: string }>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
+      apiDelete<{ message?: string }>(`${PATHS.companies}/${ensureId(id, 'companyId')}`),
   },
 
-
-  // positions CRUD
+  // ============= Positions =============
   positions: {
     list: () => apiGet<Position[]>(PATHS.positions),
 
     // Public endpoint - no authentication required
-    listPublic: () => apiGet<Position[]>(PATHS.positions, ""), // Empty string = no token
+    listPublic: () => apiGet<Position[]>(PATHS.positions, ''),
 
     // Helper methods for filtering by isDual flag
-    listDualPositions: async () => {
+    listDualPositions: async (): Promise<Position[]> => {
       const positions = await apiGet<Position[]>(PATHS.positions);
       return positions.filter((p) => p.isDual === true);
     },
 
-    listNonDualPositions: async () => {
+    listNonDualPositions: async (): Promise<Position[]> => {
       const positions = await apiGet<Position[]>(PATHS.positions);
       return positions.filter((p) => p.isDual === false);
     },
 
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
-    create: (payload: Omit<Position, "id">) =>
+
+    create: (payload: Omit<Position, 'id'>) =>
       apiPost<Position>(PATHS.positions, payload),
 
-    // ✅ PATCH
-    update: (id: Id, body: Partial<Omit<Position, "id">>) =>
+    update: (id: Id, body: Partial<Omit<Position, 'id'>>) =>
       apiPatch<Position>(`${PATHS.positions}/${id}`, body),
+
     remove: (id: Id) =>
       apiDelete<{ message?: string }>(`${PATHS.positions}/${id}`),
 
     deactivate: (id: Id) =>
-      apiPatch<{ message: string; position: Position }>(`${PATHS.positions}/${id}/deactivate`, {}),
+      apiPatch<{ message: string; position: Position }>(
+        `${PATHS.positions}/${id}/deactivate`,
+        {}
+      ),
   },
 
-  // students / hallgatói profilok CRUD
+  // ============= Students =============
   students: {
     list: () => apiGet<StudentProfile[]>(PATHS.students),
+
     get: (id: Id) => apiGet<StudentProfile>(`${PATHS.students}/${id}`),
 
-    // ✅ PATCH helyett PUT a backend igény szerint
     update: (id: Id, body: Partial<StudentProfile>) =>
       apiPut<StudentProfile>(`${PATHS.students}/${id}`, body),
 
-    remove: (id: Id) => apiDelete<{ message?: string }>(`${PATHS.students}/${id}`),
+    remove: (id: Id) =>
+      apiDelete<{ message?: string }>(`${PATHS.students}/${id}`),
   },
 
-  // saját profil
+  // ============= Current User Profile =============
   me: {
-    get: () => apiGet<Record<string, any>>(PATHS.me),
-    update: (body: Record<string, any>) => apiPut<Record<string, any>>(PATHS.me, body),
+    get: () => apiGet<StudentProfile>(PATHS.me),
+
+    update: (body: Partial<StudentProfile>) =>
+      apiPut<StudentProfile>(PATHS.me, body),
+
     remove: () => apiDelete<{ message?: string }>(PATHS.me),
   },
 
-  // generic users (admin)
+  // ============= Generic Users (Admin) =============
   users: {
     listInactive: () => apiGet<User[]>(`${PATHS.users}/inactive`),
-    reactivate: (id: Id) => apiPatch<User>(`${PATHS.users}/${id}/reactivate`, {}),
-    deactivate: (id: Id) => apiPatch<User>(`${PATHS.users}/${id}/deactivate`, {}),
+
+    reactivate: (id: Id) =>
+      apiPatch<User>(`${PATHS.users}/${id}/reactivate`, {}),
+
+    deactivate: (id: Id) =>
+      apiPatch<User>(`${PATHS.users}/${id}/deactivate`, {}),
   },
 
-  // news
+  // ============= News =============
   news: {
     // Public
     list: () => apiGet<NewsItem[]>(PATHS.news),
@@ -406,62 +267,96 @@ export const api = {
       list: () => apiGet<NewsItem[]>(`${PATHS.news}/admin`),
       listArchived: () => apiGet<NewsItem[]>(`${PATHS.news}/admin/archived`),
       get: (id: Id) => apiGet<NewsItem>(`${PATHS.news}/admin/${id}`),
-      create: (payload: NewsCreatePayload) => apiPost<NewsItem>(`${PATHS.news}/admin`, payload),
-      update: (id: Id, payload: Partial<NewsCreatePayload>) => apiPatch<NewsItem>(`${PATHS.news}/admin/${id}`, payload),
-      archive: (id: Id) => apiPatch<void>(`${PATHS.news}/admin/${id}/archive`, {}),
-      unarchive: (id: Id) => apiPatch<void>(`${PATHS.news}/admin/${id}/unarchive`, {}),
-      remove: (id: Id) => apiDelete<void>(`${PATHS.news}/admin/${id}`),
+      create: (payload: NewsCreatePayload) =>
+        apiPost<NewsItem>(`${PATHS.news}/admin`, payload),
+      update: (id: Id, payload: Partial<NewsCreatePayload>) =>
+        apiPatch<NewsItem>(`${PATHS.news}/admin/${id}`, payload),
+      archive: (id: Id) =>
+        apiPatch<void>(`${PATHS.news}/admin/${id}/archive`, {}),
+      unarchive: (id: Id) =>
+        apiPatch<void>(`${PATHS.news}/admin/${id}/unarchive`, {}),
+      remove: (id: Id) =>
+        apiDelete<void>(`${PATHS.news}/admin/${id}`),
     },
-
-
   },
 
-  // applications
+  // ============= Applications =============
   applications: {
     submit: (payload: ApplicationCreatePayload) =>
-      apiPost<{ message: string; application: Application }>("/api/applications", payload),
+      apiPost<{ message: string; application: Application }>(
+        PATHS.applications,
+        payload
+      ),
 
-    list: () =>
-      apiGet<Application[]>("/api/applications"),
+    list: () => apiGet<Application[]>(PATHS.applications),
   },
 
-  // System Admins
+  // ============= System Admins =============
   systemAdmins: {
     me: {
-      get: () => apiGet<Record<string, any>>(`${PATHS.systemAdmins}/me`),
-      update: (body: any) => apiPatch<Record<string, any>>(`${PATHS.systemAdmins}/me`, body),
-    }
+      get: () => apiGet<SystemAdminProfile>(`${PATHS.systemAdmins}/me`),
+      update: (body: Partial<SystemAdminProfile>) =>
+        apiPatch<SystemAdminProfile>(`${PATHS.systemAdmins}/me`, body),
+    },
   },
 
-  // Company Admins
+  // ============= Company Admins =============
   companyAdmins: {
-    list: () => apiGet<any[]>(PATHS.companyAdmins),
-    get: (id: Id) => apiGet<any>(`${PATHS.companyAdmins}/${id}`),
-    update: (id: Id, body: any) => apiPatch<any>(`${PATHS.companyAdmins}/${id}`, body),
-    remove: (id: Id) => apiDelete<any>(`${PATHS.companyAdmins}/${id}`),
+    list: () => apiGet<CompanyAdminProfile[]>(PATHS.companyAdmins),
+    get: (id: Id) => apiGet<CompanyAdminProfile>(`${PATHS.companyAdmins}/${id}`),
+    update: (id: Id, body: Partial<CompanyAdminProfile>) =>
+      apiPatch<CompanyAdminProfile>(`${PATHS.companyAdmins}/${id}`, body),
+    remove: (id: Id) =>
+      apiDelete<{ message?: string }>(`${PATHS.companyAdmins}/${id}`),
     me: {
-      get: () => apiGet<Record<string, any>>(`${PATHS.companyAdmins}/me`),
-      update: (body: any) => apiPatch<Record<string, any>>(`${PATHS.companyAdmins}/me`, body),
-    }
+      get: () => apiGet<CompanyAdminProfile>(`${PATHS.companyAdmins}/me`),
+      update: (body: Partial<CompanyAdminProfile>) =>
+        apiPatch<CompanyAdminProfile>(`${PATHS.companyAdmins}/me`, body),
+    },
   },
 
-  // University Users
+  // ============= University Users =============
   universityUsers: {
-    list: () => apiGet<any[]>(PATHS.universityUsers),
-    get: (id: Id) => apiGet<any>(`${PATHS.universityUsers}/${id}`),
-    update: (id: Id, body: any) => apiPatch<any>(`${PATHS.universityUsers}/${id}`, body),
-    remove: (id: Id) => apiDelete<any>(`${PATHS.universityUsers}/${id}`),
+    list: () => apiGet<UniversityUserProfile[]>(PATHS.universityUsers),
+    get: (id: Id) => apiGet<UniversityUserProfile>(`${PATHS.universityUsers}/${id}`),
+    update: (id: Id, body: Partial<UniversityUserProfile>) =>
+      apiPatch<UniversityUserProfile>(`${PATHS.universityUsers}/${id}`, body),
+    remove: (id: Id) =>
+      apiDelete<{ message?: string }>(`${PATHS.universityUsers}/${id}`),
     me: {
-      get: () => apiGet<Record<string, any>>(`${PATHS.universityUsers}/me`),
-      update: (body: any) => apiPatch<Record<string, any>>(`${PATHS.universityUsers}/me`, body),
-    }
+      get: () => apiGet<UniversityUserProfile>(`${PATHS.universityUsers}/me`),
+      update: (body: Partial<UniversityUserProfile>) =>
+        apiPatch<UniversityUserProfile>(`${PATHS.universityUsers}/me`, body),
+    },
   },
 
-  // Employees
+  // ============= Employees =============
   employees: {
     me: {
-      get: () => apiGet<Record<string, any>>(`${PATHS.employees}/me`),
-      update: (body: any) => apiPut<Record<string, any>>(`${PATHS.employees}/me`, body),
-    }
-  }
+      get: () => apiGet<CompanyAdminProfile>(`${PATHS.employees}/me`),
+      update: (body: Partial<CompanyAdminProfile>) =>
+        apiPut<CompanyAdminProfile>(`${PATHS.employees}/me`, body),
+    },
+  },
 };
+
+// ============= Re-export Types for Convenience =============
+export type {
+  Id,
+  LoginResponse,
+  RegisterResponse,
+  StudentRegisterPayload,
+  Company,
+  Position,
+  StudentProfile,
+  CompanyAdminProfile,
+  UniversityUserProfile,
+  User,
+  StatsResponse,
+  NewsItem,
+  NewsCreatePayload,
+  Application,
+  ApplicationCreatePayload,
+  Location,
+  Tag,
+} from '../types/api.types';

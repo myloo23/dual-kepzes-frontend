@@ -1,124 +1,104 @@
-import { useEffect, useMemo, useState } from "react";
-import { api, type Company } from "../../lib/api";
-import CompanyFormModal from "../../components/admin/CompanyFormModal";
+/**
+ * Admin Companies Page - Refactored
+ * Manages company CRUD operations
+ */
 
-type Id = string | number;
+import { useState } from 'react';
+import { api } from '../../lib/api';
+import type { Company } from '../../lib/api';
+import { useCRUD, useModal } from '../../shared/hooks';
+import CompanyFormModal from '../../components/admin/CompanyFormModal';
+import {
+  PAGE_TITLES,
+  PAGE_DESCRIPTIONS,
+  LABELS,
+  CONFIRM_MESSAGES
+} from '../../constants';
 
-const ensureCompanyId = (id: Id | null) => {
-  const s = String(id ?? "").trim();
-  if (!s) throw new Error("Hiányzó companyId (nincs kiválasztott cég / üres ID).");
-  return s;
-};
+export default function AdminCompaniesPage() {
+  const companies = useCRUD<Company>({
+    listFn: api.companies.list,
+    getFn: api.companies.get,
+    createFn: api.companies.create,
+    updateFn: api.companies.update,
+    deleteFn: api.companies.remove,
+  });
 
-export default function AdminCompanies() {
-  const [items, setItems] = useState<Company[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
-
-  // ID alapú lekéréshez
-  const [lookupId, setLookupId] = useState("");
-
-  const load = async () => {
-    setLoading(true);
-    setErr(null);
-    try {
-      const res = await api.companies.list();
-      setItems(res);
-    } catch (e: any) {
-      setErr(e.message || "Hiba a cégek lekérésénél.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    load();
-  }, []);
+  const modal = useModal<Company>();
+  const [lookupId, setLookupId] = useState('');
 
   const handleCreateNew = () => {
-    setEditingCompany(null);
-    setIsModalOpen(true);
-    setMsg(null);
-    setErr(null);
+    companies.clearMessages();
+    modal.open();
   };
 
-  const onEdit = async (id: Id) => {
-    setMsg(null);
-    setErr(null);
-    setLoading(true);
-    try {
-      const c = await api.companies.get(id);
-      setEditingCompany(c);
-      setIsModalOpen(true);
-    } catch (e: any) {
-      setErr(e.message || "Nem sikerült betölteni a céget.");
-    } finally {
-      setLoading(false);
+  const handleEdit = async (id: string | number) => {
+    companies.clearMessages();
+    const company = await companies.get(id);
+    if (company) {
+      modal.open(company);
     }
   };
 
-  const onDelete = async (id: Id) => {
-    if (!confirm("Biztos törlöd ezt a céget?")) return;
-    setLoading(true);
-    setErr(null);
-    setMsg(null);
-    try {
-      await api.companies.remove(id);
-      setMsg("Cég törölve.");
-      await load();
-    } catch (e: any) {
-      setErr(e.message || "Törlés sikertelen.");
-    } finally {
-      setLoading(false);
+  const handleDelete = async (id: string | number) => {
+    if (!confirm(CONFIRM_MESSAGES.DELETE_COMPANY)) return;
+
+    const success = await companies.remove(id);
+    if (success) {
+      modal.close();
     }
   };
 
-  const handleSave = async (data: Omit<Company, "id">) => {
-    if (editingCompany) {
-      const safeId = ensureCompanyId(editingCompany.id);
-      await api.companies.update(safeId, data);
-      setMsg("Cég frissítve.");
+  const handleSave = async (data: Omit<Company, 'id'>) => {
+    let success = false;
+
+    if (modal.data) {
+      // Update existing
+      const updated = await companies.update(modal.data.id, data);
+      success = updated !== null;
     } else {
-      await api.companies.create(data);
-      setMsg("Cég létrehozva.");
+      // Create new
+      const created = await companies.create(data);
+      success = created !== null;
     }
-    await load();
+
+    if (success) {
+      modal.close();
+    }
   };
 
-  const onLookup = async () => {
-    setErr(null);
-    setMsg(null);
+  const handleLookup = async () => {
     if (!lookupId.trim()) return;
 
-    setLoading(true);
-    try {
-      const c = await api.companies.get(lookupId.trim());
-      setMsg(`Lekért cég: ${c.name}`);
-      await onEdit(c.id);
-    } catch (e: any) {
-      setErr(e.message || "Nincs ilyen cég / hiba.");
-    } finally {
-      setLoading(false);
+    const company = await companies.get(lookupId.trim());
+    if (company) {
+      modal.open(company);
     }
   };
-
-  const rows = useMemo(() => items ?? [], [items]);
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
       <div>
-        <h1 className="text-lg font-semibold">Cégek</h1>
-        <p className="text-sm text-slate-600">Összes cég, cég létrehozás / módosítás / törlés.</p>
+        <h1 className="text-lg font-semibold">{PAGE_TITLES.ADMIN_COMPANIES}</h1>
+        <p className="text-sm text-slate-600">{PAGE_DESCRIPTIONS.ADMIN_COMPANIES}</p>
       </div>
 
-      {err && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{err}</div>}
-      {msg && <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{msg}</div>}
+      {/* Feedback Messages */}
+      {companies.error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {companies.error}
+        </div>
+      )}
+      {companies.message && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          {companies.message}
+        </div>
+      )}
 
+      {/* Main Content */}
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        {/* Toolbar */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <h2 className="text-base font-bold text-slate-800">Összes cég</h2>
@@ -130,29 +110,31 @@ export default function AdminCompanies() {
             </button>
           </div>
           <button
-            onClick={load}
+            onClick={companies.load}
             className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50 transition"
           >
-            Frissítés
+            {LABELS.REFRESH}
           </button>
         </div>
 
+        {/* Lookup */}
         <div className="flex gap-2 mb-4">
           <input
             value={lookupId}
             onChange={(e) => setLookupId(e.target.value)}
-            placeholder="Cég keresése ID alapján..."
+            placeholder={LABELS.SEARCH_COMPANY_BY_ID}
             className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
           />
           <button
             type="button"
-            onClick={onLookup}
+            onClick={handleLookup}
             className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900 transition shadow-sm"
           >
-            Lekérés
+            {LABELS.SEARCH}
           </button>
         </div>
 
+        {/* Table */}
         <div className="overflow-y-auto max-h-[600px] rounded-xl border border-slate-200 shadow-sm">
           <table className="min-w-full text-sm relative">
             <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
@@ -164,36 +146,38 @@ export default function AdminCompanies() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {rows.map((c) => (
-                <tr key={String(c.id)} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-4 py-3 text-slate-500 font-mono text-xs">{String(c.id).slice(0, 8)}...</td>
-                  <td className="px-4 py-3 font-medium text-slate-900">{c.name}</td>
+              {companies.items.map((company) => (
+                <tr key={String(company.id)} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-4 py-3 text-slate-500 font-mono text-xs">
+                    {String(company.id).slice(0, 8)}...
+                  </td>
+                  <td className="px-4 py-3 font-medium text-slate-900">{company.name}</td>
                   <td className="px-4 py-3 text-slate-600">
-                    <div className="text-xs">{c.contactName}</div>
-                    <div className="text-[10px] text-slate-400">{c.contactEmail}</div>
+                    <div className="text-xs">{company.contactName}</div>
+                    <div className="text-[10px] text-slate-400">{company.contactEmail}</div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => onEdit(c.id)}
+                        onClick={() => handleEdit(company.id)}
                         className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition"
                       >
-                        Szerkesztés
+                        {LABELS.EDIT}
                       </button>
                       <button
-                        onClick={() => onDelete(c.id)}
+                        onClick={() => handleDelete(company.id)}
                         className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition"
                       >
-                        Törlés
+                        {LABELS.DELETE}
                       </button>
                     </div>
                   </td>
                 </tr>
               ))}
-              {!loading && rows.length === 0 && (
+              {!companies.loading && companies.items.length === 0 && (
                 <tr>
                   <td className="px-4 py-12 text-center text-slate-500" colSpan={5}>
-                    Nincs adat.
+                    {LABELS.NO_DATA}
                   </td>
                 </tr>
               )}
@@ -202,11 +186,12 @@ export default function AdminCompanies() {
         </div>
       </div>
 
+      {/* Modal */}
       <CompanyFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={modal.isOpen}
+        onClose={modal.close}
         onSave={handleSave}
-        initialData={editingCompany}
+        initialData={modal.data}
       />
     </div>
   );
