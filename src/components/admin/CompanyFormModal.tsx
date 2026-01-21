@@ -8,7 +8,22 @@ interface CompanyFormModalProps {
     initialData?: Company | null;
 }
 
-const INITIAL_FORM_STATE: Omit<Company, "id"> = {
+// Internal form state interface to handle flat inputs before transforming to nested output
+interface CompanyFormData {
+    name: string;
+    taxId: string;
+    hqCountry: string;
+    hqZipCode: string;
+    hqCity: string;
+    hqAddress: string;
+    contactName: string;
+    contactEmail: string;
+    description: string;
+    website: string;
+    logoUrl: string;
+}
+
+const INITIAL_FORM_STATE: CompanyFormData = {
     name: "",
     taxId: "",
     hqCountry: "",
@@ -28,7 +43,7 @@ export default function CompanyFormModal({
     onSave,
     initialData,
 }: CompanyFormModalProps) {
-    const [formData, setFormData] = useState<Omit<Company, "id">>(INITIAL_FORM_STATE);
+    const [formData, setFormData] = useState<CompanyFormData>(INITIAL_FORM_STATE);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -36,13 +51,14 @@ export default function CompanyFormModal({
         if (isOpen) {
             setError(null);
             if (initialData) {
+                const hqLocation = initialData.locations?.[0];
                 setFormData({
                     name: initialData.name,
                     taxId: initialData.taxId,
-                    hqCountry: initialData.hqCountry,
-                    hqZipCode: initialData.hqZipCode,
-                    hqCity: initialData.hqCity,
-                    hqAddress: initialData.hqAddress,
+                    hqCountry: hqLocation?.country || "",
+                    hqZipCode: String(hqLocation?.zipCode || ""),
+                    hqCity: hqLocation?.city || "",
+                    hqAddress: hqLocation?.address || "",
                     contactName: initialData.contactName,
                     contactEmail: initialData.contactEmail,
                     description: initialData.description || "",
@@ -76,13 +92,21 @@ export default function CompanyFormModal({
 
         setLoading(true);
         try {
-            // Convert empty strings to null/undefined to avoid validation errors
-            const payload = {
-                ...formData,
-                hqZipCode: formData.hqZipCode ? Number(formData.hqZipCode) : formData.hqZipCode,
+            // Transform flat form data to API expected structure
+            const payload: any = {
+                name: formData.name,
+                taxId: formData.taxId,
+                contactName: formData.contactName,
+                contactEmail: formData.contactEmail,
                 website: formData.website?.trim() || undefined,
                 logoUrl: formData.logoUrl?.trim() || undefined,
                 description: formData.description?.trim() || undefined,
+                locations: [{
+                    country: formData.hqCountry,
+                    zipCode: formData.hqZipCode ? Number(formData.hqZipCode) : 0,
+                    city: formData.hqCity,
+                    address: formData.hqAddress
+                }]
             };
 
             await onSave(payload);

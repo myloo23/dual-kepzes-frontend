@@ -71,24 +71,30 @@ export default function CompanyProfileModal({ company, isOpen, onClose }: Compan
                     {/* Székhely */}
                     <div className="rounded-xl border border-slate-200 bg-white p-4">
                         <h4 className="text-sm font-semibold text-slate-700 mb-3">Székhely</h4>
-                        <div className="space-y-2 text-sm">
-                            <div className="flex items-start gap-2">
-                                <span className="text-slate-500 min-w-[100px]">Ország:</span>
-                                <span className="text-slate-900">{company.hqCountry}</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                                <span className="text-slate-500 min-w-[100px]">Irányítószám:</span>
-                                <span className="text-slate-900">{company.hqZipCode}</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                                <span className="text-slate-500 min-w-[100px]">Város:</span>
-                                <span className="text-slate-900">{company.hqCity}</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                                <span className="text-slate-500 min-w-[100px]">Cím:</span>
-                                <span className="text-slate-900">{company.hqAddress}</span>
-                            </div>
-                        </div>
+                        {company.locations && company.locations.length > 0 ? (
+                            company.locations.map((loc, index) => (
+                                <div key={index} className="space-y-2 border-b border-slate-100 last:border-0 pb-2 last:pb-0 mb-2 last:mb-0">
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-slate-500 min-w-[100px]">Ország:</span>
+                                        <span className="text-slate-900">{loc.country}</span>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-slate-500 min-w-[100px]">Irányítószám:</span>
+                                        <span className="text-slate-900">{loc.zipCode}</span>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-slate-500 min-w-[100px]">Város:</span>
+                                        <span className="text-slate-900">{loc.city}</span>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-slate-500 min-w-[100px]">Cím:</span>
+                                        <span className="text-slate-900">{loc.address}</span>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-slate-500 text-sm italic">Nincs megadva cím.</p>
+                        )}
                     </div>
                 </div>
 
