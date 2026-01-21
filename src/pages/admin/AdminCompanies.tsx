@@ -3,7 +3,7 @@
  * Manages company CRUD operations
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../../lib/api';
 import type { Company } from '../../lib/api';
 import { useCRUD, useModal } from '../../shared/hooks';
@@ -27,6 +27,11 @@ export default function AdminCompaniesPage() {
   const modal = useModal<Company>();
   const [lookupId, setLookupId] = useState('');
 
+  // Load companies on mount
+  useEffect(() => {
+    companies.load();
+  }, []);
+
   const handleCreateNew = () => {
     companies.clearMessages();
     modal.open();
@@ -34,6 +39,15 @@ export default function AdminCompaniesPage() {
 
   const handleEdit = async (id: string | number) => {
     companies.clearMessages();
+
+    // Try to find in local list first to avoid API call and potential missing relations
+    const localCompany = companies.items.find((c) => String(c.id) === String(id));
+    if (localCompany && localCompany.locations?.length > 0) {
+      modal.open(localCompany);
+      return;
+    }
+
+    // Fallback to fetch
     const company = await companies.get(id);
     if (company) {
       modal.open(company);

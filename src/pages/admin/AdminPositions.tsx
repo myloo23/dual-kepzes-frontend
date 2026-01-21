@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Briefcase } from 'lucide-react';
 import { api } from '../../lib/api';
 import type { Position, Company } from '../../lib/api';
 import { useCRUD, useModal } from '../../shared/hooks';
@@ -27,6 +28,11 @@ export default function AdminPositionsPage() {
 
   const modal = useModal<Position>();
   const [lookupId, setLookupId] = useState('');
+
+  // Load positions on mount
+  useEffect(() => {
+    positions.load();
+  }, []);
 
   // Load companies for the dropdown
   useEffect(() => {
@@ -209,7 +215,16 @@ export default function AdminPositionsPage() {
                   </td>
                   <td className="px-4 py-3 font-medium text-slate-900">{position.title}</td>
                   <td className="px-4 py-3 text-slate-600">{position.location?.city || '-'}</td>
-                  <td className="px-4 py-3">{getStatusBadge(position)}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      {getStatusBadge(position)}
+                      {!position.isDual && (
+                        <span title="Full-time" className="inline-flex items-center justify-center w-6 h-6 rounded text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                          <Briefcase size={12} />
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <button
