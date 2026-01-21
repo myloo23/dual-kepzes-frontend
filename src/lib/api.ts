@@ -152,14 +152,21 @@ export type StudentRegisterPayload = {
 };
 
 // Admin / Cégek
+// Új Location típus
+export type Location = {
+  id?: Id;
+  country?: string; // Csak cégeknél van a példa szerint, de lehet opcionális
+  zipCode: string | number;
+  city: string;
+  address: string;
+};
+
 export type Company = {
   id: Id;
   name: string;
   taxId: string;
-  hqCountry: string;
-  hqZipCode: string | number; // Backend expects number, but we accept both for flexibility
-  hqCity: string;
-  hqAddress: string;
+  // hq fields replaced by locations
+  locations: Location[];
   contactName: string;
   contactEmail: string;
   description?: string;
@@ -177,9 +184,7 @@ export type Position = {
   companyId: string;
   title: string;
   description: string;
-  zipCode: string;
-  city: string;
-  address: string;
+  location: Location; // flat location fields replaced by nested location object
   deadline: string; // "yyyy-MM-ddTHH:mm:ssZ"
   isDual?: boolean; // Backend field for dual training positions
   isActive?: boolean;
@@ -187,10 +192,9 @@ export type Position = {
   updatedAt?: string;
   tags: Tag[];
   company?: {
-    id: string;
     name: string;
     logoUrl?: string | null;
-    hqCity: string;
+    locations: Location[]; // Company in position also has locations array
   };
 };
 
@@ -367,8 +371,8 @@ export const api = {
 
     // Admin
     admin: {
-      list: () => apiGet<NewsItem[]>(PATHS.news),
-      listArchived: () => apiGet<NewsItem[]>(`${PATHS.news}/archived`),
+      list: () => apiGet<NewsItem[]>(`${PATHS.news}/admin`),
+      listArchived: () => apiGet<NewsItem[]>(`${PATHS.news}/admin/archived`),
       get: (id: Id) => apiGet<NewsItem>(`${PATHS.news}/admin/${id}`),
       create: (payload: NewsCreatePayload) => apiPost<NewsItem>(`${PATHS.news}/admin`, payload),
       update: (id: Id, payload: Partial<NewsCreatePayload>) => apiPatch<NewsItem>(`${PATHS.news}/admin/${id}`, payload),
@@ -377,10 +381,7 @@ export const api = {
       remove: (id: Id) => apiDelete<void>(`${PATHS.news}/admin/${id}`),
     },
 
-    // Legacy support for current AdminNews.tsx (will be updated shortly)
-    create: (payload: NewsCreatePayload) => apiPost<NewsItem>(`${PATHS.news}/admin`, payload),
-    update: (id: Id, payload: Partial<NewsCreatePayload>) => apiPatch<NewsItem>(`${PATHS.news}/admin/${id}`, payload),
-    remove: (id: Id) => apiDelete<void>(`${PATHS.news}/admin/${id}`),
+
   },
 
   // applications

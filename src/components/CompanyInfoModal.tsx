@@ -5,8 +5,7 @@ type CompanyInfoModalProps = {
     companyInfo: {
         name: string;
         logoUrl?: string | null;
-        hqCity?: string;
-        hqAddress?: string;
+        locations?: Array<{ city: string; address?: string }>;
         description?: string;
         contactName?: string;
         contactEmail?: string;
@@ -59,12 +58,12 @@ export default function CompanyInfoModal({ companyInfo, isOpen, onClose }: Compa
                         </div>
                     )}
 
-                    {/* Térkép */}
-                    {companyInfo.hqCity && (
+                    {/* Térkép - Use first location or iterate */}
+                    {companyInfo.locations?.[0]?.city && (
                         <LocationMap
                             companyName={companyInfo.name}
-                            companyCity={companyInfo.hqCity}
-                            companyAddress={companyInfo.hqAddress || ""}
+                            companyCity={companyInfo.locations[0].city}
+                            companyAddress={companyInfo.locations[0].address || ""}
                         />
                     )}
 
@@ -95,11 +94,15 @@ export default function CompanyInfoModal({ companyInfo, isOpen, onClose }: Compa
                     )}
 
                     {/* Székhely város */}
-                    {companyInfo.hqCity && (
+                    {companyInfo.locations && companyInfo.locations.length > 0 && (
                         <div className="rounded-xl border border-slate-200 bg-white p-4">
-                            <h4 className="text-sm font-semibold text-slate-700 mb-2">Székhely</h4>
-                            <div className="text-sm text-slate-900">
-                                {companyInfo.hqCity}{companyInfo.hqAddress ? `, ${companyInfo.hqAddress}` : ''}
+                            <h4 className="text-sm font-semibold text-slate-700 mb-2">Telephelyek</h4>
+                            <div className="space-y-1">
+                                {companyInfo.locations.map((loc, i) => (
+                                    <div key={i} className="text-sm text-slate-900">
+                                        {loc.city}{loc.address ? `, ${loc.address}` : ''}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     )}

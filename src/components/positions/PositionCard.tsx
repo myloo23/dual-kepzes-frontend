@@ -5,13 +5,11 @@ type Position = {
     id?: string | number;
     title?: string;
     description?: string;
-    city?: string;
-    zipCode?: string;
-    address?: string;
+    location?: { city?: string; zipCode?: string | number; address?: string };
     deadline?: string;
     tags?: any[];
     companyId?: string | number;
-    company?: { id?: string | number; name?: string; companyName?: string };
+    company?: { id?: string | number; name?: string; locations?: Array<{ city?: string }> };
     [key: string]: any;
 };
 
@@ -24,9 +22,9 @@ interface PositionCardProps {
 }
 
 export default function PositionCard({ position: p, logo, onCompanyClick, onApply, hideCompanyInfo }: PositionCardProps) {
-    const companyName = norm(p.company?.name || p.company?.companyName) || "Ismeretlen cég";
+    const companyName = norm(p.company?.name) || "Ismeretlen cég";
     const title = norm(p.title) || "Névtelen pozíció";
-    const cityText = norm(p.city) || "—";
+    const cityText = norm(p.location?.city) || "—";
     const deadlineText = formatHuDate(p.deadline);
 
     const tags = (Array.isArray(p.tags) ? p.tags : [])
@@ -145,11 +143,11 @@ export default function PositionCard({ position: p, logo, onCompanyClick, onAppl
 
                 {/* alsó meta */}
                 <div className="mt-4 space-y-1 text-xs text-slate-600">
-                    {norm(p.address) && (
-                        <div>📌 {norm(p.address)}</div>
+                    {norm(p.location?.address) && (
+                        <div>📌 {norm(p.location?.address)}</div>
                     )}
-                    {(norm(p.zipCode) || norm(p.city)) && (
-                        <div>🏷️ {norm(p.zipCode)} {norm(p.city)}</div>
+                    {(norm(p.location?.zipCode) || norm(p.location?.city)) && (
+                        <div>🏷️ {norm(p.location?.zipCode)} {norm(p.location?.city)}</div>
                     )}
                 </div>
 

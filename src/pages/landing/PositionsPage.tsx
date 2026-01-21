@@ -113,7 +113,7 @@ export default function PositionsPage() {
   }, []);
 
   // Navigate to company profile page
-  const showCompanyInfo = async (companyData: { id?: string | number; name?: string; logoUrl?: string | null; hqCity?: string } | undefined) => {
+  const showCompanyInfo = async (companyData: { id?: string | number; name?: string; logoUrl?: string | null } | undefined) => {
     console.log("🏢 showCompanyInfo called with:", companyData);
 
     if (!companyData || !companyData.name) {
@@ -185,7 +185,7 @@ export default function PositionsPage() {
     const categorySet = new Set<string>();
 
     for (const p of positions) {
-      const c = norm(p.city);
+      const c = norm(p.location?.city);
       if (c) citySet.add(c);
 
       const companyName = norm(p.company?.name || "");
@@ -265,9 +265,9 @@ export default function PositionsPage() {
     const q = lower(search);
     const out = positions.filter((p) => {
       const companyName = norm(p.company?.name || "");
-      const cty = norm(p.city);
+      const cty = norm(p.location?.city);
       const title = norm(p.title);
-      const addr = norm(p.address);
+      const addr = norm(p.location?.address);
       const tagsText = (Array.isArray(p.tags) ? p.tags : [])
         .map((t) => norm(toTagName(t)))
         .filter(Boolean)
@@ -278,7 +278,7 @@ export default function PositionsPage() {
         if (!hay.includes(q)) return false;
       }
 
-      if (city !== "ALL" && norm(p.city) !== city) return false;
+      if (city !== "ALL" && norm(p.location?.city) !== city) return false;
       if (company !== "ALL" && companyName !== company) return false;
 
       if (activeOnly && isExpired(p.deadline)) return false;
@@ -380,12 +380,12 @@ export default function PositionsPage() {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-2">
               {filtered.map((p) => {
-                const companyKey = norm(p.company?.id ?? p.companyId ?? p.company?.name);
+                const companyKey = norm(p.companyId ?? p.company?.name);
                 const logo = pickLogo(companyKey, { logo1: abcTechLogo, logo2: businessItLogo });
 
                 return (
                   <PositionCard
-                    key={String(p.id ?? `${p.company?.name}-${p.title}-${p.city}`)}
+                    key={String(p.id ?? `${p.company?.name}-${p.title}-${p.location?.city}`)}
                     position={p}
                     logo={logo}
                     onCompanyClick={showCompanyInfo}
@@ -408,8 +408,8 @@ export default function PositionsPage() {
             id: String(applicationModal.position.id),
             title: applicationModal.position.title || "Pozíció",
             company: applicationModal.position.company,
-            city: applicationModal.position.city || (applicationModal.position as any).location?.city,
-            address: applicationModal.position.address || (applicationModal.position as any).location?.address,
+            city: applicationModal.position.location?.city,
+            address: applicationModal.position.location?.address,
           }}
           onClose={() => setApplicationModal({ isOpen: false, position: null })}
           onSubmit={handleSubmitApplication}

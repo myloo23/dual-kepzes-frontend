@@ -30,8 +30,7 @@ export default function PublicCompanyProfilePage() {
                 const allPositions = await api.positions.listPublic();
                 // Filter for this company
                 const companyPositions = allPositions.filter(p =>
-                    String(p.companyId) === String(id) ||
-                    (p.company?.id && String(p.company.id) === String(id))
+                    String(p.companyId) === String(id)
                 );
                 setPositions(companyPositions);
 
@@ -70,9 +69,9 @@ export default function PublicCompanyProfilePage() {
 
     const logo = pickLogo(company.name, { logo1: abcTechLogo, logo2: businessItLogo });
     // Fallback for location if hqCity is missing but present in locations array (backend inconsistency handling)
-    const location = (company as any).locations?.[0];
-    const city = company.hqCity || location?.city;
-    const address = company.hqAddress || location?.address;
+    const location = company.locations?.[0];
+    const city = location?.city;
+    const address = location?.address;
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20 pt-8">

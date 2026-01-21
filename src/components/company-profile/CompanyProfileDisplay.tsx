@@ -19,15 +19,16 @@ export default function CompanyProfileDisplay({ company }: CompanyProfileDisplay
                         <dd className="mt-1 text-sm text-gray-900">{company.taxId}</dd>
                     </div>
                     <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">Székhely</dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                            {[company.hqZipCode, company.hqCity, company.hqAddress].filter(Boolean).join(', ')}
+                        <dt className="text-sm font-medium text-gray-500">Telephelyek</dt>
+                        <dd className="mt-1 text-sm text-gray-900 space-y-1">
+                            {company.locations?.map((loc, i) => (
+                                <div key={i}>
+                                    {[loc.zipCode, loc.city, loc.address].filter(Boolean).join(', ')}
+                                </div>
+                            )) || '-'}
                         </dd>
                     </div>
-                    <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">Ország</dt>
-                        <dd className="mt-1 text-sm text-gray-900">{company.hqCountry}</dd>
-                    </div>
+
                     <div className="sm:col-span-2">
                         <dt className="text-sm font-medium text-gray-500">Kapcsolattartó</dt>
                         <dd className="mt-1 text-sm text-gray-900">{company.contactName}</dd>

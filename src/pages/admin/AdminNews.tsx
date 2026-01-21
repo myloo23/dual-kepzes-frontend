@@ -39,16 +39,14 @@ export default function AdminNews() {
       setErr(prev => prev ? `${prev} Hiba az aktív híreknél.` : "Hiba a hírek betöltésekor.");
     }
 
-    // Load archived news - Endpoint seems to be missing or incorrect
-    /*
+    // Load archived news
     try {
       const archives = await api.news.admin.listArchived();
       setArchivedItems(Array.isArray(archives) ? archives : []);
     } catch (e: any) {
       console.error("Failed to load archived news:", e);
     }
-    */
-    setArchivedItems([]);
+
     setLoading(false);
   };
 
