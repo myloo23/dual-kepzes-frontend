@@ -20,6 +20,12 @@ type StudentProfilePayload = Partial<StudentProfile> & {
 function normalizeStudentProfile(payload: StudentProfilePayload | null) {
   if (!payload) return null;
 
+  const toNumber = (value: unknown) => {
+    if (value === null || value === undefined || value === "") return undefined;
+    const num = typeof value === "number" ? value : Number(value);
+    return Number.isNaN(num) ? undefined : num;
+  };
+
   const merged = {
     ...payload,
     ...(payload.profile || {}),
@@ -38,11 +44,11 @@ function normalizeStudentProfile(payload: StudentProfilePayload | null) {
     mothersName: merged.mothersName ?? "",
     dateOfBirth,
     country: merged.country ?? "",
-    zipCode: merged.zipCode ?? "",
+    zipCode: toNumber(merged.zipCode),
     city: merged.city ?? "",
     streetAddress: merged.streetAddress ?? (merged as { address?: string }).address ?? "",
     highSchool: merged.highSchool ?? "",
-    graduationYear: merged.graduationYear ?? "",
+    graduationYear: toNumber(merged.graduationYear),
     neptunCode: merged.neptunCode ?? "",
     currentMajor: merged.currentMajor ?? "",
     studyMode: merged.studyMode ?? "NAPPALI",
