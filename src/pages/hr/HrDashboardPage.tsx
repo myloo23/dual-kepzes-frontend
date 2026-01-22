@@ -7,7 +7,7 @@ import CompanyProfilePage from "./CompanyProfilePage";
 export default function HrDashboardPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout: authLogout } = useAuth();
+  const { logout: authLogout } = useAuth();
 
   const [companyAdmin, setCompanyAdmin] = useState<CompanyAdminProfile | null>(null);
   const [adminForm, setAdminForm] = useState<Partial<CompanyAdminProfile>>({});
@@ -31,12 +31,13 @@ export default function HrDashboardPage() {
   const [employeesLoading, setEmployeesLoading] = useState(false);
   const [employeesError, setEmployeesError] = useState<string | null>(null);
 
-  const logout = () => {
-    authLogout();
-    navigate("/");
-  };
-
   const activeTab = useMemo(() => {
+    const path = location.pathname;
+    if (path === "/hr/job-postings") return "positions";
+    if (path === "/hr/applications") return "applications";
+    if (path === "/hr/employees") return "employees";
+    if (path === "/hr/company-profile") return "company";
+    if (path === "/hr/profile") return "profile";
     const hash = location.hash;
     if (hash === "#positions") return "positions";
     if (hash === "#applications") return "applications";
@@ -44,7 +45,7 @@ export default function HrDashboardPage() {
     if (hash === "#company") return "company";
     if (hash === "#profile") return "profile";
     return "overview";
-  }, [location.hash]);
+  }, [location.pathname, location.hash]);
 
   const loadCompanyAdmin = async () => {
     setAdminLoading(true);
@@ -188,107 +189,15 @@ export default function HrDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto max-w-6xl px-4 lg:px-8 py-6">
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-10">
-            <div className="px-4 lg:px-8 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-emerald-500" />
-                <div>
-                  <div className="text-sm text-slate-500">Cég admin felület</div>
-                  <div className="font-semibold text-slate-900">
-                    Üdv, {user?.email ?? "Cégadmin"} 👋
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Link
-                  to="/positions"
-                  className="hidden sm:inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-                >
-                  Állások böngészése
-                </Link>
-
-                <button
-                  onClick={logout}
-                  className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
-                >
-                  Kijelentkezés
-                </button>
-              </div>
-            </div>
-          </header>
-
-          <main className="px-4 lg:px-8 py-8 space-y-6">
-            <div className="border-b border-slate-200">
-              <nav className="flex flex-wrap gap-6">
-                <Link
-                  to="/hr"
-                  className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "overview"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-600 hover:text-slate-900"
-                    }`}
-                >
-                  Áttekintés
-                </Link>
-                <Link
-                  to="/hr#positions"
-                  className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "positions"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-600 hover:text-slate-900"
-                    }`}
-                >
-                  Álláshirdetések
-                </Link>
-                <Link
-                  to="/hr#applications"
-                  className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "applications"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-600 hover:text-slate-900"
-                    }`}
-                >
-                  Jelentkezések
-                </Link>
-                <Link
-                  to="/hr#employees"
-                  className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "employees"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-600 hover:text-slate-900"
-                    }`}
-                >
-                  Munkavállalók
-                </Link>
-                <Link
-                  to="/hr#company"
-                  className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "company"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-600 hover:text-slate-900"
-                    }`}
-                >
-                  Cégprofil
-                </Link>
-                <Link
-                  to="/hr#profile"
-                  className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "profile"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-600 hover:text-slate-900"
-                    }`}
-                >
-                  Saját profil
-                </Link>
-              </nav>
-            </div>
-
-            {activeTab === "overview" && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h1 className="text-2xl font-semibold text-slate-900">Cég adminisztráció</h1>
-                <p className="mt-1 text-sm text-slate-600">
-                  Álláshirdetések, jelentkezések, munkavállalók és cégprofil kezelése egy helyen.
-                </p>
-              </div>
-            )}
+    <div className="space-y-6">
+      {activeTab === "overview" && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h1 className="text-2xl font-semibold text-slate-900">Cég adminisztráció</h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Álláshirdetések, jelentkezések, munkavállalók és cégprofil kezelése egy helyen.
+          </p>
+        </div>
+      )}
 
             {activeTab === "positions" && (
               <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
@@ -494,9 +403,6 @@ export default function HrDashboardPage() {
                 )}
               </div>
             )}
-          </main>
-        </div>
-      </div>
     </div>
   );
 }

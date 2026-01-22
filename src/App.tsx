@@ -11,6 +11,7 @@ import StudentDashboardPage from "./pages/student/StudentDashboardPage";
 
 import TeacherLayout from "./layouts/TeacherLayout";
 import MentorLayout from "./layouts/MentorLayout";
+import HrLayout from "./layouts/HrLayout";
 import HrDashboardPage from "./pages/hr/HrDashboardPage";
 
 import AdminLayout from "./layouts/AdminLayout";
@@ -72,8 +73,14 @@ function App() {
             </Route>
 
             {/* HR routes section */}
-            <Route path="/hr" element={<HrDashboardPage />} />
-            <Route path="/hr/*" element={<HrDashboardPage />} />
+            <Route path="/hr" element={<HrLayout />}>
+              <Route index element={<HrDashboardPage />} />
+              <Route path="job-postings" element={<HrDashboardPage />} />
+              <Route path="applications" element={<HrDashboardPage />} />
+              <Route path="employees" element={<HrDashboardPage />} />
+              <Route path="company-profile" element={<HrDashboardPage />} />
+              <Route path="profile" element={<HrDashboardPage />} />
+            </Route>
           </Routes>
         </main>
 
