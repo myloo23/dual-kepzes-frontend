@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { api, type Application, type CompanyAdminProfile, type EmployeeProfile, type Position } from "../../lib/api";
 import { useAuth } from "../../features/auth";
 import CompanyProfilePage from "./CompanyProfilePage";
