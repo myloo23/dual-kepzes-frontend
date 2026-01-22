@@ -50,7 +50,7 @@ function normalizeStudentProfile(payload: StudentProfilePayload | null) {
   } as Partial<StudentProfile>;
 }
 
-function buildProfileForm(data: Partial<StudentProfile> | null) {
+function buildProfileForm(data: Partial<StudentProfile> | null): Partial<StudentProfile> {
   if (!data) return {};
   return {
     fullName: data.fullName ?? "",
