@@ -310,7 +310,7 @@ export default function HrDashboardPage() {
                     <div key={String(position.id)} className="rounded-lg border border-slate-200 p-4">
                       <div className="font-semibold text-slate-900">{position.title}</div>
                       <div className="text-sm text-slate-600">
-                        {position.city} • {position.isDual ? "Duális" : "Nem duális"}
+                        {position.location?.city ?? "Ismeretlen város"} • {position.isDual ? "Duális" : "Nem duális"}
                       </div>
                     </div>
                   ))}
