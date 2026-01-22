@@ -5,11 +5,90 @@ import { useAuth } from "../../features/auth";
 import StudentNewsPage from "./StudentNewsPage";
 import { api, type StudentProfile } from "../../lib/api";
 
+type StudentProfilePayload = Partial<StudentProfile> & {
+  profile?: Partial<StudentProfile>;
+  studentProfile?: Partial<StudentProfile>;
+  user?: {
+    id?: string | number;
+    email?: string;
+    fullName?: string;
+    phoneNumber?: string;
+  };
+  birthDate?: string;
+};
+
+function normalizeStudentProfile(payload: StudentProfilePayload | null) {
+  if (!payload) return null;
+
+  const merged = {
+    ...payload,
+    ...(payload.profile || {}),
+    ...(payload.studentProfile || {}),
+  };
+  const user = merged.user || {};
+  const rawDate = merged.dateOfBirth || payload.birthDate || "";
+  const dateOfBirth = rawDate ? String(rawDate).split("T")[0] : "";
+
+  return {
+    id: merged.id ?? "",
+    userId: merged.userId ?? user.id ?? "",
+    fullName: merged.fullName ?? user.fullName ?? "",
+    email: merged.email ?? user.email ?? "",
+    phoneNumber: merged.phoneNumber ?? user.phoneNumber ?? "",
+    mothersName: merged.mothersName ?? "",
+    dateOfBirth,
+    country: merged.country ?? "",
+    zipCode: merged.zipCode ?? "",
+    city: merged.city ?? "",
+    streetAddress: merged.streetAddress ?? (merged as { address?: string }).address ?? "",
+    highSchool: merged.highSchool ?? "",
+    graduationYear: merged.graduationYear ?? "",
+    neptunCode: merged.neptunCode ?? "",
+    currentMajor: merged.currentMajor ?? "",
+    studyMode: merged.studyMode ?? "NAPPALI",
+    hasLanguageCert: Boolean(merged.hasLanguageCert),
+  } as Partial<StudentProfile>;
+}
+
+function buildProfileForm(data: Partial<StudentProfile> | null) {
+  if (!data) return {};
+  return {
+    fullName: data.fullName ?? "",
+    email: data.email ?? "",
+    phoneNumber: data.phoneNumber ?? "",
+    mothersName: data.mothersName ?? "",
+    dateOfBirth: data.dateOfBirth ?? "",
+    country: data.country ?? "",
+    zipCode: data.zipCode ?? "",
+    city: data.city ?? "",
+    streetAddress: data.streetAddress ?? "",
+    highSchool: data.highSchool ?? "",
+    graduationYear: data.graduationYear ?? "",
+    neptunCode: data.neptunCode ?? "",
+    currentMajor: data.currentMajor ?? "",
+    studyMode: data.studyMode ?? "NAPPALI",
+    hasLanguageCert: data.hasLanguageCert ?? false,
+  };
+}
+
+function buildProfilePayload(form: Partial<StudentProfile>) {
+  const {
+    dateOfBirth,
+    email,
+    ...rest
+  } = form;
+
+  return {
+    ...rest,
+    ...(dateOfBirth ? { birthDate: dateOfBirth } : {}),
+  };
+}
+
 export default function StudentDashboardPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout: authLogout } = useAuth();
-  const [profile, setProfile] = useState<StudentProfile | null>(null);
+  const [profile, setProfile] = useState<Partial<StudentProfile> | null>(null);
   const [profileForm, setProfileForm] = useState<Partial<StudentProfile>>({});
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
@@ -42,24 +121,9 @@ export default function StudentDashboardPage() {
       try {
         const data = await api.me.get();
         if (!mounted) return;
-        setProfile(data);
-        setProfileForm({
-          fullName: data.fullName,
-          email: data.email,
-          phoneNumber: data.phoneNumber,
-          mothersName: data.mothersName,
-          dateOfBirth: data.dateOfBirth,
-          country: data.country,
-          zipCode: data.zipCode,
-          city: data.city,
-          streetAddress: data.streetAddress,
-          highSchool: data.highSchool,
-          graduationYear: data.graduationYear,
-          neptunCode: data.neptunCode ?? "",
-          currentMajor: data.currentMajor,
-          studyMode: data.studyMode,
-          hasLanguageCert: data.hasLanguageCert,
-        });
+        const normalized = normalizeStudentProfile(data as StudentProfilePayload);
+        setProfile(normalized);
+        setProfileForm(buildProfileForm(normalized));
       } catch (err) {
         if (!mounted) return;
         const message = err instanceof Error ? err.message : "Hiba a profil betöltésekor.";
@@ -96,25 +160,10 @@ export default function StudentDashboardPage() {
     setProfileError(null);
     setProfileSuccess(null);
     try {
-      const updated = await api.me.update(profileForm);
-      setProfile(updated);
-      setProfileForm({
-        fullName: updated.fullName,
-        email: updated.email,
-        phoneNumber: updated.phoneNumber,
-        mothersName: updated.mothersName,
-        dateOfBirth: updated.dateOfBirth,
-        country: updated.country,
-        zipCode: updated.zipCode,
-        city: updated.city,
-        streetAddress: updated.streetAddress,
-        highSchool: updated.highSchool,
-        graduationYear: updated.graduationYear,
-        neptunCode: updated.neptunCode ?? "",
-        currentMajor: updated.currentMajor,
-        studyMode: updated.studyMode,
-        hasLanguageCert: updated.hasLanguageCert,
-      });
+      const updated = await api.me.update(buildProfilePayload(profileForm));
+      const normalized = normalizeStudentProfile(updated as StudentProfilePayload);
+      setProfile(normalized);
+      setProfileForm(buildProfileForm(normalized));
       setProfileSuccess("Profil frissítve.");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Hiba a mentés során.";
@@ -541,4 +590,3 @@ export default function StudentDashboardPage() {
     </div>
   );
 }
-

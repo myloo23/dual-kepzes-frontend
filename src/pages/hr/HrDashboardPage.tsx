@@ -26,6 +26,7 @@ export default function HrDashboardPage() {
   const [applicationsError, setApplicationsError] = useState<string | null>(null);
   const [applicationsActionError, setApplicationsActionError] = useState<string | null>(null);
   const [applicationsActionId, setApplicationsActionId] = useState<string | null>(null);
+  const [expandedApplicationId, setExpandedApplicationId] = useState<string | null>(null);
 
   const [employees, setEmployees] = useState<EmployeeProfile[]>([]);
   const [employeesLoading, setEmployeesLoading] = useState(false);
@@ -256,22 +257,17 @@ export default function HrDashboardPage() {
                       <div className="text-sm text-slate-600">
                         Státusz: {app.status}
                       </div>
-                      {app.student && (
-                        <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                          <div className="font-semibold text-slate-900">Jelentkező adatai</div>
-                          <div className="mt-1">Név: {app.student.fullName}</div>
-                          <div>E-mail: {app.student.email}</div>
-                          <div>Telefonszám: {app.student.phoneNumber}</div>
-                          <div>Város: {app.student.city}</div>
-                          <div>Szak: {app.student.currentMajor}</div>
-                        </div>
-                      )}
-                      {!app.student && (
-                        <div className="mt-3 text-sm text-slate-600">
-                          A jelentkező részletes adatai nem elérhetők.
-                        </div>
-                      )}
                       <div className="mt-4 flex flex-wrap gap-3">
+                        <button
+                          onClick={() =>
+                            setExpandedApplicationId((prev) =>
+                              prev === String(app.id) ? null : String(app.id)
+                            )
+                          }
+                          className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                          {expandedApplicationId === String(app.id) ? "Bezárás" : "Megtekintés"}
+                        </button>
                         <button
                           onClick={() => handleApplicationDecision(String(app.id), "ACCEPTED")}
                           disabled={applicationsActionId === String(app.id)}
@@ -287,6 +283,25 @@ export default function HrDashboardPage() {
                           Elutasítás
                         </button>
                       </div>
+                      {expandedApplicationId === String(app.id) && (
+                        <>
+                          {app.student && (
+                            <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+                              <div className="font-semibold text-slate-900">Jelentkező adatai</div>
+                              <div className="mt-1">Név: {app.student.fullName}</div>
+                              <div>E-mail: {app.student.email}</div>
+                              <div>Telefonszám: {app.student.phoneNumber}</div>
+                              <div>Város: {app.student.city}</div>
+                              <div>Szak: {app.student.currentMajor}</div>
+                            </div>
+                          )}
+                          {!app.student && (
+                            <div className="mt-4 text-sm text-slate-600">
+                              A jelentkező részletes adatai nem elérhetők.
+                            </div>
+                          )}
+                        </>
+                      )}
                       {app.companyNote && (
                         <div className="mt-2 text-sm text-slate-700">Megjegyzés: {app.companyNote}</div>
                       )}

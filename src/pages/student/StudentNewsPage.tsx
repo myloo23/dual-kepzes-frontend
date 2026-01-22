@@ -12,12 +12,24 @@ export default function StudentNewsPage() {
   const [tag, setTag] = useState<string>("ALL");
   const [onlyImportant, setOnlyImportant] = useState(false);
 
+  const extractList = (response: unknown): NewsItem[] => {
+    if (Array.isArray(response)) return response;
+    if (!response || typeof response !== "object") return [];
+    const payload = response as {
+      data?: NewsItem[];
+      items?: NewsItem[];
+      news?: NewsItem[];
+    };
+    return payload.data || payload.items || payload.news || [];
+  };
+
   async function load() {
     setLoading(true);
     setErr(null);
     try {
       const list = await api.news.list();
-      setItems(Array.isArray(list) ? list : []);
+      const extracted = extractList(list);
+      setItems(extracted);
     } catch (e: any) {
       setErr(e?.message || "Nem sikerült betölteni a híreket.");
       setItems([]);
