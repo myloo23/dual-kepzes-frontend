@@ -93,6 +93,15 @@ export interface CompanyAdminProfile {
     email?: string;
 }
 
+export interface EmployeeProfile {
+    id: Id;
+    userId?: Id;
+    companyId?: Id;
+    fullName?: string | null;
+    email?: string | null;
+    role?: string | null;
+}
+
 export interface UniversityUserProfile {
     id: Id;
     userId: Id;
@@ -199,6 +208,7 @@ export interface Application {
             logoUrl?: string | null;
         };
     };
+    student?: StudentProfile | null;
 }
 
 export interface ApplicationCreatePayload {

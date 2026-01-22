@@ -198,7 +198,7 @@ export default function Navbar() {
   const notifications = notificationsTab === "active" ? active : archived;
 
   const getNotificationTitle = (item: NotificationItem) =>
-    item.title || item.message || item.body || "Notification";
+    item.title || item.message || item.body || "Értesítés";
 
   const getNotificationPreview = (item: NotificationItem) =>
     item.message || item.body || item.title || "";
@@ -210,7 +210,7 @@ export default function Navbar() {
       const detail = await getById(id);
       setSelectedNotification(detail);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to load notification.";
+      const message = err instanceof Error ? err.message : "Nem sikerült betölteni az értesítést.";
       setActionError(message);
     } finally {
       setDetailsLoading(false);
@@ -229,7 +229,7 @@ export default function Navbar() {
       await refreshUnreadCount();
       setSelectedNotification(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Notification action failed.";
+      const message = err instanceof Error ? err.message : "Az értesítési művelet sikertelen.";
       setActionError(message);
     }
   };
@@ -280,7 +280,7 @@ export default function Navbar() {
               <button
                 type="button"
                 className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 sm:h-9 sm:w-9"
-                aria-label="Notifications"
+                aria-label="Értesítések"
                 onClick={() => setNotificationsOpen((prev) => !prev)}
               >
                 <svg
@@ -306,21 +306,21 @@ export default function Navbar() {
               {notificationsOpen && (
                 <div className="absolute left-1/2 mt-2 w-[90vw] max-w-sm -translate-x-1/2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg sm:left-auto sm:right-0 sm:translate-x-0 sm:w-80">
                   <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
-                    <span className="text-sm font-semibold text-slate-800">Notifications</span>
+                    <span className="text-sm font-semibold text-slate-800">Értesítések</span>
                     <div className="flex items-center gap-2 text-xs">
                       <button
                         type="button"
                         className="rounded px-2 py-1 text-slate-600 hover:bg-slate-100"
                         onClick={() => handleAction(markAllRead)}
                       >
-                        Mark all read
+                        Mind olvasottnak
                       </button>
                       <button
                         type="button"
                         className="rounded px-2 py-1 text-slate-600 hover:bg-slate-100"
                         onClick={() => refreshUnreadCount()}
                       >
-                        Refresh
+                        Frissítés
                       </button>
                     </div>
                   </div>
@@ -334,7 +334,7 @@ export default function Navbar() {
                         }`}
                       onClick={() => setNotificationsTab("active")}
                     >
-                      Active
+                      Aktív
                     </button>
                     <button
                       type="button"
@@ -344,19 +344,22 @@ export default function Navbar() {
                         }`}
                       onClick={() => setNotificationsTab("archived")}
                     >
-                      Archived
+                      Archivált
                     </button>
                   </div>
 
                   <div className="max-h-72 overflow-y-auto">
                     {notificationsLoading && (
-                      <div className="px-3 py-4 text-xs text-slate-500">Loading notifications...</div>
+                      <div className="px-3 py-4 text-xs text-slate-500">Értesítések betöltése...</div>
                     )}
                     {!notificationsLoading && notifications.length === 0 && (
-                      <div className="px-3 py-4 text-xs text-slate-500">No notifications yet.</div>
+                      <div className="px-3 py-4 text-xs text-slate-500">Nincs még értesítés.</div>
                     )}
                     {notifications.map((item) => {
-                      const isUnread = item.isRead === false || (!item.readAt && notificationsTab === "active");
+                      const hasReadFlag = typeof item.isRead === "boolean";
+                      const isUnread = hasReadFlag
+                        ? !item.isRead
+                        : !item.readAt && notificationsTab === "active";
                       return (
                         <div
                           key={item.id}
@@ -372,7 +375,7 @@ export default function Navbar() {
                                 {getNotificationTitle(item)}
                               </span>
                               {isUnread && (
-                                <span className="h-2 w-2 rounded-full bg-blue-500" aria-label="Unread" />
+                                <span className="h-2 w-2 rounded-full bg-blue-500" aria-label="Olvasatlan" />
                               )}
                             </div>
                             {getNotificationPreview(item) && (
@@ -388,7 +391,7 @@ export default function Navbar() {
                                 className="rounded px-2 py-1 hover:bg-slate-100"
                                 onClick={() => handleAction(() => markRead(String(item.id)))}
                               >
-                                Mark read
+                                Olvasottnak
                               </button>
                             )}
                             {notificationsTab === "active" ? (
@@ -397,7 +400,7 @@ export default function Navbar() {
                                 className="rounded px-2 py-1 hover:bg-slate-100"
                                 onClick={() => handleAction(() => archive(String(item.id)))}
                               >
-                                Archive
+                                Archiválás
                               </button>
                             ) : (
                               <button
@@ -405,7 +408,7 @@ export default function Navbar() {
                                 className="rounded px-2 py-1 hover:bg-slate-100"
                                 onClick={() => handleAction(() => unarchive(String(item.id)))}
                               >
-                                Unarchive
+                                Visszaállítás
                               </button>
                             )}
                             <button
@@ -413,7 +416,7 @@ export default function Navbar() {
                               className="rounded px-2 py-1 text-red-500 hover:bg-red-50"
                               onClick={() => handleAction(() => remove(String(item.id)))}
                             >
-                              Delete
+                              Törlés
                             </button>
                           </div>
                         </div>
@@ -429,7 +432,7 @@ export default function Navbar() {
 
                   {detailsLoading && (
                     <div className="border-t border-slate-100 px-3 py-2 text-xs text-slate-500">
-                      Loading details...
+                      Részletek betöltése...
                     </div>
                   )}
 
@@ -449,7 +452,7 @@ export default function Navbar() {
                             href={selectedNotification.link}
                             className="text-xs font-semibold text-dkk-blue hover:underline"
                           >
-                            Open link
+                            Hivatkozás megnyitása
                           </a>
                         </div>
                       )}

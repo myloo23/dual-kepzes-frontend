@@ -38,7 +38,7 @@ export function useNotifications(): UseNotificationsReturn {
       const res = await api.notifications.listActive();
       setActive(Array.isArray(res) ? res : []);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load notifications.';
+      const message = err instanceof Error ? err.message : 'Nem sikerĂĽlt betĂ¶lteni az Ă©rtesĂ­tĂ©seket.';
       setError(message);
     } finally {
       setLoading(false);
@@ -52,7 +52,7 @@ export function useNotifications(): UseNotificationsReturn {
       const res = await api.notifications.listArchived();
       setArchived(Array.isArray(res) ? res : []);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load archived notifications.';
+      const message = err instanceof Error ? err.message : 'Nem sikerĂĽlt betĂ¶lteni az archivĂˇlt Ă©rtesĂ­tĂ©seket.';
       setError(message);
     } finally {
       setLoading(false);
@@ -62,10 +62,13 @@ export function useNotifications(): UseNotificationsReturn {
   const refreshUnreadCount = useCallback(async () => {
     try {
       const res = await api.notifications.unreadCount();
-      const count = typeof res === 'number' ? res : res?.count ?? 0;
+      const count =
+        typeof res === 'number'
+          ? res
+          : res?.count ?? (res as { unreadNotificationsCount?: number })?.unreadNotificationsCount ?? 0;
       setUnreadCount(count);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load unread count.';
+      const message = err instanceof Error ? err.message : 'Nem sikerĂĽlt betĂ¶lteni az olvasatlanok szĂˇmĂˇt.';
       setError(message);
     }
   }, []);

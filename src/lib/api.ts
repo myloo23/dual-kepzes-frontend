@@ -13,6 +13,7 @@ import type {
   Position,
   StudentProfile,
   CompanyAdminProfile,
+  EmployeeProfile,
   UniversityUserProfile,
   SystemAdminProfile,
   User,
@@ -20,6 +21,7 @@ import type {
   NewsItem,
   NewsCreatePayload,
   Application,
+  ApplicationStatus,
   ApplicationCreatePayload,
 } from '../types/api.types';
 import type {
@@ -213,6 +215,8 @@ export const api = {
     },
 
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
+    listByCompany: (companyId: Id) =>
+      apiGet<Position[]>(`${PATHS.positions}/company/${ensureId(companyId, 'companyId')}`),
 
     create: (payload: Omit<Position, 'id'>) =>
       apiPost<Position>(PATHS.positions, payload),
@@ -297,6 +301,12 @@ export const api = {
       ),
 
     list: () => apiGet<Application[]>(PATHS.applications),
+    listCompany: () => apiGet<Application[]>(`${PATHS.applications}/company`),
+    evaluateCompany: (id: Id, body: { status: ApplicationStatus; companyNote?: string }) =>
+      apiPatch<Application>(
+        `${PATHS.applications}/company/${ensureId(id, 'applicationId')}/evaluate`,
+        body
+      ),
   },
 
   // ============= Notifications =============
@@ -341,6 +351,7 @@ export const api = {
       get: () => apiGet<CompanyAdminProfile>(`${PATHS.companyAdmins}/me`),
       update: (body: Partial<CompanyAdminProfile>) =>
         apiPatch<CompanyAdminProfile>(`${PATHS.companyAdmins}/me`, body),
+      remove: () => apiDelete<{ message?: string }>(`${PATHS.companyAdmins}/me`),
     },
   },
 
@@ -361,10 +372,11 @@ export const api = {
 
   // ============= Employees =============
   employees: {
+    list: () => apiGet<EmployeeProfile[]>(PATHS.employees),
     me: {
-      get: () => apiGet<CompanyAdminProfile>(`${PATHS.employees}/me`),
-      update: (body: Partial<CompanyAdminProfile>) =>
-        apiPut<CompanyAdminProfile>(`${PATHS.employees}/me`, body),
+      get: () => apiGet<EmployeeProfile>(`${PATHS.employees}/me`),
+      update: (body: Partial<EmployeeProfile>) =>
+        apiPut<EmployeeProfile>(`${PATHS.employees}/me`, body),
     },
   },
 };
@@ -379,6 +391,7 @@ export type {
   Position,
   StudentProfile,
   CompanyAdminProfile,
+  EmployeeProfile,
   UniversityUserProfile,
   User,
   StatsResponse,

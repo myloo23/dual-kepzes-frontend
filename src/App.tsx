@@ -11,8 +11,7 @@ import StudentDashboardPage from "./pages/student/StudentDashboardPage";
 
 import TeacherLayout from "./layouts/TeacherLayout";
 import MentorLayout from "./layouts/MentorLayout";
-import HrLayout from "./layouts/HrLayout";
-import CompanyProfilePage from "./pages/hr/CompanyProfilePage";
+import HrDashboardPage from "./pages/hr/HrDashboardPage";
 
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -73,14 +72,8 @@ function App() {
             </Route>
 
             {/* HR routes section */}
-            <Route path="/hr" element={<HrLayout />}>
-              <Route index element={<PlaceholderPage title="HR kezdőlap" />} />
-              <Route path="job-postings" element={<PlaceholderPage title="Álláshirdetések" />} />
-              <Route path="messages" element={<PlaceholderPage title="Üzenetek" />} />
-              <Route path="applications" element={<PlaceholderPage title="Jelentkezések" />} />
-              <Route path="mentors" element={<PlaceholderPage title="Mentorok kezelése" />} />
-              <Route path="company-profile" element={<CompanyProfilePage />} />
-            </Route>
+            <Route path="/hr" element={<HrDashboardPage />} />
+            <Route path="/hr/*" element={<HrDashboardPage />} />
           </Routes>
         </main>
 
@@ -91,4 +84,5 @@ function App() {
 }
 
 export default App;
+
 
