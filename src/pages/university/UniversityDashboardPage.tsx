@@ -8,7 +8,6 @@ export default function UniversityDashboardPage() {
   const location = useLocation();
   const { logout: authLogout } = useAuth();
 
-  const [profile, setProfile] = useState<UniversityUserProfile | null>(null);
   const [profileForm, setProfileForm] = useState<Partial<UniversityUserProfile>>({});
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
@@ -36,7 +35,6 @@ export default function UniversityDashboardPage() {
     setProfileSuccess(null);
     try {
       const data = await api.universityUsers.me.get();
-      setProfile(data);
       setProfileForm({
         fullName: data.fullName ?? "",
         email: data.email ?? "",
@@ -88,7 +86,6 @@ export default function UniversityDashboardPage() {
         email: profileForm.email ?? "",
         department: profileForm.department ?? "",
       });
-      setProfile(updated);
       setProfileForm({
         fullName: updated.fullName ?? "",
         email: updated.email ?? "",
