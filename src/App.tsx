@@ -9,7 +9,6 @@ import StudentRegisterPage from "./pages/auth/StudentRegisterPage";
 import PlaceholderPage from "./components/layout/PlaceholderPage";
 import StudentDashboardPage from "./pages/student/StudentDashboardPage";
 
-import StudentLayout from "./layouts/StudentLayout";
 import TeacherLayout from "./layouts/TeacherLayout";
 import MentorLayout from "./layouts/MentorLayout";
 import HrLayout from "./layouts/HrLayout";
@@ -23,7 +22,6 @@ import AdminPositions from "./pages/admin/AdminPositions";
 import AdminTags from "./pages/admin/AdminTags";
 import AdminSettings from "./pages/admin/AdminSettings";
 
-import StudentNewsPage from "./pages/student/StudentNewsPage";
 import AdminNews from "./pages/admin/AdminNews";
 
 
@@ -56,18 +54,8 @@ function App() {
 
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-
-            <Route path="/student" element={<StudentLayout />}>
-              <Route index element={<StudentDashboardPage />} />
-              <Route path="jobs" element={<PlaceholderPage title="Állások" />} />
-              <Route path="profile" element={<PlaceholderPage title="Saját adataim" />} />
-              <Route path="applications" element={<PlaceholderPage title="Megpályázott állások" />} />
-              <Route path="faq" element={<PlaceholderPage title="Q&A / Útmutató" />} />
-              <Route path="progress" element={<PlaceholderPage title="Haladási napló" />} />
-              <Route path="chat" element={<PlaceholderPage title="Chat" />} />
-              <Route path="survey" element={<PlaceholderPage title="Elégedettségi kérdőív" />} />
-              <Route path="news" element={<StudentNewsPage />} />
-            </Route>
+            <Route path="/student" element={<StudentDashboardPage />} />
+            <Route path="/student/news" element={<StudentDashboardPage />} />
 
             <Route path="/teacher" element={<TeacherLayout />}>
               <Route index element={<PlaceholderPage title="Oktatói kezdőlap" />} />
@@ -103,3 +91,4 @@ function App() {
 }
 
 export default App;
+

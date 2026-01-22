@@ -248,7 +248,7 @@ export const api = {
     get: () => apiGet<StudentProfile>(PATHS.me),
 
     update: (body: Partial<StudentProfile>) =>
-      apiPut<StudentProfile>(PATHS.me, body),
+      apiPatch<StudentProfile>(PATHS.me, body),
 
     remove: () => apiDelete<{ message?: string }>(PATHS.me),
   },

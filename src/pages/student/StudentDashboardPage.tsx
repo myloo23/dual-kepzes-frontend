@@ -1,35 +1,156 @@
-import { useMemo } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import ApplicationsList from "../../features/applications/components/ApplicationsList";
+import { useAuth } from "../../features/auth";
+import StudentNewsPage from "./StudentNewsPage";
+import { api, type StudentProfile } from "../../lib/api";
 
 export default function StudentDashboardPage() {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const user = useMemo(() => {
-    try {
-      const raw = localStorage.getItem("user");
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  }, []);
+  const { user, logout: authLogout } = useAuth();
+  const [profile, setProfile] = useState<StudentProfile | null>(null);
+  const [profileForm, setProfileForm] = useState<Partial<StudentProfile>>({});
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileDeleting, setProfileDeleting] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
+  const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("role");
+    authLogout();
     navigate("/");
   };
 
   // Determine active tab from URL hash
-  const activeTab = location.hash === "#applications" ? "applications" : "overview";
+  const activeTab = location.pathname === "/student/news"
+    ? "news"
+    : location.hash === "#profile"
+      ? "profile"
+    : location.hash === "#applications"
+      ? "applications"
+      : "overview";
+
+  useEffect(() => {
+    if (activeTab !== "profile") return;
+    let mounted = true;
+
+    const loadProfile = async () => {
+      setProfileLoading(true);
+      setProfileError(null);
+      setProfileSuccess(null);
+      try {
+        const data = await api.me.get();
+        if (!mounted) return;
+        setProfile(data);
+        setProfileForm({
+          fullName: data.fullName,
+          email: data.email,
+          phoneNumber: data.phoneNumber,
+          mothersName: data.mothersName,
+          dateOfBirth: data.dateOfBirth,
+          country: data.country,
+          zipCode: data.zipCode,
+          city: data.city,
+          streetAddress: data.streetAddress,
+          highSchool: data.highSchool,
+          graduationYear: data.graduationYear,
+          neptunCode: data.neptunCode ?? "",
+          currentMajor: data.currentMajor,
+          studyMode: data.studyMode,
+          hasLanguageCert: data.hasLanguageCert,
+        });
+      } catch (err) {
+        if (!mounted) return;
+        const message = err instanceof Error ? err.message : "Hiba a profil betöltésekor.";
+        setProfileError(message);
+      } finally {
+        if (mounted) setProfileLoading(false);
+      }
+    };
+
+    loadProfile();
+    return () => {
+      mounted = false;
+    };
+  }, [activeTab]);
+
+  const handleProfileChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const target = event.target;
+    const { name, value, type } = target;
+    const isCheckbox = target instanceof HTMLInputElement && type === "checkbox";
+    setProfileForm((prev) => ({
+      ...prev,
+      [name]: isCheckbox
+        ? target.checked
+        : name === "zipCode" || name === "graduationYear"
+          ? value === ""
+            ? ""
+            : Number(value)
+          : value,
+    }));
+  };
+
+  const handleProfileSave = async () => {
+    setProfileSaving(true);
+    setProfileError(null);
+    setProfileSuccess(null);
+    try {
+      const updated = await api.me.update(profileForm);
+      setProfile(updated);
+      setProfileForm({
+        fullName: updated.fullName,
+        email: updated.email,
+        phoneNumber: updated.phoneNumber,
+        mothersName: updated.mothersName,
+        dateOfBirth: updated.dateOfBirth,
+        country: updated.country,
+        zipCode: updated.zipCode,
+        city: updated.city,
+        streetAddress: updated.streetAddress,
+        highSchool: updated.highSchool,
+        graduationYear: updated.graduationYear,
+        neptunCode: updated.neptunCode ?? "",
+        currentMajor: updated.currentMajor,
+        studyMode: updated.studyMode,
+        hasLanguageCert: updated.hasLanguageCert,
+      });
+      setProfileSuccess("Profil frissítve.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Hiba a mentés során.";
+      setProfileError(message);
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
+  const handleProfileDelete = async () => {
+    if (!profile) return;
+    const ok = window.confirm("Biztosan törlöd a profilodat? Ez nem visszavonható.");
+    if (!ok) return;
+
+    setProfileDeleting(true);
+    setProfileError(null);
+    setProfileSuccess(null);
+    try {
+      await api.me.remove();
+      authLogout();
+      navigate("/");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Hiba a profil törlése során.";
+      setProfileError(message);
+    } finally {
+      setProfileDeleting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* TOP BAR */}
-      <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-10">
-        <div className="mx-auto max-w-6xl px-4 lg:px-8 py-4 flex items-center justify-between">
+      <div className="mx-auto max-w-6xl px-4 lg:px-8 py-6">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          {/* TOP BAR */}
+          <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-10">
+            <div className="px-4 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-emerald-500" />
             <div>
@@ -55,11 +176,11 @@ export default function StudentDashboardPage() {
               Kijelentkezés
             </button>
           </div>
-        </div>
-      </header>
+            </div>
+          </header>
 
-      {/* CONTENT */}
-      <main className="mx-auto max-w-6xl px-4 lg:px-8 py-8 space-y-6">
+          {/* CONTENT */}
+          <main className="px-4 lg:px-8 py-8 space-y-6">
         {/* TAB NAVIGATION */}
         <div className="border-b border-slate-200">
           <nav className="flex gap-8">
@@ -81,6 +202,27 @@ export default function StudentDashboardPage() {
             >
               Jelentkezéseim
             </Link>
+
+            <Link
+              to="/student/news"
+              className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "news"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-slate-600 hover:text-slate-900"
+                }`}
+            >
+              Hírek
+            </Link>
+
+            <Link
+              to="/student#profile"
+              className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "profile"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-slate-600 hover:text-slate-900"
+                }`}
+            >
+              Saját profil
+            </Link>
+            
           </nav>
         </div>
 
@@ -195,7 +337,208 @@ export default function StudentDashboardPage() {
             <ApplicationsList />
           </div>
         )}
-      </main>
+        {activeTab === "profile" && (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+            <header className="space-y-1">
+              <h1 className="text-xl font-semibold text-slate-900">Saját profil</h1>
+              <p className="text-sm text-slate-600">
+                Itt frissítheted a saját adataidat, vagy törölheted a profilodat.
+              </p>
+            </header>
+
+            {profileLoading && (
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                Betöltés...
+              </div>
+            )}
+
+            {!profileLoading && profileError && (
+              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                {profileError}
+              </div>
+            )}
+
+            {!profileLoading && profileSuccess && (
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+                {profileSuccess}
+              </div>
+            )}
+
+            {!profileLoading && !profileError && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Teljes név</span>
+                  <input
+                    name="fullName"
+                    value={profileForm.fullName ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">E-mail</span>
+                  <input
+                    type="email"
+                    name="email"
+                    value={profileForm.email ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Telefonszám</span>
+                  <input
+                    name="phoneNumber"
+                    value={profileForm.phoneNumber ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Anyja neve</span>
+                  <input
+                    name="mothersName"
+                    value={profileForm.mothersName ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Születési dátum</span>
+                  <input
+                    type="date"
+                    name="dateOfBirth"
+                    value={profileForm.dateOfBirth ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Ország</span>
+                  <input
+                    name="country"
+                    value={profileForm.country ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Irányítószám</span>
+                  <input
+                    name="zipCode"
+                    value={profileForm.zipCode ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Város</span>
+                  <input
+                    name="city"
+                    value={profileForm.city ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-600">Utca, házszám</span>
+                  <input
+                    name="streetAddress"
+                    value={profileForm.streetAddress ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-600">Középiskola</span>
+                  <input
+                    name="highSchool"
+                    value={profileForm.highSchool ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Érettségi éve</span>
+                  <input
+                    name="graduationYear"
+                    value={profileForm.graduationYear ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Neptun kód</span>
+                  <input
+                    name="neptunCode"
+                    value={profileForm.neptunCode ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-600">Szak</span>
+                  <input
+                    name="currentMajor"
+                    value={profileForm.currentMajor ?? ""}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+                <label className="space-y-1 text-sm text-slate-700">
+                  <span className="text-xs font-semibold text-slate-600">Képzési forma</span>
+                  <select
+                    name="studyMode"
+                    value={profileForm.studyMode ?? "NAPPALI"}
+                    onChange={handleProfileChange}
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="NAPPALI">Nappali</option>
+                    <option value="LEVELEZŐ">Levelező</option>
+                  </select>
+                </label>
+                <label className="flex items-center gap-3 text-sm text-slate-700 md:col-span-2">
+                  <input
+                    type="checkbox"
+                    name="hasLanguageCert"
+                    checked={Boolean(profileForm.hasLanguageCert)}
+                    onChange={handleProfileChange}
+                    className="h-4 w-4"
+                  />
+                  Van nyelvvizsga
+                </label>
+              </div>
+            )}
+
+            {!profileLoading && (
+              <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 pt-4">
+                <button
+                  onClick={handleProfileSave}
+                  disabled={profileSaving}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                >
+                  {profileSaving ? "Mentés..." : "Mentés"}
+                </button>
+                <button
+                  onClick={handleProfileDelete}
+                  disabled={profileDeleting}
+                  className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
+                >
+                  {profileDeleting ? "Törlés..." : "Profil törlése"}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+        {activeTab === "news" && (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <StudentNewsPage />
+          </div>
+        )}
+          </main>
+        </div>
+      </div>
     </div>
   );
 }
+
