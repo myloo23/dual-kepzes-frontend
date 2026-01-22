@@ -1,17 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useNotifications } from "../../features/notifications/hooks/useNotifications";
+import type { NotificationItem } from "../../lib/api";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [newsLink, setNewsLink] = useState<string | null>(null);
   const [dashboardLink, setDashboardLink] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notificationsTab, setNotificationsTab] = useState<"active" | "archived">("active");
+  const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const location = useLocation();
+  const notificationsRef = useRef<HTMLDivElement | null>(null);
+
+  const {
+    active,
+    archived,
+    unreadCount,
+    loading: notificationsLoading,
+    error: notificationsError,
+    loadActive,
+    loadArchived,
+    refreshUnreadCount,
+    getById,
+    markRead,
+    markAllRead,
+    archive,
+    unarchive,
+    remove,
+  } = useNotifications();
 
   // Számítsa ki a linkeket a localStorage alapján
   const calculateLinks = () => {
     const token = localStorage.getItem("token") || localStorage.getItem("auth_token") || "";
     const role = localStorage.getItem("role") || "";
+    setIsLoggedIn(!!token);
 
     // DEBUG: Nézd meg a konzolban
     console.log("🔍 Navbar Debug:");
@@ -95,6 +122,50 @@ export default function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    refreshUnreadCount();
+
+    const interval = window.setInterval(() => {
+      refreshUnreadCount();
+    }, 60000);
+
+    return () => window.clearInterval(interval);
+  }, [isLoggedIn, refreshUnreadCount]);
+
+  useEffect(() => {
+    if (!notificationsOpen || !isLoggedIn) return;
+    if (notificationsTab === "active") {
+      loadActive();
+    } else {
+      loadArchived();
+    }
+  }, [notificationsOpen, notificationsTab, isLoggedIn, loadActive, loadArchived]);
+
+  useEffect(() => {
+    if (!notificationsOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+        setNotificationsOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setNotificationsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [notificationsOpen]);
+
   const closeMobileMenu = () => setMobileOpen(false);
 
   const getLinkClass = (path: string) => {
@@ -124,13 +195,57 @@ export default function Navbar() {
     return `${baseClass} ${isActive ? activeClass : inactiveClass}`;
   };
 
+  const notifications = notificationsTab === "active" ? active : archived;
+
+  const getNotificationTitle = (item: NotificationItem) =>
+    item.title || item.message || item.body || "Notification";
+
+  const getNotificationPreview = (item: NotificationItem) =>
+    item.message || item.body || item.title || "";
+
+  const handleSelectNotification = async (id: string) => {
+    setDetailsLoading(true);
+    setActionError(null);
+    try {
+      const detail = await getById(id);
+      setSelectedNotification(detail);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to load notification.";
+      setActionError(message);
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  const handleAction = async (action: () => Promise<void>) => {
+    setActionError(null);
+    try {
+      await action();
+      if (notificationsTab === "active") {
+        await loadActive();
+      } else {
+        await loadArchived();
+      }
+      await refreshUnreadCount();
+      setSelectedNotification(null);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Notification action failed.";
+      setActionError(message);
+    }
+  };
+
+  useEffect(() => {
+    setSelectedNotification(null);
+    setActionError(null);
+  }, [notificationsTab]);
+
 
   // DEBUG: Végső ellenőrzés
   console.log("📊 Navbar render - newsLink:", newsLink, "dashboardLink:", dashboardLink);
 
   return (
     <header className="sticky top-0 z-[1100] border-b border-dkk-gray/30 bg-white/80 backdrop-blur">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 lg:px-8 py-3">
+      <div className="max-w-6xl mx-auto flex items-center gap-4 px-4 lg:px-8 py-3">
         <Link
           to="/"
           className="flex items-center gap-3"
@@ -143,8 +258,9 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden sm:flex gap-6 text-sm">
+        <div className="ml-auto flex items-center gap-3">
+          {/* Desktop nav */}
+          <nav className="hidden sm:flex items-center gap-6 text-sm">
           <Link to="/" className={getLinkClass("/")}>Kezdőlap</Link>
 
           {dashboardLink && (
@@ -158,9 +274,193 @@ export default function Navbar() {
           {newsLink && (
             <Link to={newsLink} className={getLinkClass(newsLink)}>Hírek</Link>
           )}
-        </nav>
+          </nav>
+          {isLoggedIn && (
+            <div className="relative" ref={notificationsRef}>
+              <button
+                type="button"
+                className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 sm:h-9 sm:w-9"
+                aria-label="Notifications"
+                onClick={() => setNotificationsOpen((prev) => !prev)}
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 11-6 0m6 0H9"
+                  />
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-semibold text-white">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </button>
 
-        {/* Mobile hamburger */}
+              {notificationsOpen && (
+                <div className="absolute left-1/2 mt-2 w-[90vw] max-w-sm -translate-x-1/2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg sm:left-auto sm:right-0 sm:translate-x-0 sm:w-80">
+                  <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
+                    <span className="text-sm font-semibold text-slate-800">Notifications</span>
+                    <div className="flex items-center gap-2 text-xs">
+                      <button
+                        type="button"
+                        className="rounded px-2 py-1 text-slate-600 hover:bg-slate-100"
+                        onClick={() => handleAction(markAllRead)}
+                      >
+                        Mark all read
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded px-2 py-1 text-slate-600 hover:bg-slate-100"
+                        onClick={() => refreshUnreadCount()}
+                      >
+                        Refresh
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2 text-xs">
+                    <button
+                      type="button"
+                      className={`rounded px-2 py-1 ${notificationsTab === "active"
+                        ? "bg-slate-900 text-white"
+                        : "text-slate-600 hover:bg-slate-100"
+                        }`}
+                      onClick={() => setNotificationsTab("active")}
+                    >
+                      Active
+                    </button>
+                    <button
+                      type="button"
+                      className={`rounded px-2 py-1 ${notificationsTab === "archived"
+                        ? "bg-slate-900 text-white"
+                        : "text-slate-600 hover:bg-slate-100"
+                        }`}
+                      onClick={() => setNotificationsTab("archived")}
+                    >
+                      Archived
+                    </button>
+                  </div>
+
+                  <div className="max-h-72 overflow-y-auto">
+                    {notificationsLoading && (
+                      <div className="px-3 py-4 text-xs text-slate-500">Loading notifications...</div>
+                    )}
+                    {!notificationsLoading && notifications.length === 0 && (
+                      <div className="px-3 py-4 text-xs text-slate-500">No notifications yet.</div>
+                    )}
+                    {notifications.map((item) => {
+                      const isUnread = item.isRead === false || (!item.readAt && notificationsTab === "active");
+                      return (
+                        <div
+                          key={item.id}
+                          className="border-b border-slate-100 px-3 py-2 last:border-b-0"
+                        >
+                          <button
+                            type="button"
+                            className="w-full text-left"
+                            onClick={() => handleSelectNotification(String(item.id))}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className={`text-sm ${isUnread ? "font-semibold text-slate-900" : "text-slate-700"}`}>
+                                {getNotificationTitle(item)}
+                              </span>
+                              {isUnread && (
+                                <span className="h-2 w-2 rounded-full bg-blue-500" aria-label="Unread" />
+                              )}
+                            </div>
+                            {getNotificationPreview(item) && (
+                              <div className="mt-1 text-xs text-slate-500">
+                                {getNotificationPreview(item)}
+                              </div>
+                            )}
+                          </button>
+                          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                            {notificationsTab === "active" && (
+                              <button
+                                type="button"
+                                className="rounded px-2 py-1 hover:bg-slate-100"
+                                onClick={() => handleAction(() => markRead(String(item.id)))}
+                              >
+                                Mark read
+                              </button>
+                            )}
+                            {notificationsTab === "active" ? (
+                              <button
+                                type="button"
+                                className="rounded px-2 py-1 hover:bg-slate-100"
+                                onClick={() => handleAction(() => archive(String(item.id)))}
+                              >
+                                Archive
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                className="rounded px-2 py-1 hover:bg-slate-100"
+                                onClick={() => handleAction(() => unarchive(String(item.id)))}
+                              >
+                                Unarchive
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              className="rounded px-2 py-1 text-red-500 hover:bg-red-50"
+                              onClick={() => handleAction(() => remove(String(item.id)))}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {(notificationsError || actionError) && (
+                    <div className="border-t border-slate-100 px-3 py-2 text-xs text-red-500">
+                      {actionError || notificationsError}
+                    </div>
+                  )}
+
+                  {detailsLoading && (
+                    <div className="border-t border-slate-100 px-3 py-2 text-xs text-slate-500">
+                      Loading details...
+                    </div>
+                  )}
+
+                  {selectedNotification && !detailsLoading && (
+                    <div className="border-t border-slate-100 px-3 py-2 text-xs text-slate-600">
+                      <div className="text-sm font-semibold text-slate-800">
+                        {getNotificationTitle(selectedNotification)}
+                      </div>
+                      {getNotificationPreview(selectedNotification) && (
+                        <div className="mt-1 text-xs text-slate-500">
+                          {getNotificationPreview(selectedNotification)}
+                        </div>
+                      )}
+                      {selectedNotification.link && (
+                        <div className="mt-2">
+                          <a
+                            href={selectedNotification.link}
+                            className="text-xs font-semibold text-dkk-blue hover:underline"
+                          >
+                            Open link
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Mobile hamburger */}
         <button
           type="button"
           className="sm:hidden inline-flex items-center justify-center rounded-md border border-slate-300 px-2 py-1 text-slate-700 bg-white shadow-sm"
@@ -182,12 +482,13 @@ export default function Navbar() {
             />
           </div>
         </button>
+        </div>
       </div>
 
       {/* Mobile nav dropdown */}
       {mobileOpen && (
         <nav className="sm:hidden border-t border-dkk-gray/30 bg-white">
-          <div className="max-w-6xl mx-auto px-4 lg:px-8 py-3 flex flex-col gap-2 text-sm">
+          <div className="max-w-6xl mx-auto px-4 lg:px-8 py-3 flex flex-col items-end gap-2 text-right text-sm">
             <Link to="/" className={getMobileLinkClass("/")} onClick={closeMobileMenu}>Kezdőlap</Link>
 
             {dashboardLink && (

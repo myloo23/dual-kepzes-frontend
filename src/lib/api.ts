@@ -22,6 +22,12 @@ import type {
   Application,
   ApplicationCreatePayload,
 } from '../types/api.types';
+import type {
+  NotificationCreatePayload,
+  NotificationDetails,
+  NotificationItem,
+  NotificationUnreadCount,
+} from '../types/notifications.types';
 
 const API_URL = API_CONFIG.BASE_URL;
 
@@ -154,6 +160,7 @@ const PATHS = {
   stats: '/api/stats',
   news: '/api/news',
   applications: '/api/applications',
+  notifications: '/api/notifications',
 } as const;
 
 // ============= API Object =============
@@ -292,6 +299,27 @@ export const api = {
     list: () => apiGet<Application[]>(PATHS.applications),
   },
 
+  // ============= Notifications =============
+  notifications: {
+    listActive: () => apiGet<NotificationItem[]>(PATHS.notifications),
+    listArchived: () => apiGet<NotificationItem[]>(`${PATHS.notifications}/archived`),
+    get: (id: Id) =>
+      apiGet<NotificationDetails>(`${PATHS.notifications}/${ensureId(id, 'notificationId')}`),
+    unreadCount: () =>
+      apiGet<NotificationUnreadCount | number>(`${PATHS.notifications}/unread-count`),
+    create: (payload: NotificationCreatePayload) =>
+      apiPost<NotificationItem>(PATHS.notifications, payload),
+    readAll: () => apiPut<void>(`${PATHS.notifications}/read-all`, {}),
+    markRead: (id: Id) =>
+      apiPut<void>(`${PATHS.notifications}/${ensureId(id, 'notificationId')}/read`, {}),
+    archive: (id: Id) =>
+      apiPut<void>(`${PATHS.notifications}/${ensureId(id, 'notificationId')}/archive`, {}),
+    unarchive: (id: Id) =>
+      apiPut<void>(`${PATHS.notifications}/${ensureId(id, 'notificationId')}/unarchive`, {}),
+    remove: (id: Id) =>
+      apiDelete<void>(`${PATHS.notifications}/${ensureId(id, 'notificationId')}`),
+  },
+
   // ============= System Admins =============
   systemAdmins: {
     me: {
@@ -363,3 +391,9 @@ export type {
   Location,
   Tag,
 } from '../types/api.types';
+export type {
+  NotificationCreatePayload,
+  NotificationDetails,
+  NotificationItem,
+  NotificationUnreadCount,
+} from '../types/notifications.types';
