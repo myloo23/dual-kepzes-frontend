@@ -17,6 +17,7 @@ const roleToPath: Record<string, string> = {
   MENTOR: "/mentor",
   HR: "/hr",
   COMPANY_ADMIN: "/hr",
+  UNIVERSITY_USER: "/university",
   ADMIN: "/admin",
   SYSTEM_ADMIN: "/admin",
   SUPER_ADMIN: "/admin",

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNotifications } from "../../features/notifications/hooks/useNotifications";
+import { useAuth } from "../../features/auth";
 import type { NotificationItem } from "../../lib/api";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 
@@ -16,6 +17,7 @@ export default function Navbar() {
   const [actionError, setActionError] = useState<string | null>(null);
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
+  const { user, isAuthenticated } = useAuth();
 
   const {
     active,
@@ -37,8 +39,8 @@ export default function Navbar() {
   // Számítsa ki a linkeket a localStorage alapján
   const calculateLinks = () => {
     const token = localStorage.getItem("token") || localStorage.getItem("auth_token") || "";
-    const role = localStorage.getItem("role") || "";
-    setIsLoggedIn(!!token);
+    const role = user?.role || localStorage.getItem("role") || "";
+    setIsLoggedIn(isAuthenticated || !!token);
 
     // DEBUG: Nézd meg a konzolban
     console.log("🔍 Navbar Debug:");
@@ -70,6 +72,11 @@ export default function Navbar() {
     else if (roleUpper === "TEACHER") {
       // news = "/teacher/news";
       dashboard = "/teacher";
+    }
+    // University role-ok
+    else if (roleUpper === "UNIVERSITY_USER") {
+      news = "/university/news";
+      dashboard = "/university";
     }
     // Mentor role-ok
     else if (roleUpper === "MENTOR") {
@@ -120,7 +127,7 @@ export default function Navbar() {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("localStorageUpdated", handleCustomStorageChange);
     };
-  }, []);
+  }, [user?.role, isAuthenticated]);
 
   useEffect(() => {
     if (!isLoggedIn) return;

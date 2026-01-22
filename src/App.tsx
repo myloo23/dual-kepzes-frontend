@@ -13,6 +13,9 @@ import TeacherLayout from "./layouts/TeacherLayout";
 import MentorLayout from "./layouts/MentorLayout";
 import HrLayout from "./layouts/HrLayout";
 import HrDashboardPage from "./pages/hr/HrDashboardPage";
+import UniversityLayout from "./layouts/UniversityLayout";
+import UniversityDashboardPage from "./pages/university/UniversityDashboardPage";
+import StudentNewsPage from "./pages/student/StudentNewsPage";
 
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -80,6 +83,13 @@ function App() {
               <Route path="employees" element={<HrDashboardPage />} />
               <Route path="company-profile" element={<HrDashboardPage />} />
               <Route path="profile" element={<HrDashboardPage />} />
+            </Route>
+
+            <Route path="/university" element={<UniversityLayout />}>
+              <Route index element={<UniversityDashboardPage />} />
+              <Route path="students" element={<UniversityDashboardPage />} />
+              <Route path="news" element={<StudentNewsPage />} />
+              <Route path="profile" element={<UniversityDashboardPage />} />
             </Route>
           </Routes>
         </main>

@@ -367,6 +367,7 @@ export const api = {
       get: () => apiGet<UniversityUserProfile>(`${PATHS.universityUsers}/me`),
       update: (body: Partial<UniversityUserProfile>) =>
         apiPatch<UniversityUserProfile>(`${PATHS.universityUsers}/me`, body),
+      remove: () => apiDelete<{ message?: string }>(`${PATHS.universityUsers}/me`),
     },
   },
 

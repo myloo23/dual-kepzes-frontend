@@ -49,6 +49,14 @@ export const MENTOR_ROUTES = {
     DASHBOARD: '/mentor',
 } as const;
 
+// ============= University Routes =============
+export const UNIVERSITY_ROUTES = {
+    DASHBOARD: '/university',
+    STUDENTS: '/university/students',
+    NEWS: '/university/news',
+    PROFILE: '/university/profile',
+} as const;
+
 // ============= All Routes Combined =============
 export const ROUTES = {
     ...PUBLIC_ROUTES,
@@ -57,4 +65,5 @@ export const ROUTES = {
     HR: HR_ROUTES,
     TEACHER: TEACHER_ROUTES,
     MENTOR: MENTOR_ROUTES,
+    UNIVERSITY: UNIVERSITY_ROUTES,
 } as const;
