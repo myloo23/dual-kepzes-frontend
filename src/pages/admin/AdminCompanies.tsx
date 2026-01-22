@@ -8,6 +8,7 @@ import { api } from '../../lib/api';
 import type { Company } from '../../lib/api';
 import { useCRUD, useModal } from '../../hooks';
 import CompanyFormModal from '../../features/companies/components/modals/CompanyFormModal';
+import Button from '../../components/ui/Button';
 import {
   PAGE_TITLES,
   PAGE_DESCRIPTIONS,
@@ -116,19 +117,13 @@ export default function AdminCompaniesPage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <h2 className="text-base font-bold text-slate-800">Összes cég</h2>
-            <button
-              onClick={handleCreateNew}
-              className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition"
-            >
+            <Button onClick={handleCreateNew} variant="primary" size="xs">
               + Új cég
-            </button>
+            </Button>
           </div>
-          <button
-            onClick={companies.load}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50 transition"
-          >
+          <Button onClick={companies.load} variant="outline" size="xs">
             {LABELS.REFRESH}
-          </button>
+          </Button>
         </div>
 
         {/* Lookup */}
@@ -139,13 +134,14 @@ export default function AdminCompaniesPage() {
             placeholder={LABELS.SEARCH_COMPANY_BY_ID}
             className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
           />
-          <button
+          <Button
             type="button"
             onClick={handleLookup}
-            className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900 transition shadow-sm"
+            variant="dark"
+            size="sm"
           >
             {LABELS.SEARCH}
-          </button>
+          </Button>
         </div>
 
         {/* Table */}
@@ -172,18 +168,20 @@ export default function AdminCompaniesPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
-                      <button
+                      <Button
                         onClick={() => handleEdit(company.id)}
-                        className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition"
+                        variant="outlineAccent"
+                        size="xs"
                       >
                         {LABELS.EDIT}
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => handleDelete(company.id)}
-                        className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition"
+                        variant="danger"
+                        size="xs"
                       >
                         {LABELS.DELETE}
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>

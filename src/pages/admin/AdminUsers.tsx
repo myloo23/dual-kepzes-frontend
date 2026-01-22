@@ -9,6 +9,7 @@ import { useUserManagement } from '../../features/users/hooks/useUserManagement'
 import { useModal } from '../../hooks';
 import StudentFormModal from '../../features/users/components/modals/StudentFormModal';
 import AdminUserModal from '../../features/users/components/modals/AdminUserModal';
+import Button from '../../components/ui/Button';
 import {
   PAGE_TITLES,
   PAGE_DESCRIPTIONS,
@@ -184,19 +185,22 @@ export default function AdminUsersPage() {
               placeholder={LABELS.SEARCH_USER_BY_ID}
               className="w-40 rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
             />
-            <button
+            <Button
               type="button"
               onClick={handleLookup}
-              className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-900 transition"
+              variant="dark"
+              size="sm"
             >
               {LABELS.SEARCH}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={userManagement.load}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50 transition ml-2"
+              variant="outline"
+              size="xs"
+              className="ml-2"
             >
               {LABELS.REFRESH}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -228,29 +232,32 @@ export default function AdminUsersPage() {
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       {userManagement.activeTab === 'INACTIVE_USER' && (
-                        <button
+                        <Button
                           onClick={() => userManagement.reactivateUser(item.id)}
-                          className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition"
+                          variant="success"
+                          size="xs"
                         >
                           {LABELS.ACTIVATE}
-                        </button>
+                        </Button>
                       )}
 
                       {userManagement.activeTab !== 'INACTIVE_USER' && (
-                        <button
+                        <Button
                           onClick={() => handleOpenItem(item)}
-                          className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition"
+                          variant="outlineAccent"
+                          size="xs"
                         >
                           {LABELS.EDIT}
-                        </button>
+                        </Button>
                       )}
 
-                      <button
+                      <Button
                         onClick={() => handleDelete(item.id)}
-                        className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition"
+                        variant="danger"
+                        size="xs"
                       >
                         {LABELS.DELETE}
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>

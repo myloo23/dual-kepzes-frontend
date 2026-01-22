@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type NewsCreatePayload, type NewsItem } from "../../lib/api";
 import NewsFormModal from "../../features/news/components/modals/NewsFormModal";
+import Button from "../../components/ui/Button";
 
 type Id = string | number;
 type Tab = "active" | "archived";
@@ -180,18 +181,12 @@ export default function AdminNews() {
           </div>
 
           <div className="flex gap-2">
-            <button
-              onClick={load}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium hover:bg-slate-50 transition"
-            >
+            <Button onClick={load} variant="outline" size="xs">
               Frissítés
-            </button>
-            <button
-              onClick={handleCreateNew}
-              className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition"
-            >
+            </Button>
+            <Button onClick={handleCreateNew} variant="primary" size="xs">
               + Új hír
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -244,36 +239,40 @@ export default function AdminNews() {
                     <div className="flex justify-end gap-2">
                       {currentTab === "active" ? (
                         <>
-                          <button
+                          <Button
                             onClick={() => startEdit(n)}
-                            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition"
+                            variant="outlineAccent"
+                            size="xs"
                           >
                             Szerkesztés
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => onArchive(n.id)}
-                            className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100 transition"
+                            variant="warning"
+                            size="xs"
                             title="Archiválás (eltüntetés a hallgatók elől)"
                           >
                             Archivál
-                          </button>
+                          </Button>
                         </>
                       ) : (
-                        <button
+                        <Button
                           onClick={() => onRestore(n.id)}
-                          className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition"
+                          variant="success"
+                          size="xs"
                         >
                           Visszaállítás
-                        </button>
+                        </Button>
                       )}
 
-                      <button
+                      <Button
                         onClick={() => onDelete(n.id)}
-                        className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition"
+                        variant="danger"
+                        size="xs"
                         title="Végleges törlés"
                       >
                         Törlés
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
