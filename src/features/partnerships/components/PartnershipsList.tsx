@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Partnership, Id, EmployeeProfile } from "../../../types/api.types";
 import { api } from "../../../lib/api";
+import AssignMentorModal from "./modals/AssignMentorModal";
 
 interface PartnershipsListProps {
     partnerships: Partnership[];
@@ -10,21 +11,18 @@ interface PartnershipsListProps {
 }
 
 export default function PartnershipsList({ partnerships, mentors, onRefresh, isLoading }: PartnershipsListProps) {
-    const [assigningMentorId, setAssigningMentorId] = useState<Id | null>(null);
-    const [mentorIdInput, setMentorIdInput] = useState("");
+    const [selectedPartnership, setSelectedPartnership] = useState<Partnership | null>(null);
+    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [terminatingId, setTerminatingId] = useState<Id | null>(null);
 
-    const handleAssignMentor = async (partnershipId: Id) => {
-        if (!mentorIdInput.trim()) return;
-        try {
-            await api.partnerships.assignMentor(partnershipId, mentorIdInput);
-            setAssigningMentorId(null);
-            setMentorIdInput("");
-            onRefresh();
-        } catch (error) {
-            console.error("Failed to assign mentor:", error);
-            alert("Hiba történt a mentor hozzárendelésekor.");
-        }
+    const handleOpenAssign = (partnership: Partnership) => {
+        setSelectedPartnership(partnership);
+        setIsAssignModalOpen(true);
+    };
+
+    const handleCloseAssign = () => {
+        setIsAssignModalOpen(false);
+        setSelectedPartnership(null);
     };
 
     const handleTerminate = async (partnershipId: Id) => {
@@ -55,155 +53,134 @@ export default function PartnershipsList({ partnerships, mentors, onRefresh, isL
     }
 
     return (
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-slate-200">
-                    <thead className="bg-slate-50">
-                        <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Hallgató
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Pozíció
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Mentor
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Egyetemi Felelős
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Státusz
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Dátumok
-                            </th>
-                            <th scope="col" className="relative px-6 py-3">
-                                <span className="sr-only">Műveletek</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 bg-white">
-                        {partnerships.map((partnership) => (
-                            <tr key={String(partnership.id)}>
-                                <td className="whitespace-nowrap px-6 py-4">
-                                    <div className="flex items-center">
-                                        <div>
-                                            <div className="font-medium text-slate-900">
+        <>
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-slate-200">
+                        <thead className="bg-slate-50">
+                            <tr>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                                    Hallgató
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                                    Pozíció
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                                    Időszak
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                                    Mentor
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                                    Egyetemi Felelős
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                                    Státusz
+                                </th>
+                                <th scope="col" className="relative px-6 py-3">
+                                    <span className="sr-only">Műveletek</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200 bg-white">
+                            {partnerships.map((partnership) => (
+                                <tr key={String(partnership.id)} className="hover:bg-slate-50 transition-colors">
+                                    <td className="px-6 py-3 align-middle">
+                                        <div className="flex flex-col">
+                                            <span className="font-semibold text-slate-900 text-sm">
                                                 {partnership.student?.fullName || "Ismeretlen hallgató"}
-                                            </div>
-                                            <div className="text-sm text-slate-500">
+                                            </span>
+                                            <span className="text-xs text-slate-500">
                                                 {partnership.student?.email}
-                                            </div>
-                                            <div className="text-xs text-slate-400 mt-1">
-                                                {partnership.contractNumber}
-                                            </div>
+                                            </span>
                                         </div>
-                                    </div>
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-700">
-                                    <div className="font-medium">{partnership.position?.title || "-"}</div>
-                                    <div className="text-xs text-slate-500">{partnership.position?.company?.name}</div>
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-700">
-                                    {/* Temporary simple mentor assignment UI for MVP */}
-                                    {partnership.mentor ? (
+                                    </td>
+                                    <td className="px-6 py-3 align-middle">
                                         <div>
-                                            <div className="font-medium">{partnership.mentor.fullName}</div>
-                                            <div className="text-xs text-slate-500">{partnership.mentor.email}</div>
+                                            <div className="text-sm font-medium text-slate-900">{partnership.position?.title || "-"}</div>
+                                            <div className="text-xs text-slate-500">{partnership.contractNumber}</div>
                                         </div>
-                                    ) : (
-                                        <div className="text-amber-600 italic text-xs">Nincs mentor</div>
-                                    )}
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-700">
-                                    {partnership.uniEmployee ? (
-                                        <div>
-                                            <div className="font-medium">{partnership.uniEmployee.fullName}</div>
-                                            <div className="text-xs text-slate-500">{partnership.uniEmployee.email}</div>
+                                    </td>
+                                    <td className="px-6 py-3 align-middle">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600 w-fit font-medium">
+                                                {partnership.semester || "N/A"}
+                                            </div>
+                                            <div className="text-xs text-slate-500 whitespace-nowrap">
+                                                {partnership.startDate ? new Date(partnership.startDate).toLocaleDateString() : "?"} -
+                                                {partnership.endDate ? new Date(partnership.endDate).toLocaleDateString() : "?"}
+                                            </div>
                                         </div>
-                                    ) : (
-                                        <div className="text-slate-400 italic text-xs">-</div>
-                                    )}
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4">
-                                    <span
-                                        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${partnership.status === "ACTIVE"
-                                            ? "bg-green-100 text-green-800"
-                                            : partnership.status === "TERMINATED"
-                                                ? "bg-red-100 text-red-800"
-                                                : "bg-yellow-100 text-yellow-800"
-                                            }`}
-                                    >
-                                        {partnership.status === "ACTIVE" && "Aktív"}
-                                        {partnership.status === "TERMINATED" && "Lezárt"}
-                                        {partnership.status === "PENDING_MENTOR" && "Mentor jóváhagyásra vár"}
-                                    </span>
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                                    {partnership.startDate && <div>Kezdet: {new Date(partnership.startDate).toLocaleDateString()}</div>}
-                                    {partnership.endDate && <div>Vége: {new Date(partnership.endDate).toLocaleDateString()}</div>}
-                                    {partnership.semester && <div className="text-xs text-slate-400 mt-1">{partnership.semester}</div>}
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                    <div className="flex justify-end gap-2">
-                                        {partnership.status !== "TERMINATED" && (
-                                            <>
-                                                {assigningMentorId === partnership.id ? (
-                                                    <div className="flex items-center gap-2">
-                                                        <select
-                                                            className="w-48 text-xs border rounded p-1"
-                                                            value={mentorIdInput}
-                                                            onChange={(e) => setMentorIdInput(e.target.value)}
-                                                        >
-                                                            <option value="">Válasszon mentort...</option>
-                                                            {mentors.map((m) => (
-                                                                <option key={String(m.id)} value={String(m.id)}>
-                                                                    {m.fullName}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                        <button
-                                                            onClick={() => handleAssignMentor(partnership.id)}
-                                                            className="text-green-600 hover:text-green-900 text-xs"
-                                                            disabled={!mentorIdInput}
-                                                        >
-                                                            Mentés
-                                                        </button>
-                                                        <button
-                                                            onClick={() => {
-                                                                setAssigningMentorId(null);
-                                                                setMentorIdInput("");
-                                                            }}
-                                                            className="text-slate-600 hover:text-slate-900 text-xs"
-                                                        >
-                                                            Mégse
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <button
-                                                        onClick={() => setAssigningMentorId(partnership.id)}
-                                                        className="text-indigo-600 hover:text-indigo-900"
-                                                    >
-                                                        Mentor kezelése
-                                                    </button>
-                                                )}
+                                    </td>
+                                    <td className="px-6 py-3 align-middle">
+                                        <div className="flex items-center gap-3">
+                                            {partnership.mentor ? (
+                                                <div className="text-sm font-medium text-slate-900">
+                                                    {partnership.mentor.fullName}
+                                                </div>
+                                            ) : (
+                                                <span className="text-sm italic text-amber-600">Nincs kijelölve</span>
+                                            )}
+
+                                            <button
+                                                onClick={() => handleOpenAssign(partnership)}
+                                                className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline shrink-0"
+                                            >
+                                                {partnership.mentor ? "Módosítás" : "+ Hozzárendelés"}
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-3 align-middle">
+                                        {partnership.uniEmployee ? (
+                                            <div className="text-sm text-slate-700">
+                                                {partnership.uniEmployee.fullName}
+                                            </div>
+                                        ) : (
+                                            <span className="text-xs italic text-slate-400">Nincs kijelölve</span>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-3 align-middle">
+                                        <span
+                                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${partnership.status === "ACTIVE"
+                                                ? "bg-emerald-100 text-emerald-800"
+                                                : partnership.status === "TERMINATED"
+                                                    ? "bg-rose-100 text-rose-800"
+                                                    : "bg-amber-100 text-amber-800"
+                                                }`}
+                                        >
+                                            {partnership.status === "ACTIVE" && "Aktív"}
+                                            {partnership.status === "TERMINATED" && "Lezárt"}
+                                            {partnership.status === "PENDING_MENTOR" && "Mentor jóváhagyásra vár"}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-3 text-right align-middle">
+                                        <div className="flex justify-end gap-2">
+                                            {partnership.status !== "TERMINATED" && (
                                                 <button
                                                     onClick={() => handleTerminate(partnership.id)}
                                                     disabled={terminatingId === partnership.id}
-                                                    className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                                    className="text-sm font-medium text-slate-400 hover:text-red-600 transition-colors"
+                                                    title="Partnerség lezárása"
                                                 >
                                                     Lezárás
                                                 </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+
+            <AssignMentorModal
+                isOpen={isAssignModalOpen}
+                onClose={handleCloseAssign}
+                partnership={selectedPartnership}
+                mentors={mentors}
+                onAssignSuccess={onRefresh}
+            />
+        </>
     );
 }
