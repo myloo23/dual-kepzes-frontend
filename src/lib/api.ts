@@ -307,6 +307,18 @@ export const api = {
         `${PATHS.applications}/company/${ensureId(id, 'applicationId')}/evaluate`,
         body
       ),
+
+    updateCompanyApplication: (id: Id, body: { status: ApplicationStatus; companyNote?: string }) =>
+      apiPatch<Application>(
+        `${PATHS.applications}/company/${ensureId(id, 'applicationId')}`,
+        body
+      ),
+
+    retract: (id: Id) =>
+      apiPatch<Application>(
+        `${PATHS.applications}/${ensureId(id, 'applicationId')}/retract`,
+        {}
+      ),
   },
 
   // ============= Notifications =============

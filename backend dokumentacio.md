@@ -163,7 +163,7 @@ A cégek kezelése, beleértve a státuszkezelést és a munkavállalókat.
 | `GET` | `/` | Saját jelentkezések megtekintése. | Student |
 | `PATCH` | `/:id/retract` | Jelentkezés visszavonása. | Student |
 | `GET` | `/company` | Céghez érkezett jelentkezések. | Company |
-| `PATCH` | `/company/:id/evaluate` | Jelentkezés értékelése. | Company |
+| `PATCH` | `/company/:id/evaluate` | Jelentkezés értékelése. (`ACCEPTED` esetén automatikusan létrejön a partnerség). | Company |
 | `PATCH` | `/company/:id` | Értékelés módosítása. | Company |
 | `GET` | `/admin` | Összes jelentkezés (Admin nézet). | Admin |
 | `GET` | `/admin/:id` | Jelentkezés részletei. | Admin |
@@ -207,12 +207,17 @@ A cégek kezelése, beleértve a státuszkezelést és a munkavállalókat.
 ### 🤝 Duális Partnerkapcsolatok (`/api/partnerships`)
 
 A hallgatók és cégek közötti duális képzési szerződések kezelése.
+A partnerség automatikusan létrejön `PENDING_MENTOR` státusszal, amikor a cég elfogad egy jelentkezést (`ACCEPTED`).
 
 | Metódus | Végpont | Leírás |
 | :--- | :--- | :--- |
-| `GET` | `/` | Partnerkapcsolatok listázása (jogosultság szerint). |
+| `GET` | `/student` | Hallgató saját partnerségeinek listázása. |
+| `GET` | `/company` | Céghez tartozó partnerségek listázása. |
+| `GET` | `/university` | Összes partnerség listázása (Egyetem). |
 | `GET` | `/:id` | Partnerkapcsolat részletei. |
 | `PATCH` | `/:id` | Partnerkapcsolat adatainak frissítése. |
+| `PATCH` | `/:id/assign-mentor` | Mentor hozzárendelése (Cégadmin). |
+| `PATCH` | `/:id/assign-university-user` | Egyetemi felelős hozzárendelése (Admin). |
 | `PATCH` | `/:id/terminate` | Partnerkapcsolat megszakítása (Terminated státusz). |
 | `DELETE` | `/:id` | Partnerkapcsolat törlése (Soft delete). |
 
@@ -238,6 +243,7 @@ Céges munkavállalók (pl. mentorok) kezelése.
 | Metódus | Végpont | Leírás |
 | :--- | :--- | :--- |
 | `GET` | `/` | Céghez tartozó munkavállalók listázása. |
+| `GET` | `/mentors` | Csak a mentorok listázása (Cégadminnak). |
 | `GET` | `/me` | Saját profil lekérése. |
 | `PATCH` | `/me` | Saját profil frissítése. |
 | `DELETE` | `/me` | Saját profil törlése. |
@@ -266,6 +272,7 @@ A platform üzemeltetői.
 | Metódus | Végpont | Leírás |
 | :--- | :--- | :--- |
 | `GET` | `/` | Összes rendszeradmin listázása. |
+| `GET` | `/admin-users` | Minden admin (Rendszer, Cég, Egyetem) listázása. |
 | `GET` | `/me` | Saját admin profil lekérése. |
 | `PATCH` | `/me` | Saját admin profil frissítése. |
 | `DELETE` | `/me` | Saját admin profil törlése. |
