@@ -11,6 +11,7 @@ import StudentDashboardPage from "./pages/student/StudentDashboardPage";
 
 import TeacherLayout from "./layouts/TeacherLayout";
 import MentorLayout from "./layouts/MentorLayout";
+import MentorPartnerships from "./pages/mentor/MentorPartnerships";
 import HrLayout from "./layouts/HrLayout";
 import HrDashboardPage from "./pages/hr/HrDashboardPage";
 import UniversityLayout from "./layouts/UniversityLayout";
@@ -71,6 +72,7 @@ function App() {
 
             <Route path="/mentor" element={<MentorLayout />}>
               <Route index element={<PlaceholderPage title="Mentori kezdőlap" />} />
+              <Route path="partnerships" element={<MentorPartnerships />} />
               <Route path="messages" element={<PlaceholderPage title="Üzenetek" />} />
               <Route path="progress" element={<PlaceholderPage title="Haladási napló" />} />
               <Route path="reviews" element={<PlaceholderPage title="Hallgatók értékelése" />} />

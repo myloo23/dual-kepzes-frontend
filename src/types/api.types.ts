@@ -107,6 +107,12 @@ export interface CompanyAdminProfile {
 export interface EmployeeProfile {
     id: Id;
     userId?: Id;
+    user?: {
+        id: Id;
+        fullName: string;
+        email: string;
+        role: string;
+    };
     companyId?: Id; // Keep for now if used elsewhere, or investigate more if this also changes
     fullName?: string | null;
     email?: string | null;
