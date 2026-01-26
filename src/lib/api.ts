@@ -325,11 +325,17 @@ export const api = {
   // ============= Partnerships =============
   partnerships: {
     listCompany: () => apiGet<Partnership[]>(`/api/partnerships/company`),
+    listUniversity: () => apiGet<Partnership[]>(`/api/partnerships/university`),
     get: (id: Id) => apiGet<Partnership>(`/api/partnerships/${ensureId(id, 'partnershipId')}`),
     assignMentor: (id: Id, mentorId: Id) =>
       apiPatch<Partnership>(
         `/api/partnerships/${ensureId(id, 'partnershipId')}/assign-mentor`,
         { mentorId } // Reverting to { mentorId }. 500 error means acceptable format but backend crash.
+      ),
+    assignUniversityUser: (id: Id, universityUserId: Id) =>
+      apiPatch<Partnership>(
+        `/api/partnerships/${ensureId(id, 'partnershipId')}/assign-university-user`,
+        { uniEmployeeId: universityUserId }
       ),
     terminate: (id: Id) =>
       apiPatch<Partnership>(

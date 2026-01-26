@@ -67,6 +67,16 @@ function AdminLayout() {
               </NavLink>
 
               <NavLink
+                to="/admin/partnerships"
+                className={({ isActive }) =>
+                  `${navItemBase} ${isActive ? navItemActive : navItemInactive}`
+                }
+                onClick={() => setMobileOpen(false)}
+              >
+                Partnerek
+              </NavLink>
+
+              <NavLink
                 to="/admin/companies"
                 className={({ isActive }) =>
                   `${navItemBase} ${isActive ? navItemActive : navItemInactive}`

@@ -24,6 +24,7 @@ import AdminCompanies from "./pages/admin/AdminCompanies";
 import AdminPositions from "./pages/admin/AdminPositions";
 import AdminTags from "./pages/admin/AdminTags";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminPartnerships from "./pages/admin/AdminPartnerships";
 
 import AdminNews from "./pages/admin/AdminNews";
 
@@ -48,6 +49,7 @@ function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
+              <Route path="partnerships" element={<AdminPartnerships />} />
               <Route path="companies" element={<AdminCompanies />} />
               <Route path="positions" element={<AdminPositions />} />
               <Route path="tags" element={<AdminTags />} />
