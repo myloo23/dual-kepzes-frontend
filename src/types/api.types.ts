@@ -85,18 +85,29 @@ export interface StudentProfile {
     hasLanguageCert: boolean;
 }
 
+export interface CompanyEmployee {
+    id: Id;
+    jobTitle: string;
+    company: {
+        id: Id;
+        name: string;
+    };
+}
+
 export interface CompanyAdminProfile {
     id: Id;
-    userId: Id;
-    companyId: Id;
-    fullName?: string;
-    email?: string;
+    email: string;
+    fullName: string;
+    phoneNumber: string;
+    role: 'COMPANY_ADMIN';
+    isActive: boolean;
+    companyEmployee: CompanyEmployee;
 }
 
 export interface EmployeeProfile {
     id: Id;
     userId?: Id;
-    companyId?: Id;
+    companyId?: Id; // Keep for now if used elsewhere, or investigate more if this also changes
     fullName?: string | null;
     email?: string | null;
     role?: string | null;

@@ -98,7 +98,7 @@ export default function AdminUsersPage() {
             {item.user?.email ?? item.email ?? '-'}
           </td>
           <td className="px-4 py-3 text-slate-500">
-            Cég ID: {item.companyId ?? '-'}
+            Cég ID: {item.companyEmployee?.company?.id ?? '-'}
           </td>
         </>
       );
