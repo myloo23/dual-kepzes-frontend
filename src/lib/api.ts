@@ -329,7 +329,7 @@ export const api = {
     assignMentor: (id: Id, mentorId: Id) =>
       apiPatch<Partnership>(
         `/api/partnerships/${ensureId(id, 'partnershipId')}/assign-mentor`,
-        { mentorId } // Reverting to mentorId as employeeId caused 400 Validation Error. 500 indicates backend bug with likely correct key.
+        { mentorId } // Reverting to { mentorId }. 500 error means acceptable format but backend crash.
       ),
     terminate: (id: Id) =>
       apiPatch<Partnership>(
