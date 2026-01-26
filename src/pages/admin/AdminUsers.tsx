@@ -85,7 +85,7 @@ export default function AdminUsersPage() {
             {item.fullName ?? item.name ?? 'User'}
           </td>
           <td className="px-4 py-3 text-slate-600">{item.email ?? '-'}</td>
-          <td className="px-4 py-3 text-slate-500">{item.neptunCode ?? '-'}</td>
+          <td className="px-4 py-3 text-slate-500">{item.neptunCode ?? item.studentProfile?.neptunCode ?? '-'}</td>
         </>
       );
     } else if (userManagement.activeTab === 'COMPANY_ADMIN') {

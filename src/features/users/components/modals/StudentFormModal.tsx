@@ -55,8 +55,12 @@ export default function StudentFormModal({
 
                 const d = initialData as any;
                 // Check if there is a nested profile object (common in some architectures)
-                const p = d.profile || {};
+                // Also check for studentProfile as seen in some backend responses
+                const p = d.profile || d.studentProfile || {};
                 const source = { ...d, ...p };
+
+                // Handle location data which is nested in studentProfile.location or just location
+                const loc = (p as any).location || d.location || {};
 
                 setFormData({
                     fullName: source.fullName || "",
@@ -64,10 +68,10 @@ export default function StudentFormModal({
                     phoneNumber: source.phoneNumber || "",
                     mothersName: source.mothersName || "",
                     dateOfBirth: source.dateOfBirth ? String(source.dateOfBirth).split('T')[0] : "", // Handle potential ISO string
-                    country: source.country || "",
-                    zipCode: source.zipCode || "",
-                    city: source.city || "",
-                    streetAddress: source.streetAddress || "",
+                    country: loc.country || source.country || "",
+                    zipCode: loc.zipCode || source.zipCode || "",
+                    city: loc.city || source.city || "",
+                    streetAddress: loc.address || source.streetAddress || "", // Note: API uses 'address', form uses 'streetAddress'
                     highSchool: source.highSchool || "",
                     graduationYear: source.graduationYear || "",
                     neptunCode: source.neptunCode || "",
