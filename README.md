@@ -1,237 +1,47 @@
-# 🎓 Dual Képzés Frontend
+# 🎓 Dual Képzés Frontend - Project Documentation
 
-Modern, szerepkör-alapú webalkalmazás a duális képzési rendszer támogatására. Az alkalmazás lehetővé teszi a **hallgatók**, **adminisztrátorok**, **HR munkatársak**, **mentorok** és **oktatók** számára az együttműködést.
+This document serves as the central hub for the technical documentation of the **Dual Képzés Frontend** project.
 
-## 🧰 Tech Stack
+## 📚 Documentation Index
 
-- **React 19** - Modern UI library
-- **TypeScript** - Type-safe development
-- **Vite** - Lightning-fast build tool
-- **React Router DOM** - Client-side routing
-- **Tailwind CSS** - Utility-first CSS framework
-- **Leaflet / React-Leaflet** - Interactive maps
-- **Photon API** - Geocoding service
-- **Lucide React** - Icon library
-- **ESLint** - Code linting
-- **Vercel** - Deployment platform
+We have organized the documentation into detailed sections to help you navigate specific topics:
+
+### 🏗️ [Architecture Overview](./docs/01-architecture.md)
+Understanding the high-level design, File Structure, Tech Stack choices, and Data Flow.
+
+### 🚀 [Getting Started](./docs/02-getting-started.md)
+Step-by-step guide to setting up your development environment, installing dependencies, and running the app locally.
+
+### 🧩 [Features & Modules](./docs/03-features-and-modules.md)
+Deep dive into the modular "Feature-Based Architecture", explaining the purpose of each directory in `src/features/` (Auth, Companies, Positions, etc.).
+
+### 🔌 [API & Data Flow](./docs/04-api-and-data-flow.md)
+Detailed explanation of the `api.ts` layer, how requests are handled, error normalization, and how to add new endpoints.
+
+### 🔐 [Authentication & Security](./docs/05-authentication-and-security.md)
+How the login flow works, simple JWT management, and Role-Based Access Control (RBAC) implementation in Routing.
+
+### ☁️ [Deployment](./docs/06-deployment.md)
+Strategies for deploying to production, specifically tailored for Vercel or standard static hosting.
 
 ---
 
-## 📦 Telepítés és Futtatás
+## ⚡ Quick Start
 
-### 1️⃣ Repository klónozása
+For those who just want to get running immediately:
 
 ```bash
+# 1. Clone
 git clone https://github.com/myloo23/dual-kepzes-frontend.git
-cd dual-kepzes-frontend
-```
 
-### 2️⃣ Függőségek telepítése
-
-```bash
+# 2. Install
 npm install
-```
 
-### 3️⃣ Környezeti változók
+# 3. Configure API
+# Create .env file with: VITE_API_URL=http://localhost:8000
 
-Hozz létre egy `.env` fájlt a projekt gyökerében:
-
-```env
-VITE_API_URL=http://localhost:8000
-```
-
-### 4️⃣ Fejlesztői szerver indítása
-
-```bash
+# 4. Run
 npm run dev
 ```
 
-A frontend elérhető lesz a `http://localhost:5173` címen.
-
-### 5️⃣ Production build
-
-```bash
-npm run build
-npm run preview
-```
-
----
-
-## 🗂️ Projektstruktúra
-
-A projekt **Feature-Based Architecture** (Funkció alapú architektúra) elvet követi.
-
-```
-dual-kepzes-frontend/
-├── public/                   # Public assets (markers, etc.)
-├── src/
-│   ├── assets/               # Statikus fájlok (képek, dokumentumok)
-│   │   └── reference-images/ # Referencia személyek fotói
-│   ├── components/           # Általános, megosztott UI komponensek
-│   │   ├── layout/           # Keret komponensek (Navbar, Footer)
-│   │   ├── shared/           # Újrafelhasználható elemek (Modals, Buttons)
-│   │   └── ui/               # Design System (Base UI)
-│   ├── config/               # App konfiguráció
-│   ├── features/             # Üzleti logika témakörökre bontva (Single Source of Truth)
-│   │   ├── applications/     # Jelentkezések kezelése
-│   │   ├── auth/             # Hitelesítés
-│   │   ├── companies/        # Cégek
-│   │   ├── landing/          # Főoldali elemek
-│   │   ├── news/             # Hírek
-│   │   ├── positions/        # Álláshirdetések
-│   │   └── users/            # Felhasználók
-│   ├── hooks/                # Globális hook-ok (useCRUD, useToast)
-│   ├── layouts/              # Szerepkör alapú elrendezések
-│   ├── lib/                  # Könyvtárak és API réteg
-│   ├── pages/                # Route target oldalak
-│   ├── types/                # TypeScript definíciók
-│   ├── App.tsx               # Fő komponens / Routing
-│   └── main.tsx              # Belépési pont
-```
-
----
-
-## 🏗️ Architektúra
-
-### Routing Flow
-
-```
-main.tsx
-  ↓
-App.tsx (Global Router)
-  ├─ Public Routes
-  │   ├─ HomePage (/)
-  │   ├─ PositionsPage (/positions)
-  │   ├─ MapPage (/map)
-  │   └─ Auth Pages (/register, /login, etc.)
-  │
-  └─ Protected Routes (Role-based)
-      ├─ AdminLayout (/admin/*)
-      ├─ StudentLayout (/student/*)
-      ├─ HrLayout (/hr/*)
-      ├─ MentorLayout (/mentor/*)
-      └─ TeacherLayout (/teacher/*)
-```
-
-### Data Flow
-
-```
-Feature Components (src/features/*)
-    ↓
-lib/api.ts (API Layer)
-    ↓
-Backend REST API
-```
-
----
-
-## 📚 Funkcionális Modulok (`src/features/`)
-
-A projekt gerincét a **features** mappa adja. Minden modul tartalmazza a saját komponenseit, hook-jait és logikáját.
-
-### 🔐 **auth/**
-Bejelentkezési logikát és a kapcsolódó komponenseket tartalmazza.
-- **Context**: `AuthContext` (Globális auth állapot).
-- **Hooks**: `useAuth` (Bejelentkezés, kijelentkezés, user adatok).
-- **Components**: `LoginCard`.
-
-### 📋 **applications/**
-Hallgatói jelentkezések kezelése.
-- **Components**: `ApplicationsList` (Jelentkezések listázása), `LocationMap` (Térkép).
-
-### 🏢 **companies/**
-Céges profilok és adminisztráció.
-- **Components**: `CompanyProfileDisplay` (Adatlap), `CompanyFormModal` (Szerkesztés).
-
-### 🏠 **landing/**
-A publikus főoldal építőkockái.
-- **Components**: `HowItWorksSection`, `DualInfoSection`, `MaterialsGallery` (Szórólapok), `ReferencesSlider`.
-
-### 📰 **news/**
-Hírek és értesítések rendszere.
-- **Components**: `NewsCard`, `NewsFilter`, `NewsFormModal`.
-
-### 💼 **positions/**
-Álláshirdetések böngészése és kezelése.
-- **Components**: `PositionsList`, `PositionsMap`, `PositionCard`, `FilterSidebar`, `JobSlider`.
-- **Utils**: Pozíció specifikus segédfüggvények.
-
-### 👥 **users/**
-Felhasználói fiókok kezelése (Admin/HR).
-- **Components**: `AdminUserModal`, `StudentFormModal`.
-
----
-
-## 📄 Oldalak (`src/pages/`)
-
-Az oldalak kötik össze a funkciókat a routing-gal.
-
-### **admin/** - Admin Dashboard
-- `AdminDashboard.tsx` - Vezérlőpult
-- `AdminPositions.tsx`, `AdminCompanies.tsx`, `AdminUsers.tsx`, `AdminNews.tsx` - CRUD felületek
-
-### **auth/** - Autentikáció
-- `StudentRegisterPage.tsx`, `ForgotPasswordPage.tsx`, `ResetPasswordPage.tsx`
-
-### **hr/** - HR Dashboard
-- `CompanyProfilePage.tsx` - Saját cég adatainak kezelése
-
-### **landing/** - Publikus Oldalak
-- `HomePage.tsx` - Főoldal
-- `PositionsPage.tsx` - Álláskereső
-- `PublicCompanyProfilePage.tsx` - Cég publikus adatlapja
-
-### **student/** - Hallgatói Dashboard
-- `StudentDashboardPage.tsx` - Saját jelentkezések
-- `StudentNewsPage.tsx` - Hírek
-
----
-
-## 🧠 Utilitás és Hook-ok
-
-### `src/hooks/`
-- **`useCRUD`**: Általános adatkezelő hook (létrehozás, olvasás, frissítés, törlés).
-- **`useToast`**: Visszajelző üzenetek kezelése.
-- **`useModal`**: Modál ablakok vezérlése.
-- **`useGeocoding`**: Címek koordinátává alakítása.
-
-### `src/lib/`
-- **`api.ts`**: Központi Axios példány beépített token kezeléssel és hibakezeléssel.
-- **`cn.ts`**: Tailwind osztályok dinamikus összefűzése (`clsx`, `tailwind-merge`).
-
----
-
-## 🎨 Styling
-
-### Tailwind CSS
-Az alkalmazás **Tailwind CSS**-t használ a stílusozáshoz.
-- **Primary**: Blue (`blue-600`)
-- **Success**: Green (`green-600`)
-- **UI Elements**: `rounded-2xl`, `shadow-sm`, `border-slate-200`
-
----
-
-## 🚀 Deployment
-
-A projekt Vercelre optimalizált.
-
-**Environment Variables:**
-```
-VITE_API_URL=https://your-backend-api.com
-```
-
-**Build:**
-```bash
-npm run build
-```
-
----
-
-##  License
-
-MIT License - Szabad felhasználás és módosítás.
-
----
-
-**Készítette:** Dual Képzés Fejlesztői Csapat  
-**Utolsó frissítés:** 2026-01-21
+For more details, please refer to the [Getting Started](./docs/02-getting-started.md) guide.
