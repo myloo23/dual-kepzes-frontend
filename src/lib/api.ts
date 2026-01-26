@@ -23,6 +23,7 @@ import type {
   Application,
   ApplicationStatus,
   ApplicationCreatePayload,
+  Partnership,
 } from '../types/api.types';
 import type {
   NotificationCreatePayload,
@@ -321,6 +322,22 @@ export const api = {
       ),
   },
 
+  // ============= Partnerships =============
+  partnerships: {
+    listCompany: () => apiGet<Partnership[]>(`/api/partnerships/company`),
+    get: (id: Id) => apiGet<Partnership>(`/api/partnerships/${ensureId(id, 'partnershipId')}`),
+    assignMentor: (id: Id, mentorId: Id) =>
+      apiPatch<Partnership>(
+        `/api/partnerships/${ensureId(id, 'partnershipId')}/assign-mentor`,
+        { mentorId } // Reverting to mentorId as employeeId caused 400 Validation Error. 500 indicates backend bug with likely correct key.
+      ),
+    terminate: (id: Id) =>
+      apiPatch<Partnership>(
+        `/api/partnerships/${ensureId(id, 'partnershipId')}/terminate`,
+        {}
+      ),
+  },
+
   // ============= Notifications =============
   notifications: {
     listActive: () => apiGet<NotificationItem[]>(PATHS.notifications),
@@ -386,6 +403,7 @@ export const api = {
   // ============= Employees =============
   employees: {
     list: () => apiGet<EmployeeProfile[]>(PATHS.employees),
+    listMentors: () => apiGet<EmployeeProfile[]>(`${PATHS.employees}/mentors`),
     me: {
       get: () => apiGet<EmployeeProfile>(`${PATHS.employees}/me`),
       update: (body: Partial<EmployeeProfile>) =>
@@ -416,6 +434,8 @@ export type {
   ApplicationCreatePayload,
   Location,
   Tag,
+  Partnership,
+  PartnershipStatus,
 } from '../types/api.types';
 export type {
   NotificationCreatePayload,

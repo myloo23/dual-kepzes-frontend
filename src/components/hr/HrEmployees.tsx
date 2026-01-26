@@ -47,6 +47,9 @@ export default function HrEmployees() {
                         <div className="text-sm text-slate-600">
                             {emp.email ?? "Nincs email"}{emp.role ? ` • ${emp.role}` : ""}
                         </div>
+                        <div className="mt-2 text-xs font-mono text-slate-400 bg-slate-50 inline-block px-1 rounded border border-slate-100 select-all">
+                            ID: {String(emp.id)}
+                        </div>
                     </div>
                 ))}
             </div>

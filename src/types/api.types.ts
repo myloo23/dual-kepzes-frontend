@@ -243,3 +243,33 @@ export interface StatsResponse {
     };
     usersByRole: UsersByRole[];
 }
+
+// ============= Partnership Types =============
+export type PartnershipStatus = 'PENDING_MENTOR' | 'ACTIVE' | 'TERMINATED';
+
+export interface Partnership {
+    id: Id;
+    semester?: string;
+    contractNumber?: string;
+    status: PartnershipStatus;
+    startDate?: string;
+    endDate?: string;
+    createdAt: string;
+    updatedAt: string;
+    student?: {
+        id: Id;
+        email: string;
+        fullName: string;
+        studentProfile?: StudentProfile;
+    };
+    mentor?: EmployeeProfile | null;
+    position?: {
+        id: Id;
+        title: string;
+        companyId: Id;
+        company: {
+            name: string;
+        };
+    };
+    uniEmployee?: UniversityUserProfile | null;
+}

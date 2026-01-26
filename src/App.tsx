@@ -80,6 +80,7 @@ function App() {
               <Route index element={<HrDashboardPage />} />
               <Route path="job-postings" element={<HrDashboardPage />} />
               <Route path="applications" element={<HrDashboardPage />} />
+              <Route path="partnerships" element={<HrDashboardPage />} />
               <Route path="employees" element={<HrDashboardPage />} />
               <Route path="company-profile" element={<HrDashboardPage />} />
               <Route path="profile" element={<HrDashboardPage />} />

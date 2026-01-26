@@ -73,6 +73,15 @@ export default function HrLayout() {
                 Jelentkezések
               </NavLink>
               <NavLink
+                to="/hr/partnerships"
+                className={({ isActive }) =>
+                  `${navItemBase} ${isActive ? navItemActive : navItemInactive}`
+                }
+                onClick={() => setMobileOpen(false)}
+              >
+                Partnerek
+              </NavLink>
+              <NavLink
                 to="/hr/employees"
                 className={({ isActive }) =>
                   `${navItemBase} ${isActive ? navItemActive : navItemInactive}`
