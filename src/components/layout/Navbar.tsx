@@ -2,14 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNotifications } from "../../features/notifications/hooks/useNotifications";
 import { useAuth } from "../../features/auth";
+import { useNavigation } from "../../hooks/useNavigation";
 import type { NotificationItem } from "../../lib/api";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [newsLink, setNewsLink] = useState<string | null>(null);
-  const [dashboardLink, setDashboardLink] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { news: newsLink, dashboard: dashboardLink } = useNavigation();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notificationsTab, setNotificationsTab] = useState<"active" | "archived">("active");
   const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);
@@ -17,7 +16,10 @@ export default function Navbar() {
   const [actionError, setActionError] = useState<string | null>(null);
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  
+  // Use auth state directly
+  const isLoggedIn = isAuthenticated;
 
   const {
     active,
@@ -35,99 +37,6 @@ export default function Navbar() {
     unarchive,
     remove,
   } = useNotifications();
-
-  // Számítsa ki a linkeket a localStorage alapján
-  const calculateLinks = () => {
-    const token = localStorage.getItem("token") || localStorage.getItem("auth_token") || "";
-    const role = user?.role || localStorage.getItem("role") || "";
-    setIsLoggedIn(isAuthenticated || !!token);
-
-    // DEBUG: Nézd meg a konzolban
-    console.log("🔍 Navbar Debug:");
-    console.log("  Token:", token ? `${token.substring(0, 20)}...` : "NINCS");
-    console.log("  Role:", role || "NINCS");
-
-    if (!token || !role) {
-      console.log("  ❌ Nincs token vagy role - links = null");
-      return { news: null, dashboard: null };
-    }
-
-    const roleUpper = role.trim().toUpperCase();
-    console.log("  Role (uppercase):", roleUpper);
-
-    let news = null;
-    let dashboard = null;
-
-    // Student role-ok
-    if (roleUpper === "STUDENT") {
-      news = "/student/news";
-      dashboard = "/student";
-    }
-    // Admin role-ok
-    else if (roleUpper === "ADMIN" || roleUpper === "SYSTEM_ADMIN" || roleUpper === "SUPER_ADMIN") {
-      news = "/admin/news";
-      dashboard = "/admin";
-    }
-    // Teacher role-ok
-    else if (roleUpper === "TEACHER") {
-      // news = "/teacher/news";
-      dashboard = "/teacher";
-    }
-    // University role-ok
-    else if (roleUpper === "UNIVERSITY_USER") {
-      news = "/university/news";
-      dashboard = "/university";
-    }
-    // Mentor role-ok
-    else if (roleUpper === "MENTOR") {
-      // news = "/mentor/news";
-      dashboard = "/mentor";
-    }
-    // HR role-ok
-    else if (roleUpper === "HR" || roleUpper === "COMPANY_ADMIN") {
-      // news = "/hr/news";
-      dashboard = "/hr";
-    }
-    else {
-      console.log("  ⚠️ Ismeretlen role - links = null");
-    }
-
-    return { news, dashboard };
-  };
-
-  // Kezdeti betöltés és localStorage változások figyelése
-  useEffect(() => {
-    const updateLinks = () => {
-      const { news, dashboard } = calculateLinks();
-      setNewsLink(news);
-      setDashboardLink(dashboard);
-    };
-
-    // Kezdeti érték beállítása
-    updateLinks();
-
-    // Storage event listener (más tab-ok változásaihoz)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "token" || e.key === "auth_token" || e.key === "role") {
-        console.log("🔄 localStorage változás észlelve (másik tab)");
-        updateLinks();
-      }
-    };
-
-    // Custom event listener (ugyanazon tab változásaihoz)
-    const handleCustomStorageChange = () => {
-      console.log("🔄 localStorage változás észlelve (ugyanez a tab)");
-      updateLinks();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("localStorageUpdated", handleCustomStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("localStorageUpdated", handleCustomStorageChange);
-    };
-  }, [user?.role, isAuthenticated]);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -245,10 +154,6 @@ export default function Navbar() {
     setSelectedNotification(null);
     setActionError(null);
   }, [notificationsTab]);
-
-
-  // DEBUG: Végső ellenőrzés
-  console.log("📊 Navbar render - newsLink:", newsLink, "dashboardLink:", dashboardLink);
 
   return (
     <header className="sticky top-0 z-[1100] border-b border-dkk-gray/30 bg-white/80 backdrop-blur">

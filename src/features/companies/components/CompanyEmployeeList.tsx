@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { api, type EmployeeProfile } from "../../lib/api";
+import { api, type EmployeeProfile } from "../../../lib/api";
 
-export default function HrEmployees() {
+export default function CompanyEmployeeList() {
     const [employees, setEmployees] = useState<EmployeeProfile[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

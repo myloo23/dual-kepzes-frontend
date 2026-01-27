@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { api, type CompanyAdminProfile } from "../../lib/api";
 import CompanyProfilePage from "./CompanyProfilePage";
-import HrOverview from "../../components/hr/HrOverview";
-import HrPositions from "../../components/hr/HrPositions";
-import HrApplications from "../../components/hr/HrApplications";
-import HrEmployees from "../../components/hr/HrEmployees";
-import HrProfile from "../../components/hr/HrProfile";
-import HrPartnerships from "../../components/hr/HrPartnerships";
+import HrOverview from "./components/HrOverview";
+import CompanyPositionList from "../../features/positions/components/CompanyPositionList";
+import CompanyApplicationList from "../../features/applications/components/CompanyApplicationList";
+import CompanyEmployeeList from "../../features/companies/components/CompanyEmployeeList";
+import CompanyProfileEditor from "../../features/companies/components/CompanyProfileEditor";
+import CompanyPartnershipList from "../../features/partnerships/components/CompanyPartnershipList";
 
 export default function HrDashboardPage() {
   const location = useLocation();
@@ -87,20 +87,20 @@ export default function HrDashboardPage() {
             {loading && !companyAdmin ? (
                 <div className="text-slate-600">Admin adatok betöltése...</div>
             ) : (
-                <HrPositions companyAdmin={companyAdmin} />
+                <CompanyPositionList companyAdmin={companyAdmin} />
             )}
         </>
       )}
-      {activeTab === "applications" && <HrApplications />}
-      {activeTab === "partnerships" && <HrPartnerships />}
-      {activeTab === "employees" && <HrEmployees />}
+      {activeTab === "applications" && <CompanyApplicationList />}
+      {activeTab === "partnerships" && <CompanyPartnershipList />}
+      {activeTab === "employees" && <CompanyEmployeeList />}
       {activeTab === "company" && (
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
           <CompanyProfilePage />
         </div>
       )}
       {activeTab === "profile" && (
-        <HrProfile
+        <CompanyProfileEditor
           companyAdmin={companyAdmin}
           onUpdate={(updated) => setCompanyAdmin(updated)}
         />

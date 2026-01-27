@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DashboardLayout, { type NavItem } from "../components/layout/DashboardLayout";
+import DashboardLayout, { type NavItem } from "./DashboardLayout";
 
 export default function StudentLayout() {
   // Demo: mivel backend még nincs kész, ezzel tudod kapcsolgatni a menüt

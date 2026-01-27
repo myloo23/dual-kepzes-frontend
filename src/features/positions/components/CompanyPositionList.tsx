@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { api, type Position, type CompanyAdminProfile } from "../../lib/api";
-import PositionFormModal from "../../features/positions/components/modals/PositionFormModal";
+import { api, type Position, type CompanyAdminProfile } from "../../../lib/api";
+import PositionFormModal from "./modals/PositionFormModal";
 
-interface HrPositionsProps {
+interface CompanyPositionListProps {
     companyAdmin: CompanyAdminProfile | null;
 }
 
-export default function HrPositions({ companyAdmin }: HrPositionsProps) {
+export default function CompanyPositionList({ companyAdmin }: CompanyPositionListProps) {
     const [positions, setPositions] = useState<Position[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

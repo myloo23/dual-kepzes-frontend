@@ -1,7 +1,7 @@
 import { type ReactNode, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { cn } from "../../lib/cn";
-import { useAuth } from "../../features/auth";
+import { cn } from "../lib/cn";
+import { useAuth } from "../features/auth";
 
 export type NavItem = {
   to: string;

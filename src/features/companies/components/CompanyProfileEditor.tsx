@@ -1,14 +1,14 @@
 import { useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { api, type CompanyAdminProfile } from "../../lib/api";
-import { useAuth } from "../../features/auth";
+import { api, type CompanyAdminProfile } from "../../../lib/api";
+import { useAuth } from "../../../features/auth";
 
-interface HrProfileProps {
+interface CompanyProfileEditorProps {
     companyAdmin: CompanyAdminProfile | null;
     onUpdate: (updated: CompanyAdminProfile) => void;
 }
 
-export default function HrProfile({ companyAdmin, onUpdate }: HrProfileProps) {
+export default function CompanyProfileEditor({ companyAdmin, onUpdate }: CompanyProfileEditorProps) {
     const navigate = useNavigate();
     const { logout: authLogout } = useAuth();
 

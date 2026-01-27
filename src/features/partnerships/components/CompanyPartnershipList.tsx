@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
-import PartnershipFilters from "../../features/partnerships/components/PartnershipFilters";
-import PartnershipsList from "../../features/partnerships/components/PartnershipsList";
-import { api } from "../../lib/api";
-import type { Partnership, PartnershipStatus, EmployeeProfile } from "../../types/api.types";
+import PartnershipFilters from "./PartnershipFilters";
+import PartnershipsList from "./PartnershipsList";
+import { api } from "../../../lib/api";
+import type { Partnership, PartnershipStatus, EmployeeProfile } from "../../../types/api.types";
 
-export default function HrPartnerships() {
+export default function CompanyPartnershipList() {
     const [partnerships, setPartnerships] = useState<Partnership[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState<PartnershipStatus | "ALL">("ALL");

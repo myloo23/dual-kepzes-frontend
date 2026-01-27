@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { api, type Application, type ApplicationStatus } from "../../lib/api";
+import { api, type Application, type ApplicationStatus } from "../../../lib/api";
 
-export default function HrApplications() {
+export default function CompanyApplicationList() {
     const [applications, setApplications] = useState<Application[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
