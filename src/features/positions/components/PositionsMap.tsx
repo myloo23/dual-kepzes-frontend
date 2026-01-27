@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { type Position } from "../../../lib/api";
-import { useGeocoding } from "../../../hooks/useGeocoding";
+import { useGeocoding } from "../hooks/useGeocoding";
 
 // Default blue marker for positions
 const defaultIcon = L.icon({
@@ -138,7 +138,7 @@ export default function PositionsMap({
                                         {p.location?.address}, {p.location?.city}
                                     </div>
                                     <button
-                                        onClick={() => handleViewPosition(p.id)}
+                                        onClick={() => handleViewPosition(p.id!)}
                                         className="w-full mt-2 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors"
                                     >
                                         Megnézem az állást

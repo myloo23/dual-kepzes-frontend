@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import type { Position } from "../../../lib/api";
 import {
     norm,
@@ -13,42 +13,35 @@ import {
 export type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
 export type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
 
-interface UsePositionsFiltersProps {
-    positions: Position[];
-    search: string;
-    city: string;
-    company: string;
-    tagCategory: string;
-    deadlineFilter: DeadlineFilter;
-    activeOnly: boolean;
-    selectedTags: string[];
-    sortKey: SortKey;
-}
-
 /**
  * Custom hook for filtering and sorting positions
  * Extracts complex filtering logic from PositionsPage
  */
-export function usePositionsFilters({
-    positions,
-    search,
-    city,
-    company,
-    tagCategory,
-    deadlineFilter,
-    activeOnly,
-    selectedTags,
-    sortKey,
-}: UsePositionsFiltersProps) {
+export function usePositionsFilters(positions: Position[]) {
+    const [search, setSearch] = useState("");
+    const [city, setCity] = useState("ALL");
+    const [company, setCompany] = useState("ALL");
+    const [tagCategory, setTagCategory] = useState("ALL");
+    const [deadlineFilter, setDeadlineFilter] = useState<DeadlineFilter>("ALL");
+    const [activeOnly, setActiveOnly] = useState(false);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [sortKey, setSortKey] = useState<SortKey>("NEWEST");
+
     // Extract unique values for filters
     const cities = useMemo(() => {
-        const citySet = new Set(positions.map((p) => p.location?.city).filter(Boolean));
+        const citySet = new Set(
+            positions
+                .map((p) => p.location?.city)
+                .filter((city): city is string => Boolean(city))
+        );
         return Array.from(citySet).sort();
     }, [positions]);
 
     const companies = useMemo(() => {
         const companySet = new Set(
-            positions.map((p) => p.company?.name).filter(Boolean)
+            positions
+                .map((p) => p.company?.name)
+                .filter((name): name is string => Boolean(name))
         );
         return Array.from(companySet).sort();
     }, [positions]);
@@ -75,7 +68,6 @@ export function usePositionsFilters({
         return Array.from(tagSet).sort();
     }, [positions]);
 
-    // Filter positions
     const filteredPositions = useMemo(() => {
         return positions.filter((p) => {
             // Active filter
@@ -112,7 +104,7 @@ export function usePositionsFilters({
 
             // Selected tags filter
             if (selectedTags.length > 0) {
-                const positionTags = p.tags?.map((t: TagLike) => toTagName(t)) || [];
+                const positionTags = p.tags?.map((t) => toTagName(t)) || [];
                 const hasAllTags = selectedTags.every((tag) =>
                     positionTags.includes(tag)
                 );
@@ -147,18 +139,8 @@ export function usePositionsFilters({
 
             return true;
         });
-    }, [
-        positions,
-        search,
-        city,
-        company,
-        tagCategory,
-        deadlineFilter,
-        activeOnly,
-        selectedTags,
-    ]);
+    }, [positions, search, city, company, tagCategory, deadlineFilter, activeOnly, selectedTags]);
 
-    // Sort positions
     const sortedPositions = useMemo(() => {
         const sorted = [...filteredPositions];
 
@@ -201,11 +183,59 @@ export function usePositionsFilters({
         return sorted;
     }, [filteredPositions, sortKey]);
 
+    const derived = useMemo(
+        () => ({
+            cities,
+            companies,
+            tags: allTags,
+            categories: tagCategories,
+            showCityChips: cities.length <= 10,
+            showCompanyChips: companies.length <= 10,
+        }),
+        [cities, companies, allTags, tagCategories]
+    );
+
+    const resetFilters = useCallback(() => {
+        setSearch("");
+        setCity("ALL");
+        setCompany("ALL");
+        setTagCategory("ALL");
+        setDeadlineFilter("ALL");
+        setActiveOnly(false);
+        setSelectedTags([]);
+        setSortKey("NEWEST");
+    }, []);
+
+    const toggleTag = useCallback((name: string) => {
+        setSelectedTags((prev) => {
+            const exists = prev.some((t) => lower(t) === lower(name));
+            if (exists) {
+                return prev.filter((t) => lower(t) !== lower(name));
+            }
+            return [...prev, name];
+        });
+    }, []);
+
     return {
-        cities,
-        companies,
-        tagCategories,
-        allTags,
-        filteredPositions: sortedPositions,
+        search,
+        city,
+        company,
+        tagCategory,
+        deadlineFilter,
+        activeOnly,
+        selectedTags,
+        sortKey,
+        setSearch,
+        setCity,
+        setCompany,
+        setTagCategory,
+        setDeadlineFilter,
+        setActiveOnly,
+        setSelectedTags,
+        setSortKey,
+        derived,
+        filtered: sortedPositions,
+        resetFilters,
+        toggleTag,
     };
 }
