@@ -32,24 +32,65 @@ export default function HrDashboardPage() {
     return "overview";
   }, [location.pathname, location.hash]);
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const loadCompanyAdmin = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const data = await api.companyAdmins.me.get();
       setCompanyAdmin(data);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to load company admin profile", err);
+      // More user-friendly error message for connection issues
+      if (err.message?.includes("Failed to fetch") || err.message?.includes("Network request failed")) {
+        setError("Nem sikerült kapcsolódni a szerverhez. Ellenőrizd az internetkapcsolatot vagy próbáld újra később.");
+      } else {
+        setError("Hiba történt az adatok betöltésekor: " + (err.message || "Ismeretlen hiba"));
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Load admin profile initially to have the data ready (e.g. companyId for positions)
+    // Load admin profile initially to have the data ready
     void loadCompanyAdmin();
   }, []);
+
+  if (error && !companyAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-center bg-white rounded-2xl border border-red-100 shadow-sm">
+        <div className="rounded-full bg-red-50 p-3 mb-4">
+          <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-slate-900 mb-2">Hiba történt</h3>
+        <p className="text-slate-600 mb-6 max-w-md">{error}</p>
+        <button
+          onClick={() => loadCompanyAdmin()}
+          className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Újrapróbálkozás
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       {activeTab === "overview" && <HrOverview />}
-      {activeTab === "positions" && <HrPositions companyAdmin={companyAdmin} />}
+      {activeTab === "positions" && (
+        <>
+            {loading && !companyAdmin ? (
+                <div className="text-slate-600">Admin adatok betöltése...</div>
+            ) : (
+                <HrPositions companyAdmin={companyAdmin} />
+            )}
+        </>
+      )}
       {activeTab === "applications" && <HrApplications />}
       {activeTab === "partnerships" && <HrPartnerships />}
       {activeTab === "employees" && <HrEmployees />}

@@ -68,8 +68,8 @@ export function useNotifications(): UseNotificationsReturn {
           : res?.count ?? (res as { unreadNotificationsCount?: number })?.unreadNotificationsCount ?? 0;
       setUnreadCount(count);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Nem sikerĂĽlt betĂ¶lteni az olvasatlanok szĂˇmĂˇt.';
-      setError(message);
+      // Don't set global error for background polling, just warn in console
+      console.warn('Failed to refresh unread notifications count:', err);
     }
   }, []);
 

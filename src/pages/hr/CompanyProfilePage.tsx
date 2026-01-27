@@ -25,10 +25,12 @@ export default function CompanyProfilePage() {
   useEffect(() => {
     const loadCompanyProfile = async () => {
       try {
-        // Assuming we have an endpoint to get the current user's company
-        const companies = await api.companies.list();
-        if (companies.length > 0) {
-          const companyData = await api.companies.get(companies[0].id);
+        // Fetch current user's company ID first
+        const adminProfile = await api.companyAdmins.me.get();
+        const companyId = adminProfile.companyEmployee?.company?.id;
+
+        if (companyId) {
+          const companyData = await api.companies.get(companyId);
           setCompany(companyData);
           setFormData({
             name: companyData.name,
@@ -41,6 +43,8 @@ export default function CompanyProfilePage() {
             contactEmail: companyData.contactEmail,
             description: companyData.description || ''
           });
+        } else {
+          setError("Nem található a felhasználóhoz rendelt cég.");
         }
       } catch (err: any) {
         setError(err.message || "Hiba a cégadatok betöltésekor");
