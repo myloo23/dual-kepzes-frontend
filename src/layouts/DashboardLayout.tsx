@@ -7,6 +7,7 @@ export type NavItem = {
   to: string;
   label: string;
   hint?: string;
+  end?: boolean;
 };
 
 
@@ -80,6 +81,7 @@ export default function DashboardLayout(props: {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  end={item.end}
                   className={({ isActive }) =>
                     cn(
                       "block rounded-lg px-3 py-2 text-sm transition",
