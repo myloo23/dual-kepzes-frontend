@@ -1,59 +1,69 @@
-# Getting Started
+# Kezdeti Lépések
 
-## Prerequisites
-Before you begin, ensure you have the following installed on your machine:
-- **Node.js** (v18.0.0 or higher recommended)
-- **npm** (comes with Node.js)
+## Előfeltételek
+
+Mielőtt hozzálátna, győződjön meg arról, hogy a következő szoftverek telepítve vannak a rendszerén:
+
+- **Node.js** (v18.0.0 vagy újabb verzió ajánlott)
+- **npm** (a Node.js részeként települ)
 - **Git**
 
-## Installation
+## Telepítés
 
-1.  **Clone the Repository**
+1.  **Repository Klónozása**
+
     ```bash
     git clone https://github.com/myloo23/dual-kepzes-frontend.git
     cd dual-kepzes-frontend
     ```
 
-2.  **Install Dependencies**
+2.  **Függőségek Telepítése**
     ```bash
     npm install
     ```
 
-## Environment Configuration
-The application relies on environment variables for API connections.
+## Környezeti Konfiguráció
 
-1.  Create a `.env` file in the project root (copy from `.env.example` if it exists, otherwise create new).
-2.  Add the following variable:
+Az alkalmazás környezeti változókat használ az API kapcsolatok kezelésére.
+
+1.  Hozzon létre egy `.env` fájlt a projekt gyökérkönyvtárában (másolja át a tartalmát a `.env.example` fájlból, ha létezik, egyébként hozzon létre egy újat).
+2.  Adja hozzá a következő változót:
     ```env
     VITE_API_URL=http://localhost:8000
     ```
-    *Note: Adjust this URL if your backend server is running on a different port or host.*
+    _Megjegyzés: Módosítsa ezt az URL-t, ha a backend szervere eltérő porton vagy hoszton fut._
 
-## Running Development Server
-To start the local development server with Hot Module Replacement (HMR):
+## Fejlesztői Szerver Indítása
+
+A helyi fejlesztői szerver indítása Hot Module Replacement (HMR) funkcióval:
 
 ```bash
 npm run dev
 ```
-Access the app at `http://localhost:5173`.
+
+Az alkalmazás a `http://localhost:5173` címen érhető el.
 
 ## Production Build
-To create an optimized production build:
+
+Optimalizált éles (production) build létrehozása:
 
 1.  **Build**
+
     ```bash
     npm run build
     ```
-    This compiles TypeScript and bundles assets into the `dist/` folder.
 
-2.  **Preview**
+    Ez a parancs lefordítja a TypeScript kódot és összecsomagolja (bundle) az eszközöket a `dist/` mappába.
+
+2.  **Előnézet (Preview)**
     ```bash
     npm run preview
     ```
-    This starts a local static server serving the `dist/` folder, allowing you to test the production build locally.
+    Ez egy helyi statikus szervert indít, amely a `dist/` mappa tartalmát szolgálja ki, így lehetőség nyílik az éles verzió helyi tesztelésére.
 
 ## Linting
-To check code quality and potential errors:
+
+A kódminőség ellenőrzése és a potenciális hibák felderítése:
 
 ```bash
 npm run lint

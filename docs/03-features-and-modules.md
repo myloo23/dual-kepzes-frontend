@@ -1,50 +1,65 @@
-# Features & Modules
+# Funkciók és Modulok
 
-The application is divided into several business modules located in `src/features/`.
+Az alkalmazás számos üzleti modulra van felosztva, amelyek az `src/features/` könyvtárban találhatók.
 
-## Core Features
+## Alapvető Funkciók (Core Features)
 
-### 🔐 Authentication (`auth/`)
-Handles all user identity operations.
-- **Context**: `AuthContext` provides global access to the current user (User object) and authentication status.
-- **Token Management**: JWT tokens are stored in `localStorage` and automatically injected into API requests.
-- **Components**: Login forms, Password reset flows.
+### 🔐 Hitelesítés (`auth/`)
 
-### 🏢 Companies (`companies/`)
-Manages company profiles and data.
-- **Public**: Searchable company profiles for students.
-- **HR/Admin**: Interfaces for companies to update their details, logo, and description.
+Minden felhasználói identitással kapcsolatos műveletet kezel.
 
-### 💼 Positions (`positions/`)
-The job board component of the application.
-- **Listing**: Filters for "Dual" vs "Standard" positions.
-- **Management**: HR admins can create, edit, close, and re-open job postings.
-- **Application**: Connects students to these positions.
+- **Context**: Az `AuthContext` globális hozzáférést biztosít az aktuális felhasználóhoz (User objektum) és a hitelesítési státuszhoz.
+- **Token Kezelés**: A JWT tokenek a `localStorage`-ban kerülnek tárolásra, és automatikusan beillesztésre kerülnek az API kérésekbe.
+- **Komponensek**: Bejelentkezési űrlapok, jelszó-visszaállítási folyamatok.
 
-### 📋 Applications (`applications/`)
-Tracks the lifecycle of a student applying to a position.
-- **Flow**: Student applies -> Company (HR) evaluates -> Acceptance/Rejection.
-- **Status Tracking**: Visual indicators for application status (Pending, Interview, Accepted, Rejected).
+### 🏢 Vállalatok (`companies/`)
 
-### 🤝 Partnerships (`partnerships/`)
-Manages the formal relationships in the dual education system.
-- **Mentor Assignment**: Linking a company mentor to a student.
-- **University Oversight**: Tools for university staff to monitor these partnerships.
+A vállalati profilokat és adatokat kezeli.
 
-### 📰 News (`news/`)
-A CMS-like feature for announcements.
-- **Targeting**: News can be targeted to specific roles (e.g., "Only Students", "Only Mentors").
-- **Admin**: internal editor for creating and publishing news items.
+- **Publikus**: Kereshető vállalati profilok a hallgatók számára.
+- **HR/Admin**: Felületek a vállalatok számára adataik, logójuk és leírásuk szerkesztésére.
 
-## Shared Infrastructure (`components/`)
+### 💼 Pozíciók (`positions/`)
 
-### Layouts
-- **`AdminLayout`**: Sidebar navigation for system administrators.
-- **`HrLayout`**: Dashboard view for Company HR representatives.
-- **`StudentLayout`**: User-centric view for students.
+Az alkalmazás állásportál komponense.
 
-### UI Components
-We use a custom design system built with Tailwind CSS.
-- **`Button`**: Standardized variants (primary, secondary, danger, ghost).
-- **`Modal`**: Accessible dialogs for forms and confirmations.
-- **`Card`**: Container style for lists and dashboards.
+- **Listázás**: Szűrők a "Duális" és "Hagyományos" pozíciók megkülönböztetésére.
+- **Menedzsment**: HR adminisztrátorok létrehozhatnak, szerkeszthetnek, lezárhatnak és újra megnyithatnak álláshirdetéseket.
+- **Jelentkezés**: Összeköti a hallgatókat ezekkel a pozíciókkal.
+
+### 📋 Jelentkezések (`applications/`)
+
+Nyomon követi egy hallgató adott pozícióra történő jelentkezésének életciklusát.
+
+- **Folyamat**: Hallgató jelentkezik -> Vállalat (HR) értékeli -> Elfogadás/Elutasítás.
+- **Státusz Követés**: Vizuális indikátorok a jelentkezés státuszához (Függőben, Interjú, Elfogadva, Elutasítva).
+
+### 🤝 Partnerségek (`partnerships/`)
+
+A duális képzési rendszer formális kapcsolatait kezeli.
+
+- **Mentor Hozzárendelés**: Vállalati mentor összekapcsolása a hallgatóval.
+- **Egyetemi Felügyelet**: Eszközök az egyetemi személyzet számára a partnerségek monitorozására.
+
+### 📰 Hírek (`news/`)
+
+CMS-szerű funkció a közlemények számára.
+
+- **Célzás**: A hírek specifikus szerepkörökhöz rendelhetők (pl. "Csak Hallgatóknak", "Csak Mentoroknak").
+- **Admin**: Belső szerkesztő hírek létrehozására és publikálására.
+
+## Megosztott Infrastruktúra (`components/`)
+
+### Layoutok
+
+- **`AdminLayout`**: Oldalsáv navigáció a rendszeradminisztrátorok számára.
+- **`HrLayout`**: Irányítópult (dashboard) nézet a vállalati HR képviselők számára.
+- **`StudentLayout`**: Felhasználóközpontú nézet a hallgatók számára.
+
+### UI Komponensek
+
+Egyedi, Tailwind CSS alapú design rendszert használunk.
+
+- **`Button`**: Szabványosított variánsok (primary, secondary, danger, ghost).
+- **`Modal`**: Hozzáférhető párbeszédablakok űrlapokhoz és megerősítésekhez.
+- **`Card`**: Konténer stílus listákhoz és dashboardokhoz.

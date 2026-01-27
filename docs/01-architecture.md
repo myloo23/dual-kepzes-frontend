@@ -1,43 +1,49 @@
-# Architecture Overview
+# Architektúra Áttekintés
 
-## High-Level Design
-The **Dual Képzés Frontend** is a modern, single-page application (SPA) built with **React** and **TypeScript**. It serves as the primary interface for managing dual education partnerships between universities, companies, and students. The application is designed to be **role-based**, meaning the user interface and available features adapt dynamically based on the logged-in user's role (Student, Company Admin, HR, Mentor, Teacher, System Admin).
+## Magas Szintű Tervezés
 
-The architecture prioritizes:
-- **Scalability**: By using a feature-based folder structure.
-- **Type Safety**: Extensive use of TypeScript interfaces for API responses and component props.
-- **Maintainability**: Shared UI components and centralized API logic.
+A **Dual Képzés Frontend** egy modern alkalmazás (SPA), amely **React** és **TypeScript** alapokon nyugszik. Ez a rendszer szolgál elsődleges felületként a duális képzési együttműködések kezelésére az egyetemek, vállalatok és hallgatók között. Az alkalmazás **szerepkör-alapú** (Role-Based), ami azt jelenti, hogy a felhasználói felület és az elérhető funkciók dinamikusan alkalmazkodnak a bejelentkezett felhasználó szerepköréhez (Hallgató, Vállalati Adminisztrátor, HR, Mentor, Oktató, Rendszeradminisztrátor).
 
-## Feature-Based Architecture
-We utilize a **Feature-Based Architecture** (FBA) rather than a layer-based one (controllers/views). This means that code is organized by the "business domain" or feature it belongs to, rather than its technical function.
+Az architektúra fő prioritásai:
 
-### Directory Structure Rationale
-- `src/features/`: This is the core of the application. Each folder here represents a distinct business domain (e.g., `auth`, `companies`, `applications`).
-  - **Encapsulation**: Everything related to a feature (components, hooks, utils, types) stays within that feature's folder.
-  - **Public API**: Features should ideally expose only what's necessary via an `index.ts` file, keeping internal implementation details private (though currently enforced by convention).
+- **Skálázhatóság**: Funkció-alapú (Feature-Based) mappastruktúra alkalmazásával.
+- **Típusbiztonság**: A TypeScript interfészek kiterjedt használatával az API válaszok és komponens prop-ok terén.
+- **Karbantarthatóság**: Megosztott UI komponensek és centralizált API logika révén.
 
-### Key Directories
-- **`src/features/`**: Business logic modules.
-- **`src/components/`**: Shared "dumb" UI components (buttons, modals, inputs) that are feature-agnostic.
-- **`src/pages/`**: The entry points for routing. Pages ideally serve as containers that compose feature components together.
-- **`src/lib/`**: Configuration for third-party libraries (Axios, Utility functions).
-- **`src/layouts/`**: Layout wrappers that handle persistent UI elements (Sidebar, Navbar) for different roles.
+## Funkció-Alapú Architektúra (Feature-Based Architecture - FBA)
 
-## Technical Stack Decisions
+A hagyományos réteg-alapú (controller/view) felosztás helyett **Funkció-Alapú Architektúrát** (FBA) alkalmazunk. Ez azt jelenti, hogy a kódbázis nem technikai funkciók, hanem az "üzleti domain" vagy funkciók szerint van szervezve.
 
-| Technology | Role | Rationale |
-|------------|------|-----------|
-| **React 19** | UI Framework | Utilizes the latest concurrent features and optimized render cycles. |
-| **Vite** | Build Tool | selected for superior DevX, instant HMR (Hot Module Replacement), and efficient efficient ES module builds. |
-| **TypeScript** | Language | Enforces strict type boundaries, significantly reducing runtime errors and improving code navigation. |
-| **Tailwind CSS** | Styling | Utility-first approach allowing for rapid UI development and consistent design tokens without style sheet bloat. |
-| **React Query / Custom Hooks** | State Management | *Note: Currently strictly using custom hooks (`useCRUD`) and `useEffect`, but architecture is ready for React Query migration.* |
-| **React Router v7** | Routing | Standard industry routing solution with robust support for nested layouts and protected routes. |
+### Könyvtárszerkezet Racionálé
 
-## Data Flow
-1.  **UI Component**: Triggers an action (e.g., form submission).
-2.  **Custom Hook**: (e.g., `useAuth`, `useCRUD`) Intercepts the action.
-3.  **API Layer (`src/lib/api.ts`)**: Formats the request, attaches the JWT token, and sends it to the backend.
-4.  **Backend**: Processes request and returns JSON.
-5.  **API Layer**: Normalizes logic (error handling) and returns data to the hook.
-6.  **UI Component**: Re-renders with new data.
+- `src/features/`: Az alkalmazás magja. Itt minden mappa egy különálló üzleti domaint képvisel (pl. `auth` - hitelesítés, `companies` - vállalatok, `applications` - jelentkezések).
+  - **Enkapszuláció**: Minden, ami egy adott funkcióhoz tartozik (komponensek, hook-ok, segédfüggvények, típusok), az adott funkció mappáján belül marad.
+  - **Publikus API**: A funkciók ideális esetben csak a szükséges elemeket exportálják egy `index.ts` fájlon keresztül, belső implementációs részleteiket elrejtve (ezt jelenleg konvenciók biztosítják).
+
+### Kulcsfontosságú Könyvtárak
+
+- **`src/features/`**: Üzleti logika modulok.
+- **`src/components/`**: Megosztott, "buta" (dumb) UI komponensek (gombok, modális ablakok, input mezők), amelyek funkció-függetlenek.
+- **`src/pages/`**: A routing belépési pontjai. Az oldalak ideális esetben csak konténerek, amelyek a különböző feature komponenseket komponálják össze.
+- **`src/lib/`**: Harmadik féltől származó könyvtárak konfigurációja (Axios, Utility függvények).
+- **`src/layouts/`**: Layout csomagolók, amelyek a perzisztens UI elemeket kezelik (Oldalsáv, Navigációs sáv) a különböző szerepkörökhöz.
+
+## Technológiai Stack Döntések
+
+| Technológia                    | Szerep           | Indoklás                                                                                                                                            |
+| ------------------------------ | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **React 19**                   | UI Keretrendszer | A legújabb párhuzamos (concurrent) funkciók és optimalizált renderelési ciklusok kihasználása.                                                      |
+| **Vite**                       | Build Eszköz     | Kiváló fejlesztői élmény (DevX), azonnali HMR (Hot Module Replacement) és hatékony ES modul build-ek miatt választva.                               |
+| **TypeScript**                 | Nyelv            | Szigorú típushatárokat kényszerít ki, jelentősen csökkentve a futásidejű hibákat és javítva a kód navigálhatóságát.                                 |
+| **Tailwind CSS**               | Stílusozás       | Utility-first megközelítés, amely lehetővé teszi a gyors UI fejlesztést és konzisztens design tokenek használatát stíluslap-túlcsordulás nélkül.    |
+| **React Query / Custom Hooks** | Állapotkezelés   | _Megjegyzés: Jelenleg szigorúan egyedi hook-okat (`useCRUD`) és `useEffect`-et használunk, de az architektúra készen áll a React Query migrációra._ |
+| **React Router v7**            | Routing          | Ipari sztenderd routing megoldás, robusztus támogatással a beágyazott layoutokhoz és védett útvonalakhoz.                                           |
+
+## Adatfolyam (Data Flow)
+
+1.  **UI Komponens**: Kezdeményez egy műveletet (pl. űrlap beküldése).
+2.  **Custom Hook**: (pl. `useAuth`, `useCRUD`) Elkapja a műveletet.
+3.  **API Réteg (`src/lib/api.ts`)**: Formázza a kérést, csatolja a JWT tokent, és elküldi a backendnek.
+4.  **Backend**: Feldolgozza a kérést és JSON választ küld.
+5.  **API Réteg**: Normalizálja a logikát (hibakezelés) és visszaadja az adatot a hook-nak.
+6.  **UI Komponens**: Újra-renderelődik az új adatokkal.

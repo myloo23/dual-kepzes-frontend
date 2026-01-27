@@ -1,37 +1,44 @@
-# Authentication & Security
+# Hitelesítés és Biztonság
 
-## Overview
-Authentication is handled via **JWT (JSON Web Tokens)**. The backend issues a token upon successful login, which the frontend stores and uses to authenticate subsequent requests.
+## Áttekintés
 
-## Authentication Flow
-1.  **Login**: User enters credentials on `/login`.
-2.  **Request**: `api.auth.login(email, password)` is called.
-3.  **Response**: Backend checks credentials and returns a JWT.
-4.  **Storage**: The `AuthContext` (or `api.ts` utility) saves this token to `localStorage` under the key `auth_token`.
-5.  **State Update**: The `AuthContext` updates the `user` state, triggering a re-render that redirects the user to their dashboard.
+A hitelesítés **JWT (JSON Web Token)** alapú. A backend sikeres bejelentkezéskor kiállít egy tokent, amelyet a frontend eltárol és a későbbi kérések hitelesítésére használ fel.
 
-## Role-Based Access Control (RBAC)
-The application differentiates between multiple user roles. This is enforced at two levels:
+## Hitelesítési Folyamat
 
-### 1. Routing Level (Client-Side)
-React Router protects sensitive routes using layout guards. For example, `AdminLayout` likely checks if `user.role === 'admin'`. If not, it redirects to the login page or a forbidden page.
+1.  **Bejelentkezés**: A felhasználó megadja az adatait a `/login` oldalon.
+2.  **Kérés**: Meghívódik az `api.auth.login(email, password)` függvény.
+3.  **Válasz**: A backend ellenőrzi az adatokat és visszaküld egy JWT-t.
+4.  **Tárolás**: Az `AuthContext` (vagy `api.ts` segédprogram) elmenti ezt a tokent a `localStorage`-ba az `auth_token` kulcs alatt.
+5.  **Állapot Frissítés**: Az `AuthContext` frissíti a `user` állapotot, ami kiváltja a UI frissítését és átirányítja a felhasználót a vezérlőpultra (dashboard).
 
-| Role | Access Scope |
-|------|--------------|
-| **Student** | Can apply to jobs, view own applications, edit profile. |
-| **HR / Company Admin** | Can manage company profile, post jobs, evaluate applicants. |
-| **Mentor** | Can view assigned students, log progress. |
-| **Teacher / University** | Oversight of all partnerships and stats. |
-| **System Admin** | Full access to users, news, and global settings. |
+## Szerepkör-Alapú Hozzáférés-Vezérlés (RBAC)
 
-### 2. API Level (Server-Side)
-The frontend UI hiding a button does not secure the app. The backend validates the JWT on every request to ensure the user actually has permission to perform the action.
+Az alkalmazás különbséget tesz több felhasználói szerepkör között. Ez két szinten valósul meg:
 
-## Token Persistence
-- **LocalStorage**: We currently use `localStorage` for persistence.
-  - *Pros*: Easy to implement, persistent across tabs/restarts.
-  - *Cons*: Vulnerable to XSS (Cross-Site Scripting) if the app has security flaws.
-- *Future Improvement*: Consider moving to `HttpOnly` cookies for better security against XSS.
+### 1. Routing Szint (Kliens-oldal)
 
-## Logout
-Logout clears the token from storage and resets the `AuthContext` state, immediately redirecting the user to the public landing page.
+A React Router layout őrökkel (guards) védi az érzékeny útvonalakat. Például az `AdminLayout` valószínűleg ellenőrzi, hogy `user.role === 'admin'`. Ha nem, átirányítja a felhasználót a bejelentkezési oldalra vagy egy "hozzáférés megtagadva" oldalra.
+
+| Szerepkör                   | Hozzáférési Jogosultság                                                                |
+| --------------------------- | -------------------------------------------------------------------------------------- |
+| **Hallgató (Student)**      | Jelentkezhet állásokra, megtekintheti saját jelentkezéseit, szerkesztheti a profilját. |
+| **HR / Vállalati Admin**    | Kezelheti a vállalati profilt, állásokat hirdethet, értékelheti a jelentkezőket.       |
+| **Mentor**                  | Megtekintheti a hozzá rendelt hallgatókat, naplózhatja a haladást.                     |
+| **Tanár / Egyetem**         | Felügyeletet gyakorol az összes partnerség és statisztika felett.                      |
+| **Rendszer Adminisztrátor** | Teljes hozzáférés a felhasználókhoz, hírekhez és globális beállításokhoz.              |
+
+### 2. API Szint (Szerver-oldal)
+
+A frontend UI elemek elrejtése önmagában nem teszi biztonságossá az alkalmazást. A backend minden kérésnél validálja a JWT-t annak biztosítására, hogy a felhasználónak valóban van jogosultsága a művelet végrehajtására.
+
+## Token Perzisztencia
+
+- **LocalStorage**: Jelenleg a `localStorage`-ot használjuk a tárolásra.
+  - _Előnyök_: Könnyen implementálható, perzisztens a fülek/böngésző újraindítása között.
+  - _Hátrányok_: Sérülékeny XSS (Cross-Site Scripting) támadásokkal szemben, ha az alkalmazásban biztonsági rések vannak.
+- _Jövőbeli Fejlesztés_: Megfontolandó az áttérés `HttpOnly` sütikre a jobb XSS elleni védelem érdekében.
+
+## Kijelentkezés
+
+A kijelentkezés törli a tokent a tárhelyről és visszaállítja az `AuthContext` állapotot, azonnal átirányítva a felhasználót a publikus kezdőlapra.

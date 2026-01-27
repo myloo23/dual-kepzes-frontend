@@ -1,43 +1,49 @@
-# Deployment
+# Telepítés (Deployment)
 
-## Strategy
-This application is a **Static Site** (SPA) once built. It can be hosted on any static file server (Nginx, Apache, AWS S3, Vercel, Netlify).
+## Stratégia
 
-## Vercel Deployment (Recommended)
-The project includes a `vercel.json` configuration file, making it ready for instant deployment on Vercel.
+Ez az alkalmazás buildelés után egy **Statikus Oldal** (SPA - Single Page Application). Bármilyen statikus fájlszerveren hosztolható (Nginx, Apache, AWS S3, Vercel, Netlify).
 
-1.  Connect your GitHub repository to Vercel.
-2.  Vercel will detect `vite` and automatically configure the build settings.
-    - **Build Command**: `npm run build`
-    - **Output Directory**: `dist`
-3.  **Environment Variables**: Add `VITE_API_URL` in the Vercel dashboard settings pointing to your production backend.
+## Vercel Telepítés (Ajánlott)
 
-## Manual / Docker Deployment
-To host it manually (e.g., via Nginx):
+A projekt tartalmaz egy `vercel.json` konfigurációs fájlt, így készen áll az azonnali Vercel telepítésre.
+
+1.  Csatlakoztassa GitHub repóját a Vercelhez.
+2.  A Vercel automatikusan felismeri a `vite`-ot és konfigurálja a build beállításokat.
+    - **Build Parancs**: `npm run build`
+    - **Kimeneti Könyvtár**: `dist`
+3.  **Környezeti Változók**: Adja hozzá a `VITE_API_URL` változót a Vercel dashboard beállításainál, amely az éles backendre mutat.
+
+## Manuális / Docker Telepítés
+
+Kézi hosztolás esetén (pl. Nginx-szel):
 
 1.  **Build**
     ```bash
     npm run build
     ```
-2.  **Serve**
-    Copy the contents of the `dist/` directory to your web server's root (e.g., `/var/www/html`).
-3.  **SPA Configuration**
-    Ensure your server is configured to redirect all 404 requests to `index.html`. This is required for React Router to handle deep links (Client-Side Routing).
+2.  **Kiszolgálás**
+    Másolja a `dist/` könyvtár tartalmát a webszerver gyökérkönyvtárába (pl. `/var/www/html`).
+3.  **SPA Konfiguráció**
+    Győződjön meg arról, hogy a szerver minden 404-es kérést az `index.html`-re irányít át. Ez szükséges ahhoz, hogy a React Router kezelni tudja a mélyhivatkozásokat (Kliens-oldali Routing).
 
-    **Nginx Example:**
+    **Nginx Példa:**
+
     ```nginx
     location / {
       try_files $uri $uri/ /index.html;
     }
     ```
 
-## CI/CD Pipeline (Example)
-For automated deployments via GitHub Actions:
-1.  **Trigger**: On push to `main` branch.
-2.  **Steps**:
-    - Checkout code.
-    - Install Node.js `v18`.
+## CI/CD Pipeline (Példa)
+
+Automatizált telepítés GitHub Actions használatával:
+
+1.  **Indító esemény (Trigger)**: Push a `main` ágra.
+2.  **Lépések**:
+    - Kód letöltése (Checkout).
+    - Node.js `v18` telepítése.
     - `npm install`.
-    - `npm run lint` (Fail if errors).
+    - `npm run lint` (Megszakítás hiba esetén).
     - `npm run build`.
-    - Upload `dist/` artifact to hosting provider.
+    - `dist/` artifact feltöltése a tárhelyszolgáltatóhoz.
