@@ -50,7 +50,7 @@ export default function AssignMentorModal({
     if (!isOpen || !partnership) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-black bg-opacity-50 p-4 overflow-y-auto">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-auto">
                 <div className="border-b border-slate-200 p-6 flex justify-between items-center bg-slate-50 rounded-t-2xl">
                     <h2 className="text-xl font-semibold text-slate-900">

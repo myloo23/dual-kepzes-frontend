@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type StatsResponse } from "../../lib/api";
+import { useAuth } from "../../features/auth";
 
 function StatCard({
   title,
@@ -32,11 +33,13 @@ function roleLabel(role: string) {
 }
 
 export default function AdminDashboard() {
+  const { isAuthenticated } = useAuth();
   const [data, setData] = useState<StatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchStats = async () => {
+    if (!isAuthenticated) return;
     try {
       setLoading(true);
       setError(null);
@@ -52,8 +55,10 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+    if (isAuthenticated) {
+      fetchStats();
+    }
+  }, [isAuthenticated]);
 
   const maxRoleCount = useMemo(() => {
     if (!data?.usersByRole?.length) return 0;
