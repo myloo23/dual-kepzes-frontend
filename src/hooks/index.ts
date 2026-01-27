@@ -12,6 +12,6 @@ export { useToast } from './useToast';
 export type { UseToastReturn } from './useToast';
 
 // Re-export existing hooks
-export { useGeocoding } from './useGeocoding';
-export { useLocationGeocoding } from './useLocationGeocoding';
+// Note: useGeocoding moved to features/positions
+// Note: useLocationGeocoding moved to features/applications
 // Note: usePositionsFilters moved to features/positions
