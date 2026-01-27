@@ -64,6 +64,15 @@ export default function UniversityLayout() {
                 Hallgatok
               </NavLink>
               <NavLink
+                to="/university/partnerships"
+                className={({ isActive }) =>
+                  `${navItemBase} ${isActive ? navItemActive : navItemInactive}`
+                }
+                onClick={() => setMobileOpen(false)}
+              >
+                Partnerkapcsolatok
+              </NavLink>
+              <NavLink
                 to="/university/news"
                 className={({ isActive }) =>
                   `${navItemBase} ${isActive ? navItemActive : navItemInactive}`

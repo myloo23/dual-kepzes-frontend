@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { api, type StudentProfile, type UniversityUserProfile } from "../../lib/api";
+import { api, type StudentProfile, type UniversityUserProfile, type Partnership } from "../../lib/api";
 import { useAuth } from "../../features/auth";
+import UniversityPartnershipsTable from "../../features/partnerships/components/UniversityPartnershipsTable";
 
 export default function UniversityDashboardPage() {
   const navigate = useNavigate();
@@ -19,12 +20,18 @@ export default function UniversityDashboardPage() {
   const [studentsLoading, setStudentsLoading] = useState(false);
   const [studentsError, setStudentsError] = useState<string | null>(null);
 
+  const [partnerships, setPartnerships] = useState<Partnership[]>([]);
+  const [partnershipsLoading, setPartnershipsLoading] = useState(false);
+  const [partnershipsError, setPartnershipsError] = useState<string | null>(null);
+
   const activeTab = useMemo(() => {
     const path = location.pathname;
     if (path === "/university/students") return "students";
+    if (path === "/university/partnerships") return "partnerships";
     if (path === "/university/profile") return "profile";
     const hash = location.hash;
     if (hash === "#students") return "students";
+    if (hash === "#partnerships") return "partnerships";
     if (hash === "#profile") return "profile";
     return "overview";
   }, [location.pathname, location.hash]);
@@ -70,6 +77,24 @@ export default function UniversityDashboardPage() {
     };
     void load();
   }, [activeTab]);
+
+  useEffect(() => {
+      if (activeTab !== "partnerships") return;
+      const load = async () => {
+        setPartnershipsLoading(true);
+        setPartnershipsError(null);
+        try {
+          const list = await api.partnerships.listUniversity();
+          setPartnerships(Array.isArray(list) ? list : []);
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Hiba a partnerkapcsolatok betoltese kozben.";
+          setPartnershipsError(message);
+        } finally {
+          setPartnershipsLoading(false);
+        }
+      };
+      void load();
+    }, [activeTab]);
 
   const handleProfileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -159,6 +184,26 @@ export default function UniversityDashboardPage() {
           </div>
         </div>
       )}
+
+      {activeTab === "partnerships" && (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">Partnerkapcsolatok</h2>
+              <p className="text-sm text-slate-600">Egyetemi partnerkapcsolatok listaja.</p>
+            </div>
+            
+            {partnershipsError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {partnershipsError}
+              </div>
+            )}
+            
+            <UniversityPartnershipsTable 
+              partnerships={partnerships}
+              isLoading={partnershipsLoading}
+            />
+          </div>
+        )}
 
       {activeTab === "profile" && (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">

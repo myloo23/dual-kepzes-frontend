@@ -24,6 +24,7 @@ export default function PublicCompanyProfilePage() {
                 setLoading(true);
                 // Fetch company details
                 const companyData = await api.companies.get(id);
+                console.log("Fetched company data:", companyData);
                 setCompany(companyData);
 
                 // Fetch all public positions

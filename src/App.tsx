@@ -93,6 +93,7 @@ function App() {
             <Route path="/university" element={<UniversityLayout />}>
               <Route index element={<UniversityDashboardPage />} />
               <Route path="students" element={<UniversityDashboardPage />} />
+              <Route path="partnerships" element={<UniversityDashboardPage />} />
               <Route path="news" element={<StudentNewsPage />} />
               <Route path="profile" element={<UniversityDashboardPage />} />
             </Route>
