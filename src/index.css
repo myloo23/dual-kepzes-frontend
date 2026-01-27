@@ -10,4 +10,5 @@
 
 body {
   @apply bg-dkk-light text-slate-900;
+  font-family: 'Inter', sans-serif;
 }

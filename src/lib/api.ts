@@ -23,6 +23,7 @@ import type {
   ApplicationStatus,
   ApplicationCreatePayload,
   Partnership,
+  PaginationQuery,
 } from '../types/api.types';
 import type {
   NotificationCreatePayload,
@@ -77,7 +78,7 @@ export const api = {
 
   // ============= Companies =============
   companies: {
-    list: () => apiGet<Company[]>(PATHS.companies),
+    list: (params?: PaginationQuery) => apiGet<Company[]>(PATHS.companies, params),
 
     get: (id: Id) =>
       apiGet<Company>(`${PATHS.companies}/${ensureId(id, 'companyId')}`),
@@ -94,25 +95,19 @@ export const api = {
 
   // ============= Positions =============
   positions: {
-    list: () => apiGet<Position[]>(PATHS.positions),
+    list: (params?: PaginationQuery) => apiGet<Position[]>(PATHS.positions, params),
 
     // Public endpoint - no authentication required
-    listPublic: () => apiGet<Position[]>(PATHS.positions, ''),
+    // Public endpoint - no authentication required
+    listPublic: (params?: PaginationQuery) => apiGet<Position[]>(PATHS.positions, params, ''),
 
     // Helper methods for filtering by isDual flag
-    listDualPositions: async (): Promise<Position[]> => {
-      const positions = await apiGet<Position[]>(PATHS.positions);
-      return positions.filter((p) => p.isDual === true);
-    },
-
-    listNonDualPositions: async (): Promise<Position[]> => {
-      const positions = await apiGet<Position[]>(PATHS.positions);
-      return positions.filter((p) => p.isDual === false);
-    },
+    listDualPositions: (params?: PaginationQuery) => apiGet<Position[]>(`${PATHS.positions}/dual`, params),
+    listNonDualPositions: (params?: PaginationQuery) => apiGet<Position[]>(`${PATHS.positions}/non-dual`, params),
 
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
-    listByCompany: (companyId: Id) =>
-      apiGet<Position[]>(`${PATHS.positions}/company/${ensureId(companyId, 'companyId')}`),
+    listByCompany: (companyId: Id, params?: PaginationQuery) =>
+      apiGet<Position[]>(`${PATHS.positions}/company/${ensureId(companyId, 'companyId')}`, params),
 
     create: (payload: Omit<Position, 'id'>) =>
       apiPost<Position>(PATHS.positions, payload),
@@ -132,7 +127,7 @@ export const api = {
 
   // ============= Students =============
   students: {
-    list: () => apiGet<StudentProfile[]>(PATHS.students),
+    list: (params?: PaginationQuery) => apiGet<StudentProfile[]>(PATHS.students, params),
 
     get: (id: Id) => apiGet<StudentProfile>(`${PATHS.students}/${id}`),
 
@@ -155,7 +150,7 @@ export const api = {
 
   // ============= Generic Users (Admin) =============
   users: {
-    listInactive: () => apiGet<User[]>(`${PATHS.users}/inactive`),
+    listInactive: (params?: PaginationQuery) => apiGet<User[]>(`${PATHS.users}/inactive`, params),
 
     reactivate: (id: Id) =>
       apiPatch<User>(`${PATHS.users}/${id}/reactivate`, {}),
@@ -167,13 +162,13 @@ export const api = {
   // ============= News =============
   news: {
     // Public
-    list: () => apiGet<NewsItem[]>(PATHS.news),
+    list: (params?: PaginationQuery) => apiGet<NewsItem[]>(PATHS.news, params),
     get: (id: Id) => apiGet<NewsItem>(`${PATHS.news}/${id}`),
 
     // Admin
     admin: {
-      list: () => apiGet<NewsItem[]>(`${PATHS.news}/admin`),
-      listArchived: () => apiGet<NewsItem[]>(`${PATHS.news}/admin/archived`),
+      list: (params?: PaginationQuery) => apiGet<NewsItem[]>(`${PATHS.news}/admin`, params),
+      listArchived: (params?: PaginationQuery) => apiGet<NewsItem[]>(`${PATHS.news}/admin/archived`, params),
       get: (id: Id) => apiGet<NewsItem>(`${PATHS.news}/admin/${id}`),
       create: (payload: NewsCreatePayload) =>
         apiPost<NewsItem>(`${PATHS.news}/admin`, payload),
@@ -196,8 +191,9 @@ export const api = {
         payload
       ),
 
-    list: () => apiGet<Application[]>(PATHS.applications),
-    listCompany: () => apiGet<Application[]>(`${PATHS.applications}/company`),
+    list: (params?: PaginationQuery) => apiGet<Application[]>(PATHS.applications, params),
+    listMy: (params?: PaginationQuery) => apiGet<Application[]>(`${PATHS.applications}/my`, params),
+    listCompany: (params?: PaginationQuery) => apiGet<Application[]>(`${PATHS.applications}/company`, params),
     evaluateCompany: (id: Id, body: { status: ApplicationStatus; companyNote?: string }) =>
       apiPatch<Application>(
         `${PATHS.applications}/company/${ensureId(id, 'applicationId')}/evaluate`,
@@ -219,8 +215,9 @@ export const api = {
 
   // ============= Partnerships =============
   partnerships: {
-    listCompany: () => apiGet<Partnership[]>(`/api/partnerships/company`),
-    listUniversity: () => apiGet<Partnership[]>(`/api/partnerships/university`),
+    listCompany: (params?: PaginationQuery) => apiGet<Partnership[]>(`/api/partnerships/company`, params),
+    listUniversity: (params?: PaginationQuery) => apiGet<Partnership[]>(`/api/partnerships/university`, params),
+    listStudent: (params?: PaginationQuery) => apiGet<Partnership[]>(`/api/partnerships/student`, params),
     get: (id: Id) => apiGet<Partnership>(`/api/partnerships/${ensureId(id, 'partnershipId')}`),
     assignMentor: (id: Id, mentorId: Id) =>
       apiPatch<Partnership>(
@@ -262,16 +259,18 @@ export const api = {
 
   // ============= System Admins =============
   systemAdmins: {
+    list: (params?: PaginationQuery) => apiGet<SystemAdminProfile[]>(PATHS.systemAdmins, params),
     me: {
       get: () => apiGet<SystemAdminProfile>(`${PATHS.systemAdmins}/me`),
       update: (body: Partial<SystemAdminProfile>) =>
         apiPatch<SystemAdminProfile>(`${PATHS.systemAdmins}/me`, body),
     },
+    listAll: (params?: PaginationQuery) => apiGet<SystemAdminProfile[]>(`${PATHS.systemAdmins}/all-admins`, params),
   },
 
   // ============= Company Admins =============
   companyAdmins: {
-    list: () => apiGet<CompanyAdminProfile[]>(PATHS.companyAdmins),
+    list: (params?: PaginationQuery) => apiGet<CompanyAdminProfile[]>(PATHS.companyAdmins, params),
     get: (id: Id) => apiGet<CompanyAdminProfile>(`${PATHS.companyAdmins}/${id}`),
     update: (id: Id, body: Partial<CompanyAdminProfile>) =>
       apiPatch<CompanyAdminProfile>(`${PATHS.companyAdmins}/${id}`, body),
@@ -287,7 +286,7 @@ export const api = {
 
   // ============= University Users =============
   universityUsers: {
-    list: () => apiGet<UniversityUserProfile[]>(PATHS.universityUsers),
+    list: (params?: PaginationQuery) => apiGet<UniversityUserProfile[]>(PATHS.universityUsers, params),
     get: (id: Id) => apiGet<UniversityUserProfile>(`${PATHS.universityUsers}/${id}`),
     update: (id: Id, body: Partial<UniversityUserProfile>) =>
       apiPatch<UniversityUserProfile>(`${PATHS.universityUsers}/${id}`, body),
@@ -303,8 +302,12 @@ export const api = {
 
   // ============= Employees =============
   employees: {
-    list: () => apiGet<EmployeeProfile[]>(PATHS.employees),
-    listMentors: () => apiGet<EmployeeProfile[]>(`${PATHS.employees}/mentors`),
+    list: (params?: PaginationQuery) => apiGet<EmployeeProfile[]>(PATHS.employees, params),
+    listByCompany: (companyId: Id, params?: PaginationQuery) =>
+      apiGet<EmployeeProfile[]>(`${PATHS.employees}/company/${ensureId(companyId, 'companyId')}`, params),
+    listMentors: (params?: PaginationQuery) => apiGet<EmployeeProfile[]>(`${PATHS.employees}/mentors`, params),
+    listMentorsByCompany: (companyId: Id, params?: PaginationQuery) =>
+      apiGet<EmployeeProfile[]>(`${PATHS.employees}/mentors/${ensureId(companyId, 'companyId')}`, params),
     me: {
       get: () => apiGet<EmployeeProfile>(`${PATHS.employees}/me`),
       update: (body: Partial<EmployeeProfile>) =>

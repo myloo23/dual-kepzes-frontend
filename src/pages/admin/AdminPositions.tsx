@@ -20,7 +20,7 @@ export default function AdminPositionsPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
 
   const positions = useCRUD<Position>({
-    listFn: api.positions.list,
+    listFn: () => api.positions.list({ limit: 1000 }),
     getFn: api.positions.get,
     createFn: api.positions.create,
     updateFn: api.positions.update,

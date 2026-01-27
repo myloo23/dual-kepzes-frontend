@@ -15,6 +15,12 @@ export interface Location {
     address: string;
 }
 
+export interface PaginationQuery {
+    page?: number;
+    limit?: number;
+    [key: string]: any;
+}
+
 // ============= Company Types =============
 export interface Company {
     id: Id;
@@ -278,4 +284,15 @@ export interface Partnership {
         };
     };
     uniEmployee?: UniversityUserProfile | null;
+}
+
+export interface PaginatedResponse<T> {
+    success: boolean;
+    data: T[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
 }

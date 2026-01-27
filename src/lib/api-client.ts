@@ -44,11 +44,47 @@ async function apiRequest<T>(
     throw new Error(msg);
   }
 
+  // Auto-unwrap generic API responses
+  // If the response follows { success: true, data: T }, return T
+  if (
+    data &&
+    typeof data === 'object' &&
+    'data' in data &&
+    'success' in data &&
+    (data as any).success === true
+  ) {
+    return (data as any).data as T;
+  }
+
+  // Fallback for pagination specific check if success is missing but pagination exists (robustness)
+  if (
+    data &&
+    typeof data === 'object' &&
+    'data' in data &&
+    'pagination' in data &&
+    Array.isArray((data as any).data)
+  ) {
+    return (data as any).data as T;
+  }
+
   return (data ?? {}) as T;
 }
 
-export function apiGet<T>(path: string, token?: string): Promise<T> {
-  return apiRequest<T>(path, { method: 'GET' }, token);
+export function apiGet<T>(path: string, query?: Record<string, any>, token?: string): Promise<T> {
+  let url = path;
+  if (query) {
+    const params = new URLSearchParams();
+    Object.entries(query).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        params.append(key, String(value));
+      }
+    });
+    const queryString = params.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+  }
+  return apiRequest<T>(url, { method: 'GET' }, token);
 }
 
 export function apiPost<T>(path: string, body: unknown, token?: string): Promise<T> {
