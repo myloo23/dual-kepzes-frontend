@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { type Company, type Position, type Tag } from "../../../../lib/api";
+import { type Position, type Tag } from "../../../../lib/api";
 
 interface PositionFormModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (data: Omit<Position, "id">) => Promise<void>;
-    companies: Company[];
+    companies: { id: string | number; name: string }[];
     initialData?: Position | null;
 }
 
@@ -47,15 +47,18 @@ export default function PositionFormModal({
             if (initialData) {
                 setFormData({
                     ...initialData,
-                    companyId: initialData.companyId || "", // Ensure string
+                    companyId: initialData.companyId || (companies.length === 1 ? String(companies[0].id) : ""),
                     deadline: formatDeadlineForInput(initialData.deadline),
                     tags: initialData.tags || [],
                 });
             } else {
-                setFormData(INITIAL_FORM_STATE);
+                setFormData({
+                    ...INITIAL_FORM_STATE,
+                    companyId: companies.length === 1 ? String(companies[0].id) : "",
+                });
             }
         }
-    }, [isOpen, initialData]);
+    }, [isOpen, initialData, companies]);
 
     const handleFormChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -164,7 +167,8 @@ export default function PositionFormModal({
                                 name="companyId"
                                 value={formData.companyId}
                                 onChange={handleFormChange}
-                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                disabled={companies.length === 1}
+                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-100 disabled:text-slate-500"
                             >
                                 <option value="">Válassz céget...</option>
                                 {companies.map((c) => (

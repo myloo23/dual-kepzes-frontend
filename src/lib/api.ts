@@ -242,7 +242,7 @@ export const api = {
     get: (id: Id) => apiGet<StudentProfile>(`${PATHS.students}/${id}`),
 
     update: (id: Id, body: Partial<StudentProfile>) =>
-      apiPut<StudentProfile>(`${PATHS.students}/${id}`, body),
+      apiPatch<StudentProfile>(`${PATHS.students}/${id}`, body),
 
     remove: (id: Id) =>
       apiDelete<{ message?: string }>(`${PATHS.students}/${id}`),
