@@ -2,24 +2,24 @@ import { ArrowRight, Building2, GraduationCap } from "lucide-react";
 
 export default function DualInfoSection() {
     return (
-        <section className="py-16 bg-slate-50 overflow-hidden">
-            <div className="max-w-7xl mx-auto px-4 lg:px-8">
-                <div className="grid gap-12 lg:grid-cols-2">
+        <section className="py-8 md:py-16 bg-slate-50 overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full overflow-x-hidden">
+                <div className="grid gap-6 md:gap-12 lg:grid-cols-2 w-full max-w-full">
 
                     {/* Duális Képzés Leírás */}
-                    <div className="relative">
-                        <div className="absolute -left-4 -top-4 w-20 h-20 bg-blue-100 rounded-full blur-xl opacity-60" />
-                        <div className="relative bg-white rounded-3xl p-8 shadow-sm border border-slate-100 h-full">
+                    <div className="relative overflow-hidden">
+                        <div className="absolute -left-4 -top-4 w-20 h-20 bg-blue-100 rounded-full blur-xl opacity-60 hidden md:block" />
+                        <div className="relative bg-white rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-8 shadow-sm border border-slate-100 h-full">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider mb-6">
                                 <GraduationCap size={14} />
                                 Duális Képzés
                             </div>
 
-                            <h2 className="text-2xl font-bold text-slate-900 mb-6">
+                            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 md:mb-6">
                                 Mi a Duális Képzés?
                             </h2>
 
-                            <div className="space-y-4 text-slate-600 leading-relaxed">
+                            <div className="space-y-3 md:space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed">
                                 <p>
                                     A duális képzés során a hallgató az egyetemi tanulmányai mellett egy vállalatnál is aktívan részt vesz a munkában.
                                     A tanulmányi idő alatt <strong>folyamatos kapcsolatban áll a céggel</strong>, hallgatói munkaszerződéssel dolgozik, és havi juttatásban részesül.
@@ -48,19 +48,19 @@ export default function DualInfoSection() {
                     </div>
 
                     {/* Duális Képzési Központ */}
-                    <div className="relative">
-                        <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-100 rounded-full blur-xl opacity-60" />
-                        <div className="relative bg-white rounded-3xl p-8 shadow-sm border border-slate-100 h-full flex flex-col">
+                    <div className="relative overflow-hidden">
+                        <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-100 rounded-full blur-xl opacity-60 hidden md:block" />
+                        <div className="relative bg-white rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-8 shadow-sm border border-slate-100 h-full flex flex-col">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-bold uppercase tracking-wider mb-6 w-fit">
                                 <Building2 size={14} />
                                 Duális Képzési Központ
                             </div>
 
-                            <h2 className="text-2xl font-bold text-slate-900 mb-6">
+                            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 md:mb-6">
                                 A Központ Feladatai
                             </h2>
 
-                            <div className="space-y-4 text-slate-600 leading-relaxed mb-6">
+                            <div className="space-y-3 md:space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed mb-4 md:mb-6">
                                 <p>
                                     A <strong>Neumann János Egyetem Duális Képzési Központja</strong> a duális képzések szakmai és szervezeti hátterét biztosítja,
                                     összefogja az egyetem és a vállalati partnerek együttműködését, valamint támogatja a hallgatók duális tanulmányainak teljes folyamatát.
@@ -72,15 +72,15 @@ export default function DualInfoSection() {
                             </div>
 
                             {/* Leader Highlight */}
-                            <div className="mt-auto bg-slate-50 rounded-2xl p-5 border border-slate-200">
-                                <div className="flex items-start gap-4">
-                                    <div className="h-12 w-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                            <div className="mt-auto bg-slate-50 rounded-xl md:rounded-2xl p-4 md:p-5 border border-slate-200">
+                                <div className="flex items-start gap-3 md:gap-4">
+                                    <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-base md:text-lg flex-shrink-0">
                                         EA
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-slate-900">Dr. Angeli Eliza</h4>
-                                        <p className="text-xs text-rose-600 font-bold uppercase mb-2">A KÖZPONT VEZETŐJE</p>
-                                        <p className="text-sm text-slate-600 leading-snug">
+                                        <h4 className="text-sm md:text-base font-bold text-slate-900">Dr. Angeli Eliza</h4>
+                                        <p className="text-[10px] md:text-xs text-rose-600 font-bold uppercase mb-1 md:mb-2">A KÖZPONT VEZETŐJE</p>
+                                        <p className="text-xs md:text-sm text-slate-600 leading-snug">
                                             Meghatározó szerepet tölt be a duális képzések fejlesztésében és minőségbiztosításában.
                                             <a href="mailto:angeli.eliza@nje.hu" className="text-dkk-blue hover:underline ml-1">
                                                 angeli.eliza@nje.hu
