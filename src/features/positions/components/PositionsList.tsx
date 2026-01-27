@@ -5,8 +5,7 @@
 
 import type { Position } from '../../../lib/api';
 import PositionCard from './PositionCard';
-import { pickLogo } from '../../../lib/positions-utils';
-import { norm } from '../../../lib/positions-utils';
+import { pickLogo, norm } from "../utils/positions.utils";
 import { LABELS } from '../../../constants';
 
 // Temporary logos (will be moved to assets management)

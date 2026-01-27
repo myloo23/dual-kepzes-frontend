@@ -1,5 +1,3 @@
-// src/lib/validation-utils.ts
-
 /**
  * Validation utility functions for forms
  */

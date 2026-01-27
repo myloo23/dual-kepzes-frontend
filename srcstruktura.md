@@ -1,95 +1,118 @@
-# Részletes Projekt Struktúra (`src`)
+# Projekt Struktúra Dokumentáció (`src`)
 
-Ez a dokumentum a `dual-kepzes-frontend` teljes forráskód strukturáját írja le, mappáról mappára, mélységében tárgyalva a fájlok szerepét. A projekt **Feature-Based Architecture** (Funkció alapú architektúra) elvet követi.
+Ez a dokumentum a `src` könyvtár szerkezetét és az egyes könyvtárak célját mutatja be.
 
-## 📁 `src/` (Source Root)
-A forráskód gyökérkönyvtára.
+## Fő Könyvtárszerkezet
 
-### 📁 `assets/`
-Statikus fájlok tárolója. Nem vesznek részt a fordítási logikában, de importálhatóak.
-*   **`reference-images/`**: A "Referenciák" szekcióban megjelenő személyek (oktatók, diákok) fotói.
-    *   `*.jpg`: Portrék, pl. `SariB-V-199x300.jpg`, `Kiraly_I.jpg`.
-*   **`documents/`**: Letölthető csatolmányok.
-    *   `dkk_referensek.pdf`: Referencia lista PDF-ben.
-*   **`logos/`**: Partner, egyetem és céges logók.
-    *   `dkk_logos/`, `nje_logos/`: Szervezeti logók.
+```
+src/
+├── assets/          # Statikus fájlok (képek, logók)
+├── components/      # Globális UI komponensek
+├── config/          # Alkalmazás konfiguráció
+├── constants/       # Konstans értékek
+├── features/        # Funkcionális modulok (Feature-based architecture)
+├── hooks/           # Globális Custom Hook-ok
+├── layouts/         # Oldal elrendezések (Layouts)
+├── lib/             # Infrastruktúra és API kliensek
+├── pages/           # Útválasztás (Routing) szerinti oldalak
+├── types/           # Globális TypeScript definíciók
+└── utils/           # Segédfüggvények
+```
 
-### 📁 `components/`
-Általános, nem domain-specifikus UI komponensek.
-*   **`layout/`**: Az oldal keretét adó komponensek.
-    *   `Navbar.tsx`: Felső navigációs sáv (menü).
-    *   `Footer.tsx`: Lábléc.
-    *   `DashboardLayout.tsx`: Bejelentkezett felhasználók (Admin, Diák, HR) közös kerete (oldalsáv, fejléc).
-*   **`shared/`**: Újrafelhasználható, alapvető UI elemek.
-    *   `ChipButton.tsx`: Kicsi, címke-szerű gomb.
-    *   `ImageModal.tsx`: Képek nagyítása kattintásra.
-    *   `PasswordInput.tsx`: Jelszó mező szem ikonnal.
-*   **`ui/`**: "Design System" - Az alkalmazás legkisebb építőkövei.
-    *   `Button.tsx`: Stílusozott gomb.
-    *   `Input.tsx`: Stílusozott beviteli mező.
-    *   `Card.tsx`: Kerettel és árnyékkal ellátott tároló doboz.
+## Részletes Leírás
 
-### 📁 `config/`
-*   `app.config.ts`: Globális konfiguráció, például az API végpont (`API_URL`) beállítása környezettől függően.
+### `assets/`
 
-### 📁 `constants/`
-*   `routes.ts`: Az alkalmazás összes URL útvonala egy helyen definiálva.
-*   `messages.ts`: Felhasználónak megjelenő statikus üzenetek.
-*   `filters.ts`: Szűrő feltételek alapértelmezett értékei.
+Statikus erőforrások tárolása.
 
-### 📁 `features/` (Funkcionális modulok)
-Ez a mappa tartalmazza az üzleti logikát és a kapcsolódó komponenseket témakörökre bontva. Ez a **"Single Source of Truth"** elv alapja.
+- `documents/`: Letölthető dokumentumok.
+- `logos/`: Partner és céges logók.
+- `reference-images/`: Referencia képek a designhoz.
 
-*   **`auth/`**: Hitelesítés.
-    *   `context/`: `AuthContext.tsx` (Autentikációs állapotkezelő).
-    *   `hooks/`: `useAuth` export.
-    *   `components/`: `LoginCard.tsx`.
-*   **`applications/`**: Jelentkezések kezelése.
-    *   `components/`: `ApplicationsList.tsx` (Jelentkezések listája), `ApplicationModal.tsx` (Jelentkezés részletei), `LocationMap.tsx` (Jelentkezés helyszíne).
-*   **`companies/`**: Cégek logikája.
-    *   `components/`: `CompanyProfileDisplay.tsx` (Adatlap), `CompanyProfileForm.tsx` (Szerkesztő).
-    *   `components/modals/`: `CompanyFormModal.tsx` (Admin szerkesztő), `CompanyInfoModal.tsx` (Publikus infó).
-*   **`landing/`**: A publikus főoldal (Landing Page) elemei.
-    *   `components/`: `DualInfoSection.tsx`, `HowItWorksSection.tsx`, `MaterialsGallery.tsx`, `ReferencesSlider.tsx`.
-*   **`news/`**: Hírek modul.
-    *   `components/`: `NewsCard.tsx`, `NewsFilter.tsx`.
-    *   `components/modals/`: `NewsFormModal.tsx`.
-*   **`positions/`**: Álláshirdetések modul.
-    *   `components/`: `PositionsList.tsx`, `PositionsMap.tsx`, `FilterSidebar.tsx`, `JobCard.tsx`, `JobSlider.tsx`, `PositionCard.tsx`.
-    *   `components/modals/`: `PositionFormModal.tsx`.
-*   **`users/`**: Felhasználókezelés.
-    *   `components/modals/`: `AdminUserModal.tsx`, `StudentFormModal.tsx`.
+### `components/`
 
-### 📁 `hooks/` (Globális Hook-ok)
-Általános célú és megosztott hook-ok gyűjteménye.
-*   `useCRUD.ts`: Generikus adatműveletek (Create, Read, Update, Delete) kezelése.
-*   `useModal.ts`: Modál ablakok állapotkezelése.
-*   `useToast.ts`: Értesítések kezelése.
-*   `useGeocoding.ts`, `useLocationGeocoding.ts`: Térképes koordináta konverziók.
-*   `usePositionsFilters.ts`: Álláskereső szűrőlogikája (megosztott).
+Újrafelhasználható, "buta" (presentational) komponensek.
 
-### 📁 `layouts/`
-*   `StudentLayout.tsx`, `TeacherLayout.tsx`, `MentorLayout.tsx`, `HrLayout.tsx`, `AdminLayout.tsx`:
-    Szerepkör-specifikus elrendezések definíciója.
+- `ui/`: Atomikus UI elemek (pl. `Button`, `Input`).
+- `shared/`: Több helyen használt, összetettebb komponensek (pl. `Pagination`, `Modal`).
+- `layout/`: Régi layout elemek (deprecated, layout-ok a `layouts` mappában vannak).
 
-### 📁 `lib/` (Könyvtárak és Segédek)
-*   `api.ts`: Konfigurált `axios` példány, token kezeléssel.
-*   `cn.ts`: CSS osztályok összefűzése (`clsx`, `tailwind-merge`).
-*   `city-coordinates.ts`: Városok fix koordinátái.
+### `config/`
 
-### 📁 `pages/` (Oldalak - Routing)
-Az alkalmazás végpontjai (Router Pages).
-*   **`admin/`**: `AdminDashboard.tsx`, `AdminCompanies.tsx`, `AdminPositions.tsx`, `AdminUsers.tsx`, `AdminNews.tsx`.
-*   **`auth/`**: `StudentRegisterPage.tsx`, `ForgotPasswordPage.tsx`, `ResetPasswordPage.tsx`.
-*   **`hr/`**: `CompanyProfilePage.tsx`.
-*   **`landing/`**: `HomePage.tsx`, `PositionsPage.tsx`, `MapPage.tsx`, `PublicCompanyProfilePage.tsx`.
-*   **`student/`**: `StudentDashboardPage.tsx`, `StudentNewsPage.tsx`.
+Az alkalmazás működését befolyásoló konfigurációs fájlok.
 
-### 📁 `types/` (TypeScript Definíciók)
-*   `api.types.ts`: API adatmodellek (`User`, `Company`, `Position`, stb.).
-*   `ui.types.ts`, `form.types.ts`: UI és űrlap típusdefiníciók.
+- `app.config.ts`: Környezeti változók és API URL beállítások.
+- `navigation.ts`: Szerepkör alapú navigációs útvonalak (`ROLE_NAVIGATION_PATHS`).
 
-### Gyökér fájlok
-*   `App.tsx`: Routing konfiguráció.
-*   `main.tsx`: Belépési pont.
-*   `index.css`: Globális stílusok.
+### `constants/`
+
+Hardcoded értékek kiszervezése a könnyebb karbantarthatóságért.
+
+- `messages.ts`: Felhasználói üzenetek, szövegek (i18n előkészítés).
+- `routes.ts`: Útvonal definíciók.
+- `ui.ts`: UI konstansok (pl. animációs idők).
+- `filters.ts`: Szűrő opciók értékei.
+
+### `features/`
+
+**Feature-Based Architecture**: Az üzleti logika moduláris szervezése. Minden mappa egy-egy funkcionális egységet tartalmaz, saját komponensekkel, hook-okkal és típusokkal.
+
+- `auth/`: Hitelesítés, regisztráció, login.
+- `applications/`: Jelentkezések kezelése.
+- `companies/`: Cégek kezelése.
+- `landing/`: Publikus oldal elemei.
+- `news/`: Hírek kezelése.
+- `notifications/`: Értesítési rendszer.
+- `partnerships/`: Egyetemi partnerségek.
+- `positions/`: Állásajánlatok kezelése.
+- `users/`: Felhasználókezelés (Admin).
+
+### `hooks/`
+
+Kizárólag globális, generikus hook-ok. (A feature-specifikus hook-ok a `features` mappában vannak).
+
+- `useCRUD.ts`: Generikus adatkezelő hook (listázás, létrehozás, törlés).
+- `useModal.ts`: Modális ablakok állapotkezelése.
+- `useNavigation.ts`: Szerepkör alapú navigációs logika.
+- `useToast.ts`: Értesítő üzenetek kezelése.
+
+### `layouts/`
+
+Az alkalmazás keretét adó komponensek.
+
+- `DashboardLayout.tsx`: A fő elrendezés (Sidebar + Header + Content).
+- Szerepkör-specifikus layoutok (pl. `AdminLayout`, `StudentLayout`): Ezek mind a `DashboardLayout`-ot használják, specifikus menüpontokkal.
+
+### `lib/`
+
+Alacsony szintű infrastruktúra kód.
+
+- `api.ts`: Központi API facade.
+- `api-client.ts`: Axios példány és interceptorok.
+- `auth-token.ts`: Token kezelés.
+
+### `pages/`
+
+Az alkalmazás oldalai, az URL struktúrának megfelelően szervezve. Ezek többnyire "vékony" komponensek, amelyek a `features` mappából importálják a logikát.
+
+- `admin/`: Adminisztrációs felület oldalai.
+- `auth/`: Bejelentkezés, regisztráció.
+- `student/`: Hallgatói felület.
+- `hr/`: Céges (HR) felület.
+- `landing/`: Publikus (Landing) oldalak.
+
+### `types/`
+
+Globális TypeScript típusdefiníciók.
+
+- `api.types.ts`: Backend API válaszok típusai (Single Source of Truth).
+- `ui.types.ts`: UI elemek típusai.
+- `form.types.ts`: Űrlap kezelés típusai.
+
+### `utils/`
+
+"Tiszta" segédfüggvények (pure functions), amelyek nem függenek az alkalmazás állapotától.
+
+- `cn.ts`: Classname összefűző utility (Tailwind-hez).
+- `validation-utils.ts`: Validációs segédfüggvények.
+- `city-coordinates.ts`: Város koordináták (hardcoded).

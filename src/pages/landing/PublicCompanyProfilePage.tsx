@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Globe, MapPin, User, Building2 } from "lucide-react";
 import { api, type Company, type Position } from "../../lib/api";
 import PositionCard from "../../features/positions/components/PositionCard";
-import { pickLogo } from "../../lib/positions-utils";
+import { pickLogo } from "../../features/positions/utils/positions.utils";
 import abcTechLogo from "../../assets/logos/abc-tech.jpg";
 import businessItLogo from "../../assets/logos/business-it.jpg";
 import LocationMap from "../../features/applications/components/LocationMap";

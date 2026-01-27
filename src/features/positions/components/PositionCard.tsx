@@ -1,5 +1,5 @@
 // src/components/positions/PositionCard.tsx
-import { norm, formatHuDate, isExpired, toTagName } from "../../../lib/positions-utils";
+import { formatHuDate, isExpired, toTagName, norm } from "../utils/positions.utils";
 
 type Position = {
     id?: string | number;

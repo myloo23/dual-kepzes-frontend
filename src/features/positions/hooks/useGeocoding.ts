@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getCityCoordinates } from "../../../lib/city-coordinates";
+import { getCityCoordinates } from "../../../utils/city-coordinates";
 import type { Position } from "../../../lib/api";
 
 interface PositionWithCoords extends Position {

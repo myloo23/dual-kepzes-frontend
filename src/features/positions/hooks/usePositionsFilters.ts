@@ -2,13 +2,12 @@ import { useMemo, useState, useCallback } from "react";
 import type { Position } from "../../../lib/api";
 import {
     norm,
-    lower,
     parseDate,
-    toTagName,
     toTagCategory,
     isExpired,
     type TagLike,
-} from "../../../lib/positions-utils";
+} from "../utils/positions.utils";
+import { lower, toTagName } from "../utils/positions.utils";
 
 export type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
 export type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";

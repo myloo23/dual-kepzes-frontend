@@ -1,5 +1,5 @@
 // src/components/landing/JobCard.tsx
-import { norm, formatHuDate, isExpired, toTagName } from "../../../lib/positions-utils";
+import { formatHuDate, toTagName, isExpired, norm } from "../utils/positions.utils";
 
 type Position = {
     id?: string | number;

@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { api, type Position } from "../../lib/api";
-import { isExpired } from "../../lib/positions-utils";
-import { useGeocoding } from "../../hooks/useGeocoding";
+import { isExpired } from "../../features/positions/utils/positions.utils";
+import { useGeocoding } from "../../features/positions/hooks/useGeocoding";
 
 // Default blue marker for positions
 const defaultIcon = L.icon({
@@ -100,14 +100,14 @@ function MapPage() {
   // Calculate map center
   const mapCenter: [number, number] = useMemo(() => {
     if (userLocation && positionsWithCoords.length > 0) {
-      const avgLat = positionsWithCoords.reduce((sum, p) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
-      const avgLng = positionsWithCoords.reduce((sum, p) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
+      const avgLat = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
+      const avgLng = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
       return [(userLocation.lat + avgLat) / 2, (userLocation.lng + avgLng) / 2];
     }
 
     if (positionsWithCoords.length > 0) {
-      const avgLat = positionsWithCoords.reduce((sum, p) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
-      const avgLng = positionsWithCoords.reduce((sum, p) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
+      const avgLat = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
+      const avgLng = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
       return [avgLat, avgLng];
     }
 

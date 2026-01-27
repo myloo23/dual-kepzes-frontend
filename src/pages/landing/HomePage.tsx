@@ -9,19 +9,7 @@ import ReferencesSlider from "../../features/landing/components/ReferencesSlider
 import DualInfoSection from "../../features/landing/components/DualInfoSection";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import njeLogoImage from "../../assets/logos/nje_logos/nje_logo2.png";
-
-// Definiáljuk az útvonalakat a szerepkörökhöz
-const roleToPath: Record<string, string> = {
-  STUDENT: "/student",
-  TEACHER: "/teacher",
-  MENTOR: "/mentor",
-  HR: "/hr",
-  COMPANY_ADMIN: "/hr",
-  UNIVERSITY_USER: "/university",
-  ADMIN: "/admin",
-  SYSTEM_ADMIN: "/admin",
-  SUPER_ADMIN: "/admin",
-};
+import { ROLE_NAVIGATION_PATHS, type UserRole } from "../../config/navigation";
 
 function HomePage() {
   const [email, setEmail] = useState("");
@@ -42,12 +30,10 @@ function HomePage() {
       console.log("API Válasz:", res);
       console.log("Kapott role:", res.user.role);
 
-      console.log("Kapott role:", res.user.role);
-
       login(res.token, res.user as any); // TODO: Ensure API response matches User type fully
 
-      const normalizedRole = res.user.role;
-      const target = roleToPath[normalizedRole];
+      const normalizedRole = res.user.role as UserRole;
+      const target = ROLE_NAVIGATION_PATHS[normalizedRole]?.dashboard;
       console.log("Számított útvonal:", target);
 
       if (target) {
@@ -64,8 +50,6 @@ function HomePage() {
     }
   };
 
-
-
   const handleViewJobDetails = (positionId: string | number) => {
     // Navigate to positions page and scroll to the specific position
     sessionStorage.setItem("highlightPositionId", String(positionId));
@@ -76,11 +60,8 @@ function HomePage() {
   const userInfo = user ? {
     name: user.email || "Felhasználó", // Note: API types might need full name check
     role: user.role,
-    dashboardPath: roleToPath[user.role] || "/"
+    dashboardPath: ROLE_NAVIGATION_PATHS[user.role as UserRole]?.dashboard || "/"
   } : null;
-
-  // Szerepkör szép megjelenítése
-  // (Eltávolítva)
 
   return (
     <div className="max-w-6xl mx-auto px-4 lg:px-8">
