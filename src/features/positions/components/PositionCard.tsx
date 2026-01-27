@@ -59,7 +59,13 @@ export default function PositionCard({ position: p, logo, onCompanyClick, onAppl
                             className="h-20 w-20 rounded-2xl border border-slate-200 bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-blue-500 hover:shadow-md transition cursor-pointer"
                             title={`${companyName} információi`}
                         >
-                            <img src={logo} alt={`${companyName} logó`} className="h-full w-full object-contain" />
+                            <img 
+                                src={logo} 
+                                alt={`${companyName} logó`} 
+                                className="h-full w-full object-contain"
+                                loading="lazy"
+                                decoding="async"
+                            />
                         </button>
                     )}
 

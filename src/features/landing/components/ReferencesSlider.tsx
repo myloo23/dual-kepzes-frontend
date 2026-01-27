@@ -219,7 +219,13 @@ export default function ReferencesSlider() {
                             <div className="flex flex-col items-center text-center gap-4 mb-4">
                                 <div className={`h-32 w-32 rounded-2xl flex-shrink-0 flex items-center justify-center font-bold text-3xl shadow-md overflow-hidden border-4 border-white ${!person.image ? getRandomColor(person.name) : 'bg-slate-100'}`}>
                                     {person.image ? (
-                                        <img src={person.image} alt={person.name} className="w-full h-full object-cover object-top hover:scale-110 transition-transform duration-500" />
+                                        <img 
+                                            src={person.image} 
+                                            alt={person.name} 
+                                            className="w-full h-full object-cover object-top hover:scale-110 transition-transform duration-500"
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
                                     ) : (
                                         getInitials(person.name)
                                     )}

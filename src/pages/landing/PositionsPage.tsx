@@ -9,6 +9,7 @@ import { api } from '../../lib/api';
 import { usePositions } from '../../features/positions/hooks/usePositions';
 import { usePositionsFilters } from '../../features/positions/hooks/usePositionsFilters';
 import { useModal } from '../../hooks';
+import { useToast } from '../../hooks/useToast';
 import ApplicationModal from '../../features/applications/components/ApplicationModal';
 import FilterSidebar from '../../features/positions/components/FilterSidebar';
 import PositionsList from '../../features/positions/components/PositionsList';
@@ -18,6 +19,7 @@ import type { Position } from '../../lib/api';
 
 export default function PositionsPage() {
   const navigate = useNavigate();
+  const toast = useToast();
   const { positions, loading, error, applicationSuccess, submitApplication } = usePositions();
   const filters = usePositionsFilters(positions);
   const applicationModal = useModal<Position>();
@@ -65,7 +67,7 @@ export default function PositionsPage() {
     companyData: { id?: string | number; name?: string; logoUrl?: string | null } | undefined
   ) => {
     if (!companyData || !companyData.name) {
-      alert(ERROR_MESSAGES.NO_COMPANY_DATA);
+      toast.showError(ERROR_MESSAGES.NO_COMPANY_DATA);
       return;
     }
 
@@ -90,7 +92,7 @@ export default function PositionsPage() {
     if (targetId) {
       navigate(`/companies/${targetId}`);
     } else {
-      alert(ERROR_MESSAGES.COMPANY_NOT_FOUND);
+      toast.showError(ERROR_MESSAGES.COMPANY_NOT_FOUND);
     }
   }, [navigate]);
 

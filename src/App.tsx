@@ -1,47 +1,57 @@
+import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
-
-import HomePage from "./pages/landing/HomePage";
-import PositionsPage from "./pages/landing/PositionsPage";
-import PublicCompanyProfilePage from "./pages/landing/PublicCompanyProfilePage";
-import StudentRegisterPage from "./pages/auth/StudentRegisterPage";
-import PlaceholderPage from "./components/layout/PlaceholderPage";
-import StudentDashboardPage from "./pages/student/StudentDashboardPage";
-
-import TeacherLayout from "./layouts/TeacherLayout";
-import MentorLayout from "./layouts/MentorLayout";
-import MentorPartnerships from "./pages/mentor/MentorPartnerships";
-import HrLayout from "./layouts/HrLayout";
-import HrDashboardPage from "./pages/hr/HrDashboardPage";
-import UniversityLayout from "./layouts/UniversityLayout";
-import UniversityDashboardPage from "./pages/university/UniversityDashboardPage";
-import StudentNewsPage from "./pages/student/StudentNewsPage";
-
-import AdminLayout from "./layouts/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminCompanies from "./pages/admin/AdminCompanies";
-import AdminPositions from "./pages/admin/AdminPositions";
-import AdminTags from "./pages/admin/AdminTags";
-import AdminSettings from "./pages/admin/AdminSettings";
-import AdminPartnerships from "./pages/admin/AdminPartnerships";
-
-import AdminNews from "./pages/admin/AdminNews";
-
-
-import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import BackToTop from "./components/shared/BackToTop";
+import ToastContainer from "./components/shared/ToastContainer";
+import PageLoader from "./components/shared/PageLoader";
+import { useToast } from "./hooks/useToast";
 import { AuthProvider } from "./features/auth";
 
+// Lazy load page components for better performance
+const HomePage = lazy(() => import("./pages/landing/HomePage"));
+const PositionsPage = lazy(() => import("./pages/landing/PositionsPage"));
+const PublicCompanyProfilePage = lazy(() => import("./pages/landing/PublicCompanyProfilePage"));
+const StudentRegisterPage = lazy(() => import("./pages/auth/StudentRegisterPage"));
+const PlaceholderPage = lazy(() => import("./components/layout/PlaceholderPage"));
+const StudentDashboardPage = lazy(() => import("./pages/student/StudentDashboardPage"));
+const StudentNewsPage = lazy(() => import("./pages/student/StudentNewsPage"));
+
+// Lazy load layouts
+const TeacherLayout = lazy(() => import("./layouts/TeacherLayout"));
+const MentorLayout = lazy(() => import("./layouts/MentorLayout"));
+const HrLayout = lazy(() => import("./layouts/HrLayout"));
+const UniversityLayout = lazy(() => import("./layouts/UniversityLayout"));
+const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
+
+// Lazy load admin pages
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminCompanies = lazy(() => import("./pages/admin/AdminCompanies"));
+const AdminPositions = lazy(() => import("./pages/admin/AdminPositions"));
+const AdminTags = lazy(() => import("./pages/admin/AdminTags"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
+const AdminPartnerships = lazy(() => import("./pages/admin/AdminPartnerships"));
+const AdminNews = lazy(() => import("./pages/admin/AdminNews"));
+
+// Lazy load other pages
+const MentorPartnerships = lazy(() => import("./pages/mentor/MentorPartnerships"));
+const HrDashboardPage = lazy(() => import("./pages/hr/HrDashboardPage"));
+const UniversityDashboardPage = lazy(() => import("./pages/university/UniversityDashboardPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
+
 function App() {
+  const { toasts, removeToast } = useToast();
+
   return (
     <AuthProvider>
       <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
         <Navbar />
 
         <main className="flex-1">
-          <Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/positions" element={<PositionsPage />} />
             <Route path="/companies/:id" element={<PublicCompanyProfilePage />} />
@@ -98,9 +108,14 @@ function App() {
               <Route path="profile" element={<UniversityDashboardPage />} />
             </Route>
           </Routes>
+          </Suspense>
         </main>
 
         <Footer />
+        
+        {/* Global UX Components */}
+        <BackToTop />
+        <ToastContainer toasts={toasts} onClose={removeToast} />
       </div>
     </AuthProvider>
   );

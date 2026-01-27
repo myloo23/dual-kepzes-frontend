@@ -2,6 +2,7 @@ import { type ReactNode, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { cn } from "../utils/cn";
 import { useAuth } from "../features/auth";
+import Breadcrumbs from "../components/shared/Breadcrumbs";
 
 export type NavItem = {
   to: string;
@@ -112,6 +113,7 @@ export default function DashboardLayout(props: {
 
           {/* Tartalom */}
           <main className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <Breadcrumbs className="mb-6" />
             <Outlet />
           </main>
         </div>
