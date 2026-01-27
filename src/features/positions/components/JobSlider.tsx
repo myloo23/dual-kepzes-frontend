@@ -34,7 +34,7 @@ export default function JobSlider({ onViewDetails }: JobSliderProps) {
         const fetchJobs = async () => {
             try {
                 setLoading(true);
-                const allPositions = await api.positions.listPublic();
+                const allPositions = await api.positions.listPublic({ limit: 1000 });
 
                 console.log("📊 All positions:", allPositions);
                 console.log("📊 Positions with isDual values:", allPositions.map(p => ({

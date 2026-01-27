@@ -96,15 +96,18 @@ export default function PublicCompanyProfilePage() {
                     </div>
 
                     <div className="relative px-6 pb-8 md:px-10">
-                        <div className="-mt-12 mb-6 flex flex-col items-center md:-mt-16 md:flex-row md:items-end md:gap-8">
-                            <div className="relative h-24 w-24 overflow-hidden rounded-2xl border-4 border-white bg-white shadow-md md:h-32 md:w-32">
+                        <div className="flex flex-col items-center md:flex-row md:items-start md:gap-8">
+                            {/* Logo - overlaps the blue header */}
+                            <div className="relative -mt-12 h-24 w-24 overflow-hidden rounded-2xl border-4 border-white bg-white shadow-md md:-mt-16 md:h-32 md:w-32 flex-shrink-0">
                                 <img
                                     src={company.logoUrl || logo}
                                     alt={company.name}
                                     className="h-full w-full object-contain p-2"
                                 />
                             </div>
-                            <div className="text-center md:mb-4 md:text-left">
+                            
+                            {/* Company info - on white background */}
+                            <div className="mt-4 text-center md:mt-0 md:pt-4 md:text-left flex-1">
                                 <h1 className="text-3xl font-bold text-slate-900">{company.name}</h1>
                                 <div className="mt-2 flex flex-wrap justify-center gap-4 text-sm text-slate-600 md:justify-start">
                                     {city && (

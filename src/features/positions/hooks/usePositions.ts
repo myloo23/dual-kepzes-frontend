@@ -28,7 +28,7 @@ export function usePositions(): UsePositionsReturn {
             try {
                 setLoading(true);
                 setError(null);
-                const res = await api.positions.listPublic();
+                const res = await api.positions.listPublic({ limit: 1000 });
                 setPositions(Array.isArray(res) ? res : []);
             } catch (e) {
                 console.error('Failed to load positions:', e);
