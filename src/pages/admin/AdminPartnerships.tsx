@@ -4,12 +4,16 @@ import AdminPartnershipsList from "../../features/partnerships/components/AdminP
 import { api } from "../../lib/api";
 import type { Partnership, PartnershipStatus, UniversityUserProfile } from "../../types/api.types";
 
+import ExportButton from '../../components/shared/ExportButton';
+import { usePartnershipExport } from '../../features/partnerships/hooks/usePartnershipExport';
+
 export default function AdminPartnerships() {
     const [partnerships, setPartnerships] = useState<Partnership[]>([]);
     const [universityUsers, setUniversityUsers] = useState<UniversityUserProfile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState<PartnershipStatus | "ALL">("ALL");
     const [searchQuery, setSearchQuery] = useState("");
+    const { handleExport } = usePartnershipExport();
 
     const loadData = async () => {
         setIsLoading(true);
@@ -63,13 +67,22 @@ export default function AdminPartnerships() {
                         A rendszerben lévő összes duális együttműködés kezelése.
                     </p>
                 </div>
-                <button
-                    onClick={loadData}
-                    className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
-                >
-                    Frissítés
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={loadData}
+                        className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
+                    >
+                        Frissítés
+                    </button>
+                    <ExportButton 
+                        onExport={() => handleExport(filteredPartnerships)}
+                        disabled={partnerships.length === 0}
+                        icon="excel"
+                        label="Excel export"
+                    />
+                </div>
             </div>
+
 
             <PartnershipFilters
                 statusFilter={statusFilter}

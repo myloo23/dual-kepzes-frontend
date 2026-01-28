@@ -15,7 +15,8 @@ import {
   LABELS,
   CONFIRM_MESSAGES
 } from '../../constants';
-
+import { useCompanyExport } from '../../features/companies/hooks/useCompanyExport';
+import ExportButton from '../../components/shared/ExportButton';
 export default function AdminCompaniesPage() {
   const companies = useCRUD<Company>({
     listFn: api.companies.list,
@@ -27,6 +28,7 @@ export default function AdminCompaniesPage() {
 
   const modal = useModal<Company>();
   const [lookupId, setLookupId] = useState('');
+  const { handleExport } = useCompanyExport();
 
   // Load companies on mount
   useEffect(() => {
@@ -121,9 +123,17 @@ export default function AdminCompaniesPage() {
               + Új cég
             </Button>
           </div>
-          <Button onClick={companies.load} variant="outline" size="xs">
-            {LABELS.REFRESH}
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={companies.load} variant="outline" size="xs">
+              {LABELS.REFRESH}
+            </Button>
+            <ExportButton 
+              onExport={() => handleExport(companies.items)}
+              disabled={companies.items.length === 0}
+              icon="excel"
+              label="Excel export"
+            />
+          </div>
         </div>
 
         {/* Lookup */}

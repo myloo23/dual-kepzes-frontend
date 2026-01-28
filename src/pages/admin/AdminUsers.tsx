@@ -11,7 +11,8 @@ import StudentFormModal from '../../features/users/components/modals/StudentForm
 import AdminUserModal from '../../features/users/components/modals/AdminUserModal';
 import Button from '../../components/ui/Button';
 import ExportButton from '../../components/shared/ExportButton';
-import { exportToExcel, getExportFilename } from '../../utils/export';
+
+import { useUserExport } from '../../features/users/hooks/useUserExport';
 import {
   PAGE_TITLES,
   PAGE_DESCRIPTIONS,
@@ -27,6 +28,7 @@ export default function AdminUsersPage() {
   const studentModal = useModal<StudentProfile>();
   const genericModal = useModal<any>();
   const [lookupId, setLookupId] = useState('');
+  const { handleExport } = useUserExport();
 
   const handleTabChange = (tab: TabType) => {
     userManagement.clearMessages();
@@ -49,81 +51,6 @@ export default function AdminUsersPage() {
     if (item) {
       handleOpenItem(item);
     }
-  };
-
-  const handleExportExcel = () => {
-    const data = userManagement.items;
-    if (data.length === 0) return;
-
-    // Define columns based on active tab
-    let columns: { key: string; label: string }[] = [];
-    
-    if (userManagement.activeTab === 'STUDENT') {
-      columns = [
-        { key: 'fullName', label: 'Név' },
-        { key: 'email', label: 'Email' },
-        { key: 'neptunCode', label: 'Neptun kód' },
-        { key: 'currentMajor', label: 'Szak' }
-      ];
-    } else if (userManagement.activeTab === 'COMPANY_ADMIN') {
-      columns = [
-        { key: 'fullName', label: 'Név' },
-        { key: 'email', label: 'Email' },
-        { key: 'companyName', label: 'Cég' }
-      ];
-    } else if (userManagement.activeTab === 'UNIVERSITY_USER') {
-      columns = [
-        { key: 'fullName', label: 'Név' },
-        { key: 'email', label: 'Email' }
-      ];
-    } else {
-      columns = [
-        { key: 'email', label: 'Email' },
-        { key: 'role', label: 'Szerepkör' },
-        { key: 'isActive', label: 'Aktív' }
-      ];
-    }
-
-    // Flatten nested data for CSV
-    const flatData = data.map(item => {
-      // Create a flat object based on the item type
-      const flat: any = {};
-      
-      switch (userManagement.activeTab) {
-        case 'STUDENT': {
-           const student = item as any; // Cast for easier access
-           flat.fullName = student.fullName || student.user?.fullName;
-           flat.email = student.email || student.user?.email;
-           flat.neptunCode = student.neptunCode || student.studentProfile?.neptunCode || '-';
-           flat.currentMajor = student.currentMajor || student.studentProfile?.currentMajor || '-';
-           break;
-        }
-        case 'COMPANY_ADMIN': {
-           const admin = item as any;
-           flat.fullName = admin.fullName;
-           flat.email = admin.email;
-           flat.companyName = admin.companyEmployee?.company?.name || '-';
-           break;
-        }
-        case 'UNIVERSITY_USER': {
-           const uni = item as any;
-           flat.fullName = uni.fullName;
-           flat.email = uni.email;
-           break;
-        }
-        case 'INACTIVE_USER': {
-           const user = item as any;
-           flat.email = user.email;
-           flat.role = user.role;
-           flat.isActive = user.isActive ? 'Igen' : 'Nem';
-           break;
-        }
-      }
-      return flat;
-    });
-
-    const tabName = USER_TABS[userManagement.activeTab];
-    exportToExcel(flatData, getExportFilename(`users_${tabName}`, 'xlsx'), columns);
   };
 
   const handleDelete = async (id: string | number) => {
@@ -279,7 +206,7 @@ export default function AdminUsersPage() {
               {LABELS.REFRESH}
             </Button>
             <ExportButton 
-              onExport={handleExportExcel}
+              onExport={() => handleExport(userManagement.items, userManagement.activeTab)}
               disabled={userManagement.items.length === 0}
               icon="excel"
               label="Excel export"

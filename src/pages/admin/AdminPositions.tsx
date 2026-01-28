@@ -15,9 +15,11 @@ import {
   LABELS,
   CONFIRM_MESSAGES
 } from '../../constants';
-
+import { usePositionExport } from '../../features/positions/hooks/usePositionExport';
+import ExportButton from '../../components/shared/ExportButton';
 export default function AdminPositionsPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
+  const { handleExport } = usePositionExport();
 
   const positions = useCRUD<Position>({
     listFn: () => api.positions.list({ limit: 1000 }),
@@ -176,9 +178,17 @@ export default function AdminPositionsPage() {
               + Új pozíció
             </Button>
           </div>
-          <Button onClick={positions.load} variant="outline" size="xs">
-            {LABELS.REFRESH}
-          </Button>
+          <div className="flex gap-2">
+             <Button onClick={positions.load} variant="outline" size="xs">
+              {LABELS.REFRESH}
+            </Button>
+            <ExportButton 
+              onExport={() => handleExport(positions.items)}
+              disabled={positions.items.length === 0}
+              icon="excel"
+              label="Excel export"
+            />
+          </div>
         </div>
 
         {/* Lookup */}
