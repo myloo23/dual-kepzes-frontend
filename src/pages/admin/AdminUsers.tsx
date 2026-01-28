@@ -11,7 +11,7 @@ import StudentFormModal from '../../features/users/components/modals/StudentForm
 import AdminUserModal from '../../features/users/components/modals/AdminUserModal';
 import Button from '../../components/ui/Button';
 import ExportButton from '../../components/shared/ExportButton';
-import { exportToCSV, getExportFilename } from '../../utils/export';
+import { exportToExcel, getExportFilename } from '../../utils/export';
 import {
   PAGE_TITLES,
   PAGE_DESCRIPTIONS,
@@ -51,7 +51,7 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleExportCSV = () => {
+  const handleExportExcel = () => {
     const data = userManagement.items;
     if (data.length === 0) return;
 
@@ -60,41 +60,70 @@ export default function AdminUsersPage() {
     
     if (userManagement.activeTab === 'STUDENT') {
       columns = [
-        { key: 'user.fullName', label: 'Név' },
-        { key: 'user.email', label: 'Email' },
+        { key: 'fullName', label: 'Név' },
+        { key: 'email', label: 'Email' },
         { key: 'neptunCode', label: 'Neptun kód' },
-        { key: 'user.createdAt', label: 'Létrehozva' }
+        { key: 'currentMajor', label: 'Szak' }
       ];
     } else if (userManagement.activeTab === 'COMPANY_ADMIN') {
       columns = [
-        { key: 'user.fullName', label: 'Név' },
-        { key: 'user.email', label: 'Email' },
-        { key: 'companyEmployee.company.name', label: 'Cég' }
+        { key: 'fullName', label: 'Név' },
+        { key: 'email', label: 'Email' },
+        { key: 'companyName', label: 'Cég' }
+      ];
+    } else if (userManagement.activeTab === 'UNIVERSITY_USER') {
+      columns = [
+        { key: 'fullName', label: 'Név' },
+        { key: 'email', label: 'Email' }
       ];
     } else {
       columns = [
-        { key: 'fullName', label: 'Név' },
         { key: 'email', label: 'Email' },
-        { key: 'role', label: 'Szerepkör' }
+        { key: 'role', label: 'Szerepkör' },
+        { key: 'isActive', label: 'Aktív' }
       ];
     }
 
     // Flatten nested data for CSV
     const flatData = data.map(item => {
+      // Create a flat object based on the item type
       const flat: any = {};
-      columns.forEach(col => {
-        const keys = col.key.split('.');
-        let value: any = item;
-        for (const key of keys) {
-          value = value?.[key];
+      
+      switch (userManagement.activeTab) {
+        case 'STUDENT': {
+           const student = item as any; // Cast for easier access
+           flat.fullName = student.fullName || student.user?.fullName;
+           flat.email = student.email || student.user?.email;
+           flat.neptunCode = student.neptunCode || student.studentProfile?.neptunCode || '-';
+           flat.currentMajor = student.currentMajor || student.studentProfile?.currentMajor || '-';
+           break;
         }
-        flat[col.key] = value ?? '-';
-      });
+        case 'COMPANY_ADMIN': {
+           const admin = item as any;
+           flat.fullName = admin.fullName;
+           flat.email = admin.email;
+           flat.companyName = admin.companyEmployee?.company?.name || '-';
+           break;
+        }
+        case 'UNIVERSITY_USER': {
+           const uni = item as any;
+           flat.fullName = uni.fullName;
+           flat.email = uni.email;
+           break;
+        }
+        case 'INACTIVE_USER': {
+           const user = item as any;
+           flat.email = user.email;
+           flat.role = user.role;
+           flat.isActive = user.isActive ? 'Igen' : 'Nem';
+           break;
+        }
+      }
       return flat;
     });
 
     const tabName = USER_TABS[userManagement.activeTab];
-    exportToCSV(flatData, getExportFilename(`users_${tabName}`, 'csv'), columns);
+    exportToExcel(flatData, getExportFilename(`users_${tabName}`, 'xlsx'), columns);
   };
 
   const handleDelete = async (id: string | number) => {
@@ -250,9 +279,10 @@ export default function AdminUsersPage() {
               {LABELS.REFRESH}
             </Button>
             <ExportButton 
-              onExport={handleExportCSV}
+              onExport={handleExportExcel}
               disabled={userManagement.items.length === 0}
-              label="Export CSV"
+              icon="excel"
+              label="Excel export"
             />
           </div>
         </div>

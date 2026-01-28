@@ -1,5 +1,7 @@
+import * as XLSX from 'xlsx';
+
 /**
- * Export utilities for CSV and PDF generation
+ * Export utilities for CSV, Excel and PDF generation
  */
 
 /**
@@ -39,7 +41,51 @@ export function exportToCSV<T extends Record<string, any>>(
   const csv = [header, ...rows].join('\n');
 
   // Create and download file
-  downloadFile(csv, filename, 'text/csv;charset=utf-8;');
+  // Add partial BOM for Excel UTF-8 compatibility
+  downloadFile('\uFEFF' + csv, filename, 'text/csv;charset=utf-8;');
+}
+
+/**
+ * Export data to Excel (.xlsx)
+ */
+export function exportToExcel<T extends Record<string, any>>(
+  data: T[],
+  filename: string,
+  columns?: { key: keyof T; label: string }[]
+) {
+  if (data.length === 0) {
+    console.warn('No data to export');
+    return;
+  }
+
+  // Transform data to match columns
+  const excelData = data.map(item => {
+    const row: Record<string, any> = {};
+    if (columns) {
+      columns.forEach(col => {
+        row[col.label] = item[col.key];
+      });
+    } else {
+      return item;
+    }
+    return row;
+  });
+
+  // Create worksheet
+  const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+  // Auto-width for columns (simple estimation)
+  const colWidths = Object.keys(excelData[0] || {}).map(key => ({
+    wch: Math.max(key.length, ...excelData.map(row => String(row[key] || '').length)) + 2
+  }));
+  worksheet['!cols'] = colWidths;
+
+  // Create workbook
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Export');
+
+  // Write and download
+  XLSX.writeFile(workbook, filename);
 }
 
 /**
@@ -119,7 +165,7 @@ function downloadFile(content: string, filename: string, mimeType: string) {
 /**
  * Format date for filename
  */
-export function getExportFilename(prefix: string, extension: 'csv' | 'pdf'): string {
+export function getExportFilename(prefix: string, extension: 'csv' | 'pdf' | 'xlsx'): string {
   const date = new Date();
   const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
   return `${prefix}_${dateStr}.${extension}`;

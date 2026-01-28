@@ -1,10 +1,10 @@
-import { Download, FileText } from 'lucide-react';
+import { Download, FileText, FileSpreadsheet } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 interface ExportButtonProps {
   onExport: () => void;
   label?: string;
-  icon?: 'csv' | 'pdf';
+  icon?: 'csv' | 'pdf' | 'excel';
   variant?: 'primary' | 'secondary';
   disabled?: boolean;
   className?: string;
@@ -18,8 +18,15 @@ export default function ExportButton({
   disabled = false,
   className
 }: ExportButtonProps) {
-  const Icon = icon === 'csv' ? FileText : Download;
-  const defaultLabel = icon === 'csv' ? 'Export CSV' : 'Export PDF';
+  const Icon = 
+    icon === 'csv' ? FileText : 
+    icon === 'excel' ? FileSpreadsheet : 
+    Download;
+  
+  const defaultLabel = 
+    icon === 'csv' ? 'Export CSV' : 
+    icon === 'excel' ? 'Excel export' : 
+    'Export PDF';
 
   return (
     <button
