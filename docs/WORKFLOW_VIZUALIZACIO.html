@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duális Képzés - Rendszer Architektúra és Workflow</title>
+    
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Mermaid JS -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'base',
+            logLevel: 'error',
+            securityLevel: 'loose',
+            themeVariables: {
+                fontFamily: '"Inter", sans-serif',
+                fontSize: '18px',
+                primaryColor: '#dbeafe',
+                primaryTextColor: '#1e3a8a',
+                primaryBorderColor: '#3b82f6',
+                lineColor: '#64748b',
+                secondaryColor: '#f0fdf4',
+                tertiaryColor: '#fef3c7',
+                mainBkg: '#ffffff',
+                nodeBorder: '#cbd5e1',
+                clusterBkg: '#f8fafc',
+                clusterBorder: '#e2e8f0',
+                edgeLabelBackground: '#ffffff',
+            },
+            flowchart: { 
+                curve: 'basis',
+                padding: 30,
+                nodeSpacing: 80,
+                rankSpacing: 120,
+                diagramPadding: 30,
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            sequence: {
+                actorMargin: 50,
+                boxMargin: 10,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 35,
+                mirrorActors: true,
+                useMaxWidth: true
+            }
+        });
+    </script>
+    
+    <style>
+        :root {
+            --primary: #4338ca;
+            --primary-light: #818cf8;
+            --primary-dark: #312e81;
+            --accent: #22c55e;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-elevated: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --border-light: #475569;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 4rem;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+            border-bottom: 2px solid var(--primary);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(67, 56, 202, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--bg-elevated);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 70px var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .card h2 {
+            color: var(--text-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card h2::before {
+            content: '';
+            width: 6px;
+            height: 2rem;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 3px;
+        }
+
+        .card-description {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+        }
+
+        /* Mermaid Container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+        }
+
+        /* Workflow diagram specific styling */
+        #workflow .mermaid-container {
+            padding: 3rem;
+        }
+
+        #workflow .mermaid text {
+            font-size: 20px !important;
+            font-weight: 600 !important;
+        }
+
+        #workflow .mermaid .node rect,
+        #workflow .mermaid .node circle {
+            stroke-width: 3px !important;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: var(--bg-elevated);
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .info-box h3 {
+            color: var(--primary-light);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-box p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Legend */
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid var(--border-light);
+        }
+
+        .legend-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .mermaid-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-card);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-elevated);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-light);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1>🎓 Duális Képzési Rendszer</h1>
+            <p>Teljes IT Architektúra és Workflow Vizualizáció</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#architektura" class="nav-link">📐 Architektúra</a>
+            <a href="#adatfolyam" class="nav-link">🔄 Adatfolyam</a>
+            <a href="#workflow" class="nav-link">⚙️ Workflow</a>
+            <a href="#feature-structure" class="nav-link">📁 Feature Struktúra</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- 1. System Architecture -->
+        <section id="architektura" class="card">
+            <h2>Teljes Rendszer Architektúra</h2>
+            <p class="card-description">
+                A rendszer rétegeinek kapcsolata és adatfolyama. Ez a diagram bemutatja, hogyan kommunikálnak 
+                a különböző rétegek egymással a felhasználói interakciótól a backend adatbázisig.
+            </p>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TB
+    User([👤 Felhasználó]):::userStyle
+    
+    subgraph Frontend["🎨 FRONTEND"]
+        direction TB
+        
+        subgraph Views["VIEWS - Megjelenítés"]
+            Page["📄 Page Component<br/>(Thin Wrapper)"]:::pageStyle
+            SharedUI["🧩 Shared UI<br/>(Buttons, Inputs)"]:::uiStyle
+        end
+        
+        subgraph Logic["LOGIC - Üzleti Logika"]
+            FeatureHook["🪝 Feature Hook<br/>(useApplications)"]:::hookStyle
+            AuthContext["🔐 Auth Context<br/>(Global State)"]:::stateStyle
+        end
+        
+        subgraph Infrastructure["INFRA - Infrastruktúra"]
+            ApiClient["🌐 API Client<br/>(Axios Instance)"]:::apiStyle
+            Utils["🛠️ Utils<br/>(cn, formatters)"]:::utilsStyle
+        end
+    end
+    
+    subgraph Backend["⚙️ BACKEND"]
+        direction TB
+        API["🔌 REST API<br/>(Express/FastAPI)"]:::serverStyle
+        DB[("💾 Database<br/>(PostgreSQL)")]:::dbStyle
+    end
+    
+    User -->|"Interakció"| Page
+    Page -->|"Használ"| SharedUI
+    Page -.->|"Hook hívás"| FeatureHook
+    
+    FeatureHook -->|"API kérés"| ApiClient
+    SharedUI -.->|"Stílus"| Utils
+    
+    ApiClient ==>|"HTTP Request"| API
+    API <-->|"Query/Insert"| DB
+    
+    AuthContext -.->|"Auth State"| FeatureHook
+    
+    classDef userStyle fill:#22c55e,stroke:#16a34a,stroke-width:3px,color:#fff
+    classDef pageStyle fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a
+    classDef uiStyle fill:#e0e7ff,stroke:#6366f1,stroke-width:2px,color:#3730a3
+    classDef hookStyle fill:#fed7aa,stroke:#f97316,stroke-width:2px,color:#9a3412
+    classDef stateStyle fill:#fecaca,stroke:#ef4444,stroke-width:2px,color:#991b1b
+    classDef apiStyle fill:#d1fae5,stroke:#10b981,stroke-width:2px,color:#065f46
+    classDef utilsStyle fill:#f1f5f9,stroke:#64748b,stroke-width:2px,color:#334155
+    classDef serverStyle fill:#1e293b,stroke:#0f172a,stroke-width:3px,color:#fff
+    classDef dbStyle fill:#475569,stroke:#1e293b,stroke-width:3px,color:#fff
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #22c55e;"></div>
+                    <span class="legend-text">Felhasználó</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #dbeafe;"></div>
+                    <span class="legend-text">Page Components</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fed7aa;"></div>
+                    <span class="legend-text">Hooks (Logic)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #d1fae5;"></div>
+                    <span class="legend-text">API Client</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #1e293b;"></div>
+                    <span class="legend-text">Backend</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #475569;"></div>
+                    <span class="legend-text">Database</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Data Flow -->
+        <section id="adatfolyam" class="card">
+            <h2>Adatfolyam - "Thin Page" Minta</h2>
+            <p class="card-description">
+                Szekvencia diagram, amely bemutatja, hogyan töltődnek be az adatok egy tipikus oldalon. 
+                A Page komponens "vékony" marad, az összes logika a hookokban található.
+            </p>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User as 👤 Felhasználó
+    participant Page as 📄 Page Component
+    participant Hook as 🪝 useApplications Hook
+    participant API as 🌐 API Client
+    participant Backend as ⚙️ Backend API
+    participant DB as 💾 Database
+
+    User->>+Page: Oldal megnyitása
+    Note over Page: useEffect() fut
+    
+    Page->>+Hook: loadApplications()
+    Note over Hook: State: loading = true
+    
+    Hook->>+API: api.applications.list()
+    Note over API: GET /api/applications
+    
+    API->>+Backend: HTTP GET Request
+    Backend->>+DB: SELECT * FROM applications
+    DB-->>-Backend: Adatok
+    Backend-->>-API: JSON Response
+    
+    API-->>-Hook: Applications Data
+    Note over Hook: State: data, loading = false
+    
+    Hook-->>-Page: Return { data, loading, error }
+    Note over Page: Re-render UI
+    
+    Page->>User: Megjelenített adatok
+    deactivate Page
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>💡 Miért "Thin Page"?</h3>
+                <p>
+                    A Page komponensek csak a megjelenítésért felelősek. Az összes üzleti logika, 
+                    API hívás és state management a custom hookokban található. Ez tisztább kódot, 
+                    könnyebb tesztelést és jobb újrafelhasználhatóságot eredményez.
+                </p>
+            </div>
+        </section>
+
+        <!-- 3. Development Workflow -->
+        <section id="workflow" class="card">
+            <h2>Fejlesztési Workflow - Új Funkció Hozzáadása</h2>
+            <p class="card-description">
+                Lépésről lépésre bemutatja, hogyan kell egy új funkciót hozzáadni a projekthez, 
+            </p>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TB
+    Start(["🚀 START<br/>Új Funkció"]):::startStyle
+    
+    Step1["1. STRUKTÚRA<br/><br/>📁 features/FeatureName/<br/>Mappa létrehozása"]:::step1
+    
+    Step2["2. TÍPUSOK<br/><br/>📝 types.ts<br/>Interface definíciók"]:::step2
+    
+    Step3["3. API SZOLGÁLTATÁS<br/><br/>🌐 services/api.ts<br/>Backend hívások"]:::step3
+    
+    Step4["4. CUSTOM HOOK<br/><br/>🪝 hooks/useFeature.ts<br/>Üzleti logika"]:::step4
+    
+    Step5["5. UI KOMPONENSEK<br/><br/>🧩 components/<br/>Megjelenítés"]:::step5
+    
+    Step6["6. PAGE KOMPONENS<br/><br/>📄 pages/FeaturePage.tsx<br/>Thin wrapper"]:::step6
+    
+    Step7["7. ROUTING<br/><br/>🛣️ App.tsx<br/>Route hozzáadása"]:::step7
+    
+    Finish(["✅ KÉSZ<br/>Funkció Működik"]):::finishStyle
+    
+    Start ==> Step1
+    Step1 ==> Step2
+    Step2 ==> Step3
+    Step3 ==> Step4
+    Step4 ==> Step5
+    Step5 ==> Step6
+    Step6 ==> Step7
+    Step7 ==> Finish
+    
+    classDef startStyle fill:#22c55e,stroke:#16a34a,stroke-width:5px,color:#fff,font-size:24px,padding:20px
+    classDef step1 fill:#dbeafe,stroke:#1e40af,stroke-width:4px,color:#0f172a,font-size:20px,padding:25px
+    classDef step2 fill:#fce7f3,stroke:#be185d,stroke-width:4px,color:#0f172a,font-size:20px,padding:25px
+    classDef step3 fill:#fef3c7,stroke:#d97706,stroke-width:4px,color:#0f172a,font-size:20px,padding:25px
+    classDef step4 fill:#fed7aa,stroke:#ea580c,stroke-width:4px,color:#0f172a,font-size:20px,padding:25px
+    classDef step5 fill:#e0e7ff,stroke:#4f46e5,stroke-width:4px,color:#0f172a,font-size:20px,padding:25px
+    classDef step6 fill:#ddd6fe,stroke:#7c3aed,stroke-width:4px,color:#0f172a,font-size:20px,padding:25px
+    classDef step7 fill:#ccfbf1,stroke:#0d9488,stroke-width:4px,color:#0f172a,font-size:20px,padding:25px
+    classDef finishStyle fill:#a78bfa,stroke:#6d28d9,stroke-width:5px,color:#fff,font-size:24px,padding:20px
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>⚠️ Fontos Szabályok</h3>
+                <p>
+                    <strong>1.</strong> Minden feature a <code>src/features/</code> mappában van<br/>
+                    <strong>2.</strong> A Page komponensek csak routing wrapperek<br/>
+                    <strong>3.</strong> Az üzleti logika mindig hookokban van<br/>
+                    <strong>4.</strong> Az API hívások a <code>services/</code> mappában vannak<br/>
+                    <strong>5.</strong> Használd a <code>cn()</code> utilityt Tailwind class mergeléshez
+                </p>
+            </div>
+        </section>
+
+        <!-- 4. Feature Structure -->
+        <section id="feature-structure" class="card">
+            <h2>Feature-Based Struktúra</h2>
+            <p class="card-description">
+                Egy feature teljes belső struktúrája. Minden feature önálló egység, 
+                amely tartalmazza a saját komponenseit, hookjait, típusait és szolgáltatásait.
+            </p>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph TB
+    Root["📁 src/features/applications/"]:::rootStyle
+    
+    Root --> Components["📁 components/"]:::folderStyle
+    Root --> Hooks["📁 hooks/"]:::folderStyle
+    Root --> Services["📁 services/"]:::folderStyle
+    Root --> Types["📄 types.ts"]:::fileStyle
+    
+    Components --> Comp1["ApplicationCard.tsx"]:::compStyle
+    Components --> Comp2["ApplicationList.tsx"]:::compStyle
+    Components --> Comp3["ApplicationForm.tsx"]:::compStyle
+    
+    Hooks --> Hook1["useApplications.ts"]:::hookFileStyle
+    Hooks --> Hook2["useApplicationForm.ts"]:::hookFileStyle
+    
+    Services --> Service1["applicationApi.ts"]:::serviceStyle
+    
+    classDef rootStyle fill:#a78bfa,stroke:#7c3aed,stroke-width:3px,color:#fff
+    classDef folderStyle fill:#fed7aa,stroke:#f97316,stroke-width:2px,color:#9a3412
+    classDef fileStyle fill:#fecaca,stroke:#ef4444,stroke-width:2px,color:#991b1b
+    classDef compStyle fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a
+    classDef hookFileStyle fill:#d1fae5,stroke:#10b981,stroke-width:2px,color:#065f46
+    classDef serviceStyle fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#92400e
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>📦 Colocation Elve</h3>
+                <p>
+                    A kapcsolódó fájlok közel vannak egymáshoz. Ha egy hook csak egy feature-ben használt, 
+                    akkor ott is marad. Ez megkönnyíti a kód megértését és karbantartását.
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Duális Képzési Rendszer - IT Architektúra Dokumentáció</p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+            Generálva: <span id="timestamp"></span>
+        </p>
+    </footer>
+
+    <script>
+        // Add timestamp
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('hu-HU');
+        
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+
+</body>
+</html>
