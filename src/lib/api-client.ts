@@ -35,11 +35,22 @@ async function apiRequest<T>(
 
   if (!res.ok) {
     const body = data as ApiErrorBody;
-    const msg =
-      body?.error ||
-      body?.message ||
-      (Array.isArray(body?.errors) && body.errors[0]?.message) ||
-      `HTTP ${res.status} hiba`;
+    
+    // Handle new error format: error.message
+    let msg = '';
+    
+    if (body?.error && typeof body.error === 'object' && 'message' in body.error) {
+        msg = body.error.message || '';
+    } else if (typeof body?.error === 'string') {
+        msg = body.error;
+    }
+
+    // Fallbacks
+    if (!msg) {
+        msg = body?.message || 
+              (Array.isArray(body?.errors) && body.errors[0]?.message) ||
+              `HTTP ${res.status} hiba`;
+    }
 
     throw new Error(msg);
   }

@@ -5,8 +5,13 @@
 export type Id = string | number;
 
 export type ApiErrorBody = {
+    success?: boolean;
     message?: string;
-    error?: string;
+    error?: string | {
+        code?: string;
+        message?: string;
+        details?: any;
+    };
     errors?: Array<{ field?: string; message?: string }>;
 };
 
