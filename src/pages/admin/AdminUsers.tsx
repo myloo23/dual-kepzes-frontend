@@ -10,6 +10,8 @@ import { useModal } from '../../hooks';
 import StudentFormModal from '../../features/users/components/modals/StudentFormModal';
 import AdminUserModal from '../../features/users/components/modals/AdminUserModal';
 import Button from '../../components/ui/Button';
+import ExportButton from '../../components/shared/ExportButton';
+import { exportToCSV, getExportFilename } from '../../utils/export';
 import {
   PAGE_TITLES,
   PAGE_DESCRIPTIONS,
@@ -47,6 +49,52 @@ export default function AdminUsersPage() {
     if (item) {
       handleOpenItem(item);
     }
+  };
+
+  const handleExportCSV = () => {
+    const data = userManagement.items;
+    if (data.length === 0) return;
+
+    // Define columns based on active tab
+    let columns: { key: string; label: string }[] = [];
+    
+    if (userManagement.activeTab === 'STUDENT') {
+      columns = [
+        { key: 'user.fullName', label: 'Név' },
+        { key: 'user.email', label: 'Email' },
+        { key: 'neptunCode', label: 'Neptun kód' },
+        { key: 'user.createdAt', label: 'Létrehozva' }
+      ];
+    } else if (userManagement.activeTab === 'COMPANY_ADMIN') {
+      columns = [
+        { key: 'user.fullName', label: 'Név' },
+        { key: 'user.email', label: 'Email' },
+        { key: 'companyEmployee.company.name', label: 'Cég' }
+      ];
+    } else {
+      columns = [
+        { key: 'fullName', label: 'Név' },
+        { key: 'email', label: 'Email' },
+        { key: 'role', label: 'Szerepkör' }
+      ];
+    }
+
+    // Flatten nested data for CSV
+    const flatData = data.map(item => {
+      const flat: any = {};
+      columns.forEach(col => {
+        const keys = col.key.split('.');
+        let value: any = item;
+        for (const key of keys) {
+          value = value?.[key];
+        }
+        flat[col.key] = value ?? '-';
+      });
+      return flat;
+    });
+
+    const tabName = USER_TABS[userManagement.activeTab];
+    exportToCSV(flatData, getExportFilename(`users_${tabName}`, 'csv'), columns);
   };
 
   const handleDelete = async (id: string | number) => {
@@ -201,6 +249,11 @@ export default function AdminUsersPage() {
             >
               {LABELS.REFRESH}
             </Button>
+            <ExportButton 
+              onExport={handleExportCSV}
+              disabled={userManagement.items.length === 0}
+              label="Export CSV"
+            />
           </div>
         </div>
 

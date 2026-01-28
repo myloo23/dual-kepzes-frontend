@@ -1,0 +1,29 @@
+# Project-Wide Enhancement Tasks
+
+## Phase 1: Quick Wins ✅
+- [x] Smooth scrolling
+- [x] Loading skeletons
+- [x] Toast notification system
+- [x] Back to top button
+- [x] Breadcrumbs
+- [x] Basic animations
+- [x] Integrated components into pages
+
+## Phase 2: Performance ✅
+- [x] Code splitting
+- [x] Loading fallbacks
+- [x] Image lazy loading
+- [x] OptimizedImage component
+
+## Phase 3: Advanced Features 🚧
+- [x] Global search (Ctrl+K)
+- [x] Export to CSV/PDF utilities
+- [ ] Enhanced filters (salary, date, remote)
+- [ ] Data visualization (charts)
+- [ ] PWA setup (offline support)
+
+## Phase 4: Polish
+- [ ] Accessibility improvements
+- [ ] Dark mode
+- [ ] Comprehensive testing
+- [ ] Documentation updates

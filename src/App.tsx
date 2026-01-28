@@ -4,8 +4,10 @@ import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import BackToTop from "./components/shared/BackToTop";
 import ToastContainer from "./components/shared/ToastContainer";
+import GlobalSearch from "./components/shared/GlobalSearch";
 import PageLoader from "./components/shared/PageLoader";
 import { useToast } from "./hooks/useToast";
+import { useGlobalSearch } from "./hooks/useGlobalSearch";
 import { AuthProvider } from "./features/auth";
 
 // Lazy load page components for better performance
@@ -43,6 +45,7 @@ const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 
 function App() {
   const { toasts, removeToast } = useToast();
+  const { isOpen: isSearchOpen, close: closeSearch } = useGlobalSearch();
 
   return (
     <AuthProvider>
@@ -114,6 +117,7 @@ function App() {
         <Footer />
         
         {/* Global UX Components */}
+        <GlobalSearch isOpen={isSearchOpen} onClose={closeSearch} />
         <BackToTop />
         <ToastContainer toasts={toasts} onClose={removeToast} />
       </div>

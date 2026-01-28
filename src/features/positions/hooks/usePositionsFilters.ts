@@ -11,6 +11,8 @@ import { lower, toTagName } from "../utils/positions.utils";
 
 export type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
 export type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
+export type DatePostedFilter = "ALL" | "24H" | "7D" | "30D";
+export type WorkTypeFilter = "ALL" | "REMOTE" | "ONSITE";
 
 /**
  * Custom hook for filtering and sorting positions
@@ -22,6 +24,8 @@ export function usePositionsFilters(positions: Position[]) {
     const [company, setCompany] = useState("ALL");
     const [tagCategory, setTagCategory] = useState("ALL");
     const [deadlineFilter, setDeadlineFilter] = useState<DeadlineFilter>("ALL");
+    const [datePostedFilter, setDatePostedFilter] = useState<DatePostedFilter>("ALL");
+    const [workTypeFilter, setWorkTypeFilter] = useState<WorkTypeFilter>("ALL");
     const [activeOnly, setActiveOnly] = useState(false);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [sortKey, setSortKey] = useState<SortKey>("NEWEST");
@@ -136,9 +140,46 @@ export function usePositionsFilters(positions: Position[]) {
                 }
             }
 
+            // Date posted filter
+            if (datePostedFilter !== "ALL") {
+                const createdAt = p.createdAt ? new Date(p.createdAt) : null;
+                if (!createdAt) return false;
+
+                const now = new Date();
+                const diffMs = now.getTime() - createdAt.getTime();
+                const diffHours = diffMs / (1000 * 60 * 60);
+                const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+                switch (datePostedFilter) {
+                    case "24H":
+                        if (diffHours > 24) return false;
+                        break;
+                    case "7D":
+                        if (diffDays > 7) return false;
+                        break;
+                    case "30D":
+                        if (diffDays > 30) return false;
+                        break;
+                }
+            }
+
+            // Work type filter (Remote/On-site)
+            if (workTypeFilter !== "ALL") {
+                const cityLower = p.location?.city ? lower(p.location.city) : "";
+                const tagsLower = p.tags?.map((t) => lower(toTagName(t))) || [];
+                const remoteKeywords = ["remote", "távmunka", "home office", "otthoni"];
+                
+                const isRemote = 
+                    remoteKeywords.some(k => cityLower.includes(k)) || 
+                    tagsLower.some(t => remoteKeywords.some(k => t.includes(k)));
+
+                if (workTypeFilter === "REMOTE" && !isRemote) return false;
+                if (workTypeFilter === "ONSITE" && isRemote) return false;
+            }
+
             return true;
         });
-    }, [positions, search, city, company, tagCategory, deadlineFilter, activeOnly, selectedTags]);
+    }, [positions, search, city, company, tagCategory, deadlineFilter, datePostedFilter, workTypeFilter, activeOnly, selectedTags]);
 
     const sortedPositions = useMemo(() => {
         const sorted = [...filteredPositions];
@@ -200,6 +241,8 @@ export function usePositionsFilters(positions: Position[]) {
         setCompany("ALL");
         setTagCategory("ALL");
         setDeadlineFilter("ALL");
+        setDatePostedFilter("ALL");
+        setWorkTypeFilter("ALL");
         setActiveOnly(false);
         setSelectedTags([]);
         setSortKey("NEWEST");
@@ -221,6 +264,8 @@ export function usePositionsFilters(positions: Position[]) {
         company,
         tagCategory,
         deadlineFilter,
+        datePostedFilter,
+        workTypeFilter,
         activeOnly,
         selectedTags,
         sortKey,
@@ -229,6 +274,8 @@ export function usePositionsFilters(positions: Position[]) {
         setCompany,
         setTagCategory,
         setDeadlineFilter,
+        setDatePostedFilter,
+        setWorkTypeFilter,
         setActiveOnly,
         setSelectedTags,
         setSortKey,
