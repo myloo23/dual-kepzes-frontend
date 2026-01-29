@@ -1,5 +1,4 @@
 import { useState, type ChangeEvent } from "react";
-import { useNavigate } from "react-router-dom";
 import { api, type CompanyAdminProfile } from "../../../lib/api";
 import { useAuth } from "../../../features/auth";
 
@@ -9,7 +8,6 @@ interface CompanyProfileEditorProps {
 }
 
 export default function CompanyProfileEditor({ companyAdmin, onUpdate }: CompanyProfileEditorProps) {
-    const navigate = useNavigate();
     const { logout: authLogout } = useAuth();
 
     const [adminForm, setAdminForm] = useState<Partial<CompanyAdminProfile>>({
@@ -54,7 +52,6 @@ export default function CompanyProfileEditor({ companyAdmin, onUpdate }: Company
         try {
             await api.companyAdmins.me.remove();
             authLogout();
-            navigate("/");
         } catch (err) {
             const message = err instanceof Error ? err.message : "Hiba a profil törlése során.";
             setError(message);

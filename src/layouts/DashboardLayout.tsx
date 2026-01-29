@@ -1,5 +1,5 @@
 import { type ReactNode, useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { cn } from "../utils/cn";
 import { useAuth } from "../features/auth";
 import Breadcrumbs from "../components/shared/Breadcrumbs";
@@ -19,7 +19,6 @@ export default function DashboardLayout(props: {
   sidebarTop?: ReactNode;
   homeLink?: string; // Link for clicking the title
 }) {
-  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { logout, user } = useAuth();
 
@@ -27,7 +26,6 @@ export default function DashboardLayout(props: {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
   };
 
   return (

@@ -39,7 +39,10 @@ const AdminNews = lazy(() => import("./pages/admin/AdminNews"));
 // Lazy load other pages
 const MentorPartnerships = lazy(() => import("./pages/mentor/MentorPartnerships"));
 const HrDashboardPage = lazy(() => import("./pages/hr/HrDashboardPage"));
+const HrGuidePage = lazy(() => import("./pages/hr/HrGuidePage"));
 const UniversityDashboardPage = lazy(() => import("./pages/university/UniversityDashboardPage"));
+const UniversityGuidePage = lazy(() => import("./pages/university/UniversityGuidePage"));
+const AdminGuidePage = lazy(() => import("./pages/admin/AdminGuidePage"));
 const ForgotPasswordPage = lazy(() => import("./pages/auth/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 
@@ -69,12 +72,14 @@ function App() {
               <Route path="tags" element={<AdminTags />} />
               <Route path="settings" element={<AdminSettings />} />
               <Route path="news" element={<AdminNews />} />
+              <Route path="guide" element={<AdminGuidePage />} />
             </Route>
 
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/student" element={<StudentDashboardPage />} />
             <Route path="/student/news" element={<StudentDashboardPage />} />
+            <Route path="/student/guide" element={<StudentDashboardPage />} />
 
             <Route path="/teacher" element={<TeacherLayout />}>
               <Route index element={<PlaceholderPage title="Oktatói kezdőlap" />} />
@@ -101,6 +106,7 @@ function App() {
               <Route path="employees" element={<HrDashboardPage />} />
               <Route path="company-profile" element={<HrDashboardPage />} />
               <Route path="profile" element={<HrDashboardPage />} />
+              <Route path="guide" element={<HrGuidePage />} />
             </Route>
 
             <Route path="/university" element={<UniversityLayout />}>
@@ -109,6 +115,7 @@ function App() {
               <Route path="partnerships" element={<UniversityDashboardPage />} />
               <Route path="news" element={<StudentNewsPage />} />
               <Route path="profile" element={<UniversityDashboardPage />} />
+              <Route path="guide" element={<UniversityGuidePage />} />
             </Route>
           </Routes>
           </Suspense>

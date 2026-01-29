@@ -56,6 +56,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
 
         window.dispatchEvent(new Event("localStorageUpdated"));
+        
+        // Use hard redirect to ensure complete state cleanup and prevent white screen
+        window.location.href = "/";
     };
 
     return (

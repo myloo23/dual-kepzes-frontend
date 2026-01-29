@@ -9,6 +9,7 @@ export default function HrLayout() {
     { to: "/hr/employees", label: "Munkavállalók" },
     { to: "/hr/company-profile", label: "Cégprofil" },
     { to: "/hr/profile", label: "Saját profil" },
+    { to: "/hr/guide", label: "Tananyag", hint: "Útmutató az oldal használatához" },
   ];
 
   return (

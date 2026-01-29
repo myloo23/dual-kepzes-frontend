@@ -14,6 +14,7 @@ export default function StudentLayout() {
     { to: "/student/profile", label: "Saját adataim", hint: "Profil és adatok" },
     { to: "/student/applications", label: "Megpályázott állások", hint: "Státusz: megkapta / elutasítva / folyamatban" },
     { to: "/student/faq", label: "Q&A / Útmutató", hint: "Általános használati útmutató" },
+    { to: "/student/guide", label: "Tananyag", hint: "Útmutató az oldal használatához" },
   ];
 
   const extraIfHasJob: NavItem[] = [

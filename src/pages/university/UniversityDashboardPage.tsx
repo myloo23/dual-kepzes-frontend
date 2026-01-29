@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { api, type StudentProfile, type UniversityUserProfile, type Partnership } from "../../lib/api";
 import { useAuth } from "../../features/auth";
 import UniversityPartnershipsTable from "../../features/partnerships/components/UniversityPartnershipsTable";
 
 export default function UniversityDashboardPage() {
-  const navigate = useNavigate();
   const location = useLocation();
   const { logout: authLogout } = useAuth();
 
@@ -134,7 +133,6 @@ export default function UniversityDashboardPage() {
     try {
       await api.universityUsers.me.remove();
       authLogout();
-      navigate("/");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Hiba a profil torlese soran.";
       setProfileError(message);
