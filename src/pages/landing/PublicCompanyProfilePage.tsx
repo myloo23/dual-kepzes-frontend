@@ -27,12 +27,24 @@ export default function PublicCompanyProfilePage() {
                 console.log("Fetched company data:", companyData);
                 setCompany(companyData);
 
-                // Fetch all public positions
-                const allPositions = await api.positions.listPublic();
-                // Filter for this company
+                // Fetch public positions with higher limit and company filter
+                // We ask for 100 items to avoid missing jobs due to pagination
+                // We also attempt to pass companyId filter in case the API supports it
+                const allPositions = await api.positions.listPublic({ 
+                    limit: 100,
+                    companyId: id as any // Cast to any if type definition is strict, though PaginationQuery usually allows extras
+                });
+                
+                // Client-side filter is still kept as a safety net in case the API ignores the companyId param
                 const companyPositions = allPositions.filter(p =>
                     String(p.companyId) === String(id)
                 );
+                
+                // Sort by newness (optional, but good for UX)
+                companyPositions.sort((a, b) => {
+                    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(); 
+                });
+
                 setPositions(companyPositions);
 
             } catch (err) {
@@ -68,20 +80,25 @@ export default function PublicCompanyProfilePage() {
 
                     // Strategy 2: Positions by Company
                     console.log("2. Checking Positions by Company...");
-                    const companyPositions = await api.positions.listByCompany(company.id);
-                    const foundInPos = companyPositions.find(p => (p.company as any)?.description);
-                    
-                    if (foundInPos) {
-                        const desc = (foundInPos.company as any).description;
-                        console.log("✅ Found in Position (ByCompany):", desc.substring(0, 20) + "...");
-                        setCompany(prev => prev ? ({ ...prev, description: desc }) : null);
-                        console.groupEnd();
-                        return;
+                    // Try catch this specifically as it might fail for unauth
+                    try {
+                        const companyPositions = await api.positions.listByCompany(company.id);
+                        const foundInPos = companyPositions.find(p => (p.company as any)?.description);
+                        
+                        if (foundInPos) {
+                            const desc = (foundInPos.company as any).description;
+                            console.log("✅ Found in Position (ByCompany):", desc.substring(0, 20) + "...");
+                            setCompany(prev => prev ? ({ ...prev, description: desc }) : null);
+                            console.groupEnd();
+                            return;
+                        }
+                    } catch (err) {
+                        console.log("⚠️ Strategy 2 failed (likely auth needed):", err);
                     }
 
                     // Strategy 3: Public Positions (Unauthenticated)
                     console.log("3. Checking Public Positions (No Token)...");
-                    const publicPositions = await api.positions.listPublic();
+                    const publicPositions = await api.positions.listPublic({ limit: 100 });
                     const foundInPublic = publicPositions.find(p => 
                         String(p.companyId) === String(company.id) && (p.company as any)?.description
                     );
@@ -135,7 +152,7 @@ export default function PublicCompanyProfilePage() {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20 pt-8">
-            <div className="mx-auto max-w-5xl px-4 lg:px-8">
+            <div className="mx-auto max-w-6xl px-4 lg:px-8">
 
                 {/* Back button */}
                 <button
@@ -148,14 +165,14 @@ export default function PublicCompanyProfilePage() {
 
                 {/* Header Card */}
                 <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
-                    <div className="relative h-32 bg-slate-900 md:h-40">
+                    <div className="relative h-32 bg-slate-900 md:h-48">
                         {/* Cover placeholder - could be a real cover image if available */}
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-slate-900 opacity-90" />
                         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay" />
                     </div>
 
                     <div className="relative px-6 pb-8 md:px-10">
-                        <div className="flex flex-col items-center md:flex-row md:items-start md:gap-8">
+                        <div className="flex flex-col items-center md:flex-row md:items-end md:gap-8">
                             {/* Logo - overlaps the blue header */}
                             <div className="relative -mt-12 h-24 w-24 overflow-hidden rounded-2xl border-4 border-white bg-white shadow-md md:-mt-16 md:h-32 md:w-32 flex-shrink-0">
                                 <img
@@ -166,7 +183,7 @@ export default function PublicCompanyProfilePage() {
                             </div>
                             
                             {/* Company info - on white background */}
-                            <div className="mt-4 text-center md:mt-0 md:pt-4 md:text-left flex-1">
+                            <div className="mt-4 text-center md:mb-2 md:mt-0 md:text-left flex-1">
                                 <h1 className="text-3xl font-bold text-slate-900">{company.name}</h1>
                                 <div className="mt-2 flex flex-wrap justify-center gap-4 text-sm text-slate-600 md:justify-start">
                                     {city && (
@@ -190,34 +207,40 @@ export default function PublicCompanyProfilePage() {
                             </div>
                         </div>
 
-                        <div className="grid gap-8 lg:grid-cols-3">
+                        <div className="mt-10 grid gap-10 lg:grid-cols-3">
                             {/* Main Content */}
                             <div className="lg:col-span-2">
                                 <section className="prose prose-slate max-w-none">
                                     <h2 className="mb-4 text-xl font-semibold text-slate-900">A cégről</h2>
-                                    <div className="whitespace-pre-line text-slate-600">
+                                    <div className="whitespace-pre-line text-slate-600 leading-relaxed">
                                         {company.description || "Nincs elérhető leírás."}
                                     </div>
                                 </section>
 
-                                <div className="mt-8 border-t border-slate-100 pt-8">
-                                    <h2 className="mb-6 text-xl font-semibold text-slate-900">
-                                        Nyitott pozíciók ({positions.length})
-                                    </h2>
+                                <div className="mt-12 border-t border-slate-100 pt-10">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h2 className="text-xl font-semibold text-slate-900">
+                                            Nyitott pozíciók 
+                                            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                                {positions.length}
+                                            </span>
+                                        </h2>
+                                    </div>
+                                    
                                     {positions.length > 0 ? (
-                                        <div className="grid gap-6">
+                                        <div className="grid gap-6 md:grid-cols-2">
                                             {positions.map(position => (
                                                 <PositionCard
                                                     key={position.id}
                                                     position={position}
                                                     logo={company.logoUrl || logo}
-                                                    hideCompanyInfo={true} // New prop needed!
+                                                    hideCompanyInfo={true} // Clean look for profile page
                                                     onApply={(id) => {
                                                         // Store current position to auto-open modal when going back
                                                         sessionStorage.setItem('openPositionId', String(id));
                                                         navigate('/positions');
                                                     }}
-                                                    onCompanyClick={() => { }} // Already here
+                                                    onCompanyClick={() => { }} 
                                                 />
                                             ))}
                                         </div>
