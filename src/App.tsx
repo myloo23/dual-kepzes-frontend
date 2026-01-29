@@ -10,41 +10,69 @@ import { useToast } from "./hooks/useToast";
 import { useGlobalSearch } from "./hooks/useGlobalSearch";
 import { AuthProvider } from "./features/auth";
 
+// Helper function to retry lazy imports with page reload on failure
+// This fixes "Failed to fetch dynamically imported module" errors after deployments
+const lazyRetry = (componentImport: () => Promise<any>) =>
+  lazy(async () => {
+    const pageHasAlreadyBeenForceRefreshed = JSON.parse(
+      window.sessionStorage.getItem('page-has-been-force-refreshed') || 'false'
+    );
+
+    try {
+      const component = await componentImport();
+      window.sessionStorage.setItem('page-has-been-force-refreshed', 'false');
+      return component;
+    } catch (error) {
+      if (!pageHasAlreadyBeenForceRefreshed) {
+        // Assuming that the user is not on the latest version of the application.
+        // Let's refresh the page immediately.
+        window.sessionStorage.setItem('page-has-been-force-refreshed', 'true');
+        return window.location.reload();
+      }
+
+      // The page has already been reloaded
+      // Assuming that user is already using the latest version of the application.
+      // Let's let the application crash and raise the error.
+      throw error;
+    }
+  });
+
+
 // Lazy load page components for better performance
-const HomePage = lazy(() => import("./pages/landing/HomePage"));
-const PositionsPage = lazy(() => import("./pages/landing/PositionsPage"));
-const PublicCompanyProfilePage = lazy(() => import("./pages/landing/PublicCompanyProfilePage"));
-const StudentRegisterPage = lazy(() => import("./pages/auth/StudentRegisterPage"));
-const PlaceholderPage = lazy(() => import("./components/layout/PlaceholderPage"));
-const StudentDashboardPage = lazy(() => import("./pages/student/StudentDashboardPage"));
-const StudentNewsPage = lazy(() => import("./pages/student/StudentNewsPage"));
+const HomePage = lazyRetry(() => import("./pages/landing/HomePage"));
+const PositionsPage = lazyRetry(() => import("./pages/landing/PositionsPage"));
+const PublicCompanyProfilePage = lazyRetry(() => import("./pages/landing/PublicCompanyProfilePage"));
+const StudentRegisterPage = lazyRetry(() => import("./pages/auth/StudentRegisterPage"));
+const PlaceholderPage = lazyRetry(() => import("./components/layout/PlaceholderPage"));
+const StudentDashboardPage = lazyRetry(() => import("./pages/student/StudentDashboardPage"));
+const StudentNewsPage = lazyRetry(() => import("./pages/student/StudentNewsPage"));
 
 // Lazy load layouts
-const TeacherLayout = lazy(() => import("./layouts/TeacherLayout"));
-const MentorLayout = lazy(() => import("./layouts/MentorLayout"));
-const HrLayout = lazy(() => import("./layouts/HrLayout"));
-const UniversityLayout = lazy(() => import("./layouts/UniversityLayout"));
-const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
+const TeacherLayout = lazyRetry(() => import("./layouts/TeacherLayout"));
+const MentorLayout = lazyRetry(() => import("./layouts/MentorLayout"));
+const HrLayout = lazyRetry(() => import("./layouts/HrLayout"));
+const UniversityLayout = lazyRetry(() => import("./layouts/UniversityLayout"));
+const AdminLayout = lazyRetry(() => import("./layouts/AdminLayout"));
 
 // Lazy load admin pages
-const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
-const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
-const AdminCompanies = lazy(() => import("./pages/admin/AdminCompanies"));
-const AdminPositions = lazy(() => import("./pages/admin/AdminPositions"));
-const AdminTags = lazy(() => import("./pages/admin/AdminTags"));
-const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
-const AdminPartnerships = lazy(() => import("./pages/admin/AdminPartnerships"));
-const AdminNews = lazy(() => import("./pages/admin/AdminNews"));
+const AdminDashboard = lazyRetry(() => import("./pages/admin/AdminDashboard"));
+const AdminUsers = lazyRetry(() => import("./pages/admin/AdminUsers"));
+const AdminCompanies = lazyRetry(() => import("./pages/admin/AdminCompanies"));
+const AdminPositions = lazyRetry(() => import("./pages/admin/AdminPositions"));
+const AdminTags = lazyRetry(() => import("./pages/admin/AdminTags"));
+const AdminSettings = lazyRetry(() => import("./pages/admin/AdminSettings"));
+const AdminPartnerships = lazyRetry(() => import("./pages/admin/AdminPartnerships"));
+const AdminNews = lazyRetry(() => import("./pages/admin/AdminNews"));
 
 // Lazy load other pages
-const MentorPartnerships = lazy(() => import("./pages/mentor/MentorPartnerships"));
-const HrDashboardPage = lazy(() => import("./pages/hr/HrDashboardPage"));
-const HrGuidePage = lazy(() => import("./pages/hr/HrGuidePage"));
-const UniversityDashboardPage = lazy(() => import("./pages/university/UniversityDashboardPage"));
-const UniversityGuidePage = lazy(() => import("./pages/university/UniversityGuidePage"));
-const AdminGuidePage = lazy(() => import("./pages/admin/AdminGuidePage"));
-const ForgotPasswordPage = lazy(() => import("./pages/auth/ForgotPasswordPage"));
-const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
+const MentorPartnerships = lazyRetry(() => import("./pages/mentor/MentorPartnerships"));
+const HrDashboardPage = lazyRetry(() => import("./pages/hr/HrDashboardPage"));
+const HrGuidePage = lazyRetry(() => import("./pages/hr/HrGuidePage"));
+const UniversityDashboardPage = lazyRetry(() => import("./pages/university/UniversityDashboardPage"));
+const UniversityGuidePage = lazyRetry(() => import("./pages/university/UniversityGuidePage"));
+const AdminGuidePage = lazyRetry(() => import("./pages/admin/AdminGuidePage"));
+const ForgotPasswordPage = lazyRetry(() => import("./pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazyRetry(() => import("./pages/auth/ResetPasswordPage"));
 
 function App() {
   const { toasts, removeToast } = useToast();
