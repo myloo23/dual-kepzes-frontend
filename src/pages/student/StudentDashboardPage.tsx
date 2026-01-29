@@ -1,6 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ApplicationsList from "../../features/applications/components/ApplicationsList";
+import StudentPartnershipsList from "../../features/partnerships/components/StudentPartnershipsList";
 import { useAuth } from "../../features/auth";
 import StudentNewsPage from "./StudentNewsPage";
 import { api, type StudentProfile } from "../../lib/api";
@@ -137,13 +138,17 @@ export default function StudentDashboardPage() {
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
 
-
+  // Partnerships state
+  const [partnerships, setPartnerships] = useState<any[]>([]);
+  const [partnershipsLoading, setPartnershipsLoading] = useState(false);
 
   // Determine active tab from URL hash
   const activeTab = location.pathname === "/student/news"
     ? "news"
     : location.pathname === "/student/guide"
       ? "guide"
+    : location.pathname === "/student/partnerships"
+      ? "partnerships"
     : location.hash === "#profile"
       ? "profile"
     : location.hash === "#applications"
@@ -174,6 +179,29 @@ export default function StudentDashboardPage() {
     };
 
     loadProfile();
+    return () => {
+      mounted = false;
+    };
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab !== "partnerships") return;
+    let mounted = true;
+
+    const loadPartnerships = async () => {
+      setPartnershipsLoading(true);
+      try {
+        const data = await api.partnerships.listStudent();
+        if (!mounted) return;
+        setPartnerships(data);
+      } catch (err) {
+        console.error("Failed to load partnerships:", err);
+      } finally {
+        if (mounted) setPartnershipsLoading(false);
+      }
+    };
+
+    loadPartnerships();
     return () => {
       mounted = false;
     };
@@ -301,6 +329,16 @@ export default function StudentDashboardPage() {
                 }`}
             >
               Hírek
+            </Link>
+
+            <Link
+              to="/student/partnerships"
+              className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${activeTab === "partnerships"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-slate-600 hover:text-slate-900"
+                }`}
+            >
+              Partnerek
             </Link>
 
             <Link
@@ -633,6 +671,23 @@ export default function StudentDashboardPage() {
         {activeTab === "news" && (
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <StudentNewsPage />
+          </div>
+        )}
+        {activeTab === "partnerships" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900">Partnerkapcsolatok</h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Az Önhöz kapcsolódó partnerkapcsolatok és együttműködések.
+                </p>
+              </div>
+            </div>
+
+            <StudentPartnershipsList
+              partnerships={partnerships}
+              isLoading={partnershipsLoading}
+            />
           </div>
         )}
         {activeTab === "guide" && (

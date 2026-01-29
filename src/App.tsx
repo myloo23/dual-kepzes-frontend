@@ -79,6 +79,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/student" element={<StudentDashboardPage />} />
             <Route path="/student/news" element={<StudentDashboardPage />} />
+            <Route path="/student/partnerships" element={<StudentDashboardPage />} />
             <Route path="/student/guide" element={<StudentDashboardPage />} />
 
             <Route path="/teacher" element={<TeacherLayout />}>
