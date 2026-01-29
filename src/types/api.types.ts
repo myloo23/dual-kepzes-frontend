@@ -79,10 +79,7 @@ export interface StudentProfile {
     phoneNumber: string;
     mothersName: string;
     dateOfBirth: string; // YYYY-MM-DD
-    country: string;
-    zipCode: number;
-    city: string;
-    streetAddress: string;
+    location: Location;
     highSchool: string;
     graduationYear: number;
     neptunCode?: string | null;
@@ -178,10 +175,12 @@ export interface StudentRegisterPayload {
     role: 'STUDENT';
     mothersName: string;
     dateOfBirth: string;
-    country: string;
-    zipCode: number;
-    city: string;
-    streetAddress: string;
+    location: {
+        country: string;
+        zipCode: number;
+        city: string;
+        address: string;
+    };
     highSchool: string;
     graduationYear: number;
     neptunCode?: string | null;

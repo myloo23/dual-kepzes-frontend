@@ -124,8 +124,8 @@ export const CompanyApplicationCard = ({
                                     <div className="grid grid-cols-3 gap-2 text-sm">
                                         <div className="text-slate-500">Lakcím:</div>
                                         <div className="col-span-2 font-medium text-slate-900">
-                                            {displayApp.student.studentProfile ? (
-                                                `${displayApp.student.studentProfile.zipCode} ${displayApp.student.studentProfile.city}, ${displayApp.student.studentProfile.streetAddress}`
+                                            {displayApp.student.studentProfile?.location ? (
+                                                `${displayApp.student.studentProfile.location.zipCode} ${displayApp.student.studentProfile.location.city}, ${displayApp.student.studentProfile.location.address}`
                                             ) : (
                                                 "Nincs megadva"
                                             )}

@@ -17,7 +17,27 @@ type StudentProfilePayload = Partial<StudentProfile> & {
   birthDate?: string;
 };
 
-function normalizeStudentProfile(payload: StudentProfilePayload | null) {
+type StudentFormState = {
+    firstName?: string; // Not used?
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+    mothersName: string;
+    dateOfBirth: string;
+    country: string;
+    zipCode: string | number;
+    city: string;
+    streetAddress: string;
+    highSchool: string;
+    graduationYear: string | number;
+    neptunCode: string;
+    currentMajor: string;
+    studyMode: string;
+    hasLanguageCert: boolean;
+};
+
+// Returns standard nested StudentProfile
+function normalizeStudentProfile(payload: StudentProfilePayload | null): Partial<StudentProfile> | null {
   if (!payload) return null;
 
   const toNumber = (value: unknown) => {
@@ -32,8 +52,9 @@ function normalizeStudentProfile(payload: StudentProfilePayload | null) {
     ...(payload.studentProfile || {}),
   };
   const user = merged.user || {};
-  const rawDate = merged.dateOfBirth || payload.birthDate || "";
+  const rawDate = merged.dateOfBirth || (merged as any).birthDate || payload.birthDate || "";
   const dateOfBirth = rawDate ? String(rawDate).split("T")[0] : "";
+  const loc = (merged as any).location || {};
 
   return {
     id: merged.id ?? "",
@@ -43,33 +64,36 @@ function normalizeStudentProfile(payload: StudentProfilePayload | null) {
     phoneNumber: merged.phoneNumber ?? user.phoneNumber ?? "",
     mothersName: merged.mothersName ?? "",
     dateOfBirth,
-    country: merged.country ?? "",
-    zipCode: toNumber(merged.zipCode),
-    city: merged.city ?? "",
-    streetAddress: merged.streetAddress ?? (merged as { address?: string }).address ?? "",
+    location: {
+        country: loc.country || (merged as any).country || "",
+        zipCode: toNumber(loc.zipCode || (merged as any).zipCode) || 0,
+        city: loc.city || (merged as any).city || "",
+        address: loc.address || (merged as any).streetAddress || (merged as any).address || ""
+    },
     highSchool: merged.highSchool ?? "",
-    graduationYear: toNumber(merged.graduationYear),
+    graduationYear: toNumber(merged.graduationYear) || 0,
     neptunCode: merged.neptunCode ?? "",
     currentMajor: merged.currentMajor ?? "",
-    studyMode: merged.studyMode ?? "NAPPALI",
+    studyMode: (merged.studyMode?.toUpperCase() as "NAPPALI" | "LEVELEZŐ") ?? "NAPPALI",
     hasLanguageCert: Boolean(merged.hasLanguageCert),
   } as Partial<StudentProfile>;
 }
 
-function buildProfileForm(data: Partial<StudentProfile> | null): Partial<StudentProfile> {
-  if (!data) return {};
+function buildProfileForm(data: Partial<StudentProfile> | null): StudentFormState {
+  if (!data) return {} as StudentFormState;
+  const loc = data.location || { country: "", zipCode: "", city: "", address: "" };
   return {
     fullName: data.fullName ?? "",
     email: data.email ?? "",
     phoneNumber: data.phoneNumber ?? "",
     mothersName: data.mothersName ?? "",
     dateOfBirth: data.dateOfBirth ?? "",
-    country: data.country ?? "",
-    zipCode: data.zipCode ?? undefined,
-    city: data.city ?? "",
-    streetAddress: data.streetAddress ?? "",
+    country: loc.country ?? "",
+    zipCode: loc.zipCode ?? "",
+    city: loc.city ?? "",
+    streetAddress: loc.address ?? "",
     highSchool: data.highSchool ?? "",
-    graduationYear: data.graduationYear ?? undefined,
+    graduationYear: data.graduationYear ?? "",
     neptunCode: data.neptunCode ?? "",
     currentMajor: data.currentMajor ?? "",
     studyMode: data.studyMode ?? "NAPPALI",
@@ -77,16 +101,28 @@ function buildProfileForm(data: Partial<StudentProfile> | null): Partial<Student
   };
 }
 
-function buildProfilePayload(form: Partial<StudentProfile>) {
+function buildProfilePayload(form: StudentFormState) {
   const {
     dateOfBirth,
     email,
+    country,
+    zipCode,
+    city,
+    streetAddress,
     ...rest
   } = form;
 
   return {
     ...rest,
+    studyMode: rest.studyMode as "NAPPALI" | "LEVELEZŐ",
+    graduationYear: Number(rest.graduationYear),
     ...(dateOfBirth ? { birthDate: dateOfBirth } : {}),
+    location: {
+        country,
+        zipCode: Number(zipCode),
+        city,
+        address: streetAddress
+    }
   };
 }
 
@@ -95,7 +131,7 @@ export default function StudentDashboardPage() {
   const location = useLocation();
   const { user, logout: authLogout } = useAuth();
   const [profile, setProfile] = useState<Partial<StudentProfile> | null>(null);
-  const [profileForm, setProfileForm] = useState<Partial<StudentProfile>>({});
+  const [profileForm, setProfileForm] = useState<StudentFormState>({} as StudentFormState);
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileDeleting, setProfileDeleting] = useState(false);
@@ -147,16 +183,18 @@ export default function StudentDashboardPage() {
 
   const handleProfileChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const target = event.target;
-    const { name, value, type } = target;
-    const isCheckbox = target instanceof HTMLInputElement && type === "checkbox";
+    // Handle checkbox vs text/select
+    const { name, value, type } = target as HTMLInputElement; 
+    const isCheckbox = type === "checkbox";
+    
     setProfileForm((prev) => ({
       ...prev,
       [name]: isCheckbox
-        ? target.checked
+        ? (target as HTMLInputElement).checked
         : name === "zipCode" || name === "graduationYear"
           ? value === ""
             ? ""
-            : Number(value)
+            : value // Store as string in form state
           : value,
     }));
   };

@@ -86,10 +86,12 @@ export default function StudentRegisterForm() {
 
       mothersName: mothersName.trim(),
       dateOfBirth: birthDate, // "YYYY-MM-DD"
-      country: country.trim(),
-      zipCode: Number(zipCode.trim()), // Convert to number for backend
-      city: city.trim(),
-      streetAddress: streetAddress.trim(),
+      location: {
+        country: country.trim(),
+        zipCode: Number(zipCode.trim()), // Convert to number for backend
+        city: city.trim(),
+        address: streetAddress.trim(),
+      },
       highSchool: highSchool.trim(),
       graduationYear: Number(graduationYear),
       currentMajor: currentMajor.trim(),

@@ -53,31 +53,26 @@ export default function StudentFormModal({
                 // However, StudentRegisterPayload suggests a flat structure for registration.
                 // Let's assume broad compatibility.
 
-                const d = initialData as any;
-                // Check if there is a nested profile object (common in some architectures)
-                // Also check for studentProfile as seen in some backend responses
-                const p = d.profile || d.studentProfile || {};
-                const source = { ...d, ...p };
-
-                // Handle location data which is nested in studentProfile.location or just location
-                const loc = (p as any).location || d.location || {};
+                // Handle location data which is nested in studentProfile.location
+                // We trust the type now, or fallback safely
+                const loc = initialData.location || {};
 
                 setFormData({
-                    fullName: source.fullName || "",
-                    email: source.email || "",
-                    phoneNumber: source.phoneNumber || "",
-                    mothersName: source.mothersName || "",
-                    dateOfBirth: source.dateOfBirth ? String(source.dateOfBirth).split('T')[0] : "", // Handle potential ISO string
-                    country: loc.country || source.country || "",
-                    zipCode: loc.zipCode || source.zipCode || "",
-                    city: loc.city || source.city || "",
-                    streetAddress: loc.address || source.streetAddress || "", // Note: API uses 'address', form uses 'streetAddress'
-                    highSchool: source.highSchool || "",
-                    graduationYear: source.graduationYear || "",
-                    neptunCode: source.neptunCode || "",
-                    currentMajor: source.currentMajor || "",
-                    studyMode: source.studyMode || "NAPPALI",
-                    hasLanguageCert: !!source.hasLanguageCert
+                    fullName: initialData.fullName || "",
+                    email: initialData.email || "",
+                    phoneNumber: initialData.phoneNumber || "",
+                    mothersName: initialData.mothersName || "",
+                    dateOfBirth: initialData.dateOfBirth ? String(initialData.dateOfBirth).split('T')[0] : "", // Handle potential ISO string
+                    country: loc.country || "",
+                    zipCode: loc.zipCode ? String(loc.zipCode) : "",
+                    city: loc.city || "",
+                    streetAddress: loc.address || "", 
+                    highSchool: initialData.highSchool || "",
+                    graduationYear: initialData.graduationYear ? String(initialData.graduationYear) : "",
+                    neptunCode: initialData.neptunCode || "",
+                    currentMajor: initialData.currentMajor || "",
+                    studyMode: initialData.studyMode || "NAPPALI",
+                    hasLanguageCert: !!initialData.hasLanguageCert
                 });
             } else {
                 setFormData(INITIAL_FORM_STATE);
