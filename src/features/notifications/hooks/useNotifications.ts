@@ -38,8 +38,9 @@ export function useNotifications(): UseNotificationsReturn {
       const res = await api.notifications.listActive();
       setActive(Array.isArray(res) ? res : []);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Nem sikerĂĽlt betĂ¶lteni az Ă©rtesĂ­tĂ©seket.';
-      setError(message);
+      // Silently fail if notifications API is not available
+      setActive([]);
+      setError(null);
     } finally {
       setLoading(false);
     }
@@ -52,8 +53,9 @@ export function useNotifications(): UseNotificationsReturn {
       const res = await api.notifications.listArchived();
       setArchived(Array.isArray(res) ? res : []);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Nem sikerĂĽlt betĂ¶lteni az archivĂˇlt Ă©rtesĂ­tĂ©seket.';
-      setError(message);
+      // Silently fail if notifications API is not available
+      setArchived([]);
+      setError(null);
     } finally {
       setLoading(false);
     }
@@ -68,8 +70,9 @@ export function useNotifications(): UseNotificationsReturn {
           : res?.count ?? (res as { unreadNotificationsCount?: number })?.unreadNotificationsCount ?? 0;
       setUnreadCount(count);
     } catch (err) {
-      // Don't set global error for background polling, just warn in console
-      console.warn('Failed to refresh unread notifications count:', err);
+      // Silently fail - notifications might not be implemented on backend
+      // Don't log to console to avoid cluttering production logs
+      setUnreadCount(0);
     }
   }, []);
 
