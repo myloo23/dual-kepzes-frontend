@@ -231,7 +231,14 @@ export interface Application {
             logoUrl?: string | null;
         };
     };
-    student?: StudentProfile | null;
+    student?: {
+        id: string;
+        email: string;
+        fullName: string;
+        phoneNumber: string;
+        role: UserRole;
+        studentProfile?: StudentProfile;
+    } | null;
 }
 
 export interface ApplicationCreatePayload {

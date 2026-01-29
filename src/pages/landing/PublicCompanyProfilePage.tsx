@@ -46,6 +46,65 @@ export default function PublicCompanyProfilePage() {
         fetchData();
     }, [id]);
 
+    // Fallback fetch if description is missing
+    useEffect(() => {
+        const fetchDescriptionFallback = async () => {
+            if (company && !company.description && !loading) {
+                console.group("🛑 Company Description Debugger");
+                console.log("Initial fetch missing description. Attempting fallbacks...");
+                
+                try {
+                    // Strategy 1: Global Company List
+                    console.log("1. Checking Global Company List...");
+                    const companies = await api.companies.list();
+                    const foundInList = companies.find(c => String(c.id) === String(company.id));
+                    
+                    if (foundInList?.description) {
+                        console.log("✅ Found in Global List:", foundInList.description.substring(0, 20) + "...");
+                        setCompany(prev => prev ? ({ ...prev, description: foundInList.description }) : null);
+                        console.groupEnd();
+                        return;
+                    }
+
+                    // Strategy 2: Positions by Company
+                    console.log("2. Checking Positions by Company...");
+                    const companyPositions = await api.positions.listByCompany(company.id);
+                    const foundInPos = companyPositions.find(p => (p.company as any)?.description);
+                    
+                    if (foundInPos) {
+                        const desc = (foundInPos.company as any).description;
+                        console.log("✅ Found in Position (ByCompany):", desc.substring(0, 20) + "...");
+                        setCompany(prev => prev ? ({ ...prev, description: desc }) : null);
+                        console.groupEnd();
+                        return;
+                    }
+
+                    // Strategy 3: Public Positions (Unauthenticated)
+                    console.log("3. Checking Public Positions (No Token)...");
+                    const publicPositions = await api.positions.listPublic();
+                    const foundInPublic = publicPositions.find(p => 
+                        String(p.companyId) === String(company.id) && (p.company as any)?.description
+                    );
+
+                    if (foundInPublic) {
+                        const desc = (foundInPublic.company as any).description;
+                        console.log("✅ Found in Public Position:", desc.substring(0, 20) + "...");
+                        setCompany(prev => prev ? ({ ...prev, description: desc }) : null);
+                        console.groupEnd();
+                        return;
+                    }
+
+                    console.warn("❌ Description not found in any fallback source.");
+
+                } catch (e) {
+                    console.error("Fallback fetch failed", e);
+                }
+                console.groupEnd();
+            }
+        };
+        fetchDescriptionFallback();
+    }, [company?.description, company?.id, loading]);
+
     if (loading) {
         return (
             <div className="flex min-h-screen items-center justify-center">

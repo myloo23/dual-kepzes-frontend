@@ -1,139 +1,32 @@
-import { useEffect, useMemo, useState } from "react";
-import { api, type Application, type ApplicationStatus } from "../../../lib/api";
+import { useCompanyApplications } from "../hooks/useCompanyApplications";
+import { CompanyApplicationCard } from "./CompanyApplicationCard";
 
 export default function CompanyApplicationList() {
-    const [applications, setApplications] = useState<Application[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [actionError, setActionError] = useState<string | null>(null);
-    const [actionId, setActionId] = useState<string | null>(null);
-    const [expandedId, setExpandedId] = useState<string | null>(null);
-    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
-    const [deletingId, setDeletingId] = useState<string | null>(null);
-    const [deleteError, setDeleteError] = useState<string | null>(null);
-
-    // Filtering states
-    const [statusFilter, setStatusFilter] = useState<ApplicationStatus | "ALL">("ALL");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [sortBy, setSortBy] = useState<"newest" | "oldest" | "student-asc" | "student-desc" | "position-asc">("newest");
-
-    const loadApplications = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const list = await api.applications.listCompany();
-            setApplications(Array.isArray(list) ? list : []);
-        } catch (err) {
-            const message = err instanceof Error ? err.message : "Hiba a jelentkezések betöltésekor.";
-            setError(message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        void loadApplications();
-    }, []);
-
-    const statusLabels: Record<ApplicationStatus, string> = {
-        SUBMITTED: "Beküldve",
-        ACCEPTED: "Elfogadva",
-        REJECTED: "Elutasítva",
-        NO_RESPONSE: "Nincs válasz"
-    };
-
-    const handleApplicationDecision = async (id: string, status: "ACCEPTED" | "REJECTED") => {
-        setActionId(id);
-        setActionError(null);
-        try {
-            await api.applications.evaluateCompany(id, { status });
-            await loadApplications();
-        } catch (err) {
-            const message = err instanceof Error ? err.message : "Hiba a jelentkezés frissítésekor.";
-            setActionError(message);
-        } finally {
-            setActionId(null);
-        }
-    };
-
-    const handleDeleteClick = (id: string) => {
-        setDeleteConfirmId(id);
-        setDeleteError(null);
-    };
-
-    const handleDeleteConfirm = async () => {
-        if (!deleteConfirmId) return;
-
-        try {
-            setDeletingId(deleteConfirmId);
-            setDeleteError(null);
-            await api.applications.updateCompanyApplication(deleteConfirmId, {
-                status: "REJECTED",
-                companyNote: "Jelentkezés törölve a cég által."
-            });
-
-            // Remove the application from the list
-            setApplications(prev => prev.filter(app => app.id !== deleteConfirmId));
-            setDeleteConfirmId(null);
-        } catch (err: any) {
-            const errorMsg = err.message || "Hiba történt a jelentkezés törlése során.";
-            setDeleteError(errorMsg);
-        } finally {
-            setDeletingId(null);
-        }
-    };
-
-    const handleDeleteCancel = () => {
-        setDeleteConfirmId(null);
-        setDeleteError(null);
-    };
-
-    // Filtered and sorted applications
-    const filteredApplications = useMemo(() => {
-        let filtered = [...applications];
-
-        // Status filter
-        if (statusFilter !== "ALL") {
-            filtered = filtered.filter(app => app.status === statusFilter);
-        }
-
-        // Search filter
-        if (searchQuery.trim()) {
-            const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(app =>
-                app.student?.fullName.toLowerCase().includes(query) ||
-                app.student?.email.toLowerCase().includes(query) ||
-                app.student?.currentMajor.toLowerCase().includes(query) ||
-                app.position?.title.toLowerCase().includes(query)
-            );
-        }
-
-        // Sort
-        filtered.sort((a, b) => {
-            switch (sortBy) {
-                case "newest":
-                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-                case "oldest":
-                    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-                case "student-asc":
-                    return (a.student?.fullName || "").localeCompare(b.student?.fullName || "", "hu");
-                case "student-desc":
-                    return (b.student?.fullName || "").localeCompare(a.student?.fullName || "", "hu");
-                case "position-asc":
-                    return (a.position?.title || "").localeCompare(b.position?.title || "", "hu");
-                default:
-                    return 0;
-            }
-        });
-
-        return filtered;
-    }, [applications, statusFilter, searchQuery, sortBy]);
-
-    const clearFilters = () => {
-        setStatusFilter("ALL");
-        setSearchQuery("");
-        setSortBy("newest");
-    };
+    const {
+        applications,
+        filteredApplications,
+        loading,
+        error,
+        actionError,
+        actionId,
+        expandedId,
+        deleteConfirmId,
+        deletingId,
+        deleteError,
+        statusFilter,
+        setStatusFilter,
+        searchQuery,
+        setSearchQuery,
+        sortBy,
+        setSortBy,
+        handleApplicationDecision,
+        handleDeleteClick,
+        handleDeleteConfirm,
+        handleDeleteCancel,
+        toggleExpand,
+        clearFilters,
+        getDisplayApplication
+    } = useCompanyApplications();
 
     return (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
@@ -280,69 +173,17 @@ export default function CompanyApplicationList() {
 
             <div className="grid gap-3">
                 {filteredApplications.map((app) => (
-                    <div key={String(app.id)} className="rounded-lg border border-slate-200 p-4">
-                        <div className="font-semibold text-slate-900">
-                            {app.position?.title ?? "Pozíció"}
-                        </div>
-                        <div className="text-sm text-slate-600">
-                            Státusz: {statusLabels[app.status] ?? app.status}
-                        </div>
-                        <div className="mt-4 flex flex-wrap gap-3">
-                            <button
-                                onClick={() =>
-                                    setExpandedId((prev) =>
-                                        prev === String(app.id) ? null : String(app.id)
-                                    )
-                                }
-                                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                            >
-                                {expandedId === String(app.id) ? "Bezárás" : "Megtekintés"}
-                            </button>
-                            <button
-                                onClick={() => handleApplicationDecision(String(app.id), "ACCEPTED")}
-                                disabled={actionId === String(app.id)}
-                                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
-                            >
-                                {actionId === String(app.id) ? "Mentés..." : "Elfogadás"}
-                            </button>
-                            <button
-                                onClick={() => handleApplicationDecision(String(app.id), "REJECTED")}
-                                disabled={actionId === String(app.id)}
-                                className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
-                            >
-                                Elutasítás
-                            </button>
-                            <button
-                                onClick={() => handleDeleteClick(String(app.id))}
-                                disabled={deletingId === String(app.id)}
-                                className="rounded-lg border border-red-300 bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60"
-                            >
-                                {deletingId === String(app.id) ? "Törlés..." : "🗑️ Törlés"}
-                            </button>
-                        </div>
-                        {expandedId === String(app.id) && (
-                            <>
-                                {app.student && (
-                                    <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                                        <div className="font-semibold text-slate-900">Jelentkező adatai</div>
-                                        <div className="mt-1">Név: {app.student.fullName}</div>
-                                        <div>E-mail: {app.student.email}</div>
-                                        <div>Telefonszám: {app.student.phoneNumber}</div>
-                                        <div>Város: {app.student.city}</div>
-                                        <div>Szak: {app.student.currentMajor}</div>
-                                    </div>
-                                )}
-                                {!app.student && (
-                                    <div className="mt-4 text-sm text-slate-600">
-                                        A jelentkező részletes adatai nem elérhetők.
-                                    </div>
-                                )}
-                            </>
-                        )}
-                        {app.companyNote && (
-                            <div className="mt-2 text-sm text-slate-700">Megjegyzés: {app.companyNote}</div>
-                        )}
-                    </div>
+                    <CompanyApplicationCard
+                        key={String(app.id)}
+                        application={getDisplayApplication(app)}
+                        isExpanded={expandedId === String(app.id)}
+                        isLoadingExpand={false}
+                        isActionLoading={actionId === String(app.id)}
+                        isDeleting={deletingId === String(app.id)}
+                        onToggleExpand={toggleExpand}
+                        onDecision={handleApplicationDecision}
+                        onDeleteClick={handleDeleteClick}
+                    />
                 ))}
             </div>
 

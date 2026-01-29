@@ -80,6 +80,7 @@ export default function CompanyProfilePage() {
         contactName: formData.contactName,
         contactEmail: formData.contactEmail,
         locations: [{
+          id: company.locations?.[0]?.id,
           country: formData.hqCountry,
           zipCode: formData.hqZipCode ? Number(formData.hqZipCode) : 0, // Ensure number
           city: formData.hqCity,

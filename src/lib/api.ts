@@ -200,11 +200,16 @@ export const api = {
         body
       ),
 
+    getCompanyApplication: (id: Id) => 
+      apiGet<Application>(`${PATHS.applications}/company/${ensureId(id, 'applicationId')}`),
+
     updateCompanyApplication: (id: Id, body: { status: ApplicationStatus; companyNote?: string }) =>
       apiPatch<Application>(
         `${PATHS.applications}/company/${ensureId(id, 'applicationId')}`,
         body
       ),
+
+
 
     retract: (id: Id) =>
       apiPatch<Application>(
