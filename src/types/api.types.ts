@@ -79,6 +79,7 @@ export interface StudentProfile {
     phoneNumber: string;
     mothersName: string;
     dateOfBirth: string; // YYYY-MM-DD
+    birthDate?: string; // Alternative field name used by some API endpoints (ISO timestamp)
     location: Location;
     highSchool: string;
     graduationYear: number;

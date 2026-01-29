@@ -111,7 +111,21 @@ export const CompanyApplicationCard = ({
                                     <div className="grid grid-cols-3 gap-2 text-sm">
                                         <div className="text-slate-500">Született:</div>
                                         <div className="col-span-2 font-medium text-slate-900">
-                                            {displayApp.student.studentProfile?.dateOfBirth ? new Date(displayApp.student.studentProfile.dateOfBirth).toLocaleDateString("hu-HU") : "Nincs megadva"}
+                                            {(() => {
+                                                const profile = displayApp.student.studentProfile;
+                                                console.log('Student Profile Data:', profile);
+                                                console.log('Full Student Data:', displayApp.student);
+                                                
+                                                // Check all possible locations for birth date
+                                                const birthDate = profile?.birthDate || 
+                                                                profile?.dateOfBirth || 
+                                                                (profile as any)?.birth_date ||
+                                                                (displayApp.student as any)?.birthDate ||
+                                                                (displayApp.student as any)?.dateOfBirth;
+                                                
+                                                console.log('Found birthDate:', birthDate);
+                                                return birthDate ? new Date(birthDate).toLocaleDateString("hu-HU") : "Nincs megadva";
+                                            })()}
                                         </div>
                                     </div>
                                 </div>
