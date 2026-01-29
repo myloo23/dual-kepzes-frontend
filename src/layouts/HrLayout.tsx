@@ -8,6 +8,7 @@ export default function HrLayout() {
     { to: "/hr/partnerships", label: "Partnerek" },
     { to: "/hr/employees", label: "Munkavállalók" },
     { to: "/hr/company-profile", label: "Cégprofil" },
+    { to: "/hr/news", label: "Hírek" },
     { to: "/hr/profile", label: "Saját profil" },
     { to: "/hr/guide", label: "Tananyag", hint: "Útmutató az oldal használatához" },
   ];

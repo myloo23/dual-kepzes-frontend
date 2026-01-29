@@ -105,6 +105,7 @@ function App() {
               <Route path="partnerships" element={<HrDashboardPage />} />
               <Route path="employees" element={<HrDashboardPage />} />
               <Route path="company-profile" element={<HrDashboardPage />} />
+              <Route path="news" element={<StudentNewsPage />} />
               <Route path="profile" element={<HrDashboardPage />} />
               <Route path="guide" element={<HrGuidePage />} />
             </Route>
