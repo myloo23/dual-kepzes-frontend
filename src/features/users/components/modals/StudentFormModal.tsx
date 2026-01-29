@@ -53,26 +53,30 @@ export default function StudentFormModal({
                 // However, StudentRegisterPayload suggests a flat structure for registration.
                 // Let's assume broad compatibility.
 
-                // Handle location data which is nested in studentProfile.location
-                // We trust the type now, or fallback safely
-                const loc = initialData.location || {};
+                const d = initialData as any;
+                // Check if we have a nested profile object (User object with studentProfile)
+                const p = d.studentProfile || d.profile || d;
+                // Merge user fields from root (d) if available, with profile fields from p, using d as priority for user fields if needed
+                
+                // Location is strictly in the profile part (p)
+                const loc = p.location || d.location || {};
 
                 setFormData({
-                    fullName: initialData.fullName || "",
-                    email: initialData.email || "",
-                    phoneNumber: initialData.phoneNumber || "",
-                    mothersName: initialData.mothersName || "",
-                    dateOfBirth: initialData.dateOfBirth ? String(initialData.dateOfBirth).split('T')[0] : "", // Handle potential ISO string
+                    fullName: d.fullName || p.fullName || "",
+                    email: d.email || p.email || "",
+                    phoneNumber: d.phoneNumber || p.phoneNumber || "",
+                    mothersName: p.mothersName || "",
+                    dateOfBirth: (p.dateOfBirth || (p as any).birthDate || d.birthDate || "").split('T')[0],
                     country: loc.country || "",
                     zipCode: loc.zipCode ? String(loc.zipCode) : "",
                     city: loc.city || "",
                     streetAddress: loc.address || "", 
-                    highSchool: initialData.highSchool || "",
-                    graduationYear: initialData.graduationYear ? String(initialData.graduationYear) : "",
-                    neptunCode: initialData.neptunCode || "",
-                    currentMajor: initialData.currentMajor || "",
-                    studyMode: initialData.studyMode || "NAPPALI",
-                    hasLanguageCert: !!initialData.hasLanguageCert
+                    highSchool: p.highSchool || "",
+                    graduationYear: p.graduationYear ? String(p.graduationYear) : "",
+                    neptunCode: p.neptunCode || "",
+                    currentMajor: p.currentMajor || "",
+                    studyMode: p.studyMode || "NAPPALI",
+                    hasLanguageCert: !!p.hasLanguageCert
                 });
             } else {
                 setFormData(INITIAL_FORM_STATE);

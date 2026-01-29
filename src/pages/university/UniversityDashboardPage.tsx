@@ -177,7 +177,7 @@ export default function UniversityDashboardPage() {
                   {student.email} {student.currentMajor ? `• ${student.currentMajor}` : ""}
                 </div>
                 <div className="text-xs text-slate-500 mt-1">
-                  {student.city ? `${student.city} ` : ""}{student.studyMode ? `• ${student.studyMode}` : ""}
+                  {student.location?.city ? `${student.location.city} ` : ""}{student.studyMode ? `• ${student.studyMode}` : ""}
                 </div>
               </div>
             ))}
