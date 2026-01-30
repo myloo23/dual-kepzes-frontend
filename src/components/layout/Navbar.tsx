@@ -5,6 +5,7 @@ import { useAuth } from "../../features/auth";
 import { useNavigation } from "../../hooks/useNavigation";
 import type { NotificationItem } from "../../lib/api";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
+import { GlobalSearch } from "../../features/search";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -85,28 +86,26 @@ export default function Navbar() {
   const closeMobileMenu = () => setMobileOpen(false);
 
   const getLinkClass = (path: string) => {
-    // Kezdőlap esetén pontos egyezés kell, különben mindenhol aktív lenne
     const isActive = path === "/"
       ? location.pathname === "/"
       : location.pathname.startsWith(path);
 
-    const baseClass = "transition-colors duration-200";
-    const activeClass = "text-dkk-blue font-semibold";
-    const inactiveClass = "text-slate-600 hover:text-dkk-blue";
+    // Apple-style: Clean, subtle transition, weight change
+    const baseClass = "transition-all duration-300 text-[13px] tracking-wide font-medium";
+    const activeClass = "text-slate-900";
+    const inactiveClass = "text-slate-500 hover:text-slate-900";
 
     return `${baseClass} ${isActive ? activeClass : inactiveClass}`;
   };
 
-  // Mobil nézethez külön class generátor (nagyobb padding/margin)
   const getMobileLinkClass = (path: string) => {
-    // Kezdőlap esetén pontos egyezés kell
     const isActive = path === "/"
       ? location.pathname === "/"
       : location.pathname.startsWith(path);
 
-    const baseClass = "py-1 block transition-colors duration-200";
+    const baseClass = "py-3 block transition-colors duration-200 text-lg border-b border-gray-100 last:border-0";
     const activeClass = "text-dkk-blue font-semibold";
-    const inactiveClass = "text-slate-700 hover:text-dkk-blue";
+    const inactiveClass = "text-slate-600 hover:text-dkk-blue";
 
     return `${baseClass} ${isActive ? activeClass : inactiveClass}`;
   };
@@ -156,42 +155,47 @@ export default function Navbar() {
   }, [notificationsTab]);
 
   return (
-    <header className="sticky top-0 z-[1100] border-b border-dkk-gray/30 bg-white/80 backdrop-blur">
-      <div className="max-w-6xl mx-auto flex items-center gap-4 px-4 lg:px-8 py-3">
+    <header className="sticky top-0 z-[1100] border-b border-slate-200/60 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
+      <div className="max-w-6xl mx-auto flex items-center gap-6 px-6 lg:px-8 h-16">
         <Link
           to="/"
-          className="flex items-center gap-3"
+          className="flex items-center gap-3 shrink-0 group"
           onClick={closeMobileMenu}
         >
           <img
             src={logoImage}
             alt="Duális Képzési Központ"
-            className="h-10 object-contain"
+            className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </Link>
 
-        <div className="ml-auto flex items-center gap-3">
-          {/* Desktop nav */}
-          <nav className="hidden sm:flex items-center gap-6 text-sm">
-          <Link to="/" className={getLinkClass("/")}>Kezdőlap</Link>
+        {/* Desktop nav - Centered Global Search */}
+        <div className="flex-1 max-w-sm hidden sm:block">
+           <GlobalSearch />
+        </div>
 
-          {dashboardLink && (
-            <Link to={dashboardLink} className={getLinkClass(dashboardLink)}>
-              Irányítópult
-            </Link>
-          )}
+        <div className="flex items-center gap-6 ml-auto">
+          {/* Desktop nav links */}
+          <nav className="hidden sm:flex items-center gap-8">
+            <Link to="/" className={getLinkClass("/")}>Kezdőlap</Link>
+            {dashboardLink && (
+              <Link to={dashboardLink} className={getLinkClass(dashboardLink)}>
+                Irányítópult
+              </Link>
+            )}
 
-          <Link to="/positions" className={getLinkClass("/positions")}>Elérhető állások</Link>
+            <Link to="/positions" className={getLinkClass("/positions")}>Állásajánlatok</Link>
 
-          {newsLink && (
-            <Link to={newsLink} className={getLinkClass(newsLink)}>Hírek</Link>
-          )}
+            {newsLink && (
+              <Link to={newsLink} className={getLinkClass(newsLink)}>Hírek</Link>
+            )}
           </nav>
+          
           {isLoggedIn && (
             <div className="relative" ref={notificationsRef}>
               <button
                 type="button"
-                className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 sm:h-9 sm:w-9"
+                className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 focus:outline-none"
                 aria-label="Értesítések"
                 onClick={() => setNotificationsOpen((prev) => !prev)}
               >
@@ -209,27 +213,28 @@ export default function Navbar() {
                   />
                 </svg>
                 {unreadCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-semibold text-white">
-                    {unreadCount > 99 ? "99+" : unreadCount}
+                  <span className="absolute right-1 top-1 flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
                   </span>
                 )}
               </button>
 
               {notificationsOpen && (
-                <div className="absolute left-1/2 mt-2 w-[90vw] max-w-sm -translate-x-1/2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg sm:left-auto sm:right-0 sm:translate-x-0 sm:w-80">
-                  <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
-                    <span className="text-sm font-semibold text-slate-800">Értesítések</span>
-                    <div className="flex items-center gap-2 text-xs">
+                <div className="absolute right-0 mt-4 w-80 sm:w-96 origin-top-right rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl ring-1 ring-slate-900/5 focus:outline-none overflow-hidden animate-scale-in">
+                  <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 bg-slate-50/50">
+                    <span className="text-sm font-semibold text-slate-900">Értesítések</span>
+                    <div className="flex items-center gap-1">
                       <button
                         type="button"
-                        className="rounded px-2 py-1 text-slate-600 hover:bg-slate-100"
+                        className="rounded-md px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200/50 transition-colors"
                         onClick={() => handleAction(markAllRead)}
                       >
-                        Mind olvasottnak
+                        Mind olvasott
                       </button>
                       <button
                         type="button"
-                        className="rounded px-2 py-1 text-slate-600 hover:bg-slate-100"
+                        className="rounded-md px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200/50 transition-colors"
                         onClick={() => refreshUnreadCount()}
                       >
                         Frissítés
@@ -237,35 +242,44 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2 text-xs">
+                  <div className="p-1.5 flex gap-1 bg-slate-50/50 border-b border-slate-100">
                     <button
                       type="button"
-                      className={`rounded px-2 py-1 ${notificationsTab === "active"
-                        ? "bg-slate-900 text-white"
-                        : "text-slate-600 hover:bg-slate-100"
-                        }`}
+                      className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+                        notificationsTab === "active"
+                          ? "bg-white text-slate-900 shadow-sm"
+                          : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/30"
+                      }`}
                       onClick={() => setNotificationsTab("active")}
                     >
                       Aktív
                     </button>
                     <button
                       type="button"
-                      className={`rounded px-2 py-1 ${notificationsTab === "archived"
-                        ? "bg-slate-900 text-white"
-                        : "text-slate-600 hover:bg-slate-100"
-                        }`}
+                      className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+                        notificationsTab === "archived"
+                          ? "bg-white text-slate-900 shadow-sm"
+                          : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/30"
+                      }`}
                       onClick={() => setNotificationsTab("archived")}
                     >
                       Archivált
                     </button>
                   </div>
 
-                  <div className="max-h-72 overflow-y-auto">
+                  <div className="max-h-[28rem] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
                     {notificationsLoading && (
-                      <div className="px-3 py-4 text-xs text-slate-500">Értesítések betöltése...</div>
+                      <div className="p-8 text-center text-xs text-slate-500">Betöltés...</div>
                     )}
                     {!notificationsLoading && notifications.length === 0 && (
-                      <div className="px-3 py-4 text-xs text-slate-500">Nincs még értesítés.</div>
+                      <div className="p-12 text-center">
+                        <div className="mx-auto mb-3 h-10 w-10 text-slate-300">
+                          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 11-6 0m6 0H9" />
+                          </svg>
+                        </div>
+                        <p className="text-xs text-slate-500">Nincs megjeleníthető értesítés.</p>
+                      </div>
                     )}
                     {notifications.map((item) => {
                       const hasReadFlag = typeof item.isRead === "boolean";
@@ -275,57 +289,63 @@ export default function Navbar() {
                       return (
                         <div
                           key={item.id}
-                          className="border-b border-slate-100 px-3 py-2 last:border-b-0"
+                          className={`group relative border-b border-slate-50 p-4 transition-colors last:border-b-0 hover:bg-slate-50/80 ${
+                            isUnread ? "bg-blue-50/30" : ""
+                          }`}
                         >
                           <button
                             type="button"
                             className="w-full text-left"
                             onClick={() => handleSelectNotification(String(item.id))}
                           >
-                            <div className="flex items-center gap-2">
-                              <span className={`text-sm ${isUnread ? "font-semibold text-slate-900" : "text-slate-700"}`}>
-                                {getNotificationTitle(item)}
-                              </span>
+                            <div className="flex items-start gap-3">
+                              <div className="flex-1 space-y-1">
+                                <p className={`text-sm leading-tight ${isUnread ? "font-semibold text-slate-900" : "text-slate-700"}`}>
+                                  {getNotificationTitle(item)}
+                                </p>
+                                {getNotificationPreview(item) && (
+                                  <p className="line-clamp-2 text-xs text-slate-500">
+                                    {getNotificationPreview(item)}
+                                  </p>
+                                )}
+                              </div>
                               {isUnread && (
-                                <span className="h-2 w-2 rounded-full bg-blue-500" aria-label="Olvasatlan" />
+                                <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
                               )}
                             </div>
-                            {getNotificationPreview(item) && (
-                              <div className="mt-1 text-xs text-slate-500">
-                                {getNotificationPreview(item)}
-                              </div>
-                            )}
                           </button>
-                          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-600">
-                            {notificationsTab === "active" && (
-                              <button
-                                type="button"
-                                className="rounded px-2 py-1 hover:bg-slate-100"
-                                onClick={() => handleAction(() => markRead(String(item.id)))}
-                              >
-                                Olvasottnak
-                              </button>
-                            )}
-                            {notificationsTab === "active" ? (
-                              <button
-                                type="button"
-                                className="rounded px-2 py-1 hover:bg-slate-100"
-                                onClick={() => handleAction(() => archive(String(item.id)))}
-                              >
-                                Archiválás
-                              </button>
+                          
+                          {/* Actions appear on hover */}
+                          <div className="mt-3 flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                             {notificationsTab === "active" ? (
+                              <>
+                                <button
+                                  type="button"
+                                  className="text-[10px] font-medium text-slate-400 hover:text-slate-700 uppercase tracking-wider"
+                                  onClick={() => handleAction(() => markRead(String(item.id)))}
+                                >
+                                  Olvasott
+                                </button>
+                                <button
+                                  type="button"
+                                  className="text-[10px] font-medium text-slate-400 hover:text-slate-700 uppercase tracking-wider"
+                                  onClick={() => handleAction(() => archive(String(item.id)))}
+                                >
+                                  Archivál
+                                </button>
+                              </>
                             ) : (
                               <button
                                 type="button"
-                                className="rounded px-2 py-1 hover:bg-slate-100"
+                                className="text-[10px] font-medium text-slate-400 hover:text-slate-700 uppercase tracking-wider"
                                 onClick={() => handleAction(() => unarchive(String(item.id)))}
                               >
-                                Visszaállítás
+                                Visszaállít
                               </button>
                             )}
                             <button
                               type="button"
-                              className="rounded px-2 py-1 text-red-500 hover:bg-red-50"
+                              className="text-[10px] font-medium text-red-300 hover:text-red-500 uppercase tracking-wider"
                               onClick={() => handleAction(() => remove(String(item.id)))}
                             >
                               Törlés
@@ -337,36 +357,35 @@ export default function Navbar() {
                   </div>
 
                   {(notificationsError || actionError) && (
-                    <div className="border-t border-slate-100 px-3 py-2 text-xs text-red-500">
+                    <div className="bg-red-50 px-4 py-2 text-xs text-red-600">
                       {actionError || notificationsError}
                     </div>
                   )}
 
                   {detailsLoading && (
-                    <div className="border-t border-slate-100 px-3 py-2 text-xs text-slate-500">
+                    <div className="bg-slate-50 px-4 py-2 text-center text-xs text-slate-500">
                       Részletek betöltése...
                     </div>
                   )}
 
                   {selectedNotification && !detailsLoading && (
-                    <div className="border-t border-slate-100 px-3 py-2 text-xs text-slate-600">
-                      <div className="text-sm font-semibold text-slate-800">
+                    <div className="border-t border-slate-100 bg-slate-50/50 px-4 py-3">
+                      <h4 className="text-sm font-semibold text-slate-900 mb-1">
                         {getNotificationTitle(selectedNotification)}
-                      </div>
-                      {getNotificationPreview(selectedNotification) && (
-                        <div className="mt-1 text-xs text-slate-500">
-                          {getNotificationPreview(selectedNotification)}
-                        </div>
-                      )}
+                      </h4>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                         {getNotificationPreview(selectedNotification)}
+                      </p>
                       {selectedNotification.link && (
-                        <div className="mt-2">
-                          <a
-                            href={selectedNotification.link}
-                            className="text-xs font-semibold text-dkk-blue hover:underline"
-                          >
-                            Hivatkozás megnyitása
-                          </a>
-                        </div>
+                        <a
+                          href={selectedNotification.link}
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
+                        >
+                          Hivatkozás megnyitása
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
                       )}
                     </div>
                   )}
@@ -378,22 +397,22 @@ export default function Navbar() {
           {/* Mobile hamburger */}
         <button
           type="button"
-          className="sm:hidden inline-flex items-center justify-center rounded-md border border-slate-300 px-2 py-1 text-slate-700 bg-white shadow-sm"
+          className="sm:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
           onClick={() => setMobileOpen((prev) => !prev)}
           aria-label="Menü megnyitása"
         >
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <span
-              className={`block h-0.5 w-5 rounded bg-slate-700 transition-transform ${mobileOpen ? "translate-y-[5px] rotate-45" : ""
-                }`}
+              className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "translate-y-[8px] rotate-45" : ""
+              }`}
             />
             <span
-              className={`block h-0.5 w-5 rounded bg-slate-700 transition-opacity ${mobileOpen ? "opacity-0" : "opacity-100"
-                }`}
+              className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "opacity-0" : "opacity-100"
+              }`}
             />
             <span
-              className={`block h-0.5 w-5 rounded bg-slate-700 transition-transform ${mobileOpen ? "-translate-y-[5px] -rotate-45" : ""
-                }`}
+              className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "-translate-y-[8px] -rotate-45" : ""
+              }`}
             />
           </div>
         </button>
@@ -402,8 +421,8 @@ export default function Navbar() {
 
       {/* Mobile nav dropdown */}
       {mobileOpen && (
-        <nav className="sm:hidden border-t border-dkk-gray/30 bg-white">
-          <div className="max-w-6xl mx-auto px-4 lg:px-8 py-3 flex flex-col items-end gap-2 text-right text-sm">
+        <nav className="sm:hidden absolute top-full left-0 right-0 border-b border-gray-200 bg-white/95 backdrop-blur-xl animate-fade-in shadow-xl h-screen">
+          <div className="px-6 py-6 flex flex-col gap-2">
             <Link to="/" className={getMobileLinkClass("/")} onClick={closeMobileMenu}>Kezdőlap</Link>
 
             {dashboardLink && (
@@ -412,7 +431,7 @@ export default function Navbar() {
               </Link>
             )}
 
-            <Link to="/positions" className={getMobileLinkClass("/positions")} onClick={closeMobileMenu}>Elérhető állások</Link>
+            <Link to="/positions" className={getMobileLinkClass("/positions")} onClick={closeMobileMenu}>Állásajánlatok</Link>
 
             {newsLink && (
               <Link to={newsLink} className={getMobileLinkClass(newsLink)} onClick={closeMobileMenu}>Hírek</Link>

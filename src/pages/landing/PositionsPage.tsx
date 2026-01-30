@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { usePositions } from '../../features/positions/hooks/usePositions';
 import { usePositionsFilters } from '../../features/positions/hooks/usePositionsFilters';
@@ -47,20 +47,25 @@ export default function PositionsPage() {
     );
   }, []);
 
-  // Check if we should auto-open a position from map navigation
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Check if we should auto-open a position from URL query param
   useEffect(() => {
     if (positions.length === 0) return;
 
-    const openPositionId = sessionStorage.getItem('openPositionId');
-    if (openPositionId) {
-      sessionStorage.removeItem('openPositionId');
+    const positionId = searchParams.get('id');
+    if (positionId) {
+      // Prevent infinite re-opening loop if already open with same ID
+      if (applicationModal.isOpen && String(applicationModal.data?.id) === positionId) {
+        return;
+      }
 
-      const position = positions.find((p: Position) => String(p.id) === openPositionId);
+      const position = positions.find((p: Position) => String(p.id) === positionId);
       if (position) {
         applicationModal.open(position);
       }
     }
-  }, [positions, applicationModal]);
+  }, [positions, applicationModal, searchParams]);
 
   // Navigate to company profile page
   const showCompanyInfo = useCallback(async (
@@ -94,15 +99,21 @@ export default function PositionsPage() {
     } else {
       toast.showError(ERROR_MESSAGES.COMPANY_NOT_FOUND);
     }
-  }, [navigate]);
+  }, [navigate, toast]);
 
   // Handle apply button click
   const handleApply = useCallback((positionId: string | number) => {
     const position = positions.find((p: Position) => String(p.id) === String(positionId));
     if (position) {
       applicationModal.open(position);
+      // Update URL to reflect the open modal
+      setSearchParams(prev => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('id', String(positionId));
+        return newParams;
+      });
     }
-  }, [positions, applicationModal]);
+  }, [positions, applicationModal, setSearchParams]);
 
   // Handle application submission
   const handleSubmitApplication = useCallback(async (note: string) => {
@@ -111,10 +122,26 @@ export default function PositionsPage() {
     try {
       await submitApplication(String(applicationModal.data.id), note);
       applicationModal.close();
+      // Clear URL param on successful submission too
+      setSearchParams(prev => {
+        const newParams = new URLSearchParams(prev);
+        newParams.delete('id');
+        return newParams;
+      });
     } catch (err) {
       throw err; // Let ApplicationModal handle the error
     }
-  }, [applicationModal, submitApplication]);
+  }, [applicationModal, submitApplication, setSearchParams]);
+
+  const handleModalClose = useCallback(() => {
+    applicationModal.close();
+    // Clear URL param when closing manually
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      newParams.delete('id');
+      return newParams;
+    });
+  }, [applicationModal, setSearchParams]);
 
   if (loading) {
     return (
@@ -206,7 +233,7 @@ export default function PositionsPage() {
             city: applicationModal.data.location?.city,
             address: applicationModal.data.location?.address,
           }}
-          onClose={applicationModal.close}
+          onClose={handleModalClose}
           onSubmit={handleSubmitApplication}
         />
       )}

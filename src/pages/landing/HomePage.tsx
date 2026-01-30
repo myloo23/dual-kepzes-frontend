@@ -11,6 +11,7 @@ import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import njeLogoImage from "../../assets/logos/nje_logos/nje_logo2.png";
 import { ROLE_NAVIGATION_PATHS, type UserRole } from "../../config/navigation";
 
+
 function HomePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -64,134 +65,153 @@ function HomePage() {
   } : null;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 lg:px-8">
-      {/* HERO + LOGIN/WELCOME */}
-      <section
-        id="home"
-        className="py-10 lg:py-16 grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center"
-      >
-        <div>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-            <img
-              src={logoImage}
-              alt="Duális Képzési Központ"
-              className="h-14 sm:h-16 lg:h-20 object-contain"
-            />
-            <img
-              src={njeLogoImage}
-              alt="Neumann János Egyetem"
-              className="h-20 sm:h-24 lg:h-28 object-contain"
-            />
-          </div>
-          <p className="text-sm font-semibold text-dkk-blue mb-2">
-            Duális képzések online felülete
-          </p>
-          <h1 className="text-3xl sm:text-4xl lg:text-4xl font-bold tracking-tight text-slate-900 mb-4 text-balance">
-            Duális képzési online rendszer
-          </h1>
-          <p className="text-base sm:text-sm lg:text-base text-slate-600 mb-6 max-w-xl">
-            Egy egységes platform a hallgatók, céges partnerek és az
-            egyetem számára a duális képzés jelentkezési, szerződéses
-            és naplózási folyamatainak kezelésére.
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2 text-sm text-slate-700">
-            <div className="flex items-start gap-3 rounded-xl border border-slate-200/70 bg-white/80 p-3 shadow-sm">
-              <span className="text-lg">🎓</span>
-              <span>Hallgatói jelentkezés és dokumentumfeltöltés</span>
+    <div className="bg-white">
+      <div className="max-w-[1240px] mx-auto px-6 lg:px-8">
+        
+        {/* HERO SECTION */}
+        <section
+          id="home"
+          className="pt-10 pb-16 lg:pt-20 lg:pb-24 grid gap-12 lg:grid-cols-[1.2fr_1fr] items-center"
+        >
+          {/* Left Content */}
+          <div className="space-y-10 animate-fade-in">
+            <div className="flex items-center gap-8">
+              <img
+                src={logoImage}
+                alt="Duális Képzési Központ"
+                className="h-16 sm:h-20 w-auto object-contain"
+              />
+              <div className="w-px h-12 bg-slate-300"></div>
+              <img
+                src={njeLogoImage}
+                alt="Neumann János Egyetem"
+                className="h-20 sm:h-24 w-auto object-contain"
+              />
             </div>
-            <div className="flex items-start gap-3 rounded-xl border border-slate-200/70 bg-white/80 p-3 shadow-sm">
-              <span className="text-lg">🏢</span>
-              <span>Céges pozíciók és jelentkezéskezelés</span>
+            
+            <div className="space-y-6">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tighter text-slate-900 leading-[1.05] text-balance">
+                Duális képzési <br />
+                <span className="text-dkk-blue">online rendszer</span>
+              </h1>
+              <p className="text-xl leading-relaxed text-slate-500 max-w-lg font-normal">
+                Egy egységes platform a hallgatók, céges partnerek és az egységes adminisztráció számára.
+              </p>
             </div>
-            <div className="flex items-start gap-3 rounded-xl border border-slate-200/70 bg-white/80 p-3 shadow-sm">
-              <span className="text-lg">📘</span>
-              <span>Haladási napló és mentor jóváhagyás</span>
-            </div>
-            <div className="flex items-start gap-3 rounded-xl border border-slate-200/70 bg-white/80 p-3 shadow-sm">
-              <span className="text-lg">📝</span>
-              <span>Félév végi értékelések és admin felület</span>
-            </div>
-          </div>
-        </div>
 
-        {!isAuthenticated ? (
-          <LoginCard
-            email={email}
-            password={password}
-            loginError={loginError}
-            loading={loading}
-            onEmailChange={setEmail}
-            onPasswordChange={setPassword}
-            onSubmit={handleLoginSubmit}
-          />
-        ) : userInfo ? (
-          <div className="bg-slate-50 rounded-2xl shadow-xl p-8 text-slate-900 border border-slate-200 transition-all duration-300 hover:shadow-2xl max-w-md w-full mx-auto lg:mx-0">
-            <div className="text-center mb-8">
-              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-3xl font-bold text-dkk-blue border-2 border-slate-200 mx-auto mb-4 shadow-sm">
-                {userInfo.name.charAt(0).toUpperCase()}
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                { icon: "🎓", text: "Hallgatói jelentkezés és dokumentumfeltöltés" },
+                { icon: "🏢", text: "Céges pozíciók és jelentkezéskezelés" },
+                { icon: "📘", text: "Haladási napló és mentor jóváhagyás" },
+                { icon: "📝", text: "Félév végi értékelések és admin felület" }
+              ].map((feature, idx) => (
+                <div key={idx} className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-colors hover:bg-slate-100/80">
+                  <span className="text-2xl">{feature.icon}</span>
+                  <span className="text-sm font-medium text-slate-700 leading-snug">{feature.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Content - Login/User Card */}
+          <div className="relative animate-slide-in-from-right lg:pl-10">
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-50 to-purple-50 rounded-[3rem] blur-3xl opacity-60 -z-10 transform translate-y-10"></div>
+            
+            {!isAuthenticated ? (
+              <div className="relative transform transition-all hover:scale-[1.01] duration-500">
+                <LoginCard
+                  email={email}
+                  password={password}
+                  loginError={loginError}
+                  loading={loading}
+                  onEmailChange={setEmail}
+                  onPasswordChange={setPassword}
+                  onSubmit={handleLoginSubmit}
+                />
               </div>
-              <h3 className="text-3xl font-bold mb-2 break-words leading-tight text-slate-900">{userInfo.name}</h3>
-              <p className="text-slate-600 font-medium text-lg">Üdvözöljük a rendszerben!</p>
-            </div>
+            ) : userInfo ? (
+              <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-2xl p-10 text-center border border-white/50 relative overflow-hidden ring-1 ring-slate-900/5">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-400"></div>
+                <div className="w-24 h-24 bg-gradient-to-br from-slate-50 to-slate-100 rounded-full flex items-center justify-center text-4xl font-bold text-slate-700 mx-auto mb-6 shadow-inner ring-4 ring-white">
+                  {userInfo.name.charAt(0).toUpperCase()}
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">{userInfo.name}</h3>
+                <p className="text-slate-500 mb-8">Bejelentkezve mint {userInfo.role}</p>
 
+                <button
+                  onClick={() => navigate(userInfo.dashboardPath)}
+                  className="w-full bg-slate-900 text-white font-medium py-4 px-6 rounded-xl hover:bg-slate-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 active:scale-95"
+                >
+                  <span>Irányítópult megnyitása</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+        {/* JOBS SECTION */}
+        <section id="jobs" className="py-24 border-t border-slate-100">
+          <div className="text-center mb-16 space-y-4">
+            <span className="text-sm font-bold tracking-widest text-blue-600 uppercase">Lehetőségek</span>
+            <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900">
+              Aktuális Állásajánlatok
+            </h2>
+            <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+              Partnercégeink által meghirdetett teljes munkaidős álláslehetőségek.
+              Fedezd fel a legújabb nyitott pozíciókat.
+            </p>
+          </div>
+
+          <JobSlider onViewDetails={handleViewJobDetails} />
+
+          <div className="text-center mt-12">
             <button
-              onClick={() => navigate(userInfo.dashboardPath)}
-              className="w-full bg-dkk-blue text-white font-bold py-3.5 px-4 rounded-xl hover:bg-blue-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              onClick={() => navigate("/positions")}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-100 text-slate-900 text-sm font-medium hover:bg-slate-200 transition-colors"
             >
-              <span>Irányítópult megnyitása</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              Összes állás megtekintése
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m-4-4H3" />
               </svg>
             </button>
           </div>
-        ) : null}
-      </section>
+        </section>
 
-      {/* ÁLLÁSAJÁNLATOK SZEKCIÓ */}
-      <section id="jobs" className="py-10 border-t border-dkk-gray/30">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3">
-            Aktuális Állásajánlatok
-          </h2>
-          <p className="text-sm text-slate-600 max-w-2xl mx-auto">
-            Partnercégeink által meghirdetett teljes munkaidős álláslehetőségek.
-            Ezek az állások függetlenek a duális képzési programtól, és bárki
-            számára elérhetőek.
-          </p>
+        {/* INFO SECTION */}
+        <section className="py-12 border-t border-slate-100">
+          <DualInfoSection />
+        </section>
+
+        {/* REFERENCES */}
+        <section className="py-12">
+          <ReferencesSlider />
+        </section>
+
+        {/* GALLERY */}
+        <div className="py-12">
+          <MaterialsGallery />
         </div>
 
-        <JobSlider onViewDetails={handleViewJobDetails} />
-
-        <div className="text-center mt-6">
-          <button
-            onClick={() => navigate("/positions")}
-            className="inline-flex items-center gap-2 text-sm font-medium text-dkk-blue hover:text-dkk-blue/80 hover:underline transition"
-          >
-            Összes állás megtekintése →
-          </button>
-        </div>
-      </section>
-
-      <section className="border-t border-dkk-gray/30">
-        <DualInfoSection />
-      </section>
-
-      <section>
-        <ReferencesSlider />
-      </section>
-
-      <MaterialsGallery />
-
-      {/* KAPCSOLAT */}
-      <section id="contact" className="py-12 border-t border-dkk-gray/30 text-center">
-        <h2 className="text-xl lg:text-2xl font-semibold text-slate-900 mb-3">
-          Kapcsolat
-        </h2>
-        <p className="text-sm text-slate-600 max-w-xl mx-auto">
-          A rendszer egyetemi pilot projekt részeként készül. Kérdés
-          esetén forduljon az egyetem duális képzési koordinátorához.
-        </p>
-      </section>
+        {/* CONTACT */}
+        <section id="contact" className="py-24 border-t border-slate-100 text-center">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
+              Kérdése van?
+            </h2>
+            <p className="text-lg text-slate-500">
+              A rendszer egyetemi pilot projekt részeként készül. Kérdés
+              esetén forduljon az egyetem duális képzési koordinátorához.
+            </p>
+            <a href="mailto:dualis@nje.hu" className="inline-block text-blue-600 font-medium hover:underline">
+              Kapcsolatfelvétel
+            </a>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
