@@ -37,9 +37,12 @@ export function Modal({
     if (isOpen) {
       setVisible(true);
       document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
     } else {
       const timer = setTimeout(() => setVisible(false), 200);
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
       return () => clearTimeout(timer);
     }
   }, [isOpen]);

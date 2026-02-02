@@ -55,7 +55,7 @@ export default function DashboardLayout(props: {
             className={cn(
               "rounded-2xl border border-slate-200 bg-white p-3 shadow-sm",
               mobileOpen ? "block" : "hidden",
-              "lg:block"
+              "lg:block lg:self-start"
             )}
           >
             <NavLink
