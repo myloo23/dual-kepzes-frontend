@@ -7,10 +7,13 @@ import { pickLogo } from "../../features/positions/utils/positions.utils";
 import abcTechLogo from "../../assets/logos/abc-tech.jpg";
 import businessItLogo from "../../assets/logos/business-it.jpg";
 import LocationMap from "../../features/applications/components/LocationMap";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/shared/ToastContainer";
 
 export default function PublicCompanyProfilePage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const toast = useToast();
     const [company, setCompany] = useState<Company | null>(null);
     const [positions, setPositions] = useState<Position[]>([]);
     const [loading, setLoading] = useState(true);
@@ -163,6 +166,23 @@ export default function PublicCompanyProfilePage() {
     const city = location?.city;
     const address = location?.address;
 
+    const handleApply = (positionId: string | number) => {
+        const p = positions.find(pos => String(pos.id) === String(positionId));
+        
+        if (p?.company?.hasOwnApplication && p?.company?.website) {
+            const targetUrl = p.company.website;
+            toast.showInfo(`Átirányítás a(z) ${company.name} karrier oldalára...`);
+            setTimeout(() => {
+                window.open(targetUrl, '_blank');
+            }, 1500);
+            return;
+        }
+
+        // Fallback for internal application
+        sessionStorage.setItem('openPositionId', String(positionId));
+        navigate('/positions');
+    };
+
     return (
         <div className="min-h-screen bg-slate-50 pb-20 pt-8">
             <div className="mx-auto max-w-6xl px-4 lg:px-8">
@@ -248,11 +268,7 @@ export default function PublicCompanyProfilePage() {
                                                     position={position}
                                                     logo={company.logoUrl || logo}
                                                     hideCompanyInfo={true} // Clean look for profile page
-                                                    onApply={(id) => {
-                                                        // Store current position to auto-open modal when going back
-                                                        sessionStorage.setItem('openPositionId', String(id));
-                                                        navigate('/positions');
-                                                    }}
+                                                    onApply={(id) => handleApply(id)}
                                                     onCompanyClick={() => { }} 
                                                 />
                                             ))}
@@ -342,6 +358,8 @@ export default function PublicCompanyProfilePage() {
                     </div>
                 </div>
             </div>
+            
+            <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
         </div>
     );
 }

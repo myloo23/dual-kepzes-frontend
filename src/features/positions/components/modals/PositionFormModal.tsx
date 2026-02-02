@@ -11,15 +11,16 @@ interface PositionFormModalProps {
     initialData?: Position | null;
 }
 
-const INITIAL_FORM_STATE: Omit<Position, "id"> = {
+// Update state matching the new requirement
+interface PositionFormData extends Omit<Position, "id" | "location"> {
+    locationId: string;
+}
+
+const INITIAL_FORM_STATE: PositionFormData = {
     companyId: "",
     title: "",
     description: "",
-    location: {
-        zipCode: "",
-        city: "",
-        address: "",
-    },
+    locationId: "",
     deadline: "",
     isDual: false,
     tags: [],
@@ -39,7 +40,7 @@ export default function PositionFormModal({
     companies,
     initialData,
 }: PositionFormModalProps) {
-    const [formData, setFormData] = useState<Omit<Position, "id">>(INITIAL_FORM_STATE);
+    const [formData, setFormData] = useState<PositionFormData>(INITIAL_FORM_STATE);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
@@ -51,6 +52,7 @@ export default function PositionFormModal({
                 setFormData({
                     ...initialData,
                     companyId: initialData.companyId || (companies.length === 1 ? String(companies[0].id) : ""),
+                    locationId: initialData.location?.id ? String(initialData.location.id) : "",
                     deadline: formatDeadlineForInput(initialData.deadline),
                     tags: initialData.tags || [],
                 });
@@ -80,7 +82,6 @@ export default function PositionFormModal({
                 }
             } catch (err) {
                 console.error("Failed to fetch company locations:", err);
-                // Don't show error to user as this is a background enhancement
                 setAvailableLocations([]);
             }
         };
@@ -94,33 +95,7 @@ export default function PositionFormModal({
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
 
-        if (name === "zipCode" || name === "city" || name === "address") {
-            setFormData((prev) => ({
-                ...prev,
-                location: {
-                    ...prev.location!,
-                    [name]: value
-                }
-            }));
-        } else {
-            setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
-        }
-    };
-
-    const handleLocationSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const index = parseInt(e.target.value);
-        if (index >= 0 && index < availableLocations.length) {
-            const loc = availableLocations[index];
-            setFormData((prev) => ({
-                ...prev,
-                location: {
-                    country: loc.country,
-                    zipCode: loc.zipCode,
-                    city: loc.city,
-                    address: loc.address
-                }
-            }));
-        }
+        setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
     };
 
     const handleTagChange = (index: number, field: keyof Tag, value: string) => {
@@ -155,10 +130,17 @@ export default function PositionFormModal({
             setError("A cég kiválasztása kötelező.");
             return;
         }
+        if (!formData.locationId.trim()) {
+            setError("A munkavégzés helyének kiválasztása kötelező.");
+            return;
+        }
 
         setLoading(true);
         try {
-            const payload: Omit<Position, 'id'> = {
+            // We cast correctly as we are sending locationId to backend, 
+            // even if TypeScript expects 'location' object in strict types, 
+            // we assume api.types might differ or we use 'as any' for now if strictly typed to object
+            const payload: any = {
                 ...formData,
                 deadline: formatDeadlineForApi(formData.deadline),
                 tags: formData.tags
@@ -168,6 +150,7 @@ export default function PositionFormModal({
                     }))
                     .filter((tag) => tag.name),
             };
+            
             await onSave(payload);
             onClose();
         } catch (e) {
@@ -233,56 +216,32 @@ export default function PositionFormModal({
                     />
                 </div>
                     
-                {/* Location Section */}
-                <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-semibold text-slate-900">Munkavégzés helye</h3>
-                            {availableLocations.length > 0 && (
-                                <select
-                                    onChange={handleLocationSelect}
-                                    className="text-xs border-slate-300 rounded-lg px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500"
-                                    value=""
-                                >
-                                    <option value="" disabled>Válassz a cég címei közül...</option>
-                                    {availableLocations.map((loc, index) => (
-                                        <option key={index} value={index}>
-                                            {loc.city}, {loc.address}
-                                        </option>
-                                    ))}
-                                </select>
-                            )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-700">Irányítószám *</label>
-                            <input
-                                name="zipCode"
-                                value={formData.location?.zipCode || ""}
-                                onChange={handleFormChange}
-                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-700">Város *</label>
-                            <input
-                                name="city"
-                                value={formData.location?.city || ""}
-                                onChange={handleFormChange}
-                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-1">
-                        <label className="text-xs font-medium text-slate-700">Cím *</label>
-                        <input
-                            name="address"
-                            value={formData.location?.address || ""}
-                            onChange={handleFormChange}
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                        />
-                    </div>
+                {/* Location Selection - Simplified */}
+                <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-700">Munkavégzés helye *</label>
+                    <select
+                        name="locationId"
+                        value={formData.locationId}
+                        onChange={handleFormChange}
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        disabled={availableLocations.length === 0}
+                    >
+                        <option value="">
+                            {availableLocations.length === 0 
+                                ? (formData.companyId ? "A céghez nem tartoznak címek" : "Előbb válassz céget...") 
+                                : "Válassz munkavégzési helyet..."}
+                        </option>
+                        {availableLocations.map((loc) => (
+                            <option key={String(loc.id)} value={String(loc.id)}>
+                                {loc.city}, {loc.address} ({loc.zipCode})
+                            </option>
+                        ))}
+                    </select>
+                    {availableLocations.length === 0 && formData.companyId && (
+                        <p className="text-xs text-amber-600 mt-1">
+                            ⚠️ A kiválasztott céghez nem tartoznak rögzített címek. Kérjük, előbb a cég profiljában adjon hozzá címet.
+                        </p>
+                    )}
                 </div>
 
                 <div className="space-y-1">

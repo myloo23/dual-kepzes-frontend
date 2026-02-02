@@ -18,6 +18,7 @@ import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../constants'
 import type { Position } from '../../lib/api';
 import { hungarianCities } from '../../utils/city-coordinates';
 import { MapPin, Navigation } from 'lucide-react';
+import ToastContainer from '../../components/shared/ToastContainer';
 
 type LocationMode = 'gps' | 'city';
 
@@ -128,7 +129,11 @@ export default function PositionsPage() {
         try {
             const companyDetails = await api.companies.get(position.companyId);
             if (companyDetails.hasOwnApplication && companyDetails.website) {
-                window.open(companyDetails.website, '_blank');
+                toast.showInfo(`Átirányítás a(z) ${companyDetails.name} karrier oldalára...`);
+                // Short delay to let the user see the message
+                setTimeout(() => {
+                    window.open(companyDetails.website!, '_blank');
+                }, 1500);
                 return;
             }
         } catch (error) {
@@ -320,6 +325,9 @@ export default function PositionsPage() {
           </div>
         </div>
       )}
+      {/* Success Message - keeping existing one for application modal success if handled separately, 
+          but ideally we should unify. For now, just adding generic toast container */}
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
     </div>
   );
 }
