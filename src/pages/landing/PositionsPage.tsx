@@ -3,7 +3,7 @@
  * Displays public positions with filtering, sorting, and map view
  */
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { usePositions } from '../../features/positions/hooks/usePositions';
@@ -16,6 +16,10 @@ import PositionsList from '../../features/positions/components/PositionsList';
 import PositionsMap from '../../features/positions/components/PositionsMap';
 import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../constants';
 import type { Position } from '../../lib/api';
+import { hungarianCities } from '../../utils/city-coordinates';
+import { MapPin, Navigation } from 'lucide-react';
+
+type LocationMode = 'gps' | 'city';
 
 export default function PositionsPage() {
   const navigate = useNavigate();
@@ -23,7 +27,10 @@ export default function PositionsPage() {
   const { positions, loading, error, applicationSuccess, submitApplication } = usePositions();
   const filters = usePositionsFilters(positions);
   const applicationModal = useModal<Position>();
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  
+  const [locationMode, setLocationMode] = useState<LocationMode>('gps');
+  const [selectedCity, setSelectedCity] = useState<string>('Budapest');
+  const [gpsLocation, setGpsLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   // Get user location for map
   useEffect(() => {
@@ -31,7 +38,7 @@ export default function PositionsPage() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setUserLocation({
+        setGpsLocation({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
@@ -46,6 +53,16 @@ export default function PositionsPage() {
       }
     );
   }, []);
+
+  // Calculate effective user location based on mode
+  const userLocation = useMemo(() => {
+    if (locationMode === 'gps') {
+      return gpsLocation;
+    } else {
+      const cityCoords = hungarianCities[selectedCity];
+      return cityCoords || null;
+    }
+  }, [locationMode, gpsLocation, selectedCity]);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -163,7 +180,48 @@ export default function PositionsPage() {
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
       {/* Map */}
       {!loading && filters.filtered.length > 0 && !applicationModal.isOpen && (
-        <div className="mb-8">
+        <div className="mb-8 space-y-4">
+            <div className="flex items-center gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm w-fit">
+              <button
+                onClick={() => setLocationMode('gps')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  locationMode === 'gps'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                <Navigation className="w-4 h-4" />
+                Jelenlegi pozíció
+              </button>
+              <div className="h-6 w-px bg-slate-200 my-auto" />
+              <div className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-all ${
+                  locationMode === 'city' ? 'bg-blue-50' : ''
+              }`}>
+                 <button
+                    onClick={() => setLocationMode('city')}
+                    className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                      locationMode === 'city'
+                        ? 'text-blue-700'
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    <MapPin className="w-4 h-4" />
+                    Város választása:
+                  </button>
+                  {locationMode === 'city' && (
+                    <select 
+                      value={selectedCity}
+                      onChange={(e) => setSelectedCity(e.target.value)}
+                      className="text-sm font-medium text-slate-800 bg-transparent border-none focus:ring-0 cursor-pointer py-1 pl-1 pr-8"
+                    >
+                      {Object.keys(hungarianCities).sort().map(city => (
+                        <option key={city} value={city}>{city}</option>
+                      ))}
+                    </select>
+                  )}
+              </div>
+            </div>
+
           <PositionsMap
             positions={filters.filtered}
             userLocation={userLocation}

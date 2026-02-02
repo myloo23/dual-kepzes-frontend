@@ -31,6 +31,22 @@ const userIcon = L.divIcon({
     popupAnchor: [1, -34],
 });
 
+// Green marker for University
+const universityIcon = L.divIcon({
+    className: 'custom-university-marker',
+    html: `
+    <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.375 12.5 28.5 12.5 28.5S25 21.875 25 12.5C25 5.596 19.404 0 12.5 0z" 
+            fill="#10B981" stroke="#047857" stroke-width="1"/>
+      <circle cx="12.5" cy="12.5" r="4" fill="white"/>
+      <path d="M12.5 8 L15 13 L10 13 Z" fill="#047857" /> 
+    </svg>
+  `,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
+
 L.Marker.prototype.options.icon = defaultIcon;
 
 interface PositionsMapProps {
@@ -106,6 +122,10 @@ export default function PositionsMap({
                         <span className="text-slate-600">Az Ön helyzete</span>
                     </div>
                 )}
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+                    <span className="text-slate-600">Egyetem</span>
+                </div>
             </div>
 
             <div className="relative z-0 h-[400px] w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
@@ -165,6 +185,23 @@ export default function PositionsMap({
                             </Popup>
                         </Marker>
                     )}
+
+                    {/* University Marker */}
+                    <Marker
+                        position={[46.8964, 19.6688]}
+                        icon={universityIcon}
+                    >
+                         <Popup>
+                            <div className="text-xs space-y-1">
+                                <div className="font-semibold text-slate-900">
+                                    Neumann János Egyetem
+                                </div>
+                                <div className="text-slate-600">
+                                    Kecskemét, Izsáki út 10.
+                                </div>
+                            </div>
+                        </Popup>
+                    </Marker>
                 </MapContainer>
             </div>
         </div>
