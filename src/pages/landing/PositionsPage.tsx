@@ -16,7 +16,8 @@ import PositionsList from '../../features/positions/components/PositionsList';
 import PositionsMap from '../../features/positions/components/PositionsMap';
 import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../constants';
 import type { Position } from '../../lib/api';
-import { hungarianCities } from '../../utils/city-coordinates';
+import { Combobox } from '../../components/ui/Combobox';
+import HUCities from '../../assets/hu.json'; // Import the JSON
 import { MapPin, Navigation } from 'lucide-react';
 import ToastContainer from '../../components/shared/ToastContainer';
 
@@ -30,8 +31,16 @@ export default function PositionsPage() {
   const applicationModal = useModal<Position>();
   
   const [locationMode, setLocationMode] = useState<LocationMode>('gps');
-  const [selectedCity, setSelectedCity] = useState<string>('Budapest');
+  const [selectedCity, setSelectedCity] = useState<string>('Kecskemét'); // Default to Kecskemet
   const [gpsLocation, setGpsLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  // Memoize city options for Combobox
+  const cityOptions = useMemo(() => {
+    return HUCities.map(city => ({
+        value: city.city,
+        label: city.city
+    })).sort((a, b) => a.label.localeCompare(b.label, 'hu'));
+  }, []);
 
   // Get user location for map
   useEffect(() => {
@@ -60,8 +69,14 @@ export default function PositionsPage() {
     if (locationMode === 'gps') {
       return gpsLocation;
     } else {
-      const cityCoords = hungarianCities[selectedCity];
-      return cityCoords || null;
+      const cityData = HUCities.find(c => c.city === selectedCity);
+      if (cityData) {
+          return {
+              lat: parseFloat(cityData.lat),
+              lng: parseFloat(cityData.lng)
+          };
+      }
+      return null;
     }
   }, [locationMode, gpsLocation, selectedCity]);
 
@@ -198,7 +213,7 @@ export default function PositionsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
       {/* Map */}
-      {!loading && filters.filtered.length > 0 && !applicationModal.isOpen && (
+      {!loading && filters.filtered.length > 0 && (
         <div className="mb-8 space-y-4">
             <div className="flex items-center gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm w-fit">
               <button
@@ -216,7 +231,7 @@ export default function PositionsPage() {
               <div className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-all ${
                   locationMode === 'city' ? 'bg-blue-50' : ''
               }`}>
-                 <button
+                  <button
                     onClick={() => setLocationMode('city')}
                     className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                       locationMode === 'city'
@@ -228,15 +243,16 @@ export default function PositionsPage() {
                     Város választása:
                   </button>
                   {locationMode === 'city' && (
-                    <select 
-                      value={selectedCity}
-                      onChange={(e) => setSelectedCity(e.target.value)}
-                      className="text-sm font-medium text-slate-800 bg-transparent border-none focus:ring-0 cursor-pointer py-1 pl-1 pr-8"
-                    >
-                      {Object.keys(hungarianCities).sort().map(city => (
-                        <option key={city} value={city}>{city}</option>
-                      ))}
-                    </select>
+                    <div className="min-w-[200px]">
+                      <Combobox
+                        options={cityOptions}
+                        value={selectedCity}
+                        onChange={setSelectedCity}
+                        placeholder="Válassz várost..."
+                        searchPlaceholder="Keresés..."
+                        className="w-full"
+                      />
+                    </div>
                   )}
               </div>
             </div>
