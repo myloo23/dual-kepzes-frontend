@@ -1,5 +1,6 @@
 import { useCompanyApplications } from "../hooks/useCompanyApplications";
 import { CompanyApplicationCard } from "./CompanyApplicationCard";
+import { Modal } from "../../../components/ui/Modal";
 
 export default function CompanyApplicationList() {
     const {
@@ -188,53 +189,53 @@ export default function CompanyApplicationList() {
             </div>
 
             {/* Delete Confirmation Dialog */}
-            {
-                deleteConfirmId && (() => {
+            <Modal
+                isOpen={!!deleteConfirmId}
+                onClose={handleDeleteCancel}
+                title="Jelentkezés törlése"
+                size="sm"
+            >
+                {(() => {
                     const app = applications.find(a => String(a.id) === deleteConfirmId);
                     const isAccepted = app?.status === "ACCEPTED";
                     return (
-                        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
-                                <div className="text-center mb-6">
-                                    <div className="text-5xl mb-3">⚠️</div>
-                                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                                        Jelentkezés törlése
-                                    </h3>
-                                    <p className="text-sm text-slate-600">
-                                        {isAccepted
-                                            ? "Biztosan törlöd ezt az elfogadott jelentkezést? Ez megszakítja a duális partnerséget is."
-                                            : "Biztosan törlöd ezt a jelentkezést? Ez a művelet nem vonható vissza."
-                                        }
-                                    </p>
-                                </div>
-
-                                {deleteError && (
-                                    <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                                        {deleteError}
-                                    </div>
-                                )}
-
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={handleDeleteCancel}
-                                        disabled={deletingId !== null}
-                                        className="flex-1 px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 font-medium hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        Mégse
-                                    </button>
-                                    <button
-                                        onClick={handleDeleteConfirm}
-                                        disabled={deletingId !== null}
-                                        className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        {deletingId ? "Törlés..." : "Törlés"}
-                                    </button>
-                                </div>
+                        <>
+                            <div className="text-center mb-6">
+                                <div className="text-5xl mb-3">⚠️</div>
+                                <p className="text-sm text-slate-600">
+                                    {isAccepted
+                                        ? "Biztosan törlöd ezt az elfogadott jelentkezést? Ez megszakítja a duális partnerséget is."
+                                        : "Biztosan törlöd ezt a jelentkezést? Ez a művelet nem vonható vissza."
+                                    }
+                                </p>
                             </div>
-                        </div>
+
+                            {deleteError && (
+                                <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                    {deleteError}
+                                </div>
+                            )}
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={handleDeleteCancel}
+                                    disabled={deletingId !== null}
+                                    className="flex-1 px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 font-medium hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    Mégse
+                                </button>
+                                <button
+                                    onClick={handleDeleteConfirm}
+                                    disabled={deletingId !== null}
+                                    className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    {deletingId ? "Törlés..." : "Törlés"}
+                                </button>
+                            </div>
+                        </>
                     );
-                })()
-            }
+                })()}
+            </Modal>
         </div >
     );
 }

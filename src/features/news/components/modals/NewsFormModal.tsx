@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { type NewsCreatePayload, type NewsItem, type NewsTargetGroup } from "../../../../lib/api";
+import { Modal } from "../../../../components/ui/Modal";
 
 interface NewsFormModalProps {
     isOpen: boolean;
@@ -99,26 +100,14 @@ export default function NewsFormModal({
         }
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-black bg-opacity-50 p-4 overflow-y-auto">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl my-8">
-                <div className="border-b border-slate-200 p-6 flex justify-between items-center bg-slate-50 rounded-t-2xl">
-                    <h2 className="text-xl font-semibold text-slate-900">
-                        {initialData ? "Hír szerkesztése" : "Új hír létrehozása"}
-                    </h2>
-                    <button
-                        onClick={onClose}
-                        className="text-slate-400 hover:text-slate-600 transition-colors"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title={initialData ? "Hír szerkesztése" : "Új hír létrehozása"}
+            size="2xl"
+        >
+                <form onSubmit={handleSubmit} className="space-y-4">
                     {error && (
                         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                             {error}
@@ -234,7 +223,6 @@ export default function NewsFormModal({
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
+        </Modal>
     );
 }

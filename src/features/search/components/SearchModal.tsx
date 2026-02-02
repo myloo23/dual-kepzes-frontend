@@ -3,6 +3,7 @@ import { Search, X, Loader2, FileText, Briefcase, Building2, Newspaper, ChevronR
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../utils/cn';
 import type { SearchResult } from '../types';
+import { Modal } from '../../../components/ui/Modal';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -17,20 +18,12 @@ export function SearchModal({ isOpen, onClose, query, setQuery, results, loading
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const listRef = useRef<HTMLDivElement>(null);
 
+  // Focus input when open
   useEffect(() => {
     if (isOpen) {
-      // Lock body scroll
-      document.body.style.overflow = 'hidden';
-      // Focus input
       setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
-      document.body.style.overflow = '';
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
   }, [isOpen]);
 
   // Reset selection when results change
@@ -60,21 +53,18 @@ export function SearchModal({ isOpen, onClose, query, setQuery, results, loading
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[2000] flex items-start justify-center pt-[10vh] px-4">
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-transparent"
-        onClick={onClose}
-      />
-
-      {/* Modal Content */}
-      <div className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl ring-1 ring-black/5 overflow-hidden flex flex-col max-h-[70vh] animate-in fade-in zoom-in-95 duration-200">
-        
+    <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Keresés"
+        hideHeader={true}
+        align="top"
+        size="2xl"
+        className="overflow-hidden flex flex-col max-h-[70vh]"
+    >
         {/* Header / Input */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100">
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
           <Search className="w-5 h-5 text-gray-400" />
           <input
             ref={inputRef}
@@ -99,8 +89,7 @@ export function SearchModal({ isOpen, onClose, query, setQuery, results, loading
 
         {/* Results List */}
         <div 
-          ref={listRef}
-          className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent"
+          className="flex-1 p-2 space-y-1"
         >
           {results.length === 0 && !loading && (
              <div className="py-12 text-center text-gray-500">
@@ -161,8 +150,7 @@ export function SearchModal({ isOpen, onClose, query, setQuery, results, loading
              </div>
           )}
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
 

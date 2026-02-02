@@ -1,5 +1,5 @@
-import { X } from "lucide-react";
 import { type Company } from "../../../../lib/api";
+import { Modal } from "../../../../components/ui/Modal";
 
 type CompanyProfileModalProps = {
     company: Company | null;
@@ -8,31 +8,16 @@ type CompanyProfileModalProps = {
 };
 
 export default function CompanyProfileModal({ company, isOpen, onClose }: CompanyProfileModalProps) {
-    if (!isOpen || !company) return null;
+    if (!company) return null;
 
     return (
-        <div
-            className="fixed inset-0 z-[1200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-            onClick={onClose}
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Cég profilja"
+            size="2xl"
         >
-            <div
-                className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Fejléc */}
-                <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-                    <h2 className="text-xl font-semibold text-slate-900">Cég profilja</h2>
-                    <button
-                        onClick={onClose}
-                        className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition"
-                        aria-label="Bezárás"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-
-                {/* Tartalom */}
-                <div className="p-6 space-y-6">
+                <div className="space-y-6">
                     {/* Cég neve */}
                     <div>
                         <h3 className="text-2xl font-bold text-slate-900">{company.name}</h3>
@@ -98,18 +83,17 @@ export default function CompanyProfileModal({ company, isOpen, onClose }: Compan
                             <p className="text-slate-500 text-sm italic">Nincs megadva cím.</p>
                         )}
                     </div>
+                    
+                     {/* Lábléc */}
+                    <div className="pt-4 border-t border-slate-200">
+                        <button
+                            onClick={onClose}
+                            className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
+                        >
+                            Bezárás
+                        </button>
+                    </div>
                 </div>
-
-                {/* Lábléc */}
-                <div className="sticky bottom-0 border-t border-slate-200 bg-white px-6 py-4">
-                    <button
-                        onClick={onClose}
-                        className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
-                    >
-                        Bezárás
-                    </button>
-                </div>
-            </div>
-        </div>
+        </Modal>
     );
 }
