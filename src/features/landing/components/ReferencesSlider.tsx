@@ -11,6 +11,7 @@ import kiralyIldikoImg from "../../../assets/reference-images/Kiraly_I.jpg";
 import borzakNikolettImg from "../../../assets/reference-images/Borzsak_N.jpg";
 import subaEdinaImg from "../../../assets/reference-images/Suba_E.jpg";
 import boldizsarAdriennImg from "../../../assets/reference-images/Adri-1-1-200x300.jpg";
+import palotaiBernadettImg from "../../../assets/reference-images/palotaibernadett.png";
 
 // Data extracted from the user's provided text
 const REFERENCES = [
@@ -89,7 +90,8 @@ const REFERENCES = [
         title: "Tanulmányi ügyintéző",
         email: "palotai.bernadett@nje.hu",
         group: "Oktatási és Képzési Igazgatóság",
-        description: "Tanulmányi ügyintézőként támogatom az oktatásszervezési feladatokat és a hallgatói ügyintézést."
+        description: "Tanulmányi ügyintézőként támogatom az oktatásszervezési feladatokat és a hallgatói ügyintézést.",
+        image: palotaiBernadettImg
     }
 ];
 
