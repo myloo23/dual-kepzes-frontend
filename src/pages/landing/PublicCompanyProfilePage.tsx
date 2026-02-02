@@ -45,7 +45,20 @@ export default function PublicCompanyProfilePage() {
                     return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(); 
                 });
 
-                setPositions(companyPositions);
+                // Enrich positions with company data (to ensure hasOwnApplication is present)
+                const enrichedPositions = companyPositions.map(p => ({
+                    ...p,
+                    company: {
+                        ...p.company,
+                        name: companyData.name,
+                        logoUrl: companyData.logoUrl,
+                        locations: companyData.locations,
+                        hasOwnApplication: companyData.hasOwnApplication,
+                        website: companyData.website
+                    }
+                }));
+
+                setPositions(enrichedPositions);
 
             } catch (err) {
                 console.error("Error fetching company profile:", err);

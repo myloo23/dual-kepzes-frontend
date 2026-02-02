@@ -1,4 +1,5 @@
 // src/components/company-profile/CompanyProfileDisplay.tsx
+import { Globe } from 'lucide-react';
 import { type Company } from "../../../lib/api";
 
 interface CompanyProfileDisplayProps {
@@ -28,6 +29,20 @@ export default function CompanyProfileDisplay({ company }: CompanyProfileDisplay
                             )) || '-'}
                         </dd>
                     </div>
+
+                    {company.hasOwnApplication && company.website && (
+                        <div className="sm:col-span-2">
+                            <div className="mt-4 p-3 bg-blue-50 text-blue-700 rounded-lg text-sm flex items-start gap-2">
+                                <Globe size={16} className="mt-0.5 flex-shrink-0" />
+                                <div>
+                                    <div className="font-medium">Külső jelentkezési felület aktív</div>
+                                    <div className="mt-1 text-xs opacity-90 break-all">
+                                        A jelentkezők a <strong>{company.website}</strong> címre lesznek irányítva.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="sm:col-span-2">
                         <dt className="text-sm font-medium text-gray-500">Kapcsolattartó</dt>

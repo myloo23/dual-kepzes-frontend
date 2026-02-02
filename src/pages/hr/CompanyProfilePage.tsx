@@ -19,7 +19,9 @@ export default function CompanyProfilePage() {
     hqAddress: '',
     contactName: '',
     contactEmail: '',
-    description: ''
+    description: '',
+    website: '',
+    hasOwnApplication: false,
   });
 
   useEffect(() => {
@@ -41,7 +43,9 @@ export default function CompanyProfilePage() {
             hqAddress: companyData.locations?.[0]?.address || '',
             contactName: companyData.contactName,
             contactEmail: companyData.contactEmail,
-            description: companyData.description || ''
+            description: companyData.description || '',
+            website: companyData.website || '',
+            hasOwnApplication: companyData.hasOwnApplication || false,
           });
         } else {
           setError("Nem található a felhasználóhoz rendelt cég.");
@@ -57,16 +61,30 @@ export default function CompanyProfilePage() {
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, type } = e.target;
+    
+    if (type === 'checkbox') {
+        const checked = (e.target as HTMLInputElement).checked;
+        setFormData(prev => ({
+            ...prev,
+            [name]: checked
+        }));
+    } else {
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!company) return;
+
+    if (formData.hasOwnApplication && !formData.website?.trim()) {
+      setError("Külső jelentkezési felület használata esetén a Weboldal megadása kötelező.");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -85,7 +103,9 @@ export default function CompanyProfilePage() {
           zipCode: formData.hqZipCode ? Number(formData.hqZipCode) : 0, // Ensure number
           city: formData.hqCity,
           address: formData.hqAddress
-        }]
+        }],
+        hasOwnApplication: formData.hasOwnApplication,
+        website: formData.website || undefined
       };
       await api.companies.update(company.id, payload);
       // We need to re-fetch or construct the full object manually if updating local state
@@ -111,7 +131,9 @@ export default function CompanyProfilePage() {
         hqAddress: company.locations?.[0]?.address || '',
         contactName: company.contactName,
         contactEmail: company.contactEmail,
-        description: company.description || ''
+        description: company.description || '',
+        website: company.website || '',
+        hasOwnApplication: company.hasOwnApplication || false,
       });
     }
     setIsEditing(false);

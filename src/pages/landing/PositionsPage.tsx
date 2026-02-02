@@ -119,17 +119,31 @@ export default function PositionsPage() {
   }, [navigate, toast]);
 
   // Handle apply button click
-  const handleApply = useCallback((positionId: string | number) => {
+  const handleApply = useCallback(async (positionId: string | number) => {
     const position = positions.find((p: Position) => String(p.id) === String(positionId));
-    if (position) {
-      applicationModal.open(position);
-      // Update URL to reflect the open modal
-      setSearchParams(prev => {
+    if (!position) return;
+
+    // Fix: Check for external application details if missing from list view
+    if (position.companyId && (!position.company?.hasOwnApplication || position.company?.website === undefined)) {
+        try {
+            const companyDetails = await api.companies.get(position.companyId);
+            if (companyDetails.hasOwnApplication && companyDetails.website) {
+                window.open(companyDetails.website, '_blank');
+                return;
+            }
+        } catch (error) {
+            console.error("Failed to verify company application settings:", error);
+            // Fallback to internal apply if check fails
+        }
+    }
+
+    applicationModal.open(position);
+    // Update URL to reflect the open modal
+    setSearchParams(prev => {
         const newParams = new URLSearchParams(prev);
         newParams.set('id', String(positionId));
         return newParams;
-      });
-    }
+    });
   }, [positions, applicationModal, setSearchParams]);
 
   // Handle application submission

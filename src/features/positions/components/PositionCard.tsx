@@ -9,7 +9,14 @@ type Position = {
     deadline?: string;
     tags?: any[];
     companyId?: string | number;
-    company?: { id?: string | number; name?: string; locations?: Array<{ city?: string }> };
+    company?: { 
+        id?: string | number; 
+        name: string;
+        locations?: Array<{ city?: string }>;
+        logoUrl?: string | null;
+        website?: string | null;
+        hasOwnApplication?: boolean;
+    };
     [key: string]: any;
 };
 
@@ -164,6 +171,12 @@ export default function PositionCard({ position: p, logo, onCompanyClick, onAppl
                     type="button"
                     onClick={(e) => {
                         e.stopPropagation();
+                        // Check for external application
+                        if (p.company?.hasOwnApplication && p.company?.website) {
+                            window.open(p.company.website, '_blank');
+                            return;
+                        }
+
                         if (onApply && p.id) {
                             onApply(p.id);
                         }

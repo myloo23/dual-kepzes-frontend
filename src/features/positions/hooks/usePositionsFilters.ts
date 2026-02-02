@@ -123,6 +123,12 @@ export function usePositionsFilters(positions: Position[]) {
 
                 const now = new Date();
                 const diffMs = deadline.getTime() - now.getTime();
+                
+                // If filtering by deadline (7D, 30D, 90D), exclude expired positions
+                if (deadlineFilter !== "NO_DEADLINE" && diffMs < 0) {
+                    return false;
+                }
+
                 const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
                 switch (deadlineFilter) {

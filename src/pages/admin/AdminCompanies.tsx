@@ -43,14 +43,7 @@ export default function AdminCompaniesPage() {
   const handleEdit = async (id: string | number) => {
     companies.clearMessages();
 
-    // Try to find in local list first to avoid API call and potential missing relations
-    const localCompany = companies.items.find((c) => String(c.id) === String(id));
-    if (localCompany && localCompany.locations?.length > 0) {
-      modal.open(localCompany);
-      return;
-    }
-
-    // Fallback to fetch
+    // Always fetch fresh data to ensure we have all fields (including detailed profile and new settings)
     const company = await companies.get(id);
     if (company) {
       modal.open(company);

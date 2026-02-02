@@ -18,6 +18,7 @@ interface CompanyFormData {
     description: string;
     website: string;
     logoUrl: string;
+    hasOwnApplication: boolean;
 }
 
 const INITIAL_FORM_STATE: CompanyFormData = {
@@ -28,7 +29,8 @@ const INITIAL_FORM_STATE: CompanyFormData = {
     contactEmail: "",
     description: "",
     website: "",
-    logoUrl: ""
+    logoUrl: "",
+    hasOwnApplication: false,
 };
 
 export default function CompanyFormModal({
@@ -55,7 +57,8 @@ export default function CompanyFormModal({
                     contactEmail: initialData.contactEmail,
                     description: initialData.description || "",
                     website: initialData.website || "",
-                    logoUrl: initialData.logoUrl || ""
+                    logoUrl: initialData.logoUrl || "",
+                    hasOwnApplication: initialData.hasOwnApplication || false,
                 });
             } else {
                 setFormData(INITIAL_FORM_STATE);
@@ -64,8 +67,13 @@ export default function CompanyFormModal({
     }, [isOpen, initialData]);
 
     const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const { name, value, type } = e.target;
+        if (type === "checkbox") {
+             const checked = (e.target as HTMLInputElement).checked;
+             setFormData((prev) => ({ ...prev, [name]: checked }));
+        } else {
+             setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleLocationChange = (index: number, field: keyof Location, value: string | number) => {
@@ -107,6 +115,11 @@ export default function CompanyFormModal({
             setError("Legalább egy cím megadása kötelező.");
             return;
         }
+
+        if (formData.hasOwnApplication && !formData.website.trim()) {
+            setError("Külső jelentkezési felület használata esetén a Weboldal megadása kötelező.");
+            return;
+        }
         
         // Validate each location
         for (let i = 0; i < formData.locations.length; i++) {
@@ -128,7 +141,8 @@ export default function CompanyFormModal({
                 website: formData.website?.trim() || undefined,
                 logoUrl: formData.logoUrl?.trim() || undefined,
                 description: formData.description?.trim() || undefined,
-                locations: formData.locations as Location[]
+                locations: formData.locations as Location[],
+                hasOwnApplication: formData.hasOwnApplication,
             };
 
             await onSave(payload);
@@ -200,6 +214,30 @@ export default function CompanyFormModal({
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                                 placeholder="https://example.com"
                             />
+                        </div>
+
+                        <div className="md:col-span-2 space-y-3 pt-2 border-t border-slate-100">
+                             <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="hasOwnApplication"
+                                    name="hasOwnApplication"
+                                    checked={formData.hasOwnApplication}
+                                    onChange={handleFormChange}
+                                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                />
+                                <label htmlFor="hasOwnApplication" className="text-sm font-medium text-slate-700 cursor-pointer select-none">
+                                    Saját jelentkezési felület használata
+                                </label>
+                             </div>
+                             
+                             {formData.hasOwnApplication && (
+                                <div className="space-y-1">
+                                    <p className="text-[11px] text-slate-500 bg-blue-50 p-2 rounded border border-blue-100">
+                                        Bekapcsolt állapotban a "Jelentkezés" gomb a fent megadott <strong>Weboldal</strong> linkre fog átirányítani. Kérjük győződjön meg róla, hogy a Weboldal mező helyesen van kitöltve!
+                                    </p>
+                                </div>
+                             )}
                         </div>
 
                         {/* Locations */}

@@ -32,6 +32,7 @@ export interface Company {
     description?: string;
     logoUrl?: string | null;
     website?: string | null;
+    hasOwnApplication?: boolean;
 }
 
 // ============= Tag Types =============
@@ -57,6 +58,8 @@ export interface Position {
         name: string;
         logoUrl?: string | null;
         locations: Location[];
+        website?: string | null;
+        hasOwnApplication?: boolean;
     };
 }
 
