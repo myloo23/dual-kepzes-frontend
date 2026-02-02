@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { type Position, type Tag } from "../../../../lib/api";
+import { type Position, type Tag, type Location } from "../../../../lib/api";
+import { api } from "../../../../lib/api";
 
 interface PositionFormModalProps {
     isOpen: boolean;
@@ -40,6 +41,7 @@ export default function PositionFormModal({
     const [formData, setFormData] = useState<Omit<Position, "id">>(INITIAL_FORM_STATE);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
 
     useEffect(() => {
         if (isOpen) {
@@ -60,6 +62,31 @@ export default function PositionFormModal({
         }
     }, [isOpen, initialData, companies]);
 
+    // Fetch company locations when companyId changes
+    useEffect(() => {
+        const fetchCompanyLocations = async () => {
+            if (!formData.companyId) {
+                setAvailableLocations([]);
+                return;
+            }
+
+            try {
+                const company = await api.companies.get(formData.companyId);
+                if (company && company.locations) {
+                    setAvailableLocations(company.locations);
+                } else {
+                    setAvailableLocations([]);
+                }
+            } catch (err) {
+                console.error("Failed to fetch company locations:", err);
+                // Don't show error to user as this is a background enhancement
+                setAvailableLocations([]);
+            }
+        };
+
+        fetchCompanyLocations();
+    }, [formData.companyId]);
+
     const handleFormChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
@@ -76,6 +103,22 @@ export default function PositionFormModal({
             }));
         } else {
             setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+        }
+    };
+
+    const handleLocationSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const index = parseInt(e.target.value);
+        if (index >= 0 && index < availableLocations.length) {
+            const loc = availableLocations[index];
+            setFormData((prev) => ({
+                ...prev,
+                location: {
+                    country: loc.country,
+                    zipCode: loc.zipCode,
+                    city: loc.city,
+                    address: loc.address
+                }
+            }));
         }
     };
 
@@ -200,36 +243,57 @@ export default function PositionFormModal({
                             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                         />
                     </div>
+                     
+                    {/* Location Section */}
+                    <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <div className="flex items-center justify-between">
+                             <h3 className="text-sm font-semibold text-slate-900">Munkavégzés helye</h3>
+                             {availableLocations.length > 0 && (
+                                 <select
+                                     onChange={handleLocationSelect}
+                                     className="text-xs border-slate-300 rounded-lg px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500"
+                                     value=""
+                                 >
+                                     <option value="" disabled>Válassz a cég címei közül...</option>
+                                     {availableLocations.map((loc, index) => (
+                                         <option key={index} value={index}>
+                                             {loc.city}, {loc.address}
+                                         </option>
+                                     ))}
+                                 </select>
+                             )}
+                        </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium text-slate-700">Irányítószám *</label>
+                                <input
+                                    name="zipCode"
+                                    value={formData.location?.zipCode || ""}
+                                    onChange={handleFormChange}
+                                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium text-slate-700">Város *</label>
+                                <input
+                                    name="city"
+                                    value={formData.location?.city || ""}
+                                    onChange={handleFormChange}
+                                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                            </div>
+                        </div>
+
                         <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-700">Irányítószám *</label>
+                            <label className="text-xs font-medium text-slate-700">Cím *</label>
                             <input
-                                name="zipCode"
-                                value={formData.location?.zipCode || ""}
+                                name="address"
+                                value={formData.location?.address || ""}
                                 onChange={handleFormChange}
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             />
                         </div>
-                        <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-700">Város *</label>
-                            <input
-                                name="city"
-                                value={formData.location?.city || ""}
-                                onChange={handleFormChange}
-                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-1">
-                        <label className="text-xs font-medium text-slate-700">Cím *</label>
-                        <input
-                            name="address"
-                            value={formData.location?.address || ""}
-                            onChange={handleFormChange}
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                        />
                     </div>
 
                     <div className="space-y-1">
@@ -243,7 +307,7 @@ export default function PositionFormModal({
                         />
                     </div>
 
-                    <div className="space-y-2 rounded-lg border border-slate-200 p-3 bg-slate-50">
+                    <div className="space-y-2 rounded-lg border border-slate-200 p-3 bg-white">
                         <label className="flex items-center gap-3 cursor-pointer">
                             <input
                                 type="checkbox"
@@ -261,7 +325,7 @@ export default function PositionFormModal({
                         </label>
                     </div>
 
-                    <div className="space-y-3 rounded-lg border border-slate-200 p-4">
+                    <div className="space-y-3 rounded-lg border border-slate-200 p-4 bg-white">
                         <div className="flex items-center justify-between">
                             <label className="text-sm font-semibold text-slate-800">Címkék</label>
                             <button

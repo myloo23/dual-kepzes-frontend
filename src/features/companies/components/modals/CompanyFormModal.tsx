@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type Company } from "../../../../lib/api";
+import { type Company, type Location } from "../../../../lib/api";
 
 interface CompanyFormModalProps {
     isOpen: boolean;
@@ -12,10 +12,7 @@ interface CompanyFormModalProps {
 interface CompanyFormData {
     name: string;
     taxId: string;
-    hqCountry: string;
-    hqZipCode: string;
-    hqCity: string;
-    hqAddress: string;
+    locations: Partial<Location>[];
     contactName: string;
     contactEmail: string;
     description: string;
@@ -26,10 +23,7 @@ interface CompanyFormData {
 const INITIAL_FORM_STATE: CompanyFormData = {
     name: "",
     taxId: "",
-    hqCountry: "",
-    hqZipCode: "",
-    hqCity: "",
-    hqAddress: "",
+    locations: [{ country: "Magyarország", zipCode: "", city: "", address: "" }], // Default one empty location
     contactName: "",
     contactEmail: "",
     description: "",
@@ -51,14 +45,12 @@ export default function CompanyFormModal({
         if (isOpen) {
             setError(null);
             if (initialData) {
-                const hqLocation = initialData.locations?.[0];
                 setFormData({
                     name: initialData.name,
                     taxId: initialData.taxId,
-                    hqCountry: hqLocation?.country || "",
-                    hqZipCode: String(hqLocation?.zipCode || ""),
-                    hqCity: hqLocation?.city || "",
-                    hqAddress: hqLocation?.address || "",
+                    locations: initialData.locations && initialData.locations.length > 0
+                        ? initialData.locations
+                        : [{ country: "Magyarország", zipCode: "", city: "", address: "" }],
                     contactName: initialData.contactName,
                     contactEmail: initialData.contactEmail,
                     description: initialData.description || "",
@@ -76,6 +68,28 @@ export default function CompanyFormModal({
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    const handleLocationChange = (index: number, field: keyof Location, value: string | number) => {
+        setFormData((prev) => {
+            const newLocations = [...prev.locations];
+            newLocations[index] = { ...newLocations[index], [field]: value };
+            return { ...prev, locations: newLocations };
+        });
+    };
+
+    const addLocation = () => {
+        setFormData((prev) => ({
+            ...prev,
+            locations: [...prev.locations, { country: "Magyarország", zipCode: "", city: "", address: "" }]
+        }));
+    };
+
+    const removeLocation = (index: number) => {
+        setFormData((prev) => ({
+            ...prev,
+            locations: prev.locations.filter((_, i) => i !== index)
+        }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
@@ -89,6 +103,19 @@ export default function CompanyFormModal({
             setError("Az adószám kötelező.");
             return;
         }
+        if (formData.locations.length === 0) {
+            setError("Legalább egy cím megadása kötelező.");
+            return;
+        }
+        
+        // Validate each location
+        for (let i = 0; i < formData.locations.length; i++) {
+            const loc = formData.locations[i];
+            if (!loc.zipCode || !loc.city || !loc.address) {
+                setError(`A(z) ${i + 1}. cím hiányos (irányítószám, város és utca kötelező).`);
+                return;
+            }
+        }
 
         setLoading(true);
         try {
@@ -101,12 +128,7 @@ export default function CompanyFormModal({
                 website: formData.website?.trim() || undefined,
                 logoUrl: formData.logoUrl?.trim() || undefined,
                 description: formData.description?.trim() || undefined,
-                locations: [{
-                    country: formData.hqCountry,
-                    zipCode: formData.hqZipCode ? Number(formData.hqZipCode) : 0,
-                    city: formData.hqCity,
-                    address: formData.hqAddress
-                }]
+                locations: formData.locations as Location[]
             };
 
             await onSave(payload);
@@ -180,42 +202,72 @@ export default function CompanyFormModal({
                             />
                         </div>
 
-                        {/* Location */}
-                        <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-700">Ország *</label>
-                            <input
-                                name="hqCountry"
-                                value={formData.hqCountry}
-                                onChange={handleFormChange}
-                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-700">Irányítószám *</label>
-                            <input
-                                name="hqZipCode"
-                                value={formData.hqZipCode}
-                                onChange={handleFormChange}
-                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-700">Város *</label>
-                            <input
-                                name="hqCity"
-                                value={formData.hqCity}
-                                onChange={handleFormChange}
-                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
-                        </div>
-                        <div className="md:col-span-2 space-y-1">
-                            <label className="text-xs font-medium text-slate-700">Cím (utca, házszám) *</label>
-                            <input
-                                name="hqAddress"
-                                value={formData.hqAddress}
-                                onChange={handleFormChange}
-                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
+                        {/* Locations */}
+                        <div className="md:col-span-2 space-y-3">
+                            <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-2">
+                                <h3 className="text-sm font-semibold text-slate-800">Címek, telephelyek ({formData.locations.length})</h3>
+                                <button
+                                    type="button"
+                                    onClick={addLocation}
+                                    className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Cím hozzáadása
+                                </button>
+                            </div>
+                            
+                            {formData.locations.map((loc, index) => (
+                                <div key={index} className="bg-slate-50 p-3 rounded-xl border border-slate-200 relative group">
+                                    {formData.locations.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => removeLocation(index)}
+                                            className="absolute top-2 right-2 text-slate-400 hover:text-red-500 transition-colors"
+                                            title="Cím törlése"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    )}
+                                    <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+                                        <div className="md:col-span-2 space-y-1">
+                                            <label className="text-xs font-medium text-slate-500">Ország</label>
+                                            <input
+                                                value={loc.country || ""}
+                                                onChange={(e) => handleLocationChange(index, 'country', e.target.value)}
+                                                className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                            />
+                                        </div>
+                                        <div className="md:col-span-1 space-y-1">
+                                            <label className="text-xs font-medium text-slate-500">Irányítószám *</label>
+                                            <input
+                                                value={loc.zipCode || ""}
+                                                onChange={(e) => handleLocationChange(index, 'zipCode', e.target.value)}
+                                                className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                            />
+                                        </div>
+                                        <div className="md:col-span-1 space-y-1">
+                                            <label className="text-xs font-medium text-slate-500">Város *</label>
+                                            <input
+                                                value={loc.city || ""}
+                                                onChange={(e) => handleLocationChange(index, 'city', e.target.value)}
+                                                className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                            />
+                                        </div>
+                                        <div className="md:col-span-2 space-y-1">
+                                            <label className="text-xs font-medium text-slate-500">Cím (utca, hsz) *</label>
+                                            <input
+                                                value={loc.address || ""}
+                                                onChange={(e) => handleLocationChange(index, 'address', e.target.value)}
+                                                className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
 
                         {/* Contact */}
