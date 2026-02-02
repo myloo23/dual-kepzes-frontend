@@ -21,7 +21,7 @@ import type {
   NewsCreatePayload,
   Application,
   ApplicationStatus,
-  ApplicationCreatePayload,
+
   Partnership,
   PaginationQuery,
 } from '../types/api.types';
@@ -33,7 +33,7 @@ import type {
 } from '../types/notifications.types';
 
 import { auth } from './auth-token';
-import { apiGet, apiPost, apiPut, apiPatch, apiDelete } from './api-client';
+import { apiGet, apiPost, apiPut, apiPatch, apiDelete, apiPostFormData } from './api-client';
 
 // Re-export auth for backward compatibility
 export { auth };
@@ -185,8 +185,8 @@ export const api = {
 
   // ============= Applications =============
   applications: {
-    submit: (payload: ApplicationCreatePayload) =>
-      apiPost<{ message: string; application: Application }>(
+    submit: (payload: FormData) =>
+      apiPostFormData<{ message: string; application: Application }>(
         PATHS.applications,
         payload
       ),
@@ -340,7 +340,7 @@ export type {
   NewsTargetGroup,
   Application,
   ApplicationStatus,
-  ApplicationCreatePayload,
+
   Location,
   Tag,
   Partnership,

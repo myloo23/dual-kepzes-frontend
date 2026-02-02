@@ -110,6 +110,17 @@ export function apiPost<T>(path: string, body: unknown, token?: string): Promise
   );
 }
 
+export function apiPostFormData<T>(path: string, body: FormData, token?: string): Promise<T> {
+  return apiRequest<T>(
+    path,
+    {
+      method: 'POST',
+      body,
+    },
+    token
+  );
+}
+
 export function apiPut<T>(path: string, body: unknown, token?: string): Promise<T> {
   return apiRequest<T>(
     path,

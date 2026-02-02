@@ -13,7 +13,7 @@ export interface UsePositionsReturn {
     loading: boolean;
     error: string | null;
     applicationSuccess: string | null;
-    submitApplication: (positionId: string, note?: string) => Promise<void>;
+    submitApplication: (positionId: string, note?: string, cvFile?: File, motivationLetterFile?: File) => Promise<void>;
     clearApplicationSuccess: () => void;
 }
 
@@ -41,12 +41,15 @@ export function usePositions(): UsePositionsReturn {
         loadPositions();
     }, []);
 
-    const submitApplication = useCallback(async (positionId: string, note?: string) => {
+    const submitApplication = useCallback(async (positionId: string, note?: string, cvFile?: File, motivationLetterFile?: File) => {
         try {
-            await api.applications.submit({
-                positionId,
-                studentNote: note || undefined,
-            });
+            const formData = new FormData();
+            formData.append('positionId', positionId);
+            if (note) formData.append('studentNote', note);
+            if (cvFile) formData.append('cv', cvFile);
+            if (motivationLetterFile) formData.append('motivationLetter', motivationLetterFile);
+
+            await api.applications.submit(formData);
 
             setApplicationSuccess(SUCCESS_MESSAGES.APPLICATION_SUBMITTED);
 

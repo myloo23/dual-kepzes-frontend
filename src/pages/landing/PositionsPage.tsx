@@ -167,11 +167,11 @@ export default function PositionsPage() {
   }, [positions, applicationModal, setSearchParams]);
 
   // Handle application submission
-  const handleSubmitApplication = useCallback(async (note: string) => {
+  const handleSubmitApplication = useCallback(async (note: string, cvFile?: File, motivationLetterFile?: File) => {
     if (!applicationModal.data?.id) return;
 
     try {
-      await submitApplication(String(applicationModal.data.id), note);
+      await submitApplication(String(applicationModal.data.id), note, cvFile, motivationLetterFile);
       applicationModal.close();
       // Clear URL param on successful submission too
       setSearchParams(prev => {
