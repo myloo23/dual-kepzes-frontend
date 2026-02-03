@@ -43,13 +43,22 @@ export function usePositions(): UsePositionsReturn {
 
     const submitApplication = useCallback(async (positionId: string, note?: string, cvFile?: File, motivationLetterFile?: File) => {
         try {
-            const formData = new FormData();
-            formData.append('positionId', positionId);
-            if (note) formData.append('studentNote', note);
-            if (cvFile) formData.append('cv', cvFile);
-            if (motivationLetterFile) formData.append('motivationLetter', motivationLetterFile);
+            if (cvFile || motivationLetterFile) {
+                // Use new endpoint with FormData if files are present
+                const formData = new FormData();
+                formData.append('positionId', positionId);
+                if (note) formData.append('studentNote', note);
+                if (cvFile) formData.append('cv', cvFile);
+                if (motivationLetterFile) formData.append('motivationLetter', motivationLetterFile);
 
-            await api.applications.submit(formData);
+                await api.applications.submitWithFiles(formData);
+            } else {
+                // Use old endpoint with JSON if no files
+                await api.applications.submit({
+                    positionId,
+                    studentNote: note
+                });
+            }
 
             setApplicationSuccess(SUCCESS_MESSAGES.APPLICATION_SUBMITTED);
 

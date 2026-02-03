@@ -21,6 +21,7 @@ import type {
   NewsCreatePayload,
   Application,
   ApplicationStatus,
+  ApplicationCreatePayload,
 
   Partnership,
   PaginationQuery,
@@ -185,9 +186,15 @@ export const api = {
 
   // ============= Applications =============
   applications: {
-    submit: (payload: FormData) =>
-      apiPostFormData<{ message: string; application: Application }>(
+    submit: (payload: ApplicationCreatePayload) =>
+      apiPost<{ message: string; application: Application }>(
         PATHS.applications,
+        payload
+      ),
+
+    submitWithFiles: (payload: FormData) =>
+      apiPostFormData<{ message: string; application: Application }>(
+        '/api/applications/submit-with-files',
         payload
       ),
 
