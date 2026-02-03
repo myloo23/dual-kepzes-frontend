@@ -146,6 +146,10 @@ export default function NewsFormModal({
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             >
                                 <option value="STUDENT">Hallgatók (STUDENT)</option>
+                                <option value="COMPANY_ADMIN">Céges adminisztrátorok (COMPANY_ADMIN)</option>
+                                <option value="UNIVERSITY_USER">Egyetemi felhasználók (UNIVERSITY_USER)</option>
+                                <option value="SYSTEM_ADMIN">Rendszergazdák (SYSTEM_ADMIN)</option>
+                                <option value="MENTOR">Mentorok (MENTOR)</option>
                                 <option value="ALL">Mindenki (ALL)</option>
                             </select>
                         </div>

@@ -194,7 +194,7 @@ export interface StudentRegisterPayload {
 }
 
 // ============= News Types =============
-export type NewsTargetGroup = 'STUDENT' | 'ALL';
+export type NewsTargetGroup = UserRole | 'ALL';
 
 export interface NewsItem {
     id: Id;
