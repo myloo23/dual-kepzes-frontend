@@ -287,8 +287,9 @@ export default function ApplicationsList() {
                     const statusConfig = STATUS_CONFIG[app.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.SUBMITTED;
                     let createdDate = "Ismeretlen dátum";
                     try {
-                        if (app.createdAt) {
-                            const date = new Date(app.createdAt);
+                        const dateStr = app.submittedAt || app.createdAt;
+                        if (dateStr) {
+                            const date = new Date(dateStr);
                             if (!isNaN(date.getTime())) {
                                 createdDate = date.toLocaleDateString("hu-HU", {
                                     year: "numeric",

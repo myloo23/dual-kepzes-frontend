@@ -226,6 +226,7 @@ export interface Application {
     studentNote?: string;
     companyNote?: string;
     createdAt: string;
+    submittedAt?: string;
     position?: {
         id: string;
         title: string;
