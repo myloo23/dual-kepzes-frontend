@@ -11,6 +11,7 @@ import {
   validateRequired,
   validateYear,
 } from "../../../utils/validation-utils";
+import { MAJORS, LANGUAGES, LANGUAGE_LEVELS } from "../constants";
 
 export default function StudentRegisterForm() {
   const navigate = useNavigate();
@@ -31,9 +32,18 @@ export default function StudentRegisterForm() {
   const [highSchool, setHighSchool] = useState("");
   const [graduationYear, setGraduationYear] = useState<number | "">("");
   const [neptunCode, setNeptunCode] = useState("");
-  const [currentMajor, setCurrentMajor] = useState("");
+  // const [currentMajor, setCurrentMajor] = useState(""); // Removed in favor of conditional logic
+  const [selectedMajors, setSelectedMajors] = useState<string[]>([]);
+  const [universityMajor, setUniversityMajor] = useState("");
+  
   const [studyMode, setStudyMode] = useState<"NAPPALI" | "LEVELEZŐ">("NAPPALI");
   const [hasLanguageCert, setHasLanguageCert] = useState(false);
+  
+  const [language, setLanguage] = useState(LANGUAGES[0]);
+  const [languageLevel, setLanguageLevel] = useState(LANGUAGE_LEVELS[0]);
+
+  const [studentType, setStudentType] = useState<"HIGHSCHOOL" | "UNIVERSITY">("HIGHSCHOOL");
+  const [gdprAccepted, setGdprAccepted] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const [okMsg, setOkMsg] = useState<string | null>(null);
@@ -59,7 +69,7 @@ export default function StudentRegisterForm() {
       { value: city, name: "Település" },
       { value: streetAddress, name: "Utca/házszám" },
       { value: highSchool, name: "Középiskola" },
-      { value: currentMajor, name: "Szak megnevezése" },
+      // { value: currentMajor, name: "Szak megnevezése" }, // Dynamic check below
     ];
 
     for (const field of requiredFields) {
@@ -72,10 +82,29 @@ export default function StudentRegisterForm() {
     const yearError = validateYear(graduationYear, "Érettségi éve");
     if (yearError) return setError(yearError);
 
-    const neptunErr = validateNeptunOptional(neptunCode);
-    if (neptunErr) return setError(neptunErr);
+    // Dynamic Validation based on Student Type
+    let finalMajor = "";
+    let finalNeptun = "";
 
-    const neptun = normalizeNeptun(neptunCode);
+    if (studentType === "HIGHSCHOOL") {
+      if (selectedMajors.length === 0) return setError("Legalább egy szak megjelölése kötelező.");
+      finalMajor = selectedMajors.join(", ");
+    } else {
+      if (!universityMajor) return setError("Szak megnevezése kötelező.");
+      finalMajor = universityMajor;
+      
+      const neptunErr = validateNeptunOptional(neptunCode); // Should be required for Univ? User said "neptun kód legyen bekérve"
+      if (!neptunCode) return setError("Neptun kód megadása kötelező egyetemistáknak.");
+      if (neptunErr) return setError(neptunErr);
+      finalNeptun = normalizeNeptun(neptunCode);
+    }
+
+    if (hasLanguageCert) {
+        if (!language) return setError("Nyelv kiválasztása kötelező.");
+        if (!languageLevel) return setError("Nyelvi szint kiválasztása kötelező.");
+    }
+    
+    if (!gdprAccepted) return setError("A regisztrációhoz el kell fogadni az adatkezelési tájékoztatót.");
 
     const payload: StudentRegisterPayload = {
       email: email.trim(),
@@ -94,11 +123,12 @@ export default function StudentRegisterForm() {
       },
       highSchool: highSchool.trim(),
       graduationYear: Number(graduationYear),
-      currentMajor: currentMajor.trim(),
+      currentMajor: finalMajor,
       studyMode,
       hasLanguageCert: !!hasLanguageCert,
+      ...(hasLanguageCert ? { language, languageLevel } : {}),
 
-      ...(neptun ? { neptunCode: neptun } : {}),
+      ...(finalNeptun ? { neptunCode: finalNeptun } : {}),
     };
 
     setLoading(true);
@@ -251,6 +281,32 @@ export default function StudentRegisterForm() {
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h2 className="text-sm font-semibold text-slate-900 mb-4">Tanulmányok</h2>
 
+            {/* Student Type Selector */}
+            <div className="mb-6 flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                        type="radio" 
+                        name="studentType"
+                        value="HIGHSCHOOL"
+                        checked={studentType === "HIGHSCHOOL"}
+                        onChange={() => setStudentType("HIGHSCHOOL")}
+                        className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    />
+                    <span className="text-sm text-slate-700">Középiskolás</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                        type="radio" 
+                        name="studentType"
+                        value="UNIVERSITY"
+                        checked={studentType === "UNIVERSITY"}
+                        onChange={() => setStudentType("UNIVERSITY")}
+                        className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    />
+                    <span className="text-sm text-slate-700">Egyetemista</span>
+                </label>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-medium text-slate-700">Középiskola *</label>
@@ -273,27 +329,81 @@ export default function StudentRegisterForm() {
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">
-                  Neptun kód <span className="text-slate-400">(opcionális)</span>
-                </label>
-                <input
-                  value={neptunCode}
-                  onChange={(e) => setNeptunCode(e.target.value)}
-                  placeholder="ABC123"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-[11px] text-slate-500">Ha megadod: 6 karakter (A–Z, 0–9).</p>
-              </div>
+              {studentType === "UNIVERSITY" && (
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-700">
+                      Neptun kód *
+                    </label>
+                    <input
+                      value={neptunCode}
+                      onChange={(e) => setNeptunCode(e.target.value)}
+                      placeholder="ABC123"
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-[11px] text-slate-500">6 karakter (A–Z, 0–9).</p>
+                  </div>
+              )}
 
               <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-medium text-slate-700">Szak megnevezése *</label>
-                <input
-                  value={currentMajor}
-                  onChange={(e) => setCurrentMajor(e.target.value)}
-                  placeholder="Mérnökinformatikus BSc"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <label className="text-xs font-medium text-slate-700">
+                    {studentType === "HIGHSCHOOL" ? "Megjelölt szak az egyetemen" : "Szak megnevezése *"}
+                </label>
+                
+                {studentType === "HIGHSCHOOL" ? (
+                    <div className="space-y-2">
+                        {selectedMajors.map((major, idx) => (
+                            <div key={idx} className="flex gap-2">
+                                <select
+                                    value={major}
+                                    onChange={(e) => {
+                                        const newMajors = [...selectedMajors];
+                                        newMajors[idx] = e.target.value;
+                                        setSelectedMajors(newMajors);
+                                    }}
+                                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="">Válassz szakot...</option>
+                                    {MAJORS.map(m => <option key={m} value={m}>{m}</option>)}
+                                </select>
+                                <button 
+                                    type="button" 
+                                    onClick={() => setSelectedMajors(selectedMajors.filter((_, i) => i !== idx))}
+                                    className="text-red-500 hover:text-red-700"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                        {selectedMajors.length === 0 && (
+                             <select
+                                value=""
+                                onChange={(e) => setSelectedMajors([e.target.value])}
+                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">Válassz szakot...</option>
+                                {MAJORS.map(m => <option key={m} value={m}>{m}</option>)}
+                            </select>
+                        )}
+                        {selectedMajors.length > 0 && selectedMajors.length < 2 && (
+                            <button
+                                type="button"
+                                onClick={() => setSelectedMajors([...selectedMajors, ""])}
+                                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                                + Új szak hozzáadása
+                            </button>
+                        )}
+                    </div>
+                ) : (
+                    <select
+                        value={universityMajor}
+                        onChange={(e) => setUniversityMajor(e.target.value)}
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">Válassz szakot...</option>
+                        {MAJORS.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -308,20 +418,61 @@ export default function StudentRegisterForm() {
                 </select>
               </div>
 
-              <div className="flex items-center gap-3 md:pt-6">
-                <input
-                  id="langCert"
-                  type="checkbox"
-                  checked={hasLanguageCert}
-                  onChange={(e) => setHasLanguageCert(e.target.checked)}
-                  className="h-4 w-4"
-                />
-                <label htmlFor="langCert" className="text-sm text-slate-700">
-                  Van nyelvvizsgám
-                </label>
+              <div className="md:col-span-2 space-y-4 pt-2">
+                <div className="flex items-center gap-3">
+                    <input
+                    id="langCert"
+                    type="checkbox"
+                    checked={hasLanguageCert}
+                    onChange={(e) => setHasLanguageCert(e.target.checked)}
+                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <label htmlFor="langCert" className="text-sm text-slate-700">
+                    Van nyelvvizsgám
+                    </label>
+                </div>
+                
+                {hasLanguageCert && (
+                    <div className="grid grid-cols-2 gap-4 pl-7">
+                         <div className="space-y-1">
+                            <label className="text-xs font-medium text-slate-700">Nyelv *</label>
+                            <select
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value)}
+                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+                            </select>
+                         </div>
+                         <div className="space-y-1">
+                            <label className="text-xs font-medium text-slate-700">Szint *</label>
+                            <select
+                                value={languageLevel}
+                                onChange={(e) => setLanguageLevel(e.target.value)}
+                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                {LANGUAGE_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+                            </select>
+                         </div>
+                    </div>
+                )}
               </div>
             </div>
           </section>
+
+          {/* GDPR */}
+          <div className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4">
+              <input
+                id="gdpr"
+                type="checkbox"
+                checked={gdprAccepted}
+                onChange={(e) => setGdprAccepted(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label htmlFor="gdpr" className="text-sm text-blue-900 cursor-pointer">
+                  Elfogadom az <span className="font-semibold underline">adatkezelési tájékoztatót</span>, és hozzájárulok adataim kezeléséhez a regisztráció során.
+              </label>
+          </div>
 
           <div className="flex items-center justify-between">
             <Link to="/" className="text-sm text-slate-600 hover:text-slate-900">

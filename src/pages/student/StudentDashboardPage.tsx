@@ -6,6 +6,8 @@ import { useAuth } from "../../features/auth";
 import StudentNewsPage from "./StudentNewsPage";
 import { GuidePlayer } from "../../features/guide";
 import { api, type StudentProfile } from "../../lib/api";
+import { MAJORS, LANGUAGES, LANGUAGE_LEVELS } from "../../features/auth/constants";
+import { normalizeNeptun, validateNeptunOptional } from "../../utils/validation-utils";
 
 type StudentProfilePayload = Partial<StudentProfile> & {
   profile?: Partial<StudentProfile>;
@@ -36,6 +38,10 @@ type StudentFormState = {
     currentMajor: string;
     studyMode: string;
     hasLanguageCert: boolean;
+    languageExams: { language: string; level: string }[];
+    studentType: "HIGHSCHOOL" | "UNIVERSITY";
+    selectedMajors: string[]; // For High School
+    universityMajor: string; // For University
 };
 
 // Returns standard nested StudentProfile
@@ -78,12 +84,25 @@ function normalizeStudentProfile(payload: StudentProfilePayload | null): Partial
     currentMajor: merged.currentMajor ?? "",
     studyMode: (merged.studyMode?.toUpperCase() as "NAPPALI" | "LEVELEZŐ") ?? "NAPPALI",
     hasLanguageCert: Boolean(merged.hasLanguageCert),
+    languageExams: merged.languageExams || [],
   } as Partial<StudentProfile>;
 }
 
 function buildProfileForm(data: Partial<StudentProfile> | null): StudentFormState {
   if (!data) return {} as StudentFormState;
   const loc = data.location || { country: "", zipCode: "", city: "", address: "" };
+  
+  // Heuristic: If neptunCode is present and not empty, assume University.
+  // Otherwise, if currentMajor is a comma-separated list, assume High School.
+  const hasNeptun = !!data.neptunCode;
+  const studentType = hasNeptun ? "UNIVERSITY" : "HIGHSCHOOL";
+  
+  const currentMajor = data.currentMajor || "";
+  const selectedMajors = studentType === "HIGHSCHOOL" && currentMajor 
+    ? currentMajor.split(",").map(s => s.trim()) 
+    : [];
+  const universityMajor = studentType === "UNIVERSITY" ? currentMajor : "";
+
   return {
     fullName: data.fullName ?? "",
     email: data.email ?? "",
@@ -100,6 +119,12 @@ function buildProfileForm(data: Partial<StudentProfile> | null): StudentFormStat
     currentMajor: data.currentMajor ?? "",
     studyMode: data.studyMode ?? "NAPPALI",
     hasLanguageCert: data.hasLanguageCert ?? false,
+    languageExams: data.languageExams && data.languageExams.length > 0 
+        ? data.languageExams 
+        : [{ language: LANGUAGES[0], level: LANGUAGE_LEVELS[2] }], // Default B1
+    studentType,
+    selectedMajors,
+    universityMajor,
   };
 }
 
@@ -111,11 +136,34 @@ function buildProfilePayload(form: StudentFormState) {
     zipCode,
     city,
     streetAddress,
+    studentType,
+    selectedMajors,
+    universityMajor,
+    languageExams,
+    neptunCode,
     ...rest
   } = form;
 
+  // Finalize majors and neptun based on type
+  let finalMajor = "";
+  let finalNeptun = "";
+
+  if (studentType === "HIGHSCHOOL") {
+      finalMajor = selectedMajors.join(", ");
+      finalNeptun = ""; // Clear neptun for high schoolers
+  } else {
+      finalMajor = universityMajor;
+      finalNeptun = neptunCode;
+  }
+
+  // Filter proper language exams
+  const finalLanguageExams = rest.hasLanguageCert ? languageExams : [];
+
   return {
     ...rest,
+    neptunCode: finalNeptun ? normalizeNeptun(finalNeptun) : "",
+    currentMajor: finalMajor,
+    languageExams: finalLanguageExams,
     studyMode: rest.studyMode as "NAPPALI" | "LEVELEZŐ",
     graduationYear: Number(rest.graduationYear),
     ...(dateOfBirth ? { birthDate: dateOfBirth } : {}),
@@ -226,10 +274,89 @@ export default function StudentDashboardPage() {
     }));
   };
 
+  // Helper for language exam changes
+  const handleLanguageExamChange = (index: number, field: "language" | "level", value: string) => {
+    const newExams = [...(profileForm.languageExams || [])];
+    if (newExams[index]) {
+        newExams[index] = { ...newExams[index], [field]: value };
+        setProfileForm(p => ({ ...p, languageExams: newExams }));
+    }
+  };
+
+  const addLanguageExam = () => {
+    setProfileForm(p => ({
+        ...p,
+        languageExams: [...(p.languageExams || []), { language: LANGUAGES[0], level: LANGUAGE_LEVELS[2] }]
+    }));
+  };
+
+  const removeLanguageExam = (index: number) => {
+    setProfileForm(p => ({
+        ...p,
+        languageExams: p.languageExams.filter((_, i) => i !== index)
+    }));
+  };
+
+  // Helper for majors
+  const handleMajorChange = (index: number, value: string) => {
+      const newMajors = [...(profileForm.selectedMajors || [])];
+      newMajors[index] = value;
+      setProfileForm(p => ({ ...p, selectedMajors: newMajors }));
+  };
+  
+  const addMajor = () => {
+      setProfileForm(p => ({ ...p, selectedMajors: [...(p.selectedMajors || []), ""] }));
+  };
+
+  const removeMajor = (index: number) => {
+    setProfileForm(p => ({
+        ...p,
+        selectedMajors: p.selectedMajors.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleProfileSave = async () => {
     setProfileSaving(true);
     setProfileError(null);
     setProfileSuccess(null);
+
+    // Validation
+    const { studentType, selectedMajors, neptunCode, universityMajor, hasLanguageCert, languageExams } = profileForm;
+
+    if (studentType === "UNIVERSITY") {
+         if (!universityMajor) {
+             setProfileSaving(false);
+             return setProfileError("Szak megnevezése kötelező egyetemistáknak.");
+         }
+         if (!neptunCode) {
+             setProfileSaving(false);
+             return setProfileError("Neptun kód megadása kötelező egyetemistáknak.");
+         }
+         const neptunErr = validateNeptunOptional(neptunCode);
+         if (neptunErr) {
+             setProfileSaving(false);
+             return setProfileError(neptunErr);
+         }
+    } else {
+        if (!selectedMajors || selectedMajors.length === 0 || selectedMajors.every(m => !m)) {
+            setProfileSaving(false);
+            return setProfileError("Legalább egy szak megjelölése kötelező.");
+        }
+    }
+
+    if (hasLanguageCert) {
+        if (!languageExams || languageExams.length === 0) {
+            setProfileSaving(false);
+            return setProfileError("Legalább egy nyelvvizsga megadása kötelező, ha bejelölted a mezőt.");
+        }
+        for (const exam of languageExams) {
+            if (!exam.language || !exam.level) {
+                setProfileSaving(false);
+                return setProfileError("Minden nyelvvizsgához kötelező a nyelv és a szint megadása.");
+            }
+        }
+    }
+
     try {
       const updated = await api.me.update(buildProfilePayload(profileForm));
       const normalized = normalizeStudentProfile(updated as StudentProfilePayload);
@@ -606,24 +733,103 @@ export default function StudentDashboardPage() {
                     className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </label>
-                <label className="space-y-1 text-sm text-slate-700">
-                  <span className="text-xs font-semibold text-slate-600">Neptun kód</span>
-                  <input
-                    name="neptunCode"
-                    value={profileForm.neptunCode ?? ""}
-                    onChange={handleProfileChange}
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </label>
-                <label className="space-y-1 text-sm text-slate-700 md:col-span-2">
-                  <span className="text-xs font-semibold text-slate-600">Szak</span>
-                  <input
-                    name="currentMajor"
-                    value={profileForm.currentMajor ?? ""}
-                    onChange={handleProfileChange}
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </label>
+
+                
+                {/* Student Type Switch */}
+                 <div className="md:col-span-2 flex gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                            type="radio" 
+                            name="studentType"
+                            checked={profileForm.studentType === "HIGHSCHOOL"}
+                            onChange={() => setProfileForm(p => ({ ...p, studentType: "HIGHSCHOOL" }))}
+                            className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                        />
+                        <span className="text-sm font-medium text-slate-700">Középiskolás</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                            type="radio" 
+                            name="studentType"
+                            checked={profileForm.studentType === "UNIVERSITY"}
+                            onChange={() => setProfileForm(p => ({ ...p, studentType: "UNIVERSITY" }))}
+                            className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                        />
+                         <span className="text-sm font-medium text-slate-700">Egyetemista</span>
+                    </label>
+                </div>
+
+                {profileForm.studentType === "UNIVERSITY" && (
+                    <label className="space-y-1 text-sm text-slate-700">
+                      <span className="text-xs font-semibold text-slate-600">Neptun kód</span>
+                      <input
+                        name="neptunCode"
+                        value={profileForm.neptunCode ?? ""}
+                        onChange={handleProfileChange}
+                        placeholder="ABC123"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </label>
+                )}
+
+                <div className="space-y-1 text-sm text-slate-700 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-600">
+                    {profileForm.studentType === "HIGHSCHOOL" ? "Megjelölt szak az egyetemen" : "Szak megnevezése"}
+                  </span>
+                  
+                  {profileForm.studentType === "HIGHSCHOOL" ? (
+                      <div className="space-y-2">
+                        {profileForm.selectedMajors?.map((major, idx) => (
+                             <div key={idx} className="flex gap-2">
+                                <select
+                                    value={major}
+                                    onChange={(e) => handleMajorChange(idx, e.target.value)}
+                                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="">Válassz szakot...</option>
+                                    {MAJORS.map(m => <option key={m} value={m}>{m}</option>)}
+                                </select>
+                                <button 
+                                    type="button" 
+                                    onClick={() => removeMajor(idx)}
+                                    className="text-red-500 hover:text-red-700 px-2"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                         {(!profileForm.selectedMajors || profileForm.selectedMajors.length === 0) && (
+                             <select
+                                value=""
+                                onChange={(e) => setProfileForm(p => ({ ...p, selectedMajors: [e.target.value] }))}
+                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">Válassz szakot...</option>
+                                {MAJORS.map(m => <option key={m} value={m}>{m}</option>)}
+                            </select>
+                         )}
+                         {profileForm.selectedMajors && profileForm.selectedMajors.length > 0 && profileForm.selectedMajors.length < 2 && (
+                            <button
+                                type="button"
+                                onClick={addMajor}
+                                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                                + Új szak hozzáadása
+                            </button>
+                        )}
+                      </div>
+                  ) : (
+                      <select
+                        name="universityMajor"
+                        value={profileForm.universityMajor ?? ""}
+                        onChange={(e) => setProfileForm(p => ({ ...p, universityMajor: e.target.value }))}
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                         <option value="">Válassz szakot...</option>
+                         {MAJORS.map(m => <option key={m} value={m}>{m}</option>)}
+                      </select>
+                  )}
+                </div>
                 <label className="space-y-1 text-sm text-slate-700">
                   <span className="text-xs font-semibold text-slate-600">Képzési forma</span>
                   <select
@@ -646,6 +852,51 @@ export default function StudentDashboardPage() {
                   />
                   Van nyelvvizsga
                 </label>
+              
+                {/* Language Exams */}
+                {profileForm.hasLanguageCert && (
+                    <div className="md:col-span-2 space-y-3 pl-7 border-l-2 border-slate-100">
+                        {profileForm.languageExams?.map((exam, idx) => (
+                            <div key={idx} className="flex gap-3 items-end">
+                                <label className="space-y-1 text-sm text-slate-700 flex-1">
+                                    <span className="text-xs font-semibold text-slate-600">Nyelv</span>
+                                    <select
+                                        value={exam.language}
+                                        onChange={(e) => handleLanguageExamChange(idx, "language", e.target.value)}
+                                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+                                    </select>
+                                </label>
+                                <label className="space-y-1 text-sm text-slate-700 w-32">
+                                    <span className="text-xs font-semibold text-slate-600">Szint</span>
+                                    <select
+                                        value={exam.level}
+                                        onChange={(e) => handleLanguageExamChange(idx, "level", e.target.value)}
+                                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        {LANGUAGE_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+                                    </select>
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={() => removeLanguageExam(idx)}
+                                    className="mb-2 p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                    title="Törlés"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                        <button
+                            type="button"
+                            onClick={addLanguageExam}
+                            className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                        >
+                            + Nyelvvizsga hozzáadása
+                        </button>
+                    </div>
+                )}
               </div>
             )}
 

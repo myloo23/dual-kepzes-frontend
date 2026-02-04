@@ -90,6 +90,10 @@ export interface StudentProfile {
     currentMajor: string;
     studyMode: StudyMode;
     hasLanguageCert: boolean;
+    languageExams?: {
+        language: string;
+        level: string;
+    }[];
 }
 
 export interface CompanyEmployee {
@@ -191,6 +195,8 @@ export interface StudentRegisterPayload {
     currentMajor: string;
     studyMode: StudyMode;
     hasLanguageCert: boolean;
+    language?: string;
+    languageLevel?: string;
 }
 
 // ============= News Types =============

@@ -9,7 +9,7 @@ import {
 } from "../utils/positions.utils";
 import { lower, toTagName } from "../utils/positions.utils";
 
-export type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
+export type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC" | "RANDOM";
 export type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
 export type DatePostedFilter = "ALL" | "24H" | "7D" | "30D";
 export type WorkTypeFilter = "ALL" | "REMOTE" | "ONSITE";
@@ -26,9 +26,18 @@ export function usePositionsFilters(positions: Position[]) {
     const [deadlineFilter, setDeadlineFilter] = useState<DeadlineFilter>("ALL");
     const [datePostedFilter, setDatePostedFilter] = useState<DatePostedFilter>("ALL");
     const [workTypeFilter, setWorkTypeFilter] = useState<WorkTypeFilter>("ALL");
-    const [activeOnly, setActiveOnly] = useState(false);
+    const [activeOnly, setActiveOnly] = useState(true);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
-    const [sortKey, setSortKey] = useState<SortKey>("NEWEST");
+    const [sortKey, setSortKey] = useState<SortKey>("RANDOM");
+
+    // Create a stable random map for shuffling
+    const randomMap = useMemo(() => {
+        const map = new Map<string, number>();
+        positions.forEach((p) => {
+            map.set(String(p.id), Math.random());
+        });
+        return map;
+    }, [positions]);
 
     // Extract unique values for filters
     const cities = useMemo(() => {
@@ -224,10 +233,18 @@ export function usePositionsFilters(positions: Position[]) {
             case "TITLE_ASC":
                 sorted.sort((a, b) => a.title.localeCompare(b.title, "hu"));
                 break;
+
+            case "RANDOM":
+                sorted.sort((a, b) => {
+                    const rA = randomMap.get(String(a.id)) ?? 0;
+                    const rB = randomMap.get(String(b.id)) ?? 0;
+                    return rA - rB;
+                });
+                break;
         }
 
         return sorted;
-    }, [filteredPositions, sortKey]);
+    }, [filteredPositions, sortKey, randomMap]);
 
     const derived = useMemo(
         () => ({

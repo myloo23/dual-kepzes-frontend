@@ -2,7 +2,7 @@
 import ChipButton from "../../../components/shared/ChipButton";
 import { lower } from "../utils/positions.utils";
 
-type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC";
+type SortKey = "NEWEST" | "DEADLINE_ASC" | "DEADLINE_DESC" | "TITLE_ASC" | "RANDOM";
 type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
 
 interface DerivedData {
@@ -221,6 +221,7 @@ export default function FilterSidebar({
                     onChange={(e) => setSortKey(e.target.value as SortKey)}
                     className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
+                    <option value="RANDOM">Véletlenszerű</option>
                     <option value="NEWEST">Legújabb elöl</option>
                     <option value="DEADLINE_ASC">Határidő (hamarabb)</option>
                     <option value="DEADLINE_DESC">Határidő (később)</option>
