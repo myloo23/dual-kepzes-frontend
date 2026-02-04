@@ -4,6 +4,7 @@ import ApplicationsList from "../../features/applications/components/Application
 import StudentPartnershipsList from "../../features/partnerships/components/StudentPartnershipsList";
 import { useAuth } from "../../features/auth";
 import StudentNewsPage from "./StudentNewsPage";
+import { GuideEmbed } from "../../features/guide";
 import { api, type StudentProfile } from "../../lib/api";
 
 type StudentProfilePayload = Partial<StudentProfile> & {
@@ -701,16 +702,8 @@ export default function StudentDashboardPage() {
                 Tananyag és útmutató
               </h1>
               
-              <p className="text-slate-600 mb-6 max-w-md mx-auto">
-                Itt fogod megtalálni a részletes útmutatót az oldal használatához, 
-                tippeket és trükköket a sikeres jelentkezéshez.
-              </p>
-              
-              <div className="inline-flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-100 px-4 py-2 text-sm text-blue-700">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Hamarosan elérhető
+              <div className="mt-8 w-full">
+                <GuideEmbed />
               </div>
             </div>
             
