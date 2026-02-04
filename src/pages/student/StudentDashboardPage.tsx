@@ -4,7 +4,7 @@ import ApplicationsList from "../../features/applications/components/Application
 import StudentPartnershipsList from "../../features/partnerships/components/StudentPartnershipsList";
 import { useAuth } from "../../features/auth";
 import StudentNewsPage from "./StudentNewsPage";
-import { GuideEmbed } from "../../features/guide";
+import { GuideEmbed, GuideFormEmbed } from "../../features/guide";
 import { api, type StudentProfile } from "../../lib/api";
 
 type StudentProfilePayload = Partial<StudentProfile> & {
@@ -707,31 +707,7 @@ export default function StudentDashboardPage() {
               </div>
             </div>
             
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
-                <div className="text-2xl mb-2">🎯</div>
-                <h3 className="font-semibold text-slate-900 mb-1">Első lépések</h3>
-                <p className="text-sm text-slate-600">
-                  Hogyan töltsd ki a profilodat és kezdj el állásokat keresni
-                </p>
-              </div>
-              
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
-                <div className="text-2xl mb-2">💼</div>
-                <h3 className="font-semibold text-slate-900 mb-1">Jelentkezési tippek</h3>
-                <p className="text-sm text-slate-600">
-                  Hogyan készíts sikeres jelentkezést és mit várj el
-                </p>
-              </div>
-              
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
-                <div className="text-2xl mb-2">📞</div>
-                <h3 className="font-semibold text-slate-900 mb-1">Kapcsolattartás</h3>
-                <p className="text-sm text-slate-600">
-                  Hogyan kommunikálj a cégekkel és az egyetemmel
-                </p>
-              </div>
-            </div>
+            <GuideFormEmbed />
           </div>
         )}
           </main>
