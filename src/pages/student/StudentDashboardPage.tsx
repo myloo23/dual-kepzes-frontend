@@ -4,7 +4,7 @@ import ApplicationsList from "../../features/applications/components/Application
 import StudentPartnershipsList from "../../features/partnerships/components/StudentPartnershipsList";
 import { useAuth } from "../../features/auth";
 import StudentNewsPage from "./StudentNewsPage";
-import { GuideEmbed, GuideFormEmbed } from "../../features/guide";
+import { GuidePlayer } from "../../features/guide";
 import { api, type StudentProfile } from "../../lib/api";
 
 type StudentProfilePayload = Partial<StudentProfile> & {
@@ -693,21 +693,23 @@ export default function StudentDashboardPage() {
         )}
         {activeTab === "guide" && (
           <div className="space-y-6">
-            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm text-center">
-              <div className="mx-auto w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
-                <span className="text-3xl">📚</span>
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="text-center mb-8">
+                <div className="mx-auto w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                  <span className="text-3xl">📚</span>
+                </div>
+                
+                <h1 className="text-2xl font-semibold text-slate-900 mb-2">
+                  Tananyag és útmutató
+                </h1>
+                
+                <p className="text-slate-600 max-w-md mx-auto">
+                  Kövesd a lépéseket a tananyag elsajátításához.
+                </p>
               </div>
-              
-              <h1 className="text-2xl font-semibold text-slate-900 mb-2">
-                Tananyag és útmutató
-              </h1>
-              
-              <div className="mt-8 w-full">
-                <GuideEmbed />
-              </div>
+
+              <GuidePlayer />
             </div>
-            
-            <GuideFormEmbed />
           </div>
         )}
           </main>
