@@ -13,6 +13,7 @@ export interface NotificationItem {
   isRead?: boolean;
   archivedAt?: string | null;
   isArchived?: boolean;
+  senderRole?: string;
 }
 
 export type NotificationDetails = NotificationItem;

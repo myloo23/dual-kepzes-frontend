@@ -17,10 +17,11 @@ export default function Navbar() {
   const [actionError, setActionError] = useState<string | null>(null);
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   
   // Use auth state directly
   const isLoggedIn = isAuthenticated;
+  const isSystemAdmin = (user?.role as string) === 'ROLE_SYSTEM_ADMIN';
 
   const {
     active,
@@ -200,7 +201,8 @@ export default function Navbar() {
             )}
           </nav>
           
-          {isLoggedIn && (
+          
+          {isLoggedIn && !isSystemAdmin && (
             <div className="relative" ref={notificationsRef}>
               <button
                 type="button"

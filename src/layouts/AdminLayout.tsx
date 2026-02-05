@@ -7,6 +7,7 @@ export default function AdminLayout() {
     { to: "/admin/partnerships", label: "Partnerek" },
     { to: "/admin/companies", label: "Cégek" },
     { to: "/admin/positions", label: "Pozíciók" },
+    { to: "/admin/notifications", label: "Értesítések" },
     { to: "/admin/news", label: "Hírek" },
     { to: "/admin/tags", label: "Címkék / Tag-ek" },
     { to: "/admin/settings", label: "Beállítások" },

@@ -63,6 +63,7 @@ const AdminTags = lazyRetry(() => import("./pages/admin/AdminTags"));
 const AdminSettings = lazyRetry(() => import("./pages/admin/AdminSettings"));
 const AdminPartnerships = lazyRetry(() => import("./pages/admin/AdminPartnerships"));
 const AdminNews = lazyRetry(() => import("./pages/admin/AdminNews"));
+const AdminNotificationsPage = lazyRetry(() => import("./pages/admin/NotificationsPage"));
 
 // Lazy load other pages
 const MentorPartnerships = lazyRetry(() => import("./pages/mentor/MentorPartnerships"));
@@ -100,6 +101,7 @@ function App() {
               <Route path="tags" element={<AdminTags />} />
               <Route path="settings" element={<AdminSettings />} />
               <Route path="news" element={<AdminNews />} />
+              <Route path="notifications" element={<AdminNotificationsPage />} />
               <Route path="guide" element={<AdminGuidePage />} />
             </Route>
 
