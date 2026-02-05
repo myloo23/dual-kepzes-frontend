@@ -1,99 +1,8 @@
 import { useRef, useState, useEffect } from "react";
-import { Mail, Briefcase, Info } from "lucide-react";
-
-// Import images
-import sariBenceImg from "../../../assets/reference-images/SariB-V-199x300.jpg";
-import vinczeImreImg from "../../../assets/reference-images/VinczeI-V-199x300.jpg";
-import vajdaZsuzsannaImg from "../../../assets/reference-images/Vajda_Zs_1635.jpg";
-import ivanovicsGergelyImg from "../../../assets/reference-images/Ivanovics_G_446.jpg";
-import pappKlaudiaImg from "../../../assets/reference-images/Papp_K_1638.jpg";
-import kiralyIldikoImg from "../../../assets/reference-images/Kiraly_I.jpg";
-import borzakNikolettImg from "../../../assets/reference-images/Borzsak_N.jpg";
-import subaEdinaImg from "../../../assets/reference-images/Suba_E.jpg";
-import boldizsarAdriennImg from "../../../assets/reference-images/Adri-1-1-200x300.jpg";
-import palotaiBernadettImg from "../../../assets/reference-images/palotaibernadett.png";
-
-// Data extracted from the user's provided text
-const REFERENCES = [
-    {
-        name: "Sári Bence",
-        title: "Mérnökinformatika és villamosmérnök képzés",
-        email: "sari.bence@nje.hu",
-        description: "Mérnökinformatikus BSc és MBA végzettséggel rendelkezem a Neumann János Egyetemen, szakmai érdeklődésem középpontjában a robotika, a 3D tervezés és nyomtatás, valamint a mikrovezérlők alkalmazása áll. Oktatói és kutatói munkám mellett aktívan részt veszek az egyetemi közéletben, a duális képzés referenseként támogatom a hallgatókat és a partnercégeket, valamint közreműködöm az egyetem nemzetköziesítésében az EU4DUAL projekt keretében.",
-        image: sariBenceImg
-    },
-    {
-        name: "Vincze Imre",
-        title: "Gépészmérnöki képzés",
-        email: "vincze.imre@nje.hu",
-        description: "Gépészmérnöki végzettségemet a GAMF-on, minőségügyi szakmérnöki és mesterszintű diplomámat a Budapesti Műszaki és Gazdaságtudományi Egyetemen szereztem. Jelenleg a Neumann János Egyetemen dolgozom mesteroktatóként.",
-        image: vinczeImreImg
-    },
-    {
-        name: "Vajda Zsuzsanna",
-        title: "Gépészmérnöki képzés",
-        email: "vajda.zsuzsanna@nje.hu",
-        description: "A Neumann János Egyetemen, Kecskeméten oktatok a GAMF Kar IJAT tanszékének mesteroktatójaként. Munkám során a gyakorlatorientált képzésre és az elméleti ismeretek gyakorlati alkalmazására helyezem a hangsúlyt, támogatva a hallgatók szakmai fejlődését.",
-        image: vajdaZsuzsannaImg
-    },
-    {
-        name: "Ivánovics Gergely",
-        title: "Járműmérnöki képzés",
-        email: "ivanovics.gergely@nje.hu",
-        description: "A Neumann János Egyetemen, Kecskeméten oktatok a GAMF Kar IJAT tanszékének mesteroktatójaként. Oktatói munkámban a műszaki ismeretek gyakorlatorientált átadására és a hallgatók szakmai fejlődésének támogatására helyezem a hangsúlyt, különös figyelmet fordítva az elmélet és a gyakorlat összekapcsolására.",
-        image: ivanovicsGergelyImg
-    },
-    {
-        name: "Papp Klaudia",
-        title: "Járműmérnöki képzés",
-        email: "papp.klaudia@nje.hu",
-        description: "A Neumann János Egyetemen, Kecskeméten oktatok a GAMF Kar IJAT tanszékének tanársegédeként. Oktatói munkám során a hallgatók szakmai alapjainak megerősítésére és a gyakorlatorientált tudás átadására helyezem a hangsúlyt, támogatva fejlődésüket és sikeres tanulmányaikat.",
-        image: pappKlaudiaImg
-    },
-    {
-        name: "Király Ildikó",
-        title: "Kertészeti képzések",
-        email: "kiraly.ildiko@nje.hu",
-        description: "Okleveles kertészmérnöki diplomát és PhD fokozatot szereztem a Budapesti Corvinus Egyetem Kertészettudományi Karán, doktori kutatásomban a Kárpát-medencei almafajták pomológiai és molekuláris jellemzésével foglalkoztam. Jelenleg a Neumann János Egyetem Kertészeti és Vidékfejlesztési Karának egyetemi docense vagyok, a kertészmérnöki MSc szak szakfelelőseként és a duális képzés kari referenseként, kutatási területem a Kárpát-medencei gyümölcsfajták morfológiai és molekuláris vizsgálata.",
-        image: kiralyIldikoImg
-    },
-    {
-        name: "Borzák Nikolett",
-        title: "Gazdaságtudományi képzések",
-        email: "borzak.nikolett@nje.hu",
-        description: "A Neumann János Egyetem Gazdaságtudományi Karának beiskolázási csapatában dolgozom, célom, hogy a középiskolások magabiztosan és jó érzéssel válasszák a kecskeméti GTK-t, ahol támogató, közösségépítő közeg várja őket. A Hallgatói Iroda munkatársaként a kari kommunikációért és a duális vállalati kapcsolattartásért felelek, valamint a végzett hallgatókkal való kapcsolattartást is erősítem a kari alumni programokon keresztül.",
-        image: borzakNikolettImg
-    },
-    {
-        name: "Suba Edina",
-        title: "Gazdaságtudományi képzések",
-        email: "suba.edina@nje.hu",
-        description: "A Dékáni Hivatal részeként a Hallgatói Irodában az oktatással és a hallgatókkal kapcsolatos ügyek koordinálásával foglalkozom, beleértve a tanulmányi és ösztöndíjügyeket, valamint az oktatók és hallgatók közötti kommunikáció támogatását. Részt veszek a duális képzés és a kötelező szakmai gyakorlatok szervezésében, kapcsolatot tartok vállalati partnerekkel és ösztöndíjprogramokkal, valamint közreműködöm a kari beiskolázási kampányokban és az MBA-képzés ügyintézésében.",
-        image: subaEdinaImg
-    },
-    {
-        name: "Dr. Boldizsár Adrienn",
-        title: "Logisztikai mérnök képzés",
-        email: "boldizsar.adrienn@nje.hu",
-        description: "A logisztikai mérnöki alapszak szakfelelőseként és vállalati referensként dolgozom, közlekedésmérnöki alap- és mesterszakos diplomámat a Budapesti Műszaki és Gazdaságtudományi Egyetemen szereztem, majd a Kandó Kálmán Doktori Iskolában folytattam PhD tanulmányaimat. Kutatási területem a fenntartható és gazdaságos áruszállítás, annak társadalmi hatásai és a logisztikai rendszerek összefüggései, jelenleg a KTI – Magyar Közlekedéstudományi és Logisztikai Intézet Logisztikai Innovációs csoportjában dolgozom tudományos munkatársként.",
-        image: boldizsarAdriennImg
-    },
-    {
-        name: "Dr. Angeli Eliza",
-        title: "DKK vezetője",
-        email: "angeli.eliza@nje.hu",
-        group: "Duális Képzés Központ",
-        description: "A központ szakmai irányítását látom el, meghatározó szerepet töltök be a duális képzések fejlesztésében és minőségbiztosításában. Munkámmal hozzájárulok ahhoz, hogy az egyetemen megvalósuló duális képzések a munkaerőpiaci igényekhez igazodva, magas szakmai színvonalon működjenek."
-    },
-    {
-        name: "Palotai Bernadett",
-        title: "Tanulmányi ügyintéző",
-        email: "palotai.bernadett@nje.hu",
-        group: "Oktatási és Képzési Igazgatóság",
-        description: "Tanulmányi ügyintézőként támogatom az oktatásszervezési feladatokat és a hallgatói ügyintézést.",
-        image: palotaiBernadettImg
-    }
-];
+import { Mail, Briefcase, Info, ChevronRight, User } from "lucide-react";
+import { REFERENCES } from "../data/references";
+import type { ReferencePerson } from "../types";
+import ReferenceDetailModal from "./ReferenceDetailModal";
 
 function getInitials(name: string) {
     return name
@@ -126,6 +35,7 @@ export default function ReferencesSlider() {
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
+    const [selectedPerson, setSelectedPerson] = useState<ReferencePerson | null>(null);
 
     // Duplicate list for infinite scroll effect
     const displayList = [...REFERENCES, ...REFERENCES];
@@ -137,8 +47,8 @@ export default function ReferencesSlider() {
         const animate = () => {
             if (!scrollContainer) return;
 
-            // Only auto-scroll if not paused and not dragging
-            if (!isPaused && !isDragging) {
+            // Only auto-scroll if not paused, not dragging, and no modal is open
+            if (!isPaused && !isDragging && !selectedPerson) {
                 if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
                     scrollContainer.scrollLeft = 0;
                 } else {
@@ -152,9 +62,10 @@ export default function ReferencesSlider() {
         animationFrameId = requestAnimationFrame(animate);
 
         return () => cancelAnimationFrame(animationFrameId);
-    }, [isPaused, isDragging]);
+    }, [isPaused, isDragging, selectedPerson]);
 
     const handleMouseDown = (e: React.MouseEvent) => {
+        if (e.target instanceof HTMLButtonElement || (e.target as Element).closest('button')) return;
         setIsDragging(true);
         setIsPaused(true);
         setStartX(e.pageX - (scrollRef.current?.offsetLeft || 0));
@@ -212,7 +123,7 @@ export default function ReferencesSlider() {
                     {displayList.map((person, index) => (
                         <div
                             key={`${person.email}-${index}`}
-                            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 w-[320px] flex-shrink-0 hover:shadow-lg transition-all duration-300 select-none group/card relative overflow-hidden"
+                            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 w-[320px] flex-shrink-0 hover:shadow-lg transition-all duration-300 select-none group/card relative overflow-hidden flex flex-col"
                             title={person.description}
                         >
                             {/* Hover effect gradient */}
@@ -242,7 +153,7 @@ export default function ReferencesSlider() {
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-4 flex-grow">
                                 <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-lg">
                                     <Briefcase size={18} className="text-slate-400 mt-0.5 flex-shrink-0" />
                                     <p className="text-sm text-slate-700 font-medium leading-snug line-clamp-2" title={person.title}>
@@ -254,7 +165,8 @@ export default function ReferencesSlider() {
                                     <a
                                         href={`mailto:${person.email}`}
                                         className="text-sm font-medium text-slate-600 hover:text-dkk-blue hover:underline truncate transition-colors"
-                                        draggable="false" // Prevent link dragging
+                                        draggable="false"
+                                        onClick={(e) => e.stopPropagation()}
                                     >
                                         {person.email}
                                     </a>
@@ -272,6 +184,21 @@ export default function ReferencesSlider() {
                                     </div>
                                 )}
                             </div>
+
+                            <div className="mt-4 pt-4 border-t border-slate-100">
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setSelectedPerson(person);
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-slate-50 hover:bg-dkk-blue hover:text-white text-slate-600 font-medium transition-all group/btn text-sm"
+                                >
+                                    <User size={16} />
+                                    <span>Bemutatkozás</span>
+                                    <ChevronRight size={16} className="opacity-50 group-hover/btn:opacity-100 transition-opacity" />
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -286,6 +213,12 @@ export default function ReferencesSlider() {
                     scrollbar-width: none;
                 }
             `}</style>
+            
+            <ReferenceDetailModal 
+                person={selectedPerson}
+                isOpen={!!selectedPerson}
+                onClose={() => setSelectedPerson(null)}
+            />
         </section>
     );
 }
