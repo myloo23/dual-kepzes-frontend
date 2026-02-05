@@ -43,6 +43,7 @@ const HomePage = lazyRetry(() => import("./pages/landing/HomePage"));
 const PositionsPage = lazyRetry(() => import("./pages/landing/PositionsPage"));
 const PublicCompanyProfilePage = lazyRetry(() => import("./pages/landing/PublicCompanyProfilePage"));
 const StudentRegisterPage = lazyRetry(() => import("./pages/auth/StudentRegisterPage"));
+const CompanyRegistrationPage = lazyRetry(() => import("./pages/auth/CompanyRegistrationPage"));
 const PlaceholderPage = lazyRetry(() => import("./components/layout/PlaceholderPage"));
 const StudentDashboardPage = lazyRetry(() => import("./pages/student/StudentDashboardPage"));
 const StudentNewsPage = lazyRetry(() => import("./pages/student/StudentNewsPage"));
@@ -91,6 +92,7 @@ function App() {
             <Route path="/positions" element={<PositionsPage />} />
             <Route path="/companies/:id" element={<PublicCompanyProfilePage />} />
             <Route path="/register" element={<StudentRegisterPage />} />
+            <Route path="/register-company-partner" element={<CompanyRegistrationPage />} />
 
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />

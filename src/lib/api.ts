@@ -26,6 +26,7 @@ import type {
 
   Partnership,
   PaginationQuery,
+  CompanyRegisterPayload,
 } from '../types/api.types';
 import type {
   NotificationCreatePayload,
@@ -72,6 +73,9 @@ export const api = {
     apiPost<LoginResponse>('/api/auth/login', { email, password }),
 
   registerStudent: (payload: StudentRegisterPayload) =>
+    apiPost<RegisterResponse>('/api/auth/register', payload),
+
+  registerCompany: (payload: CompanyRegisterPayload) =>
     apiPost<RegisterResponse>('/api/auth/register', payload),
 
   // ============= Stats =============
@@ -365,6 +369,7 @@ export type {
   Tag,
   Partnership,
   PartnershipStatus,
+  CompanyRegisterPayload,
 } from '../types/api.types';
 export type {
   NotificationCreatePayload,

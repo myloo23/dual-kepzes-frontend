@@ -242,6 +242,31 @@ export type StudentRegisterPayload =
           languageLevel: string;
       };
 
+export interface CompanyRegisterPayload {
+    // User Credentials
+    email: string;
+    password: string;
+    fullName: string;
+    phoneNumber: string;
+    role: 'COMPANY_ADMIN';
+    
+    // Company Details
+    company: {
+        name: string;
+        taxId: string;
+        locations: Location[];
+        contactName: string;
+        contactEmail: string;
+        description?: string;
+        website?: string;
+        logoUrl?: string;
+        hasOwnApplication?: boolean;
+    };
+    
+    // GDPR
+    gdprAccepted: boolean;
+}
+
 // ============= News Types =============
 export type NewsTargetGroup = UserRole | 'ALL';
 
