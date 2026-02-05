@@ -243,28 +243,24 @@ export type StudentRegisterPayload =
       };
 
 export interface CompanyRegisterPayload {
-    // User Credentials
-    email: string;
-    password: string;
-    fullName: string;
-    phoneNumber: string;
-    role: 'COMPANY_ADMIN';
-    
-    // Company Details
     company: {
         name: string;
         taxId: string;
-        locations: Location[];
+        description?: string;
         contactName: string;
         contactEmail: string;
-        description?: string;
         website?: string;
         logoUrl?: string;
         hasOwnApplication?: boolean;
+        locations: Location[];
     };
-    
-    // GDPR
-    gdprAccepted: boolean;
+    admin: {
+        email: string;
+        password: string;
+        fullName: string;
+        phoneNumber: string;
+        jobTitle: string;
+    };
 }
 
 // ============= News Types =============

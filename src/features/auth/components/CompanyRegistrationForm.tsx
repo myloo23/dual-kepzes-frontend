@@ -22,11 +22,13 @@ export const CompanyRegistrationForm = () => {
 
     // Form State
     const [formData, setFormData] = useState<CompanyRegisterPayload>({
-        email: '',
-        password: '',
-        fullName: '',
-        phoneNumber: '',
-        role: 'COMPANY_ADMIN',
+        admin: {
+            email: '',
+            password: '',
+            fullName: '',
+            phoneNumber: '',
+            jobTitle: ''
+        },
         company: {
             name: '',
             taxId: '',
@@ -36,9 +38,17 @@ export const CompanyRegistrationForm = () => {
             description: '',
             website: '',
             hasOwnApplication: false,
-        },
-        gdprAccepted: false
+        }
     });
+
+    const [gdprAccepted, setGdprAccepted] = useState(false);
+
+    const updateAdmin = (field: keyof typeof formData.admin, value: string) => {
+        setFormData((prev: CompanyRegisterPayload) => ({
+            ...prev,
+            admin: { ...prev.admin, [field]: value }
+        }));
+    };
 
     const updateCompany = (field: keyof typeof formData.company, value: any) => {
         setFormData((prev: CompanyRegisterPayload) => ({
@@ -82,7 +92,7 @@ export const CompanyRegistrationForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        if (!formData.gdprAccepted) {
+        if (!gdprAccepted) {
             showError("A regisztrációhoz el kell fogadni az Adatkezelési Tájékoztatót.");
             return;
         }
@@ -92,9 +102,9 @@ export const CompanyRegistrationForm = () => {
         try {
             await api.registerCompany(formData);
             
-            showSuccess("Sikeres regisztráció! Fiókját létrehoztuk. Kérjük erősítse meg email címét a bejelentkezéshez.");
+            showSuccess("Sikeres regisztráció! Hamarosan felvesszük Önökkel a kapcsolatot.");
             
-            navigate('/login');
+            navigate('/');
         } catch (error: any) {
             console.error('Registration error:', error);
             const msg = error.data?.message || error.message || "Hiba történt a regisztráció során.";
@@ -153,8 +163,8 @@ export const CompanyRegistrationForm = () => {
                                     <input
                                         required
                                         type="text"
-                                        value={formData.fullName}
-                                        onChange={e => setFormData({...formData, fullName: e.target.value})}
+                                        value={formData.admin.fullName}
+                                        onChange={e => updateAdmin('fullName', e.target.value)}
                                         className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
                                         placeholder="Az adminisztrátor neve"
                                     />
@@ -166,8 +176,8 @@ export const CompanyRegistrationForm = () => {
                                 <input
                                     required
                                     type="tel"
-                                    value={formData.phoneNumber}
-                                    onChange={e => setFormData({...formData, phoneNumber: e.target.value})}
+                                    value={formData.admin.phoneNumber}
+                                    onChange={e => updateAdmin('phoneNumber', e.target.value)}
                                     className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
                                     placeholder="+36 30 123 4567"
                                 />
@@ -178,13 +188,13 @@ export const CompanyRegistrationForm = () => {
                                 <input
                                     required
                                     type="email"
-                                    value={formData.email}
+                                    value={formData.admin.email}
                                     onChange={e => {
-                                        setFormData({
-                                            ...formData, 
-                                            email: e.target.value,
-                                            company: { ...formData.company, contactEmail: e.target.value } // Auto-fill company contact
-                                        })
+                                        updateAdmin('email', e.target.value);
+                                        // Auto-fill company contact email if empty
+                                        if(!formData.company.contactEmail) {
+                                            updateCompany('contactEmail', e.target.value);
+                                        }
                                     }}
                                     className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
                                     placeholder="admin@ceg.hu"
@@ -196,10 +206,22 @@ export const CompanyRegistrationForm = () => {
                                 <input
                                     required
                                     type="password"
-                                    value={formData.password}
-                                    onChange={e => setFormData({...formData, password: e.target.value})}
+                                    value={formData.admin.password}
+                                    onChange={e => updateAdmin('password', e.target.value)}
                                     className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
                                     placeholder="Legalább 8 karakter"
+                                />
+                            </div>
+
+                             <div className="space-y-2 md:col-span-2">
+                                <label className="text-sm font-medium text-slate-700">Munkakör / Pozíció *</label>
+                                <input
+                                    required
+                                    type="text"
+                                    value={formData.admin.jobTitle}
+                                    onChange={e => updateAdmin('jobTitle', e.target.value)}
+                                    className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                                    placeholder="pl. HR Igazgató"
                                 />
                             </div>
                         </div>
@@ -208,7 +230,8 @@ export const CompanyRegistrationForm = () => {
                             <Button 
                                 type="button" 
                                 onClick={() => {
-                                    if(formData.fullName && formData.email && formData.password) {
+                                    const { fullName, email, password, jobTitle } = formData.admin;
+                                    if(fullName && email && password && jobTitle) {
                                         setStep(2);
                                     } else {
                                         showError("Kérjük töltsön ki minden kötelező mezőt!");
@@ -336,8 +359,8 @@ export const CompanyRegistrationForm = () => {
                                     <input
                                         type="checkbox"
                                         required
-                                        checked={formData.gdprAccepted}
-                                        onChange={e => setFormData({...formData, gdprAccepted: e.target.checked})}
+                                        checked={gdprAccepted}
+                                        onChange={e => setGdprAccepted(e.target.checked)}
                                         className="peer h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                     />
                                 </div>

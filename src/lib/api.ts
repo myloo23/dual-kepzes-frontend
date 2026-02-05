@@ -76,7 +76,7 @@ export const api = {
     apiPost<RegisterResponse>('/api/auth/register', payload),
 
   registerCompany: (payload: CompanyRegisterPayload) =>
-    apiPost<RegisterResponse>('/api/auth/register', payload),
+    apiPost<RegisterResponse>('/api/companies/with-admin', payload),
 
   // ============= Stats =============
   stats: {
