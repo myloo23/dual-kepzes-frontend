@@ -17,7 +17,7 @@ export default function Navbar() {
   const [actionError, setActionError] = useState<string | null>(null);
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   
   // Use auth state directly
   const isLoggedIn = isAuthenticated;
@@ -188,6 +188,15 @@ export default function Navbar() {
 
             {newsLink && (
               <Link to={newsLink} className={getLinkClass(newsLink)}>Hírek</Link>
+            )}
+
+            {isLoggedIn && (
+               <button
+                  onClick={logout}
+                  className="text-[13px] tracking-wide font-medium text-slate-500 hover:text-red-600 transition-colors duration-300"
+                >
+                  Kijelentkezés
+                </button>
             )}
           </nav>
           

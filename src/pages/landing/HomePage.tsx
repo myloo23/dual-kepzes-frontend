@@ -17,7 +17,7 @@ function HomePage() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { user, login, isAuthenticated } = useAuth();
+  const { user, login, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -147,6 +147,13 @@ function HomePage() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
+                </button>
+
+                <button
+                  onClick={logout}
+                  className="mt-4 text-sm font-medium text-slate-500 hover:text-red-600 transition-colors duration-200"
+                >
+                  Kijelentkezés
                 </button>
               </div>
             ) : null}

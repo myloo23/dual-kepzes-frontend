@@ -1,15 +1,3 @@
-export const MAJORS = [
-  "Mérnökinformatikus BSc",
-  "Programtervező informatikus BSc",
-  "Gazdaságinformatikus BSc",
-  "Gépészmérnök BSc",
-  "Villamosmérnök BSc",
-  "Mechatronikai mérnök BSc",
-  "Járműmérnök BSc",
-  "Építőmérnök BSc",
-  "Környezetmérnök BSc",
-  "Műszaki menedzser BSc",
-];
 
 export const LANGUAGES = [
   "Angol",

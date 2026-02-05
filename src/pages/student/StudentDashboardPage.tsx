@@ -6,8 +6,9 @@ import { useAuth } from "../../features/auth";
 import StudentNewsPage from "./StudentNewsPage";
 import { GuidePlayer } from "../../features/guide";
 import { api, type StudentProfile } from "../../lib/api";
-import { MAJORS, LANGUAGES, LANGUAGE_LEVELS } from "../../features/auth/constants";
 import { normalizeNeptun, validateNeptunOptional } from "../../utils/validation-utils";
+import { LANGUAGES, LANGUAGE_LEVELS } from "../../features/auth/constants";
+import { useMajors } from "../../features/majors";
 
 type StudentProfilePayload = Partial<StudentProfile> & {
   profile?: Partial<StudentProfile>;
@@ -40,7 +41,8 @@ type StudentFormState = {
     hasLanguageCert: boolean;
     languageExams: { language: string; level: string }[];
     studentType: "HIGHSCHOOL" | "UNIVERSITY";
-    selectedMajors: string[]; // For High School
+    firstChoiceId: string; // For High School
+    secondChoiceId: string; // For High School
     universityMajor: string; // For University
 };
 
@@ -85,6 +87,8 @@ function normalizeStudentProfile(payload: StudentProfilePayload | null): Partial
     studyMode: (merged.studyMode?.toUpperCase() as "NAPPALI" | "LEVELEZŐ") ?? "NAPPALI",
     hasLanguageCert: Boolean(merged.hasLanguageCert),
     languageExams: merged.languageExams || [],
+    firstChoiceId: (merged as any).firstChoice?.id || (merged as any).firstChoiceId || "",
+    secondChoiceId: (merged as any).secondChoice?.id || (merged as any).secondChoiceId || "",
   } as Partial<StudentProfile>;
 }
 
@@ -98,11 +102,23 @@ function buildProfileForm(data: Partial<StudentProfile> | null): StudentFormStat
   const studentType = hasNeptun ? "UNIVERSITY" : "HIGHSCHOOL";
   
   const currentMajor = data.currentMajor || "";
-  const selectedMajors = studentType === "HIGHSCHOOL" && currentMajor 
-    ? currentMajor.split(",").map(s => s.trim()) 
-    : [];
-  const universityMajor = studentType === "UNIVERSITY" ? currentMajor : "";
+  
+  // Parse majors for HS
+  // Priority: 1. Explicit fields from API, 2. Parsed from currentMajor string
+  let firstChoiceId = data.firstChoiceId || "";
+  let secondChoiceId = data.secondChoiceId || "";
+  
+  if (studentType === "HIGHSCHOOL") {
+      // If explicit fields are missing, try parsing currentMajor
+      if (!firstChoiceId && !secondChoiceId && currentMajor) {
+          const parts = currentMajor.split(/[,;]/).map(s => s.trim()).filter(Boolean);
+          if (parts.length > 0) firstChoiceId = parts[0];
+          if (parts.length > 1) secondChoiceId = parts[1];
+      }
+  }
 
+  const universityMajor = studentType === "UNIVERSITY" ? currentMajor : "";
+  
   return {
     fullName: data.fullName ?? "",
     email: data.email ?? "",
@@ -123,7 +139,8 @@ function buildProfileForm(data: Partial<StudentProfile> | null): StudentFormStat
         ? data.languageExams 
         : [{ language: LANGUAGES[0], level: LANGUAGE_LEVELS[2] }], // Default B1
     studentType,
-    selectedMajors,
+    firstChoiceId,
+    secondChoiceId,
     universityMajor,
   };
 }
@@ -137,7 +154,8 @@ function buildProfilePayload(form: StudentFormState) {
     city,
     streetAddress,
     studentType,
-    selectedMajors,
+    firstChoiceId,
+    secondChoiceId,
     universityMajor,
     languageExams,
     neptunCode,
@@ -149,7 +167,10 @@ function buildProfilePayload(form: StudentFormState) {
   let finalNeptun = "";
 
   if (studentType === "HIGHSCHOOL") {
-      finalMajor = selectedMajors.join(", ");
+      const parts = [];
+      if (firstChoiceId) parts.push(firstChoiceId);
+      if (secondChoiceId) parts.push(secondChoiceId);
+      finalMajor = parts.join(", ");
       finalNeptun = ""; // Clear neptun for high schoolers
   } else {
       finalMajor = universityMajor;
@@ -161,7 +182,7 @@ function buildProfilePayload(form: StudentFormState) {
 
   return {
     ...rest,
-    neptunCode: finalNeptun ? normalizeNeptun(finalNeptun) : "",
+    neptunCode: finalNeptun ? normalizeNeptun(finalNeptun) : undefined,
     currentMajor: finalMajor,
     languageExams: finalLanguageExams,
     studyMode: rest.studyMode as "NAPPALI" | "LEVELEZŐ",
@@ -179,6 +200,7 @@ function buildProfilePayload(form: StudentFormState) {
 export default function StudentDashboardPage() {
   const location = useLocation();
   const { user, logout: authLogout } = useAuth();
+  const { majors, loading: majorsLoading } = useMajors();
   const [profile, setProfile] = useState<Partial<StudentProfile> | null>(null);
   const [profileForm, setProfileForm] = useState<StudentFormState>({} as StudentFormState);
   const [profileLoading, setProfileLoading] = useState(false);
@@ -232,6 +254,52 @@ export default function StudentDashboardPage() {
       mounted = false;
     };
   }, [activeTab]);
+
+  // Sync profile major names to IDs when majors list is loaded
+  useEffect(() => {
+     if (activeTab === "profile" && profile && !majorsLoading && majors.length > 0) {
+        const currentMajor = profile.currentMajor || "";
+        const studentType = profile.neptunCode ? "UNIVERSITY" : "HIGHSCHOOL";
+        
+        if (studentType === "HIGHSCHOOL") {
+            // Try to resolve IDs if they are Names or if we only have currentMajor string
+            // If data.firstChoiceId is already a UUID, the matching below (exact ID match) will confirm it.
+            // If it is a Name, the matching (exact/partial name) will find the ID.
+            
+            const raw1 = profile.firstChoiceId || currentMajor.split(/[,;]/)[0]?.trim() || "";
+            const raw2 = profile.secondChoiceId || currentMajor.split(/[,;]/)[1]?.trim() || "";
+            
+            const findMajor = (val: string) => {
+                if (!val) return undefined;
+                const lowerVal = val.toLowerCase();
+                // 1. Try exact ID match
+                let match = majors.find(m => String(m.id) === val);
+                // 2. Try exact Name match (case-insensitive)
+                if (!match) match = majors.find(m => m.name.toLowerCase() === lowerVal);
+                // 3. Try partial Name match
+                if (!match) match = majors.find(m => m.name.toLowerCase().includes(lowerVal) || lowerVal.includes(m.name.toLowerCase()));
+                return match;
+            };
+
+            const match1 = findMajor(raw1);
+            const match2 = findMajor(raw2);
+            
+            setProfileForm(prev => {
+                const newFirstId = match1 ? String(match1.id) : prev.firstChoiceId;
+                const newSecondId = match2 ? String(match2.id) : prev.secondChoiceId;
+
+                if (prev.firstChoiceId !== newFirstId || prev.secondChoiceId !== newSecondId) {
+                     return {
+                        ...prev,
+                        firstChoiceId: newFirstId || "",
+                        secondChoiceId: newSecondId || ""
+                    };
+                }
+                return prev;
+            });
+        }
+     }
+  }, [profile, majors, majorsLoading, activeTab]);
 
   useEffect(() => {
     if (activeTab !== "partnerships") return;
@@ -297,23 +365,7 @@ export default function StudentDashboardPage() {
     }));
   };
 
-  // Helper for majors
-  const handleMajorChange = (index: number, value: string) => {
-      const newMajors = [...(profileForm.selectedMajors || [])];
-      newMajors[index] = value;
-      setProfileForm(p => ({ ...p, selectedMajors: newMajors }));
-  };
-  
-  const addMajor = () => {
-      setProfileForm(p => ({ ...p, selectedMajors: [...(p.selectedMajors || []), ""] }));
-  };
 
-  const removeMajor = (index: number) => {
-    setProfileForm(p => ({
-        ...p,
-        selectedMajors: p.selectedMajors.filter((_, i) => i !== index)
-    }));
-  };
 
   const handleProfileSave = async () => {
     setProfileSaving(true);
@@ -321,7 +373,7 @@ export default function StudentDashboardPage() {
     setProfileSuccess(null);
 
     // Validation
-    const { studentType, selectedMajors, neptunCode, universityMajor, hasLanguageCert, languageExams } = profileForm;
+    const { studentType, firstChoiceId, secondChoiceId, neptunCode, universityMajor, hasLanguageCert, languageExams } = profileForm;
 
     if (studentType === "UNIVERSITY") {
          if (!universityMajor) {
@@ -338,9 +390,18 @@ export default function StudentDashboardPage() {
              return setProfileError(neptunErr);
          }
     } else {
-        if (!selectedMajors || selectedMajors.length === 0 || selectedMajors.every(m => !m)) {
+        // HIGHSCHOOL
+        if (!firstChoiceId) {
             setProfileSaving(false);
-            return setProfileError("Legalább egy szak megjelölése kötelező.");
+            return setProfileError("Első helyen megjelölt szak kiválasztása kötelező.");
+        }
+        if (!secondChoiceId) {
+             setProfileSaving(false);
+             return setProfileError("Második helyen megjelölt szak kiválasztása kötelező.");
+        }
+        if (firstChoiceId === secondChoiceId) {
+            setProfileSaving(false);
+            return setProfileError("A két megjelölt szak nem lehet ugyanaz.");
         }
     }
 
@@ -774,60 +835,60 @@ export default function StudentDashboardPage() {
 
                 <div className="space-y-1 text-sm text-slate-700 md:col-span-2">
                   <span className="text-xs font-semibold text-slate-600">
-                    {profileForm.studentType === "HIGHSCHOOL" ? "Megjelölt szak az egyetemen" : "Szak megnevezése"}
+                    {profileForm.studentType === "HIGHSCHOOL" ? "Megjelölt szakok" : "Szak megnevezése"}
                   </span>
                   
                   {profileForm.studentType === "HIGHSCHOOL" ? (
-                      <div className="space-y-2">
-                        {profileForm.selectedMajors?.map((major, idx) => (
-                             <div key={idx} className="flex gap-2">
-                                <select
-                                    value={major}
-                                    onChange={(e) => handleMajorChange(idx, e.target.value)}
-                                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="">Válassz szakot...</option>
-                                    {MAJORS.map(m => <option key={m} value={m}>{m}</option>)}
-                                </select>
-                                <button 
-                                    type="button" 
-                                    onClick={() => removeMajor(idx)}
-                                    className="text-red-500 hover:text-red-700 px-2"
-                                >
-                                    ✕
-                                </button>
-                            </div>
-                        ))}
-                         {(!profileForm.selectedMajors || profileForm.selectedMajors.length === 0) && (
-                             <select
-                                value=""
-                                onChange={(e) => setProfileForm(p => ({ ...p, selectedMajors: [e.target.value] }))}
+                      <div className="space-y-4">
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-slate-500">Helyszín 1. választás</label>
+                            <select
+                                value={profileForm.firstChoiceId ?? ""}
+                                onChange={(e) => setProfileForm(p => ({ ...p, firstChoiceId: e.target.value }))}
                                 className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="">Válassz szakot...</option>
-                                {MAJORS.map(m => <option key={m} value={m}>{m}</option>)}
+                                <option value="">{majorsLoading ? "Betöltés..." : "Válassz szakot..."}</option>
+                                {majors.map(m => (
+                                    <option key={m.id} value={m.id}>
+                                        {m.name}{m.language ? ` (${m.language})` : ''}
+                                    </option>
+                                ))}
                             </select>
-                         )}
-                         {profileForm.selectedMajors && profileForm.selectedMajors.length > 0 && profileForm.selectedMajors.length < 2 && (
-                            <button
-                                type="button"
-                                onClick={addMajor}
-                                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-slate-500">Helyszín 2. választás</label>
+                            <select
+                                value={profileForm.secondChoiceId ?? ""}
+                                onChange={(e) => setProfileForm(p => ({ ...p, secondChoiceId: e.target.value }))}
+                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                                + Új szak hozzáadása
-                            </button>
-                        )}
+                                <option value="">{majorsLoading ? "Betöltés..." : "Válassz szakot..."}</option>
+                                {majors.map(m => (
+                                    <option 
+                                        key={m.id} 
+                                        value={m.id}
+                                        disabled={m.id === profileForm.firstChoiceId}
+                                    >
+                                        {m.name}{m.language ? ` (${m.language})` : ''}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                       </div>
                   ) : (
                       <select
-                        name="universityMajor"
-                        value={profileForm.universityMajor ?? ""}
-                        onChange={(e) => setProfileForm(p => ({ ...p, universityMajor: e.target.value }))}
-                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                         <option value="">Válassz szakot...</option>
-                         {MAJORS.map(m => <option key={m} value={m}>{m}</option>)}
-                      </select>
+                      value={profileForm.universityMajor}
+                      onChange={(e) => setProfileForm(p => ({ ...p, universityMajor: e.target.value }))}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                      <option value="">{majorsLoading ? "Betöltés..." : "Válassz szakot..."}</option>
+                      {majors.map(m => (
+                          <option key={m.id} value={m.id}>
+                              {m.name}{m.language ? ` (${m.language})` : ''}
+                          </option>
+                      ))}
+                  </select>
                   )}
                 </div>
                 <label className="space-y-1 text-sm text-slate-700">

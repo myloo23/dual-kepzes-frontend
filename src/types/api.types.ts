@@ -41,6 +41,16 @@ export interface Tag {
     category?: string;
 }
 
+// ============= Major Types =============
+export interface Major {
+    id: Id;
+    name: string;
+    language?: string;
+    code?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 // ============= Position Types =============
 export interface Position {
     id: Id;
@@ -94,6 +104,11 @@ export interface StudentProfile {
         language: string;
         level: string;
     }[];
+    firstChoiceId?: string;
+    secondChoiceId?: string;
+    // Backend returns objects sometimes
+    firstChoice?: { id: string; name: string; language?: string };
+    secondChoice?: { id: string; name: string; language?: string };
 }
 
 export interface CompanyEmployee {
@@ -175,29 +190,57 @@ export interface RegisterResponse {
     role?: UserRole;
 }
 
-export interface StudentRegisterPayload {
-    email: string;
-    password: string;
-    fullName: string;
-    phoneNumber: string;
-    role: 'STUDENT';
-    mothersName: string;
-    dateOfBirth: string;
-    location: {
-        country: string;
-        zipCode: number;
-        city: string;
-        address: string;
-    };
-    highSchool: string;
-    graduationYear: number;
-    neptunCode?: string | null;
-    currentMajor: string;
-    studyMode: StudyMode;
-    hasLanguageCert: boolean;
-    language?: string;
-    languageLevel?: string;
-}
+export type StudentRegisterPayload =
+    | {
+          email: string;
+          password: string;
+          fullName: string;
+          phoneNumber: string;
+          role: 'STUDENT';
+          mothersName: string;
+          dateOfBirth: string;
+          location: {
+              country: string;
+              zipCode: number;
+              city: string;
+              address: string;
+          };
+          // High School Specific
+          isInHighSchool: true;
+          highSchool: string;
+          graduationYear: number; // e.g. 2026
+          studyMode: StudyMode; // e.g. "NAPPALI"
+          firstChoiceId: string; // UUID from majors list
+          secondChoiceId: string; // UUID from majors list
+          hasLanguageCert: boolean; // e.g. false
+          language?: string;
+          languageLevel?: string;
+      }
+    | {
+          email: string;
+          password: string;
+          fullName: string;
+          phoneNumber: string;
+          role: 'STUDENT';
+          mothersName: string;
+          dateOfBirth: string;
+          location: {
+              country: string;
+              zipCode: number;
+              city: string;
+              address: string;
+          };
+          // University Specific
+          isInHighSchool: false;
+          highSchool: string; // Still required by backend/schema? Kept for consistency if needed, else normalized.
+          neptunCode: string;
+          majorId: string; // UUID
+          studyMode: StudyMode;
+          graduationYear: number;
+          hasLanguageCert: true;
+          language: string;
+          languageLevel: string;
+      };
 
 // ============= News Types =============
 export type NewsTargetGroup = UserRole | 'ALL';

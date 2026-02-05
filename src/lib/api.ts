@@ -22,6 +22,7 @@ import type {
   Application,
   ApplicationStatus,
   ApplicationCreatePayload,
+  Major,
 
   Partnership,
   PaginationQuery,
@@ -61,6 +62,7 @@ const PATHS = {
   news: '/api/news',
   applications: '/api/applications',
   notifications: '/api/notifications',
+  majors: '/api/majors',
 } as const;
 
 // ============= API Object =============
@@ -75,6 +77,16 @@ export const api = {
   // ============= Stats =============
   stats: {
     get: () => apiGet<StatsResponse>(PATHS.stats),
+  },
+
+  // ============= Majors =============
+  majors: {
+    list: () => apiGet<Major[]>(PATHS.majors),
+    get: (id: Id) => apiGet<Major>(`${PATHS.majors}/${ensureId(id, 'majorId')}`),
+    create: (payload: { name: string; code?: string }) => apiPost<Major>(PATHS.majors, payload),
+    update: (id: Id, payload: { name?: string; code?: string }) =>
+      apiPatch<Major>(`${PATHS.majors}/${ensureId(id, 'majorId')}`, payload),
+    remove: (id: Id) => apiDelete<{ message?: string }>(`${PATHS.majors}/${ensureId(id, 'majorId')}`),
   },
 
   // ============= Companies =============
@@ -335,6 +347,7 @@ export type {
   RegisterResponse,
   StudentRegisterPayload,
   Company,
+  Major,
   Position,
   StudentProfile,
   CompanyAdminProfile,
