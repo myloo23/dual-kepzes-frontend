@@ -77,16 +77,18 @@ export function Modal({
   };
 
   return createPortal(
-    <div className={cn(
-      "fixed inset-0 z-[9999] flex p-4 sm:p-6",
-      alignClasses[align],
-      !isOpen && "pointer-events-none"
-    )}>
+    <div
+      className={cn(
+        "fixed inset-0 z-[9999] flex p-4 sm:p-6",
+        alignClasses[align],
+        !isOpen && "pointer-events-none",
+      )}
+    >
       {/* Backdrop */}
       <div
         className={cn(
           "fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300",
-          isOpen ? "opacity-100" : "opacity-0"
+          isOpen ? "opacity-100" : "opacity-0",
         )}
         onClick={onClose}
         aria-hidden="true"
@@ -97,8 +99,10 @@ export function Modal({
         className={cn(
           "relative w-full transform rounded-2xl bg-white shadow-2xl transition-all duration-300 flex flex-col max-h-[90vh]",
           sizeClasses[size],
-          isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4",
-          className
+          isOpen
+            ? "scale-100 opacity-100 translate-y-0"
+            : "scale-95 opacity-0 translate-y-4",
+          className,
         )}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
@@ -128,14 +132,16 @@ export function Modal({
         )}
 
         {/* Scrollable Content */}
-        <div className={cn(
+        <div
+          className={cn(
             "flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent",
-             !hideHeader ? "p-6" : ""
-        )}>
+            !hideHeader ? "p-6" : "",
+          )}
+        >
           {children}
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

@@ -1,26 +1,26 @@
-import { useState, useMemo, useEffect } from 'react';
-import { useNotifications } from '../hooks/useNotifications';
-import { NotificationFilters } from './NotificationFilters';
-import { NotificationList } from './NotificationList';
+import { useState, useMemo, useEffect } from "react";
+import { useNotifications } from "../hooks/useNotifications";
+import { NotificationFilters } from "./NotificationFilters";
+import { NotificationList } from "./NotificationList";
 
 export function AdminNotifications() {
-  const { 
-    active, 
-    archived, 
-    loading, 
-    loadActive, 
-    loadArchived, 
-    markRead, 
-    archive, 
-    unarchive, 
-    remove 
+  const {
+    active,
+    archived,
+    loading,
+    loadActive,
+    loadArchived,
+    markRead,
+    archive,
+    unarchive,
+    remove,
   } = useNotifications();
 
-  const [tab, setTab] = useState<'active' | 'archived'>('active');
-  const [filters, setFilters] = useState({ role: '', type: '' });
+  const [tab, setTab] = useState<"active" | "archived">("active");
+  const [filters, setFilters] = useState({ role: "", type: "" });
 
   useEffect(() => {
-    if (tab === 'active') {
+    if (tab === "active") {
       loadActive();
     } else {
       loadArchived();
@@ -28,8 +28,8 @@ export function AdminNotifications() {
   }, [tab, loadActive, loadArchived]);
 
   const filteredNotifications = useMemo(() => {
-    const list = tab === 'active' ? active : archived;
-    return list.filter(item => {
+    const list = tab === "active" ? active : archived;
+    return list.filter((item) => {
       // Role filtering
       if (filters.role) {
         if (item.senderRole) {
@@ -37,10 +37,13 @@ export function AdminNotifications() {
         } else {
           // Fallback logic for items with missing senderRole
           // If filtering for Company, show Partnership requests as they usually come from companies
-          if (item.type === 'PARTNERSHIP_PENDING_UNIVERSITY' && filters.role === 'ROLE_COMPANY_ADMIN') {
+          if (
+            item.type === "PARTNERSHIP_PENDING_UNIVERSITY" &&
+            filters.role === "ROLE_COMPANY_ADMIN"
+          ) {
             // keep it
           } else {
-             return false;
+            return false;
           }
         }
       }
@@ -51,8 +54,8 @@ export function AdminNotifications() {
     });
   }, [active, archived, tab, filters]);
 
-  const handleFilterChange = (key: 'role' | 'type', value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+  const handleFilterChange = (key: "role" | "type", value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   return (
@@ -61,21 +64,21 @@ export function AdminNotifications() {
         <h2 className="text-xl font-semibold text-slate-900">Értesítések</h2>
         <div className="flex bg-slate-100 p-1 rounded-lg self-start sm:self-auto">
           <button
-            onClick={() => setTab('active')}
+            onClick={() => setTab("active")}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              tab === 'active' 
-                ? 'bg-white text-slate-900 shadow-sm' 
-                : 'text-slate-500 hover:text-slate-700'
+              tab === "active"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
             }`}
           >
             Aktív
           </button>
           <button
-            onClick={() => setTab('archived')}
+            onClick={() => setTab("archived")}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              tab === 'archived' 
-                ? 'bg-white text-slate-900 shadow-sm' 
-                : 'text-slate-500 hover:text-slate-700'
+              tab === "archived"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
             }`}
           >
             Archivált
@@ -83,12 +86,15 @@ export function AdminNotifications() {
         </div>
       </div>
 
-      <NotificationFilters filters={filters} onFilterChange={handleFilterChange} />
+      <NotificationFilters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+      />
 
-      <NotificationList 
+      <NotificationList
         notifications={filteredNotifications}
         onMarkRead={markRead}
-        onArchive={tab === 'active' ? archive : unarchive}
+        onArchive={tab === "active" ? archive : unarchive}
         onDelete={remove}
         isLoading={loading}
       />

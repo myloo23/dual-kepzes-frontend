@@ -55,7 +55,8 @@ export default function StudentNewsPage() {
       if (tag !== "ALL" && !(n.tags || []).includes(tag)) return false;
 
       if (!q) return true;
-      const hay = `${n.title} ${n.content} ${(n.tags || []).join(" ")}`.toLowerCase();
+      const hay =
+        `${n.title} ${n.content} ${(n.tags || []).join(" ")}`.toLowerCase();
       return hay.includes(q);
     });
   }, [items, search, tag, onlyImportant]);

@@ -11,7 +11,11 @@ export default function AdminLayout() {
     { to: "/admin/news", label: "Hírek" },
     { to: "/admin/tags", label: "Címkék / Tag-ek" },
     { to: "/admin/settings", label: "Beállítások" },
-    { to: "/admin/guide", label: "Tananyag", hint: "Útmutató az oldal használatához" },
+    {
+      to: "/admin/guide",
+      label: "Tananyag",
+      hint: "Útmutató az oldal használatához",
+    },
   ];
 
   return (

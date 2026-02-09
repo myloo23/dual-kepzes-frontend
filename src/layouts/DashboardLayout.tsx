@@ -11,7 +11,6 @@ export type NavItem = {
   end?: boolean;
 };
 
-
 export default function DashboardLayout(props: {
   roleLabel: string;
   title?: string;
@@ -55,7 +54,7 @@ export default function DashboardLayout(props: {
             className={cn(
               "rounded-2xl border border-slate-200 bg-white p-3 shadow-sm",
               mobileOpen ? "block" : "hidden",
-              "lg:block lg:self-start"
+              "lg:block lg:self-start",
             )}
           >
             <NavLink
@@ -86,14 +85,16 @@ export default function DashboardLayout(props: {
                       "block rounded-lg px-3 py-2 text-sm transition",
                       isActive
                         ? "bg-blue-50 text-blue-700 border border-blue-100"
-                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
                     )
                   }
                   onClick={() => setMobileOpen(false)}
                 >
                   <div className="font-medium">{item.label}</div>
                   {item.hint && (
-                    <div className="text-[11px] text-slate-500">{item.hint}</div>
+                    <div className="text-[11px] text-slate-500">
+                      {item.hint}
+                    </div>
                   )}
                 </NavLink>
               ))}

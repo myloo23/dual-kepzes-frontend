@@ -1,11 +1,11 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { Search, X, Clock, TrendingUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { cn } from '../../utils/cn';
+import { useEffect, useState, useCallback, useRef } from "react";
+import { Search, X, Clock, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { cn } from "../../utils/cn";
 
 interface SearchResult {
   id: string | number;
-  type: 'position' | 'company' | 'news';
+  type: "position" | "company" | "news";
   title: string;
   subtitle?: string;
   url: string;
@@ -16,11 +16,11 @@ interface GlobalSearchProps {
   onClose: () => void;
 }
 
-const RECENT_SEARCHES_KEY = 'dkk-recent-searches';
+const RECENT_SEARCHES_KEY = "dkk-recent-searches";
 const MAX_RECENT = 5;
 
 export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -35,7 +35,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
       try {
         setRecentSearches(JSON.parse(stored));
       } catch (e) {
-        console.error('Failed to parse recent searches', e);
+        console.error("Failed to parse recent searches", e);
       }
     }
   }, []);
@@ -52,7 +52,10 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
     if (!searchQuery.trim()) return;
 
     setRecentSearches((prev) => {
-      const updated = [searchQuery, ...prev.filter(s => s !== searchQuery)].slice(0, MAX_RECENT);
+      const updated = [
+        searchQuery,
+        ...prev.filter((s) => s !== searchQuery),
+      ].slice(0, MAX_RECENT);
       localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
       return updated;
     });
@@ -73,25 +76,25 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
       const mockResults: SearchResult[] = [
         {
           id: 1,
-          type: 'position',
+          type: "position",
           title: `Software Developer - ${query}`,
-          subtitle: 'Mercedes-Benz Manufacturing Hungary',
-          url: '/positions'
+          subtitle: "Mercedes-Benz Manufacturing Hungary",
+          url: "/positions",
         },
         {
           id: 2,
-          type: 'company',
+          type: "company",
           title: `${query} Company`,
-          subtitle: 'Kecskemét',
-          url: '/companies/2'
+          subtitle: "Kecskemét",
+          url: "/companies/2",
         },
         {
           id: 3,
-          type: 'news',
+          type: "news",
           title: `News about ${query}`,
-          subtitle: '2 days ago',
-          url: '/student/news'
-        }
+          subtitle: "2 days ago",
+          url: "/student/news",
+        },
       ];
 
       setResults(mockResults);
@@ -107,36 +110,38 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
       if (!isOpen) return;
 
       switch (e.key) {
-        case 'ArrowDown':
+        case "ArrowDown":
           e.preventDefault();
           setSelectedIndex((prev) => (prev + 1) % results.length);
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
           e.preventDefault();
-          setSelectedIndex((prev) => (prev - 1 + results.length) % results.length);
+          setSelectedIndex(
+            (prev) => (prev - 1 + results.length) % results.length,
+          );
           break;
-        case 'Enter':
+        case "Enter":
           e.preventDefault();
           if (results[selectedIndex]) {
             handleSelectResult(results[selectedIndex]);
           }
           break;
-        case 'Escape':
+        case "Escape":
           e.preventDefault();
           onClose();
           break;
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, results, selectedIndex, onClose]);
 
   const handleSelectResult = (result: SearchResult) => {
     saveRecentSearch(query);
     navigate(result.url);
     onClose();
-    setQuery('');
+    setQuery("");
   };
 
   const handleRecentSearch = (searchQuery: string) => {
@@ -146,15 +151,15 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
   if (!isOpen) return null;
 
   const typeIcons = {
-    position: '💼',
-    company: '🏢',
-    news: '📰'
+    position: "💼",
+    company: "🏢",
+    news: "📰",
   };
 
   const typeLabels = {
-    position: 'Pozíció',
-    company: 'Cég',
-    news: 'Hír'
+    position: "Pozíció",
+    company: "Cég",
+    news: "Hír",
   };
 
   return (
@@ -184,7 +189,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
             />
             {query && (
               <button
-                onClick={() => setQuery('')}
+                onClick={() => setQuery("")}
                 className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <X className="h-4 w-4 text-slate-400" />
@@ -236,10 +241,10 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                     key={`${result.type}-${result.id}`}
                     onClick={() => handleSelectResult(result)}
                     className={cn(
-                      'w-full text-left px-4 py-3 rounded-lg transition-colors flex items-center gap-3',
+                      "w-full text-left px-4 py-3 rounded-lg transition-colors flex items-center gap-3",
                       index === selectedIndex
-                        ? 'bg-blue-50 border border-blue-200'
-                        : 'hover:bg-slate-50'
+                        ? "bg-blue-50 border border-blue-200"
+                        : "hover:bg-slate-50",
                     )}
                   >
                     <span className="text-2xl">{typeIcons[result.type]}</span>
@@ -267,12 +272,18 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
             <div className="flex items-center justify-between text-xs text-slate-500">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded">↑</kbd>
-                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded">↓</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded">
+                    ↑
+                  </kbd>
+                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded">
+                    ↓
+                  </kbd>
                   navigálás
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded">↵</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded">
+                    ↵
+                  </kbd>
                   kiválasztás
                 </span>
               </div>

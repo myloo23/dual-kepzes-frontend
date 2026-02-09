@@ -11,17 +11,20 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { news: newsLink, dashboard: dashboardLink } = useNavigation();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [notificationsTab, setNotificationsTab] = useState<"active" | "archived">("active");
-  const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);
+  const [notificationsTab, setNotificationsTab] = useState<
+    "active" | "archived"
+  >("active");
+  const [selectedNotification, setSelectedNotification] =
+    useState<NotificationItem | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
   const { isAuthenticated, logout, user } = useAuth();
-  
+
   // Use auth state directly
   const isLoggedIn = isAuthenticated;
-  const isSystemAdmin = (user?.role as string) === 'ROLE_SYSTEM_ADMIN';
+  const isSystemAdmin = (user?.role as string) === "ROLE_SYSTEM_ADMIN";
 
   const {
     active,
@@ -58,13 +61,22 @@ export default function Navbar() {
     } else {
       loadArchived();
     }
-  }, [notificationsOpen, notificationsTab, isLoggedIn, loadActive, loadArchived]);
+  }, [
+    notificationsOpen,
+    notificationsTab,
+    isLoggedIn,
+    loadActive,
+    loadArchived,
+  ]);
 
   useEffect(() => {
     if (!notificationsOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target as Node)
+      ) {
         setNotificationsOpen(false);
       }
     };
@@ -87,12 +99,14 @@ export default function Navbar() {
   const closeMobileMenu = () => setMobileOpen(false);
 
   const getLinkClass = (path: string) => {
-    const isActive = path === "/"
-      ? location.pathname === "/"
-      : location.pathname.startsWith(path);
+    const isActive =
+      path === "/"
+        ? location.pathname === "/"
+        : location.pathname.startsWith(path);
 
     // Apple-style: Clean, subtle transition, weight change
-    const baseClass = "transition-all duration-300 text-[13px] tracking-wide font-medium";
+    const baseClass =
+      "transition-all duration-300 text-[13px] tracking-wide font-medium";
     const activeClass = "text-slate-900";
     const inactiveClass = "text-slate-500 hover:text-slate-900";
 
@@ -100,11 +114,13 @@ export default function Navbar() {
   };
 
   const getMobileLinkClass = (path: string) => {
-    const isActive = path === "/"
-      ? location.pathname === "/"
-      : location.pathname.startsWith(path);
+    const isActive =
+      path === "/"
+        ? location.pathname === "/"
+        : location.pathname.startsWith(path);
 
-    const baseClass = "py-3 block transition-colors duration-200 text-lg border-b border-gray-100 last:border-0";
+    const baseClass =
+      "py-3 block transition-colors duration-200 text-lg border-b border-gray-100 last:border-0";
     const activeClass = "text-dkk-blue font-semibold";
     const inactiveClass = "text-slate-600 hover:text-dkk-blue";
 
@@ -126,7 +142,10 @@ export default function Navbar() {
       const detail = await getById(id);
       setSelectedNotification(detail);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Nem sikerült betölteni az értesítést.";
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Nem sikerült betölteni az értesítést.";
       setActionError(message);
     } finally {
       setDetailsLoading(false);
@@ -145,7 +164,10 @@ export default function Navbar() {
       await refreshUnreadCount();
       setSelectedNotification(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Az értesítési művelet sikertelen.";
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Az értesítési művelet sikertelen.";
       setActionError(message);
     }
   };
@@ -172,36 +194,41 @@ export default function Navbar() {
 
         {/* Desktop nav - Centered Global Search */}
         <div className="flex-1 max-w-sm hidden sm:block">
-           <GlobalSearch />
+          <GlobalSearch />
         </div>
 
         <div className="flex items-center gap-6 ml-auto">
           {/* Desktop nav links */}
           <nav className="hidden sm:flex items-center gap-8">
-            <Link to="/" className={getLinkClass("/")}>Kezdőlap</Link>
+            <Link to="/" className={getLinkClass("/")}>
+              Kezdőlap
+            </Link>
             {dashboardLink && (
               <Link to={dashboardLink} className={getLinkClass(dashboardLink)}>
                 Irányítópult
               </Link>
             )}
 
-            <Link to="/positions" className={getLinkClass("/positions")}>Állásajánlatok</Link>
+            <Link to="/positions" className={getLinkClass("/positions")}>
+              Állásajánlatok
+            </Link>
 
             {newsLink && (
-              <Link to={newsLink} className={getLinkClass(newsLink)}>Hírek</Link>
+              <Link to={newsLink} className={getLinkClass(newsLink)}>
+                Hírek
+              </Link>
             )}
 
             {isLoggedIn && (
-               <button
-                  onClick={logout}
-                  className="text-[13px] tracking-wide font-medium text-slate-500 hover:text-red-600 transition-colors duration-300"
-                >
-                  Kijelentkezés
-                </button>
+              <button
+                onClick={logout}
+                className="text-[13px] tracking-wide font-medium text-slate-500 hover:text-red-600 transition-colors duration-300"
+              >
+                Kijelentkezés
+              </button>
             )}
           </nav>
-          
-          
+
           {isLoggedIn && !isSystemAdmin && (
             <div className="relative" ref={notificationsRef}>
               <button
@@ -234,7 +261,9 @@ export default function Navbar() {
               {notificationsOpen && (
                 <div className="absolute right-0 mt-4 w-80 sm:w-96 origin-top-right rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl ring-1 ring-slate-900/5 focus:outline-none overflow-hidden animate-scale-in">
                   <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 bg-slate-50/50">
-                    <span className="text-sm font-semibold text-slate-900">Értesítések</span>
+                    <span className="text-sm font-semibold text-slate-900">
+                      Értesítések
+                    </span>
                     <div className="flex items-center gap-1">
                       <button
                         type="button"
@@ -280,16 +309,30 @@ export default function Navbar() {
 
                   <div className="max-h-[28rem] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
                     {notificationsLoading && (
-                      <div className="p-8 text-center text-xs text-slate-500">Betöltés...</div>
+                      <div className="p-8 text-center text-xs text-slate-500">
+                        Betöltés...
+                      </div>
                     )}
                     {!notificationsLoading && notifications.length === 0 && (
                       <div className="p-12 text-center">
                         <div className="mx-auto mb-3 h-10 w-10 text-slate-300">
-                          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 11-6 0m6 0H9" />
+                          <svg
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.5"
+                              d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 11-6 0m6 0H9"
+                            />
                           </svg>
                         </div>
-                        <p className="text-xs text-slate-500">Nincs megjeleníthető értesítés.</p>
+                        <p className="text-xs text-slate-500">
+                          Nincs megjeleníthető értesítés.
+                        </p>
                       </div>
                     )}
                     {notifications.map((item) => {
@@ -307,11 +350,15 @@ export default function Navbar() {
                           <button
                             type="button"
                             className="w-full text-left"
-                            onClick={() => handleSelectNotification(String(item.id))}
+                            onClick={() =>
+                              handleSelectNotification(String(item.id))
+                            }
                           >
                             <div className="flex items-start gap-3">
                               <div className="flex-1 space-y-1">
-                                <p className={`text-sm leading-tight ${isUnread ? "font-semibold text-slate-900" : "text-slate-700"}`}>
+                                <p
+                                  className={`text-sm leading-tight ${isUnread ? "font-semibold text-slate-900" : "text-slate-700"}`}
+                                >
                                   {getNotificationTitle(item)}
                                 </p>
                                 {getNotificationPreview(item) && (
@@ -325,22 +372,28 @@ export default function Navbar() {
                               )}
                             </div>
                           </button>
-                          
+
                           {/* Actions appear on hover */}
                           <div className="mt-3 flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-                             {notificationsTab === "active" ? (
+                            {notificationsTab === "active" ? (
                               <>
                                 <button
                                   type="button"
                                   className="text-[10px] font-medium text-slate-400 hover:text-slate-700 uppercase tracking-wider"
-                                  onClick={() => handleAction(() => markRead(String(item.id)))}
+                                  onClick={() =>
+                                    handleAction(() =>
+                                      markRead(String(item.id)),
+                                    )
+                                  }
                                 >
                                   Olvasott
                                 </button>
                                 <button
                                   type="button"
                                   className="text-[10px] font-medium text-slate-400 hover:text-slate-700 uppercase tracking-wider"
-                                  onClick={() => handleAction(() => archive(String(item.id)))}
+                                  onClick={() =>
+                                    handleAction(() => archive(String(item.id)))
+                                  }
                                 >
                                   Archivál
                                 </button>
@@ -349,7 +402,9 @@ export default function Navbar() {
                               <button
                                 type="button"
                                 className="text-[10px] font-medium text-slate-400 hover:text-slate-700 uppercase tracking-wider"
-                                onClick={() => handleAction(() => unarchive(String(item.id)))}
+                                onClick={() =>
+                                  handleAction(() => unarchive(String(item.id)))
+                                }
                               >
                                 Visszaállít
                               </button>
@@ -357,7 +412,9 @@ export default function Navbar() {
                             <button
                               type="button"
                               className="text-[10px] font-medium text-red-300 hover:text-red-500 uppercase tracking-wider"
-                              onClick={() => handleAction(() => remove(String(item.id)))}
+                              onClick={() =>
+                                handleAction(() => remove(String(item.id)))
+                              }
                             >
                               Törlés
                             </button>
@@ -385,7 +442,7 @@ export default function Navbar() {
                         {getNotificationTitle(selectedNotification)}
                       </h4>
                       <p className="text-xs text-slate-600 leading-relaxed">
-                         {getNotificationPreview(selectedNotification)}
+                        {getNotificationPreview(selectedNotification)}
                       </p>
                       {selectedNotification.link && (
                         <a
@@ -393,8 +450,18 @@ export default function Navbar() {
                           className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
                         >
                           Hivatkozás megnyitása
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
                           </svg>
                         </a>
                       )}
@@ -406,27 +473,30 @@ export default function Navbar() {
           )}
 
           {/* Mobile hamburger */}
-        <button
-          type="button"
-          className="sm:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-          onClick={() => setMobileOpen((prev) => !prev)}
-          aria-label="Menü megnyitása"
-        >
-          <div className="space-y-1.5">
-            <span
-              className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "translate-y-[8px] rotate-45" : ""
-              }`}
-            />
-            <span
-              className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "opacity-0" : "opacity-100"
-              }`}
-            />
-            <span
-              className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "-translate-y-[8px] -rotate-45" : ""
-              }`}
-            />
-          </div>
-        </button>
+          <button
+            type="button"
+            className="sm:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+            onClick={() => setMobileOpen((prev) => !prev)}
+            aria-label="Menü megnyitása"
+          >
+            <div className="space-y-1.5">
+              <span
+                className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${
+                  mobileOpen ? "translate-y-[8px] rotate-45" : ""
+                }`}
+              />
+              <span
+                className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${
+                  mobileOpen ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <span
+                className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${
+                  mobileOpen ? "-translate-y-[8px] -rotate-45" : ""
+                }`}
+              />
+            </div>
+          </button>
         </div>
       </div>
 
@@ -434,18 +504,40 @@ export default function Navbar() {
       {mobileOpen && (
         <nav className="sm:hidden absolute top-full left-0 right-0 border-b border-gray-200 bg-white/95 backdrop-blur-xl animate-fade-in shadow-xl h-screen">
           <div className="px-6 py-6 flex flex-col gap-2">
-            <Link to="/" className={getMobileLinkClass("/")} onClick={closeMobileMenu}>Kezdőlap</Link>
+            <Link
+              to="/"
+              className={getMobileLinkClass("/")}
+              onClick={closeMobileMenu}
+            >
+              Kezdőlap
+            </Link>
 
             {dashboardLink && (
-              <Link to={dashboardLink} className={getMobileLinkClass(dashboardLink)} onClick={closeMobileMenu}>
+              <Link
+                to={dashboardLink}
+                className={getMobileLinkClass(dashboardLink)}
+                onClick={closeMobileMenu}
+              >
                 Irányítópult
               </Link>
             )}
 
-            <Link to="/positions" className={getMobileLinkClass("/positions")} onClick={closeMobileMenu}>Állásajánlatok</Link>
+            <Link
+              to="/positions"
+              className={getMobileLinkClass("/positions")}
+              onClick={closeMobileMenu}
+            >
+              Állásajánlatok
+            </Link>
 
             {newsLink && (
-              <Link to={newsLink} className={getMobileLinkClass(newsLink)} onClick={closeMobileMenu}>Hírek</Link>
+              <Link
+                to={newsLink}
+                className={getMobileLinkClass(newsLink)}
+                onClick={closeMobileMenu}
+              >
+                Hírek
+              </Link>
             )}
           </div>
         </nav>

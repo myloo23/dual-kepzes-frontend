@@ -2,33 +2,36 @@
  * Form-related type definitions
  */
 import type {
-    Company,
-    Position,
-    StudentProfile,
-    CompanyAdminProfile,
-    UniversityUserProfile,
-    NewsItem
-} from './api.types';
+  Company,
+  Position,
+  StudentProfile,
+  CompanyAdminProfile,
+  UniversityUserProfile,
+  NewsItem,
+} from "./api.types";
 
 // ============= Form Data Types =============
-export type CompanyFormData = Omit<Company, 'id'>;
-export type PositionFormData = Omit<Position, 'id' | 'company' | 'createdAt' | 'updatedAt'>;
+export type CompanyFormData = Omit<Company, "id">;
+export type PositionFormData = Omit<
+  Position,
+  "id" | "company" | "createdAt" | "updatedAt"
+>;
 export type StudentFormData = Partial<StudentProfile>;
 export type CompanyAdminFormData = Partial<CompanyAdminProfile>;
 export type UniversityUserFormData = Partial<UniversityUserProfile>;
-export type NewsFormData = Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt'>;
+export type NewsFormData = Omit<NewsItem, "id" | "createdAt" | "updatedAt">;
 
 // ============= Form Validation Types =============
 export interface ValidationError {
-    field: string;
-    message: string;
+  field: string;
+  message: string;
 }
 
 export interface FormState<T> {
-    data: T;
-    errors: Record<keyof T, string>;
-    isSubmitting: boolean;
-    isDirty: boolean;
+  data: T;
+  errors: Record<keyof T, string>;
+  isSubmitting: boolean;
+  isDirty: boolean;
 }
 
 // ============= Form Event Types =============

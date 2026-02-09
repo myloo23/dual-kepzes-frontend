@@ -20,7 +20,7 @@ const defaultIcon = L.icon({
 
 // Red marker for user location
 const userIcon = L.divIcon({
-  className: 'custom-user-marker',
+  className: "custom-user-marker",
   html: `
     <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
       <path d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.375 12.5 28.5 12.5 28.5S25 21.875 25 12.5C25 5.596 19.404 0 12.5 0z" 
@@ -60,7 +60,7 @@ function MapPage() {
         console.log("📦 API Response:", res);
 
         const activePositions = Array.isArray(res)
-          ? res.filter(p => !isExpired(p.deadline))
+          ? res.filter((p) => !isExpired(p.deadline))
           : [];
 
         console.log(`✅ Loaded ${activePositions.length} active positions`);
@@ -93,21 +93,37 @@ function MapPage() {
         enableHighAccuracy: true,
         timeout: 10000,
         maximumAge: 0,
-      }
+      },
     );
   }, []);
 
   // Calculate map center
   const mapCenter: [number, number] = useMemo(() => {
     if (userLocation && positionsWithCoords.length > 0) {
-      const avgLat = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
-      const avgLng = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
+      const avgLat =
+        positionsWithCoords.reduce(
+          (sum: number, p: any) => sum + (p.latitude || 0),
+          0,
+        ) / positionsWithCoords.length;
+      const avgLng =
+        positionsWithCoords.reduce(
+          (sum: number, p: any) => sum + (p.longitude || 0),
+          0,
+        ) / positionsWithCoords.length;
       return [(userLocation.lat + avgLat) / 2, (userLocation.lng + avgLng) / 2];
     }
 
     if (positionsWithCoords.length > 0) {
-      const avgLat = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.latitude || 0), 0) / positionsWithCoords.length;
-      const avgLng = positionsWithCoords.reduce((sum: number, p: any) => sum + (p.longitude || 0), 0) / positionsWithCoords.length;
+      const avgLat =
+        positionsWithCoords.reduce(
+          (sum: number, p: any) => sum + (p.latitude || 0),
+          0,
+        ) / positionsWithCoords.length;
+      const avgLng =
+        positionsWithCoords.reduce(
+          (sum: number, p: any) => sum + (p.longitude || 0),
+          0,
+        ) / positionsWithCoords.length;
       return [avgLat, avgLng];
     }
 
@@ -119,8 +135,8 @@ function MapPage() {
   }, [userLocation, positionsWithCoords]);
 
   const handleViewPosition = (positionId: string | number) => {
-    sessionStorage.setItem('openPositionId', String(positionId));
-    navigate('/positions');
+    sessionStorage.setItem("openPositionId", String(positionId));
+    navigate("/positions");
   };
 
   if (error) {
@@ -138,9 +154,9 @@ function MapPage() {
           Pozíciók térképes megjelenítése
         </h1>
         <p className="text-sm text-slate-600 max-w-2xl">
-          Itt láthatod, hogy a duális képzésben elérhető pozíciók
-          földrajzilag hol helyezkednek el. A jelölőre kattintva
-          megjelenik a pozíció részletei.
+          Itt láthatod, hogy a duális képzésben elérhető pozíciók földrajzilag
+          hol helyezkednek el. A jelölőre kattintva megjelenik a pozíció
+          részletei.
         </p>
       </header>
 
@@ -161,7 +177,10 @@ function MapPage() {
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               <span className="text-slate-600">
-                Pozíciók: <span className="font-semibold text-slate-900">{positionsWithCoords.length}</span>
+                Pozíciók:{" "}
+                <span className="font-semibold text-slate-900">
+                  {positionsWithCoords.length}
+                </span>
               </span>
             </div>
             {userLocation && (
@@ -223,7 +242,8 @@ function MapPage() {
                         Az Ön helyzete
                       </div>
                       <div className="text-slate-600">
-                        {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
+                        {userLocation.lat.toFixed(4)},{" "}
+                        {userLocation.lng.toFixed(4)}
                       </div>
                     </div>
                   </Popup>

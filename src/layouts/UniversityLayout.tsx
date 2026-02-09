@@ -7,7 +7,11 @@ export default function UniversityLayout() {
     { to: "/university/partnerships", label: "Partnerkapcsolatok" },
     { to: "/university/news", label: "Hírek" },
     { to: "/university/profile", label: "Saját profil" },
-    { to: "/university/guide", label: "Tananyag", hint: "Útmutató az oldal használatához" },
+    {
+      to: "/university/guide",
+      label: "Tananyag",
+      hint: "Útmutató az oldal használatához",
+    },
   ];
 
   return (

@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useLocation } from "react-router-dom";
-import { api, type StudentProfile, type UniversityUserProfile, type Partnership } from "../../lib/api";
+import {
+  api,
+  type StudentProfile,
+  type UniversityUserProfile,
+  type Partnership,
+} from "../../lib/api";
 import { useAuth } from "../../features/auth";
 import UniversityPartnershipsTable from "../../features/partnerships/components/UniversityPartnershipsTable";
 
@@ -8,7 +13,9 @@ export default function UniversityDashboardPage() {
   const location = useLocation();
   const { logout: authLogout } = useAuth();
 
-  const [profileForm, setProfileForm] = useState<Partial<UniversityUserProfile>>({});
+  const [profileForm, setProfileForm] = useState<
+    Partial<UniversityUserProfile>
+  >({});
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileDeleting, setProfileDeleting] = useState(false);
@@ -21,7 +28,9 @@ export default function UniversityDashboardPage() {
 
   const [partnerships, setPartnerships] = useState<Partnership[]>([]);
   const [partnershipsLoading, setPartnershipsLoading] = useState(false);
-  const [partnershipsError, setPartnershipsError] = useState<string | null>(null);
+  const [partnershipsError, setPartnershipsError] = useState<string | null>(
+    null,
+  );
 
   const activeTab = useMemo(() => {
     const path = location.pathname;
@@ -47,7 +56,8 @@ export default function UniversityDashboardPage() {
         department: data.department ?? "",
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Hiba a profil betoltese kozben.";
+      const message =
+        err instanceof Error ? err.message : "Hiba a profil betoltese kozben.";
       setProfileError(message);
     } finally {
       setProfileLoading(false);
@@ -68,7 +78,10 @@ export default function UniversityDashboardPage() {
         const list = await api.students.list();
         setStudents(Array.isArray(list) ? list : []);
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Hiba a hallgatok betoltese kozben.";
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Hiba a hallgatok betoltese kozben.";
         setStudentsError(message);
       } finally {
         setStudentsLoading(false);
@@ -78,22 +91,25 @@ export default function UniversityDashboardPage() {
   }, [activeTab]);
 
   useEffect(() => {
-      if (activeTab !== "partnerships") return;
-      const load = async () => {
-        setPartnershipsLoading(true);
-        setPartnershipsError(null);
-        try {
-          const list = await api.partnerships.listUniversity();
-          setPartnerships(Array.isArray(list) ? list : []);
-        } catch (err) {
-          const message = err instanceof Error ? err.message : "Hiba a partnerkapcsolatok betoltese kozben.";
-          setPartnershipsError(message);
-        } finally {
-          setPartnershipsLoading(false);
-        }
-      };
-      void load();
-    }, [activeTab]);
+    if (activeTab !== "partnerships") return;
+    const load = async () => {
+      setPartnershipsLoading(true);
+      setPartnershipsError(null);
+      try {
+        const list = await api.partnerships.listUniversity();
+        setPartnerships(Array.isArray(list) ? list : []);
+      } catch (err) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Hiba a partnerkapcsolatok betoltese kozben.";
+        setPartnershipsError(message);
+      } finally {
+        setPartnershipsLoading(false);
+      }
+    };
+    void load();
+  }, [activeTab]);
 
   const handleProfileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -117,7 +133,8 @@ export default function UniversityDashboardPage() {
       });
       setProfileSuccess("Profil frissitve.");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Hiba a mentes soran.";
+      const message =
+        err instanceof Error ? err.message : "Hiba a mentes soran.";
       setProfileError(message);
     } finally {
       setProfileSaving(false);
@@ -125,7 +142,9 @@ export default function UniversityDashboardPage() {
   };
 
   const handleProfileDelete = async () => {
-    const ok = window.confirm("Biztosan torlod a profilodat? Ez nem visszavonhato.");
+    const ok = window.confirm(
+      "Biztosan torlod a profilodat? Ez nem visszavonhato.",
+    );
     if (!ok) return;
     setProfileDeleting(true);
     setProfileError(null);
@@ -134,7 +153,8 @@ export default function UniversityDashboardPage() {
       await api.universityUsers.me.remove();
       authLogout();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Hiba a profil torlese soran.";
+      const message =
+        err instanceof Error ? err.message : "Hiba a profil torlese soran.";
       setProfileError(message);
     } finally {
       setProfileDeleting(false);
@@ -145,7 +165,9 @@ export default function UniversityDashboardPage() {
     <div className="space-y-6">
       {activeTab === "overview" && (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-semibold text-slate-900">Egyetemi felulet</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">
+            Egyetemi felulet
+          </h1>
           <p className="mt-1 text-sm text-slate-600">
             Hallgatoi adatok, kapcsolatok es sajat profil kezelese egy helyen.
           </p>
@@ -156,26 +178,39 @@ export default function UniversityDashboardPage() {
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">Hallgatok</h2>
-            <p className="text-sm text-slate-600">Aktiv hallgatoi profilok listaja.</p>
+            <p className="text-sm text-slate-600">
+              Aktiv hallgatoi profilok listaja.
+            </p>
           </div>
-          {studentsLoading && <div className="text-sm text-slate-600">Betoltes...</div>}
+          {studentsLoading && (
+            <div className="text-sm text-slate-600">Betoltes...</div>
+          )}
           {studentsError && (
             <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
               {studentsError}
             </div>
           )}
           {!studentsLoading && !studentsError && students.length === 0 && (
-            <div className="text-sm text-slate-600">Nincs megjelenitheto hallgato.</div>
+            <div className="text-sm text-slate-600">
+              Nincs megjelenitheto hallgato.
+            </div>
           )}
           <div className="grid gap-3">
             {students.map((student) => (
-              <div key={String(student.id)} className="rounded-lg border border-slate-200 p-4">
-                <div className="font-semibold text-slate-900">{student.fullName}</div>
+              <div
+                key={String(student.id)}
+                className="rounded-lg border border-slate-200 p-4"
+              >
+                <div className="font-semibold text-slate-900">
+                  {student.fullName}
+                </div>
                 <div className="text-sm text-slate-600">
-                  {student.email} {student.currentMajor ? `• ${student.currentMajor}` : ""}
+                  {student.email}{" "}
+                  {student.currentMajor ? `• ${student.currentMajor}` : ""}
                 </div>
                 <div className="text-xs text-slate-500 mt-1">
-                  {student.location?.city ? `${student.location.city} ` : ""}{student.studyMode ? `• ${student.studyMode}` : ""}
+                  {student.location?.city ? `${student.location.city} ` : ""}
+                  {student.studyMode ? `• ${student.studyMode}` : ""}
                 </div>
               </div>
             ))}
@@ -184,29 +219,35 @@ export default function UniversityDashboardPage() {
       )}
 
       {activeTab === "partnerships" && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Partnerkapcsolatok</h2>
-              <p className="text-sm text-slate-600">Egyetemi partnerkapcsolatok listaja.</p>
-            </div>
-            
-            {partnershipsError && (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                {partnershipsError}
-              </div>
-            )}
-            
-            <UniversityPartnershipsTable 
-              partnerships={partnerships}
-              isLoading={partnershipsLoading}
-            />
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">
+              Partnerkapcsolatok
+            </h2>
+            <p className="text-sm text-slate-600">
+              Egyetemi partnerkapcsolatok listaja.
+            </p>
           </div>
-        )}
+
+          {partnershipsError && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {partnershipsError}
+            </div>
+          )}
+
+          <UniversityPartnershipsTable
+            partnerships={partnerships}
+            isLoading={partnershipsLoading}
+          />
+        </div>
+      )}
 
       {activeTab === "profile" && (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
           <header className="space-y-1">
-            <h1 className="text-xl font-semibold text-slate-900">Sajat profil</h1>
+            <h1 className="text-xl font-semibold text-slate-900">
+              Sajat profil
+            </h1>
             <p className="text-sm text-slate-600">
               Itt frissitheted az egyetemi profilodat.
             </p>
@@ -233,7 +274,9 @@ export default function UniversityDashboardPage() {
           {!profileLoading && !profileError && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="space-y-1 text-sm text-slate-700">
-                <span className="text-xs font-semibold text-slate-600">Nev</span>
+                <span className="text-xs font-semibold text-slate-600">
+                  Nev
+                </span>
                 <input
                   name="fullName"
                   value={profileForm.fullName ?? ""}
@@ -242,7 +285,9 @@ export default function UniversityDashboardPage() {
                 />
               </label>
               <label className="space-y-1 text-sm text-slate-700">
-                <span className="text-xs font-semibold text-slate-600">E-mail</span>
+                <span className="text-xs font-semibold text-slate-600">
+                  E-mail
+                </span>
                 <input
                   type="email"
                   name="email"
@@ -252,7 +297,9 @@ export default function UniversityDashboardPage() {
                 />
               </label>
               <label className="space-y-1 text-sm text-slate-700 md:col-span-2">
-                <span className="text-xs font-semibold text-slate-600">Tanszek / Egyseg</span>
+                <span className="text-xs font-semibold text-slate-600">
+                  Tanszek / Egyseg
+                </span>
                 <input
                   name="department"
                   value={profileForm.department ?? ""}

@@ -42,22 +42,24 @@ export default function AdminNews() {
     // Load active news
     try {
       const activesResponse = await api.news.admin.list();
-      console.log('Raw active news response:', activesResponse);
+      console.log("Raw active news response:", activesResponse);
       const actives = extractList(activesResponse);
-      console.log('Extracted actives:', actives);
+      console.log("Extracted actives:", actives);
       setActiveItems(actives);
     } catch (e: any) {
       console.error("Failed to load active news:", e);
       // We don't block everything if this fails, but we might want to show error
-      setErr(prev => prev ? `${prev} Hiba az aktív híreknél.` : "Hiba a hírek betöltésekor.");
+      setErr((prev) =>
+        prev ? `${prev} Hiba az aktív híreknél.` : "Hiba a hírek betöltésekor.",
+      );
     }
 
     // Load archived news
     try {
       const archivesResponse = await api.news.admin.listArchived();
-      console.log('Raw archived news response:', archivesResponse);
+      console.log("Raw archived news response:", archivesResponse);
       const archives = extractList(archivesResponse);
-      console.log('Extracted archives:', archives);
+      console.log("Extracted archives:", archives);
       setArchivedItems(archives);
     } catch (e: any) {
       console.error("Failed to load archived news:", e);
@@ -112,7 +114,12 @@ export default function AdminNews() {
   };
 
   const onArchive = async (id: Id) => {
-    if (!confirm("Biztos archiválod ezt a hírt? Nem fog megjelenni a hallgatóknak.")) return;
+    if (
+      !confirm(
+        "Biztos archiválod ezt a hírt? Nem fog megjelenni a hallgatóknak.",
+      )
+    )
+      return;
     setLoading(true);
     try {
       await api.news.admin.archive(id);
@@ -166,15 +173,21 @@ export default function AdminNews() {
           <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-lg">
             <button
               onClick={() => setCurrentTab("active")}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${currentTab === "active" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                }`}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                currentTab === "active"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
             >
               Aktív hírek
             </button>
             <button
               onClick={() => setCurrentTab("archived")}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${currentTab === "archived" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                }`}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                currentTab === "archived"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
             >
               Archivált
             </button>
@@ -194,14 +207,19 @@ export default function AdminNews() {
           <table className="min-w-full text-sm relative">
             <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold">Cím / Részletek</th>
+                <th className="px-4 py-3 text-left font-semibold">
+                  Cím / Részletek
+                </th>
                 <th className="px-4 py-3 text-left font-semibold">Címkék</th>
                 <th className="px-4 py-3 text-right font-semibold">Művelet</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {rows.map((n) => (
-                <tr key={String(n.id)} className="hover:bg-slate-50 transition-colors">
+                <tr
+                  key={String(n.id)}
+                  className="hover:bg-slate-50 transition-colors"
+                >
                   <td className="px-4 py-3 align-top max-w-md">
                     <div className="flex items-start gap-2">
                       <div className="font-semibold text-slate-900">
@@ -217,8 +235,12 @@ export default function AdminNews() {
                       {n.content}
                     </div>
                     <div className="text-[10px] text-slate-400 mt-1.5">
-                      Célközönség: <span className="font-mono bg-slate-100 px-1 rounded">{n.targetGroup || "STUDENT"}</span>
-                      {n.createdAt && ` • Létrehozva: ${new Date(n.createdAt).toLocaleDateString()}`}
+                      Célközönség:{" "}
+                      <span className="font-mono bg-slate-100 px-1 rounded">
+                        {n.targetGroup || "STUDENT"}
+                      </span>
+                      {n.createdAt &&
+                        ` • Létrehozva: ${new Date(n.createdAt).toLocaleDateString()}`}
                     </div>
                   </td>
 
@@ -280,7 +302,10 @@ export default function AdminNews() {
 
               {!loading && rows.length === 0 && (
                 <tr>
-                  <td className="px-4 py-12 text-center text-slate-500" colSpan={3}>
+                  <td
+                    className="px-4 py-12 text-center text-slate-500"
+                    colSpan={3}
+                  >
                     Nincs {currentTab === "active" ? "aktív" : "archivált"} hír.
                   </td>
                 </tr>

@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { Check, ChevronsUpDown, Search } from 'lucide-react';
-import { cn } from '../../utils/cn';
+import { useState, useRef, useEffect, useMemo } from "react";
+import { Check, ChevronsUpDown, Search } from "lucide-react";
+import { cn } from "../../utils/cn";
 
 interface ParsedOption {
   value: string;
@@ -32,8 +32,8 @@ export function Combobox({
 
   // Normalize options to { value, label } format
   const parsedOptions = useMemo(() => {
-    return options.map(opt => {
-      if (typeof opt === 'string') {
+    return options.map((opt) => {
+      if (typeof opt === "string") {
         return { value: opt, label: opt };
       }
       return opt;
@@ -44,17 +44,20 @@ export function Combobox({
   const filteredOptions = useMemo(() => {
     if (!search) return parsedOptions;
     const lowerSearch = search.toLowerCase();
-    return parsedOptions.filter(opt => 
-      opt.label.toLowerCase().includes(lowerSearch)
+    return parsedOptions.filter((opt) =>
+      opt.label.toLowerCase().includes(lowerSearch),
     );
   }, [parsedOptions, search]);
 
-  const selectedOption = parsedOptions.find(opt => opt.value === value);
+  const selectedOption = parsedOptions.find((opt) => opt.value === value);
 
   // Handle outside click to close
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -107,13 +110,14 @@ export function Combobox({
                     }}
                     className={cn(
                       "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-slate-100 hover:text-slate-900",
-                      value === option.value && "bg-slate-100 text-slate-900 font-medium"
+                      value === option.value &&
+                        "bg-slate-100 text-slate-900 font-medium",
                     )}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value === option.value ? "opacity-100" : "opacity-0"
+                        value === option.value ? "opacity-100" : "opacity-0",
                       )}
                     />
                     {option.label}

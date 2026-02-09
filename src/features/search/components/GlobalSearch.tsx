@@ -1,9 +1,10 @@
-import { Search } from 'lucide-react';
-import { useGlobalSearch } from '../hooks/useGlobalSearch';
-import { SearchModal } from './SearchModal';
+import { Search } from "lucide-react";
+import { useGlobalSearch } from "../hooks/useGlobalSearch";
+import { SearchModal } from "./SearchModal";
 
 export function GlobalSearch() {
-  const { query, setQuery, results, loading, open, setOpen } = useGlobalSearch();
+  const { query, setQuery, results, loading, open, setOpen } =
+    useGlobalSearch();
 
   return (
     <>
@@ -17,8 +18,8 @@ export function GlobalSearch() {
         <span className="inline text-sm">Keresés...</span>
       </button>
 
-      <SearchModal 
-        isOpen={open} 
+      <SearchModal
+        isOpen={open}
         onClose={() => setOpen(false)}
         query={query}
         setQuery={setQuery}

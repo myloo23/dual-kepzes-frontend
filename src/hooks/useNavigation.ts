@@ -4,7 +4,10 @@ import { ROLE_NAVIGATION_PATHS, type UserRole } from "../config/navigation";
 
 export function useNavigation() {
   const { user, isAuthenticated } = useAuth();
-  const [links, setLinks] = useState<{ news: string | null; dashboard: string | null }>({
+  const [links, setLinks] = useState<{
+    news: string | null;
+    dashboard: string | null;
+  }>({
     news: null,
     dashboard: null,
   });
@@ -12,9 +15,14 @@ export function useNavigation() {
   useEffect(() => {
     const calculateLinks = () => {
       // Fallback to localStorage if auth context isn't ready/persisted differently
-      const token = localStorage.getItem("token") || localStorage.getItem("auth_token");
-      const role = (user?.role || localStorage.getItem("role") || "").toUpperCase() as UserRole;
-      
+      const token =
+        localStorage.getItem("token") || localStorage.getItem("auth_token");
+      const role = (
+        user?.role ||
+        localStorage.getItem("role") ||
+        ""
+      ).toUpperCase() as UserRole;
+
       const isLoggedIn = isAuthenticated || !!token;
 
       if (!isLoggedIn || !role || !ROLE_NAVIGATION_PATHS[role]) {

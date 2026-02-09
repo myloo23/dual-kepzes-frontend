@@ -15,7 +15,8 @@ export default function Footer() {
 
           {/* Copyright */}
           <p className="text-center text-[13px] text-slate-400 font-medium tracking-wide">
-            © {new Date().getFullYear()} Duális Képzési Központ - Neumann János Egyetem
+            © {new Date().getFullYear()} Duális Képzési Központ - Neumann János
+            Egyetem
           </p>
 
           {/* NJE Logo */}

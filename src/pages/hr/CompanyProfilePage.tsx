@@ -11,16 +11,16 @@ export default function CompanyProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    taxId: '',
-    hqCountry: '',
-    hqZipCode: '',
-    hqCity: '',
-    hqAddress: '',
-    contactName: '',
-    contactEmail: '',
-    description: '',
-    website: '',
+    name: "",
+    taxId: "",
+    hqCountry: "",
+    hqZipCode: "",
+    hqCity: "",
+    hqAddress: "",
+    contactName: "",
+    contactEmail: "",
+    description: "",
+    website: "",
     hasOwnApplication: false,
   });
 
@@ -37,14 +37,14 @@ export default function CompanyProfilePage() {
           setFormData({
             name: companyData.name,
             taxId: companyData.taxId,
-            hqCountry: companyData.locations?.[0]?.country || '',
-            hqZipCode: String(companyData.locations?.[0]?.zipCode || ''),
-            hqCity: companyData.locations?.[0]?.city || '',
-            hqAddress: companyData.locations?.[0]?.address || '',
+            hqCountry: companyData.locations?.[0]?.country || "",
+            hqZipCode: String(companyData.locations?.[0]?.zipCode || ""),
+            hqCity: companyData.locations?.[0]?.city || "",
+            hqAddress: companyData.locations?.[0]?.address || "",
             contactName: companyData.contactName,
             contactEmail: companyData.contactEmail,
-            description: companyData.description || '',
-            website: companyData.website || '',
+            description: companyData.description || "",
+            website: companyData.website || "",
             hasOwnApplication: companyData.hasOwnApplication || false,
           });
         } else {
@@ -60,20 +60,22 @@ export default function CompanyProfilePage() {
     loadCompanyProfile();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value, type } = e.target;
-    
-    if (type === 'checkbox') {
-        const checked = (e.target as HTMLInputElement).checked;
-        setFormData(prev => ({
-            ...prev,
-            [name]: checked
-        }));
+
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checked,
+      }));
     } else {
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
@@ -82,7 +84,9 @@ export default function CompanyProfilePage() {
     if (!company) return;
 
     if (formData.hasOwnApplication && !formData.website?.trim()) {
-      setError("Külső jelentkezési felület használata esetén a Weboldal megadása kötelező.");
+      setError(
+        "Külső jelentkezési felület használata esetén a Weboldal megadása kötelező.",
+      );
       return;
     }
 
@@ -90,27 +94,32 @@ export default function CompanyProfilePage() {
       setLoading(true);
       // Convert hqZipCode to number for backend
 
-
       const payload = {
         name: formData.name,
         taxId: formData.taxId,
         description: formData.description,
         contactName: formData.contactName,
         contactEmail: formData.contactEmail,
-        locations: [{
-          id: company.locations?.[0]?.id,
-          country: formData.hqCountry,
-          zipCode: formData.hqZipCode ? Number(formData.hqZipCode) : 0, // Ensure number
-          city: formData.hqCity,
-          address: formData.hqAddress
-        }],
+        locations: [
+          {
+            id: company.locations?.[0]?.id,
+            country: formData.hqCountry,
+            zipCode: formData.hqZipCode ? Number(formData.hqZipCode) : 0, // Ensure number
+            city: formData.hqCity,
+            address: formData.hqAddress,
+          },
+        ],
         hasOwnApplication: formData.hasOwnApplication,
-        website: formData.website || undefined
+        website: formData.website || undefined,
       };
       await api.companies.update(company.id, payload);
       // We need to re-fetch or construct the full object manually if updating local state
       // Simpler to just re-fetch or assume success and mix in new data
-      const updatedCompany = { ...company, ...payload, locations: payload.locations };
+      const updatedCompany = {
+        ...company,
+        ...payload,
+        locations: payload.locations,
+      };
       setCompany(updatedCompany as any); // Cast as quick fix if types mismatch slightly on complex nested objects
       setIsEditing(false);
     } catch (err: any) {
@@ -125,14 +134,14 @@ export default function CompanyProfilePage() {
       setFormData({
         name: company.name,
         taxId: company.taxId,
-        hqCountry: company.locations?.[0]?.country || '',
-        hqZipCode: String(company.locations?.[0]?.zipCode || ''),
-        hqCity: company.locations?.[0]?.city || '',
-        hqAddress: company.locations?.[0]?.address || '',
+        hqCountry: company.locations?.[0]?.country || "",
+        hqZipCode: String(company.locations?.[0]?.zipCode || ""),
+        hqCity: company.locations?.[0]?.city || "",
+        hqAddress: company.locations?.[0]?.address || "",
         contactName: company.contactName,
         contactEmail: company.contactEmail,
-        description: company.description || '',
-        website: company.website || '',
+        description: company.description || "",
+        website: company.website || "",
         hasOwnApplication: company.hasOwnApplication || false,
       });
     }

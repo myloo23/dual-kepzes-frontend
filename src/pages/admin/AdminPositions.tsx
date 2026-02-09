@@ -3,20 +3,16 @@
  * Manages position CRUD operations
  */
 
-import { useState, useEffect } from 'react';
-import { Briefcase } from 'lucide-react';
-import { api } from '../../lib/api';
-import type { Position, Company } from '../../lib/api';
-import { useCRUD, useModal } from '../../hooks';
-import PositionFormModal from '../../features/positions/components/modals/PositionFormModal';
-import Button from '../../components/ui/Button';
-import {
-  PAGE_TITLES,
-  LABELS,
-  CONFIRM_MESSAGES
-} from '../../constants';
-import { usePositionExport } from '../../features/positions/hooks/usePositionExport';
-import ExportButton from '../../components/shared/ExportButton';
+import { useState, useEffect } from "react";
+import { Briefcase } from "lucide-react";
+import { api } from "../../lib/api";
+import type { Position, Company } from "../../lib/api";
+import { useCRUD, useModal } from "../../hooks";
+import PositionFormModal from "../../features/positions/components/modals/PositionFormModal";
+import Button from "../../components/ui/Button";
+import { PAGE_TITLES, LABELS, CONFIRM_MESSAGES } from "../../constants";
+import { usePositionExport } from "../../features/positions/hooks/usePositionExport";
+import ExportButton from "../../components/shared/ExportButton";
 export default function AdminPositionsPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const { handleExport } = usePositionExport();
@@ -30,7 +26,7 @@ export default function AdminPositionsPage() {
   });
 
   const modal = useModal<Position>();
-  const [lookupId, setLookupId] = useState('');
+  const [lookupId, setLookupId] = useState("");
 
   // Load positions on mount
   useEffect(() => {
@@ -44,7 +40,7 @@ export default function AdminPositionsPage() {
         const data = await api.companies.list();
         setCompanies(data);
       } catch (err) {
-        console.error('Failed to load companies:', err);
+        console.error("Failed to load companies:", err);
       }
     };
     loadCompanies();
@@ -59,7 +55,9 @@ export default function AdminPositionsPage() {
     positions.clearMessages();
 
     // Try to find in local list first to avoid API call and potential missing relations
-    const localPosition = positions.items.find((p) => String(p.id) === String(id));
+    const localPosition = positions.items.find(
+      (p) => String(p.id) === String(id),
+    );
     if (localPosition && localPosition.location) {
       modal.open(localPosition);
       return;
@@ -86,15 +84,16 @@ export default function AdminPositionsPage() {
     positions.clearMessages();
     try {
       await api.positions.deactivate(id);
-      positions.setMessage('Pozíció deaktiválva.');
+      positions.setMessage("Pozíció deaktiválva.");
       await positions.load();
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Deaktiválás sikertelen.';
+      const errorMsg =
+        err instanceof Error ? err.message : "Deaktiválás sikertelen.";
       positions.setError(errorMsg);
     }
   };
 
-  const handleSave = async (data: Omit<Position, 'id'>) => {
+  const handleSave = async (data: Omit<Position, "id">) => {
     let success = false;
 
     if (modal.data) {
@@ -173,16 +172,18 @@ export default function AdminPositionsPage() {
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
-            <h2 className="text-base font-bold text-slate-800">Összes pozíció</h2>
+            <h2 className="text-base font-bold text-slate-800">
+              Összes pozíció
+            </h2>
             <Button onClick={handleCreateNew} variant="primary" size="xs">
               + Új pozíció
             </Button>
           </div>
           <div className="flex gap-2">
-             <Button onClick={positions.load} variant="outline" size="xs">
+            <Button onClick={positions.load} variant="outline" size="xs">
               {LABELS.REFRESH}
             </Button>
-            <ExportButton 
+            <ExportButton
               onExport={() => handleExport(positions.items)}
               disabled={positions.items.length === 0}
               icon="excel"
@@ -199,12 +200,7 @@ export default function AdminPositionsPage() {
             placeholder="Pozíció keresése ID alapján..."
             className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
           />
-          <Button
-            type="button"
-            onClick={handleLookup}
-            variant="dark"
-            size="sm"
-          >
+          <Button type="button" onClick={handleLookup} variant="dark" size="sm">
             {LABELS.SEARCH}
           </Button>
         </div>
@@ -214,26 +210,46 @@ export default function AdminPositionsPage() {
           <table className="min-w-full text-sm relative">
             <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">ID</th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">Cím</th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">Város</th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">Státusz</th>
-                <th className="px-4 py-3 text-right font-semibold bg-slate-50">Művelet</th>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
+                  ID
+                </th>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
+                  Cím
+                </th>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
+                  Város
+                </th>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
+                  Státusz
+                </th>
+                <th className="px-4 py-3 text-right font-semibold bg-slate-50">
+                  Művelet
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {positions.items.map((position) => (
-                <tr key={String(position.id)} className="hover:bg-slate-50 transition-colors">
+                <tr
+                  key={String(position.id)}
+                  className="hover:bg-slate-50 transition-colors"
+                >
                   <td className="px-4 py-3 text-slate-500 font-mono text-xs">
                     {String(position.id).slice(0, 8)}...
                   </td>
-                  <td className="px-4 py-3 font-medium text-slate-900">{position.title}</td>
-                  <td className="px-4 py-3 text-slate-600">{position.location?.city || '-'}</td>
+                  <td className="px-4 py-3 font-medium text-slate-900">
+                    {position.title}
+                  </td>
+                  <td className="px-4 py-3 text-slate-600">
+                    {position.location?.city || "-"}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-2 items-center">
                       {getStatusBadge(position)}
                       {!position.isDual && (
-                        <span title="Full-time" className="inline-flex items-center justify-center w-6 h-6 rounded text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                        <span
+                          title="Full-time"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"
+                        >
                           <Briefcase size={12} />
                         </span>
                       )}
@@ -270,7 +286,10 @@ export default function AdminPositionsPage() {
               ))}
               {!positions.loading && positions.items.length === 0 && (
                 <tr>
-                  <td className="px-4 py-12 text-center text-slate-500" colSpan={5}>
+                  <td
+                    className="px-4 py-12 text-center text-slate-500"
+                    colSpan={5}
+                  >
                     {LABELS.NO_DATA}
                   </td>
                 </tr>

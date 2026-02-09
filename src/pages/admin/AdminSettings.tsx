@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo } from "react";
 import { api } from "../../lib/api";
 
 export default function AdminSettings() {
-
   const [me, setMe] = useState<any>(null);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -91,11 +90,21 @@ export default function AdminSettings() {
         <p className="text-sm text-slate-600">Saját profil adatok kezelése.</p>
       </div>
 
-      {err && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{err}</div>}
-      {msg && <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{msg}</div>}
+      {err && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {err}
+        </div>
+      )}
+      {msg && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          {msg}
+        </div>
+      )}
 
       <section className="rounded-2xl border border-slate-200 bg-white p-6 max-w-2xl">
-        <h2 className="text-base font-semibold text-slate-800 mb-4">Saját profil</h2>
+        <h2 className="text-base font-semibold text-slate-800 mb-4">
+          Saját profil
+        </h2>
 
         {loading && !me ? (
           <div className="text-sm text-slate-500">Betöltés...</div>
@@ -103,7 +112,9 @@ export default function AdminSettings() {
           <form onSubmit={handleUpdate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Email cím (nem módosítható)</label>
+                <label className="text-xs font-medium text-slate-700">
+                  Email cím (nem módosítható)
+                </label>
                 <input
                   disabled
                   value={me?.email || ""}
@@ -111,7 +122,9 @@ export default function AdminSettings() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">Szerepkör</label>
+                <label className="text-xs font-medium text-slate-700">
+                  Szerepkör
+                </label>
                 <div className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">
                   {role || "Ismeretlen"}
                 </div>
@@ -119,20 +132,28 @@ export default function AdminSettings() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">Teljes név</label>
+              <label className="text-xs font-medium text-slate-700">
+                Teljes név
+              </label>
               <input
                 value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, fullName: e.target.value })
+                }
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
                 placeholder="Pl. Kovács János"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">Telefonszám</label>
+              <label className="text-xs font-medium text-slate-700">
+                Telefonszám
+              </label>
               <input
                 value={formData.phoneNumber}
-                onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, phoneNumber: e.target.value })
+                }
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
                 placeholder="+36..."
               />

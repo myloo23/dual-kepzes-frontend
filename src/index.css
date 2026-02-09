@@ -14,7 +14,7 @@ html {
 
 body {
   @apply bg-dkk-light text-slate-900;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 /* Custom Animations */
@@ -78,7 +78,11 @@ body {
 }
 
 /* Smooth transitions for interactive elements */
-button, a, input, textarea, select {
+button,
+a,
+input,
+textarea,
+select {
   @apply transition-colors duration-200;
 }
 

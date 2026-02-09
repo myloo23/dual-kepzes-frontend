@@ -1,10 +1,10 @@
-import { useCallback, useState } from 'react';
-import { api } from '../../../lib/api';
+import { useCallback, useState } from "react";
+import { api } from "../../../lib/api";
 import type {
   NotificationCreatePayload,
   NotificationDetails,
   NotificationItem,
-} from '../../../lib/api';
+} from "../../../lib/api";
 
 export interface UseNotificationsReturn {
   active: NotificationItem[];
@@ -65,9 +65,12 @@ export function useNotifications(): UseNotificationsReturn {
     try {
       const res = await api.notifications.unreadCount();
       const count =
-        typeof res === 'number'
+        typeof res === "number"
           ? res
-          : res?.count ?? (res as { unreadNotificationsCount?: number })?.unreadNotificationsCount ?? 0;
+          : (res?.count ??
+            (res as { unreadNotificationsCount?: number })
+              ?.unreadNotificationsCount ??
+            0);
       setUnreadCount(count);
     } catch (err) {
       // Silently fail - notifications might not be implemented on backend

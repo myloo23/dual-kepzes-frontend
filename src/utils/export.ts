@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 
 /**
  * Export utilities for CSV, Excel and PDF generation
@@ -10,39 +10,46 @@ import * as XLSX from 'xlsx';
 export function exportToCSV<T extends Record<string, any>>(
   data: T[],
   filename: string,
-  columns?: { key: keyof T; label: string }[]
+  columns?: { key: keyof T; label: string }[],
 ) {
   if (data.length === 0) {
-    console.warn('No data to export');
+    console.warn("No data to export");
     return;
   }
 
   // Determine columns
-  const cols = columns || Object.keys(data[0]).map(key => ({ key, label: key }));
+  const cols =
+    columns || Object.keys(data[0]).map((key) => ({ key, label: key }));
 
   // Create CSV header
-  const header = cols.map(col => col.label).join(',');
+  const header = cols.map((col) => col.label).join(",");
 
   // Create CSV rows
-  const rows = data.map(row =>
-    cols.map(col => {
-      const value = row[col.key];
-      // Handle values that might contain commas or quotes
-      if (value === null || value === undefined) return '';
-      const stringValue = String(value);
-      if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
-        return `"${stringValue.replace(/"/g, '""')}"`;
-      }
-      return stringValue;
-    }).join(',')
+  const rows = data.map((row) =>
+    cols
+      .map((col) => {
+        const value = row[col.key];
+        // Handle values that might contain commas or quotes
+        if (value === null || value === undefined) return "";
+        const stringValue = String(value);
+        if (
+          stringValue.includes(",") ||
+          stringValue.includes('"') ||
+          stringValue.includes("\n")
+        ) {
+          return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+        return stringValue;
+      })
+      .join(","),
   );
 
   // Combine header and rows
-  const csv = [header, ...rows].join('\n');
+  const csv = [header, ...rows].join("\n");
 
   // Create and download file
   // Add partial BOM for Excel UTF-8 compatibility
-  downloadFile('\uFEFF' + csv, filename, 'text/csv;charset=utf-8;');
+  downloadFile("\uFEFF" + csv, filename, "text/csv;charset=utf-8;");
 }
 
 /**
@@ -51,18 +58,18 @@ export function exportToCSV<T extends Record<string, any>>(
 export function exportToExcel<T extends Record<string, any>>(
   data: T[],
   filename: string,
-  columns?: { key: keyof T; label: string }[]
+  columns?: { key: keyof T; label: string }[],
 ) {
   if (data.length === 0) {
-    console.warn('No data to export');
+    console.warn("No data to export");
     return;
   }
 
   // Transform data to match columns
-  const excelData = data.map(item => {
+  const excelData = data.map((item) => {
     const row: Record<string, any> = {};
     if (columns) {
-      columns.forEach(col => {
+      columns.forEach((col) => {
         row[col.label] = item[col.key];
       });
     } else {
@@ -75,14 +82,18 @@ export function exportToExcel<T extends Record<string, any>>(
   const worksheet = XLSX.utils.json_to_sheet(excelData);
 
   // Auto-width for columns (simple estimation)
-  const colWidths = Object.keys(excelData[0] || {}).map(key => ({
-    wch: Math.max(key.length, ...excelData.map(row => String(row[key] || '').length)) + 2
+  const colWidths = Object.keys(excelData[0] || {}).map((key) => ({
+    wch:
+      Math.max(
+        key.length,
+        ...excelData.map((row) => String(row[key] || "").length),
+      ) + 2,
   }));
-  worksheet['!cols'] = colWidths;
+  worksheet["!cols"] = colWidths;
 
   // Create workbook
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Export');
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Export");
 
   // Write and download
   XLSX.writeFile(workbook, filename);
@@ -99,9 +110,9 @@ export function exportToPDF(elementId: string, filename: string) {
   }
 
   // Create a new window for printing
-  const printWindow = window.open('', '_blank');
+  const printWindow = window.open("", "_blank");
   if (!printWindow) {
-    console.error('Could not open print window');
+    console.error("Could not open print window");
     return;
   }
 
@@ -153,7 +164,7 @@ export function exportToPDF(elementId: string, filename: string) {
 function downloadFile(content: string, filename: string, mimeType: string) {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = filename;
   document.body.appendChild(link);
@@ -165,8 +176,11 @@ function downloadFile(content: string, filename: string, mimeType: string) {
 /**
  * Format date for filename
  */
-export function getExportFilename(prefix: string, extension: 'csv' | 'pdf' | 'xlsx'): string {
+export function getExportFilename(
+  prefix: string,
+  extension: "csv" | "pdf" | "xlsx",
+): string {
   const date = new Date();
-  const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+  const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
   return `${prefix}_${dateStr}.${extension}`;
 }

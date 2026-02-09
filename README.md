@@ -587,7 +587,7 @@ Részletes dokumentációt találsz a `docs/` mappában:
 ## 🔗 Kapcsolódó Projektek
 
 - **Backend API**: [dual-kepzes-backend](https://github.com/DrozsdikAdam/dual-kepzes-backend)
-- **API Dokumentáció**: [Swagger UI](https://dual-kepzes-backend-production-7c45.up.railway.app/api-docs)
+- **API Dokumentáció**: [Swagger UI](https://dual-kepzes-backend.onrender.com/api-docs)
 
 ## 📝 Licensz
 

@@ -3,31 +3,31 @@
  * Manages users across different roles (Students, Company Admins, University Users, Inactive Users)
  */
 
-import { useState } from 'react';
-import type { StudentProfile } from '../../lib/api';
-import { useUserManagement } from '../../features/users/hooks/useUserManagement';
-import { useModal } from '../../hooks';
-import StudentFormModal from '../../features/users/components/modals/StudentFormModal';
-import AdminUserModal from '../../features/users/components/modals/AdminUserModal';
-import Button from '../../components/ui/Button';
-import ExportButton from '../../components/shared/ExportButton';
+import { useState } from "react";
+import type { StudentProfile } from "../../lib/api";
+import { useUserManagement } from "../../features/users/hooks/useUserManagement";
+import { useModal } from "../../hooks";
+import StudentFormModal from "../../features/users/components/modals/StudentFormModal";
+import AdminUserModal from "../../features/users/components/modals/AdminUserModal";
+import Button from "../../components/ui/Button";
+import ExportButton from "../../components/shared/ExportButton";
 
-import { useUserExport } from '../../features/users/hooks/useUserExport';
+import { useUserExport } from "../../features/users/hooks/useUserExport";
 import {
   PAGE_TITLES,
   PAGE_DESCRIPTIONS,
   USER_TABS,
   USER_TAB_ORDER,
   LABELS,
-  CONFIRM_MESSAGES
-} from '../../constants';
-import type { TabType } from '../../types/ui.types';
+  CONFIRM_MESSAGES,
+} from "../../constants";
+import type { TabType } from "../../types/ui.types";
 
 export default function AdminUsersPage() {
   const userManagement = useUserManagement();
   const studentModal = useModal<StudentProfile>();
   const genericModal = useModal<any>();
-  const [lookupId, setLookupId] = useState('');
+  const [lookupId, setLookupId] = useState("");
   const { handleExport } = useUserExport();
 
   const handleTabChange = (tab: TabType) => {
@@ -37,7 +37,7 @@ export default function AdminUsersPage() {
 
   const handleOpenItem = (item: any) => {
     userManagement.clearMessages();
-    if (userManagement.activeTab === 'STUDENT') {
+    if (userManagement.activeTab === "STUDENT") {
       studentModal.open(item);
     } else {
       genericModal.open(item);
@@ -66,7 +66,10 @@ export default function AdminUsersPage() {
   const handleSaveStudent = async (data: Record<string, any>) => {
     if (!studentModal.data) return;
 
-    const success = await userManagement.updateStudent(studentModal.data.id, data);
+    const success = await userManagement.updateStudent(
+      studentModal.data.id,
+      data,
+    );
     if (success) {
       studentModal.close();
     }
@@ -75,45 +78,50 @@ export default function AdminUsersPage() {
   const handleSaveGeneric = async (data: Record<string, any>) => {
     if (!genericModal.data) return;
 
-    const success = await userManagement.updateGeneric(genericModal.data.id, data);
+    const success = await userManagement.updateGeneric(
+      genericModal.data.id,
+      data,
+    );
     if (success) {
       genericModal.close();
     }
   };
 
   const renderColumns = (item: any) => {
-    if (userManagement.activeTab === 'STUDENT') {
+    if (userManagement.activeTab === "STUDENT") {
       return (
         <>
           <td className="px-4 py-3 font-medium text-slate-900">
-            {item.fullName ?? item.name ?? 'User'}
+            {item.fullName ?? item.name ?? "User"}
           </td>
-          <td className="px-4 py-3 text-slate-600">{item.email ?? '-'}</td>
-          <td className="px-4 py-3 text-slate-500">{item.neptunCode ?? item.studentProfile?.neptunCode ?? '-'}</td>
+          <td className="px-4 py-3 text-slate-600">{item.email ?? "-"}</td>
+          <td className="px-4 py-3 text-slate-500">
+            {item.neptunCode ?? item.studentProfile?.neptunCode ?? "-"}
+          </td>
         </>
       );
-    } else if (userManagement.activeTab === 'COMPANY_ADMIN') {
+    } else if (userManagement.activeTab === "COMPANY_ADMIN") {
       return (
         <>
           <td className="px-4 py-3 font-medium text-slate-900">
-            {item.user?.fullName ?? item.fullName ?? item.name ?? 'User'}
+            {item.user?.fullName ?? item.fullName ?? item.name ?? "User"}
           </td>
           <td className="px-4 py-3 text-slate-600">
-            {item.user?.email ?? item.email ?? '-'}
+            {item.user?.email ?? item.email ?? "-"}
           </td>
           <td className="px-4 py-3 text-slate-500">
-            Cég ID: {item.companyEmployee?.company?.id ?? '-'}
+            Cég ID: {item.companyEmployee?.company?.id ?? "-"}
           </td>
         </>
       );
-    } else if (userManagement.activeTab === 'UNIVERSITY_USER') {
+    } else if (userManagement.activeTab === "UNIVERSITY_USER") {
       return (
         <>
           <td className="px-4 py-3 font-medium text-slate-900">
-            {item.user?.fullName ?? item.fullName ?? item.name ?? 'User'}
+            {item.user?.fullName ?? item.fullName ?? item.name ?? "User"}
           </td>
           <td className="px-4 py-3 text-slate-600">
-            {item.user?.email ?? item.email ?? '-'}
+            {item.user?.email ?? item.email ?? "-"}
           </td>
           <td className="px-4 py-3 text-slate-500">-</td>
         </>
@@ -123,19 +131,19 @@ export default function AdminUsersPage() {
       return (
         <>
           <td className="px-4 py-3 font-medium text-slate-900">
-            {item.fullName ?? item.name ?? 'User'}
+            {item.fullName ?? item.name ?? "User"}
           </td>
-          <td className="px-4 py-3 text-slate-600">{item.email ?? '-'}</td>
-          <td className="px-4 py-3 text-slate-500">{item.role ?? '-'}</td>
+          <td className="px-4 py-3 text-slate-600">{item.email ?? "-"}</td>
+          <td className="px-4 py-3 text-slate-500">{item.role ?? "-"}</td>
         </>
       );
     }
   };
 
   const getColumnHeader = () => {
-    if (userManagement.activeTab === 'STUDENT') return 'Neptun';
-    if (userManagement.activeTab === 'COMPANY_ADMIN') return 'Cég';
-    return 'Egyéb';
+    if (userManagement.activeTab === "STUDENT") return "Neptun";
+    if (userManagement.activeTab === "COMPANY_ADMIN") return "Cég";
+    return "Egyéb";
   };
 
   return (
@@ -143,7 +151,9 @@ export default function AdminUsersPage() {
       {/* Page Header */}
       <div>
         <h1 className="text-lg font-semibold">{PAGE_TITLES.ADMIN_USERS}</h1>
-        <p className="text-sm text-slate-600">{PAGE_DESCRIPTIONS.ADMIN_USERS}</p>
+        <p className="text-sm text-slate-600">
+          {PAGE_DESCRIPTIONS.ADMIN_USERS}
+        </p>
       </div>
 
       {/* Tabs */}
@@ -152,10 +162,11 @@ export default function AdminUsersPage() {
           <button
             key={tab}
             onClick={() => handleTabChange(tab)}
-            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${userManagement.activeTab === tab
-              ? 'bg-white border border-slate-200 border-b-white text-blue-600 -mb-px'
-              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-              }`}
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+              userManagement.activeTab === tab
+                ? "bg-white border border-slate-200 border-b-white text-blue-600 -mb-px"
+                : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+            }`}
           >
             {USER_TABS[tab]}
           </button>
@@ -205,8 +216,10 @@ export default function AdminUsersPage() {
             >
               {LABELS.REFRESH}
             </Button>
-            <ExportButton 
-              onExport={() => handleExport(userManagement.items, userManagement.activeTab)}
+            <ExportButton
+              onExport={() =>
+                handleExport(userManagement.items, userManagement.activeTab)
+              }
               disabled={userManagement.items.length === 0}
               icon="excel"
               label="Excel export"
@@ -219,9 +232,15 @@ export default function AdminUsersPage() {
           <table className="min-w-full text-sm relative">
             <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">ID</th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">Név</th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">Email</th>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
+                  ID
+                </th>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
+                  Név
+                </th>
+                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
+                  Email
+                </th>
                 <th className="px-4 py-3 text-left font-semibold bg-slate-50">
                   {getColumnHeader()}
                 </th>
@@ -232,7 +251,10 @@ export default function AdminUsersPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {userManagement.items.map((item) => (
-                <tr key={String(item.id)} className="hover:bg-slate-50 transition-colors">
+                <tr
+                  key={String(item.id)}
+                  className="hover:bg-slate-50 transition-colors"
+                >
                   <td className="px-4 py-3 text-slate-500 font-mono text-xs">
                     {String(item.id).slice(0, 8)}...
                   </td>
@@ -241,7 +263,7 @@ export default function AdminUsersPage() {
 
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
-                      {userManagement.activeTab === 'INACTIVE_USER' && (
+                      {userManagement.activeTab === "INACTIVE_USER" && (
                         <Button
                           onClick={() => userManagement.reactivateUser(item.id)}
                           variant="success"
@@ -251,7 +273,7 @@ export default function AdminUsersPage() {
                         </Button>
                       )}
 
-                      {userManagement.activeTab !== 'INACTIVE_USER' && (
+                      {userManagement.activeTab !== "INACTIVE_USER" && (
                         <Button
                           onClick={() => handleOpenItem(item)}
                           variant="outlineAccent"
@@ -274,7 +296,10 @@ export default function AdminUsersPage() {
               ))}
               {!userManagement.loading && userManagement.items.length === 0 && (
                 <tr>
-                  <td className="px-4 py-12 text-center text-slate-500" colSpan={5}>
+                  <td
+                    className="px-4 py-12 text-center text-slate-500"
+                    colSpan={5}
+                  >
                     {LABELS.EMPTY_CATEGORY}
                   </td>
                 </tr>
@@ -298,11 +323,11 @@ export default function AdminUsersPage() {
         onSave={handleSaveGeneric}
         initialData={genericModal.data}
         type={
-          userManagement.activeTab === 'COMPANY_ADMIN'
-            ? 'COMPANY_ADMIN'
-            : userManagement.activeTab === 'UNIVERSITY_USER'
-              ? 'UNIVERSITY_USER'
-              : 'USER'
+          userManagement.activeTab === "COMPANY_ADMIN"
+            ? "COMPANY_ADMIN"
+            : userManagement.activeTab === "UNIVERSITY_USER"
+              ? "UNIVERSITY_USER"
+              : "USER"
         }
       />
     </div>

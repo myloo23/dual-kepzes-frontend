@@ -94,23 +94,23 @@ export default function AdminDashboard() {
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard
           title="Felhasználók"
-          value={loading ? "…" : data?.totals?.users ?? "—"}
+          value={loading ? "…" : (data?.totals?.users ?? "—")}
         />
         <StatCard
           title="Cégek"
-          value={loading ? "…" : data?.totals?.companies ?? "—"}
+          value={loading ? "…" : (data?.totals?.companies ?? "—")}
         />
         <StatCard
           title="Pozíciók"
-          value={loading ? "…" : data?.totals?.positions ?? "—"}
+          value={loading ? "…" : (data?.totals?.positions ?? "—")}
         />
         <StatCard
           title="Jelentkezések"
-          value={loading ? "…" : data?.totals?.applications ?? "—"}
+          value={loading ? "…" : (data?.totals?.applications ?? "—")}
         />
         <StatCard
           title="Aktív együttműködések"
-          value={loading ? "…" : data?.totals?.activePartnerships ?? "—"}
+          value={loading ? "…" : (data?.totals?.activePartnerships ?? "—")}
           hint="(hallgató–cég kapcsolatok)"
         />
       </div>
@@ -139,7 +139,9 @@ export default function AdminDashboard() {
               .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
               .map((r) => {
                 const pct =
-                  maxRoleCount > 0 ? Math.round((r.count / maxRoleCount) * 100) : 0;
+                  maxRoleCount > 0
+                    ? Math.round((r.count / maxRoleCount) * 100)
+                    : 0;
 
                 return (
                   <div

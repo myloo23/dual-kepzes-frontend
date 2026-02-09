@@ -123,7 +123,7 @@ Minden végpont a `/api` prefix alatt érhető el. A legtöbb végponthoz érvé
 Az összes API végpont **teljes dokumentációja interaktív Swagger felületen** keresztül érhető el:
 
 👉 **Helyi fejlesztés**: `http://localhost:3000/api-docs`  
-👉 **Production**: `https://dual-kepzes-backend-production-7c45.up.railway.app/api-docs`
+👉 **Production**: `https://dual-kepzes-backend.onrender.com/api-docs`
 
 A Swagger UI lehetőséget ad:
 

@@ -50,7 +50,9 @@ export default function ResetPasswordPage() {
   return (
     <div className="max-w-md mx-auto px-4 lg:px-8 py-10">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-slate-900">Új jelszó beállítása</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">
+          Új jelszó beállítása
+        </h1>
         <p className="text-sm text-slate-600">
           Add meg az új jelszót. A link tokenje alapján azonosítjuk a kérést.
         </p>
@@ -61,11 +63,20 @@ export default function ResetPasswordPage() {
           Jelszó sikeresen módosítva! Átirányítás...
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
-          {error && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
+        <form
+          onSubmit={onSubmit}
+          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3"
+        >
+          {error && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Új jelszó</label>
+            <label className="text-xs font-medium text-slate-700">
+              Új jelszó
+            </label>
             <input
               type="password"
               value={pw}
@@ -76,7 +87,9 @@ export default function ResetPasswordPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Új jelszó megerősítése</label>
+            <label className="text-xs font-medium text-slate-700">
+              Új jelszó megerősítése
+            </label>
             <input
               type="password"
               value={pw2}
@@ -95,13 +108,17 @@ export default function ResetPasswordPage() {
           </button>
 
           <div className="text-center">
-            <Link to="/" className="text-sm text-slate-600 hover:text-slate-900">
+            <Link
+              to="/"
+              className="text-sm text-slate-600 hover:text-slate-900"
+            >
               Vissza a belépéshez
             </Link>
           </div>
 
           <div className="text-[11px] text-slate-500">
-            Jelszó szabály: 12–64 karakter, kisbetű, nagybetű, szám és speciális karakter.
+            Jelszó szabály: 12–64 karakter, kisbetű, nagybetű, szám és speciális
+            karakter.
           </div>
         </form>
       )}

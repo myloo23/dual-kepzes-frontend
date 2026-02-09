@@ -3,43 +3,51 @@
  * Displays public positions with filtering, sorting, and map view
  */
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { api } from '../../lib/api';
-import { usePositions } from '../../features/positions/hooks/usePositions';
-import { usePositionsFilters } from '../../features/positions/hooks/usePositionsFilters';
-import { useModal } from '../../hooks';
-import { useToast } from '../../hooks/useToast';
-import ApplicationModal from '../../features/applications/components/ApplicationModal';
-import FilterSidebar from '../../features/positions/components/FilterSidebar';
-import PositionsList from '../../features/positions/components/PositionsList';
-import PositionsMap from '../../features/positions/components/PositionsMap';
-import { PAGE_TITLES, PAGE_DESCRIPTIONS, ERROR_MESSAGES } from '../../constants';
-import type { Position } from '../../lib/api';
-import { Combobox } from '../../components/ui/Combobox';
-import HUCities from '../../assets/hu.json'; // Import the JSON
-import { MapPin, Navigation } from 'lucide-react';
-import ToastContainer from '../../components/shared/ToastContainer';
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { api } from "../../lib/api";
+import { usePositions } from "../../features/positions/hooks/usePositions";
+import { usePositionsFilters } from "../../features/positions/hooks/usePositionsFilters";
+import { useModal } from "../../hooks";
+import { useToast } from "../../hooks/useToast";
+import ApplicationModal from "../../features/applications/components/ApplicationModal";
+import FilterSidebar from "../../features/positions/components/FilterSidebar";
+import PositionsList from "../../features/positions/components/PositionsList";
+import PositionsMap from "../../features/positions/components/PositionsMap";
+import {
+  PAGE_TITLES,
+  PAGE_DESCRIPTIONS,
+  ERROR_MESSAGES,
+} from "../../constants";
+import type { Position } from "../../lib/api";
+import { Combobox } from "../../components/ui/Combobox";
+import HUCities from "../../assets/hu.json"; // Import the JSON
+import { MapPin, Navigation } from "lucide-react";
+import ToastContainer from "../../components/shared/ToastContainer";
 
-type LocationMode = 'gps' | 'city';
+type LocationMode = "gps" | "city";
 
 export default function PositionsPage() {
   const navigate = useNavigate();
   const toast = useToast();
-  const { positions, loading, error, applicationSuccess, submitApplication } = usePositions();
+  const { positions, loading, error, applicationSuccess, submitApplication } =
+    usePositions();
   const filters = usePositionsFilters(positions);
   const applicationModal = useModal<Position>();
-  
-  const [locationMode, setLocationMode] = useState<LocationMode>('gps');
-  const [selectedCity, setSelectedCity] = useState<string>('Kecskemét'); // Default to Kecskemet
-  const [gpsLocation, setGpsLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  const [locationMode, setLocationMode] = useState<LocationMode>("gps");
+  const [selectedCity, setSelectedCity] = useState<string>("Kecskemét"); // Default to Kecskemet
+  const [gpsLocation, setGpsLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   // Memoize city options for Combobox
   const cityOptions = useMemo(() => {
-    return HUCities.map(city => ({
-        value: city.city,
-        label: city.city
-    })).sort((a, b) => a.label.localeCompare(b.label, 'hu'));
+    return HUCities.map((city) => ({
+      value: city.city,
+      label: city.city,
+    })).sort((a, b) => a.label.localeCompare(b.label, "hu"));
   }, []);
 
   // Get user location for map
@@ -54,27 +62,27 @@ export default function PositionsPage() {
         });
       },
       (error) => {
-        console.error('Geolocation error:', error);
+        console.error("Geolocation error:", error);
       },
       {
         enableHighAccuracy: true,
         timeout: 10000,
         maximumAge: 0,
-      }
+      },
     );
   }, []);
 
   // Calculate effective user location based on mode
   const userLocation = useMemo(() => {
-    if (locationMode === 'gps') {
+    if (locationMode === "gps") {
       return gpsLocation;
     } else {
-      const cityData = HUCities.find(c => c.city === selectedCity);
+      const cityData = HUCities.find((c) => c.city === selectedCity);
       if (cityData) {
-          return {
-              lat: parseFloat(cityData.lat),
-              lng: parseFloat(cityData.lng)
-          };
+        return {
+          lat: parseFloat(cityData.lat),
+          lng: parseFloat(cityData.lng),
+        };
       }
       return null;
     }
@@ -86,14 +94,19 @@ export default function PositionsPage() {
   useEffect(() => {
     if (positions.length === 0) return;
 
-    const positionId = searchParams.get('id');
+    const positionId = searchParams.get("id");
     if (positionId) {
       // Prevent infinite re-opening loop if already open with same ID
-      if (applicationModal.isOpen && String(applicationModal.data?.id) === positionId) {
+      if (
+        applicationModal.isOpen &&
+        String(applicationModal.data?.id) === positionId
+      ) {
         return;
       }
 
-      const position = positions.find((p: Position) => String(p.id) === positionId);
+      const position = positions.find(
+        (p: Position) => String(p.id) === positionId,
+      );
       if (position) {
         applicationModal.open(position);
       }
@@ -101,95 +114,124 @@ export default function PositionsPage() {
   }, [positions, applicationModal, searchParams]);
 
   // Navigate to company profile page
-  const showCompanyInfo = useCallback(async (
-    companyData: { id?: string | number; name?: string; logoUrl?: string | null } | undefined
-  ) => {
-    if (!companyData || !companyData.name) {
-      toast.showError(ERROR_MESSAGES.NO_COMPANY_DATA);
-      return;
-    }
-
-    let targetId = companyData.id;
-
-    // If no ID, try to find it from the list of companies
-    if (!targetId) {
-      try {
-        const allCompanies = await api.companies.list();
-        const matchingCompany = allCompanies.find(
-          (c) => c.name.trim().toLowerCase() === companyData.name!.trim().toLowerCase()
-        );
-
-        if (matchingCompany) {
-          targetId = matchingCompany.id;
-        }
-      } catch (error) {
-        console.error('Failed to fetch companies list:', error);
+  const showCompanyInfo = useCallback(
+    async (
+      companyData:
+        | { id?: string | number; name?: string; logoUrl?: string | null }
+        | undefined,
+    ) => {
+      if (!companyData || !companyData.name) {
+        toast.showError(ERROR_MESSAGES.NO_COMPANY_DATA);
+        return;
       }
-    }
 
-    if (targetId) {
-      navigate(`/companies/${targetId}`);
-    } else {
-      toast.showError(ERROR_MESSAGES.COMPANY_NOT_FOUND);
-    }
-  }, [navigate, toast]);
+      let targetId = companyData.id;
+
+      // If no ID, try to find it from the list of companies
+      if (!targetId) {
+        try {
+          const allCompanies = await api.companies.list();
+          const matchingCompany = allCompanies.find(
+            (c) =>
+              c.name.trim().toLowerCase() ===
+              companyData.name!.trim().toLowerCase(),
+          );
+
+          if (matchingCompany) {
+            targetId = matchingCompany.id;
+          }
+        } catch (error) {
+          console.error("Failed to fetch companies list:", error);
+        }
+      }
+
+      if (targetId) {
+        navigate(`/companies/${targetId}`);
+      } else {
+        toast.showError(ERROR_MESSAGES.COMPANY_NOT_FOUND);
+      }
+    },
+    [navigate, toast],
+  );
 
   // Handle apply button click
-  const handleApply = useCallback(async (positionId: string | number) => {
-    const position = positions.find((p: Position) => String(p.id) === String(positionId));
-    if (!position) return;
+  const handleApply = useCallback(
+    async (positionId: string | number) => {
+      const position = positions.find(
+        (p: Position) => String(p.id) === String(positionId),
+      );
+      if (!position) return;
 
-    // Fix: Check for external application details if missing from list view
-    if (position.companyId && (!position.company?.hasOwnApplication || position.company?.website === undefined)) {
+      // Fix: Check for external application details if missing from list view
+      if (
+        position.companyId &&
+        (!position.company?.hasOwnApplication ||
+          position.company?.website === undefined)
+      ) {
         try {
-            const companyDetails = await api.companies.get(position.companyId);
-            if (companyDetails.hasOwnApplication && companyDetails.website) {
-                toast.showInfo(`Átirányítás a(z) ${companyDetails.name} karrier oldalára...`);
-                // Short delay to let the user see the message
-                setTimeout(() => {
-                    window.open(companyDetails.website!, '_blank');
-                }, 1500);
-                return;
-            }
+          const companyDetails = await api.companies.get(position.companyId);
+          if (companyDetails.hasOwnApplication && companyDetails.website) {
+            toast.showInfo(
+              `Átirányítás a(z) ${companyDetails.name} karrier oldalára...`,
+            );
+            // Short delay to let the user see the message
+            setTimeout(() => {
+              window.open(companyDetails.website!, "_blank");
+            }, 1500);
+            return;
+          }
         } catch (error) {
-            console.error("Failed to verify company application settings:", error);
-            // Fallback to internal apply if check fails
+          console.error(
+            "Failed to verify company application settings:",
+            error,
+          );
+          // Fallback to internal apply if check fails
         }
-    }
+      }
 
-    applicationModal.open(position);
-    // Update URL to reflect the open modal
-    setSearchParams(prev => {
+      applicationModal.open(position);
+      // Update URL to reflect the open modal
+      setSearchParams((prev) => {
         const newParams = new URLSearchParams(prev);
-        newParams.set('id', String(positionId));
-        return newParams;
-    });
-  }, [positions, applicationModal, setSearchParams]);
-
-  // Handle application submission
-  const handleSubmitApplication = useCallback(async (note: string, cvFile?: File, motivationLetterFile?: File) => {
-    if (!applicationModal.data?.id) return;
-
-    try {
-      await submitApplication(String(applicationModal.data.id), note, cvFile, motivationLetterFile);
-      applicationModal.close();
-      // Clear URL param on successful submission too
-      setSearchParams(prev => {
-        const newParams = new URLSearchParams(prev);
-        newParams.delete('id');
+        newParams.set("id", String(positionId));
         return newParams;
       });
-    } catch (err) {
-      throw err; // Let ApplicationModal handle the error
-    }
-  }, [applicationModal, submitApplication, setSearchParams]);
+    },
+    [positions, applicationModal, setSearchParams],
+  );
+
+  // Handle application submission
+  const handleSubmitApplication = useCallback(
+    async (note: string, cvFile?: File, motivationLetterFile?: File) => {
+      if (!applicationModal.data?.id) return;
+
+      try {
+        await submitApplication(
+          String(applicationModal.data.id),
+          note,
+          cvFile,
+          motivationLetterFile,
+        );
+        applicationModal.close();
+        // Clear URL param on successful submission too
+        setSearchParams((prev) => {
+          const newParams = new URLSearchParams(prev);
+          newParams.delete("id");
+          return newParams;
+        });
+      } catch (err) {
+        throw err; // Let ApplicationModal handle the error
+      }
+    },
+    [applicationModal, submitApplication, setSearchParams],
+  );
 
   const handleModalClose = useCallback(() => {
     applicationModal.close();
     // Clear URL param when closing manually
-    setSearchParams(prev => {
+    setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.delete('id');
+      newParams.delete("id");
       return newParams;
     });
   }, [applicationModal, setSearchParams]);
@@ -215,47 +257,49 @@ export default function PositionsPage() {
       {/* Map */}
       {!loading && filters.filtered.length > 0 && (
         <div className="mb-8 space-y-4">
-            <div className="flex items-center gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm w-fit">
+          <div className="flex items-center gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm w-fit">
+            <button
+              onClick={() => setLocationMode("gps")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                locationMode === "gps"
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100"
+              }`}
+            >
+              <Navigation className="w-4 h-4" />
+              Jelenlegi pozíció
+            </button>
+            <div className="h-6 w-px bg-slate-200 my-auto" />
+            <div
+              className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-all ${
+                locationMode === "city" ? "bg-blue-50" : ""
+              }`}
+            >
               <button
-                onClick={() => setLocationMode('gps')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  locationMode === 'gps'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-100'
+                onClick={() => setLocationMode("city")}
+                className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                  locationMode === "city"
+                    ? "text-blue-700"
+                    : "text-slate-600 hover:bg-slate-100"
                 }`}
               >
-                <Navigation className="w-4 h-4" />
-                Jelenlegi pozíció
+                <MapPin className="w-4 h-4" />
+                Város választása:
               </button>
-              <div className="h-6 w-px bg-slate-200 my-auto" />
-              <div className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-all ${
-                  locationMode === 'city' ? 'bg-blue-50' : ''
-              }`}>
-                  <button
-                    onClick={() => setLocationMode('city')}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                      locationMode === 'city'
-                        ? 'text-blue-700'
-                        : 'text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    <MapPin className="w-4 h-4" />
-                    Város választása:
-                  </button>
-                  {locationMode === 'city' && (
-                    <div className="min-w-[200px]">
-                      <Combobox
-                        options={cityOptions}
-                        value={selectedCity}
-                        onChange={setSelectedCity}
-                        placeholder="Válassz várost..."
-                        searchPlaceholder="Keresés..."
-                        className="w-full"
-                      />
-                    </div>
-                  )}
-              </div>
+              {locationMode === "city" && (
+                <div className="min-w-[200px]">
+                  <Combobox
+                    options={cityOptions}
+                    value={selectedCity}
+                    onChange={setSelectedCity}
+                    placeholder="Válassz várost..."
+                    searchPlaceholder="Keresés..."
+                    className="w-full"
+                  />
+                </div>
+              )}
             </div>
+          </div>
 
           <PositionsMap
             positions={filters.filtered}
@@ -276,8 +320,11 @@ export default function PositionsPage() {
           </p>
         </div>
         <div className="text-xs text-slate-500">
-          Találatok:{' '}
-          <span className="font-semibold text-slate-800">{filters.filtered.length}</span> / {positions.length}
+          Találatok:{" "}
+          <span className="font-semibold text-slate-800">
+            {filters.filtered.length}
+          </span>{" "}
+          / {positions.length}
         </div>
       </header>
 
@@ -321,7 +368,7 @@ export default function PositionsPage() {
           isOpen={applicationModal.isOpen}
           position={{
             id: String(applicationModal.data.id),
-            title: applicationModal.data.title || 'Pozíció',
+            title: applicationModal.data.title || "Pozíció",
             company: applicationModal.data.company,
             city: applicationModal.data.location?.city,
             address: applicationModal.data.location?.address,

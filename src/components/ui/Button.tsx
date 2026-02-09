@@ -19,10 +19,8 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary:
-    "bg-blue-600 text-white hover:bg-blue-700 font-semibold",
-  dark:
-    "bg-slate-800 text-white hover:bg-slate-900 font-semibold shadow-sm",
+  primary: "bg-blue-600 text-white hover:bg-blue-700 font-semibold",
+  dark: "bg-slate-800 text-white hover:bg-slate-900 font-semibold shadow-sm",
   outline:
     "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium",
   outlineAccent:
@@ -54,7 +52,7 @@ export default function Button({
         "rounded-lg transition",
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
-        className
+        className,
       )}
       {...props}
     />

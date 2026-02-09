@@ -11,7 +11,6 @@ import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import njeLogoImage from "../../assets/logos/nje_logos/nje_logo2.png";
 import { ROLE_NAVIGATION_PATHS, type UserRole } from "../../config/navigation";
 
-
 function HomePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +39,9 @@ function HomePage() {
       if (target) {
         navigate(target, { replace: true });
       } else {
-        console.warn(`Ismeretlen szerepkör: ${normalizedRole}, visszatérés a főoldalra.`);
+        console.warn(
+          `Ismeretlen szerepkör: ${normalizedRole}, visszatérés a főoldalra.`,
+        );
         navigate("/", { replace: true });
       }
     } catch (err: any) {
@@ -58,16 +59,18 @@ function HomePage() {
   };
 
   // Felhasználó adatainak lekérése
-  const userInfo = user ? {
-    name: user.email || "Felhasználó", // Note: API types might need full name check
-    role: user.role,
-    dashboardPath: ROLE_NAVIGATION_PATHS[user.role as UserRole]?.dashboard || "/"
-  } : null;
+  const userInfo = user
+    ? {
+        name: user.email || "Felhasználó", // Note: API types might need full name check
+        role: user.role,
+        dashboardPath:
+          ROLE_NAVIGATION_PATHS[user.role as UserRole]?.dashboard || "/",
+      }
+    : null;
 
   return (
     <div className="bg-white">
       <div className="max-w-[1240px] mx-auto px-6 lg:px-8">
-        
         {/* HERO SECTION */}
         <section
           id="home"
@@ -88,27 +91,36 @@ function HomePage() {
                 className="h-20 sm:h-24 w-auto object-contain"
               />
             </div>
-            
+
             <div className="space-y-6">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tighter text-slate-900 leading-[1.05] text-balance">
                 Duális képzési <br />
                 <span className="text-dkk-blue">online rendszer</span>
               </h1>
               <p className="text-xl leading-relaxed text-slate-500 max-w-lg font-normal">
-                Egy egységes platform a hallgatók, céges partnerek és az egységes adminisztráció számára.
+                Egy egységes platform a hallgatók, céges partnerek és az
+                egységes adminisztráció számára.
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { icon: "🎓", text: "Hallgatói jelentkezés és dokumentumfeltöltés" },
+                {
+                  icon: "🎓",
+                  text: "Hallgatói jelentkezés és dokumentumfeltöltés",
+                },
                 { icon: "🏢", text: "Céges pozíciók és jelentkezéskezelés" },
                 { icon: "📘", text: "Haladási napló és mentor jóváhagyás" },
-                { icon: "📝", text: "Félév végi értékelések és admin felület" }
+                { icon: "📝", text: "Félév végi értékelések és admin felület" },
               ].map((feature, idx) => (
-                <div key={idx} className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-colors hover:bg-slate-100/80">
+                <div
+                  key={idx}
+                  className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-colors hover:bg-slate-100/80"
+                >
                   <span className="text-2xl">{feature.icon}</span>
-                  <span className="text-sm font-medium text-slate-700 leading-snug">{feature.text}</span>
+                  <span className="text-sm font-medium text-slate-700 leading-snug">
+                    {feature.text}
+                  </span>
                 </div>
               ))}
             </div>
@@ -117,7 +129,7 @@ function HomePage() {
           {/* Right Content - Login/User Card */}
           <div className="relative animate-slide-in-from-right lg:pl-10">
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-50 to-purple-50 rounded-[3rem] blur-3xl opacity-60 -z-10 transform translate-y-10"></div>
-            
+
             {!isAuthenticated ? (
               <div className="relative transform transition-all hover:scale-[1.01] duration-500">
                 <LoginCard
@@ -136,7 +148,9 @@ function HomePage() {
                 <div className="w-24 h-24 bg-gradient-to-br from-slate-50 to-slate-100 rounded-full flex items-center justify-center text-4xl font-bold text-slate-700 mx-auto mb-6 shadow-inner ring-4 ring-white">
                   {userInfo.name.charAt(0).toUpperCase()}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">{userInfo.name}</h3>
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  {userInfo.name}
+                </h3>
                 <p className="text-slate-500 mb-8">Bejelentkezve</p>
 
                 <button
@@ -144,8 +158,18 @@ function HomePage() {
                   className="w-full bg-slate-900 text-white font-medium py-4 px-6 rounded-xl hover:bg-slate-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 active:scale-95"
                 >
                   <span>Irányítópult megnyitása</span>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
                   </svg>
                 </button>
 
@@ -163,13 +187,15 @@ function HomePage() {
         {/* JOBS SECTION */}
         <section id="jobs" className="py-24 border-t border-slate-100">
           <div className="text-center mb-16 space-y-4">
-            <span className="text-sm font-bold tracking-widest text-blue-600 uppercase">Lehetőségek</span>
+            <span className="text-sm font-bold tracking-widest text-blue-600 uppercase">
+              Lehetőségek
+            </span>
             <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900">
               Aktuális Állásajánlatok
             </h2>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
-              Partnercégeink által meghirdetett teljes munkaidős álláslehetőségek.
-              Fedezd fel a legújabb nyitott pozíciókat.
+              Partnercégeink által meghirdetett teljes munkaidős
+              álláslehetőségek. Fedezd fel a legújabb nyitott pozíciókat.
             </p>
           </div>
 
@@ -181,8 +207,18 @@ function HomePage() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-100 text-slate-900 text-sm font-medium hover:bg-slate-200 transition-colors"
             >
               Összes állás megtekintése
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m-4-4H3" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m-4-4H3"
+                />
               </svg>
             </button>
           </div>
@@ -204,16 +240,22 @@ function HomePage() {
         </div>
 
         {/* CONTACT */}
-        <section id="contact" className="py-24 border-t border-slate-100 text-center">
+        <section
+          id="contact"
+          className="py-24 border-t border-slate-100 text-center"
+        >
           <div className="max-w-2xl mx-auto space-y-6">
             <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
               Kérdése van?
             </h2>
             <p className="text-lg text-slate-500">
-              A rendszer egyetemi pilot projekt részeként készül. Kérdés
-              esetén forduljon az egyetem duális képzési koordinátorához.
+              A rendszer egyetemi pilot projekt részeként készül. Kérdés esetén
+              forduljon az egyetem duális képzési koordinátorához.
             </p>
-            <a href="mailto:dualis@nje.hu" className="inline-block text-blue-600 font-medium hover:underline">
+            <a
+              href="mailto:dualis@nje.hu"
+              className="inline-block text-blue-600 font-medium hover:underline"
+            >
               Kapcsolatfelvétel
             </a>
           </div>
