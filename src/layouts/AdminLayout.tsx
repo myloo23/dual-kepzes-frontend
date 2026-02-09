@@ -2,7 +2,7 @@ import DashboardLayout, { type NavItem } from "./DashboardLayout";
 
 export default function AdminLayout() {
   const navItems: NavItem[] = [
-    { to: "/admin", label: "Dashboard", end: true },
+    { to: "/admin", label: "Statisztikák", end: true },
     { to: "/admin/users", label: "Felhasználók" },
     { to: "/admin/partnerships", label: "Partnerek" },
     { to: "/admin/companies", label: "Cégek" },
