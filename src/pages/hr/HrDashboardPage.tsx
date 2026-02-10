@@ -8,6 +8,7 @@ import CompanyApplicationList from "../../features/applications/components/Compa
 import CompanyEmployeeList from "../../features/companies/components/CompanyEmployeeList";
 import CompanyProfileEditor from "../../features/companies/components/CompanyProfileEditor";
 import CompanyPartnershipList from "../../features/partnerships/components/CompanyPartnershipList";
+import { StudentList } from "../../features/students";
 
 export default function HrDashboardPage() {
   const location = useLocation();
@@ -20,6 +21,7 @@ export default function HrDashboardPage() {
     const path = location.pathname;
     if (path === "/hr/job-postings") return "positions";
     if (path === "/hr/applications") return "applications";
+    if (path === "/hr/students") return "students";
     if (path === "/hr/partnerships") return "partnerships";
     if (path === "/hr/employees") return "employees";
     if (path === "/hr/company-profile") return "company";
@@ -27,6 +29,7 @@ export default function HrDashboardPage() {
     const hash = location.hash;
     if (hash === "#positions") return "positions";
     if (hash === "#applications") return "applications";
+    if (hash === "#students") return "students";
     if (hash === "#partnerships") return "partnerships";
     if (hash === "#employees") return "employees";
     if (hash === "#company") return "company";
@@ -114,6 +117,7 @@ export default function HrDashboardPage() {
         </>
       )}
       {activeTab === "applications" && <CompanyApplicationList />}
+      {activeTab === "students" && <StudentList />}
       {activeTab === "partnerships" && <CompanyPartnershipList />}
       {activeTab === "employees" && <CompanyEmployeeList />}
       {activeTab === "company" && (

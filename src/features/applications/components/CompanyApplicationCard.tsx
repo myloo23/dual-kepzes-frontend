@@ -36,7 +36,7 @@ export const CompanyApplicationCard = ({
       <div className="text-sm text-slate-600">
         Státusz: {statusLabels[displayApp.status] ?? displayApp.status}
       </div>
-      <div className="mt-4 flex flex-wrap gap-3">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
           onClick={() => onToggleExpand(String(displayApp.id))}
           className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-70"
@@ -48,27 +48,44 @@ export const CompanyApplicationCard = ({
               ? "Bezárás"
               : "Megtekintés"}
         </button>
-        <button
-          onClick={() => onDecision(String(displayApp.id), "ACCEPTED")}
-          disabled={isActionLoading}
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
-        >
-          {isActionLoading ? "Mentés..." : "Elfogadás"}
-        </button>
-        <button
-          onClick={() => onDecision(String(displayApp.id), "REJECTED")}
-          disabled={isActionLoading}
-          className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
-        >
-          Elutasítás
-        </button>
-        <button
-          onClick={() => onDeleteClick(String(displayApp.id))}
-          disabled={isDeleting}
-          className="rounded-lg border border-red-300 bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60"
-        >
-          {isDeleting ? "Törlés..." : "🗑️ Törlés"}
-        </button>
+        {displayApp.status === "SUBMITTED" ||
+        displayApp.status === "NO_RESPONSE" ? (
+          <>
+            <button
+              onClick={() => onDecision(String(displayApp.id), "ACCEPTED")}
+              disabled={isActionLoading}
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+            >
+              {isActionLoading ? "Mentés..." : "Elfogadás"}
+            </button>
+            <button
+              onClick={() => onDecision(String(displayApp.id), "REJECTED")}
+              disabled={isActionLoading}
+              className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
+            >
+              Elutasítás
+            </button>
+            <button
+              onClick={() => onDeleteClick(String(displayApp.id))}
+              disabled={isDeleting}
+              className="rounded-lg border border-red-300 bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60"
+            >
+              {isDeleting ? "Törlés..." : "🗑️ Törlés"}
+            </button>
+          </>
+        ) : (
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold ${
+              displayApp.status === "ACCEPTED"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                : "bg-red-50 text-red-700 border border-red-200"
+            }`}
+          >
+            {displayApp.status === "ACCEPTED"
+              ? "✅ Elfogadva"
+              : "❌ Elutasítva"}
+          </span>
+        )}
       </div>
       {isExpanded && (
         <>
