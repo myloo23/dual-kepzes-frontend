@@ -53,9 +53,8 @@ function HomePage() {
   };
 
   const handleViewJobDetails = (positionId: string | number) => {
-    // Navigate to positions page and scroll to the specific position
-    sessionStorage.setItem("highlightPositionId", String(positionId));
-    navigate("/positions");
+    // Navigate to positions page with query param to open modal
+    navigate(`/positions?id=${positionId}`);
   };
 
   // Felhasználó adatainak lekérése

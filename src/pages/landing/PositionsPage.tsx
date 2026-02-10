@@ -336,6 +336,7 @@ export default function PositionsPage() {
           company={filters.company}
           tagCategory={filters.tagCategory}
           deadlineFilter={filters.deadlineFilter}
+          positionType={filters.positionType}
           activeOnly={filters.activeOnly}
           selectedTags={filters.selectedTags}
           sortKey={filters.sortKey}
@@ -344,6 +345,7 @@ export default function PositionsPage() {
           setCompany={filters.setCompany}
           setTagCategory={filters.setTagCategory}
           setDeadlineFilter={filters.setDeadlineFilter}
+          setPositionType={filters.setPositionType}
           setActiveOnly={filters.setActiveOnly}
           setSelectedTags={filters.setSelectedTags}
           setSortKey={filters.setSortKey}

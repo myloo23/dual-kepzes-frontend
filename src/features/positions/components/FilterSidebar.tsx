@@ -19,6 +19,8 @@ interface DerivedData {
   showCompanyChips: boolean;
 }
 
+import { type PositionTypeFilter } from "../hooks/usePositionsFilters";
+
 interface FilterSidebarProps {
   // Filter states
   search: string;
@@ -26,6 +28,7 @@ interface FilterSidebarProps {
   company: string;
   tagCategory: string;
   deadlineFilter: DeadlineFilter;
+  positionType: PositionTypeFilter;
   activeOnly: boolean;
   selectedTags: string[];
   sortKey: SortKey;
@@ -36,6 +39,7 @@ interface FilterSidebarProps {
   setCompany: (value: string) => void;
   setTagCategory: (value: string) => void;
   setDeadlineFilter: (value: DeadlineFilter) => void;
+  setPositionType: (value: PositionTypeFilter) => void;
   setActiveOnly: (value: boolean | ((prev: boolean) => boolean)) => void;
   setSelectedTags: (value: string[] | ((prev: string[]) => string[])) => void;
   setSortKey: (value: SortKey) => void;
@@ -54,6 +58,7 @@ export default function FilterSidebar({
   company,
   tagCategory,
   deadlineFilter,
+  positionType,
   activeOnly,
   selectedTags,
   sortKey,
@@ -62,6 +67,7 @@ export default function FilterSidebar({
   setCompany,
   setTagCategory,
   setDeadlineFilter,
+  setPositionType,
   setActiveOnly,
   setSelectedTags,
   setSortKey,
@@ -206,6 +212,31 @@ export default function FilterSidebar({
             onClick={() => setDeadlineFilter("NO_DEADLINE")}
           >
             Nincs megadva
+          </ChipButton>
+        </div>
+      </div>
+
+      {/* pozíció típusa */}
+      <div className="space-y-2">
+        <div className="text-xs font-medium text-slate-700">Pozíció típusa</div>
+        <div className="flex flex-wrap gap-1.5">
+          <ChipButton
+            active={positionType === "ALL"}
+            onClick={() => setPositionType("ALL")}
+          >
+            Mind
+          </ChipButton>
+          <ChipButton
+            active={positionType === "DUAL"}
+            onClick={() => setPositionType("DUAL")}
+          >
+            Duális képzés
+          </ChipButton>
+          <ChipButton
+            active={positionType === "FULL_TIME"}
+            onClick={() => setPositionType("FULL_TIME")}
+          >
+            Teljes munkaidős
           </ChipButton>
         </div>
       </div>

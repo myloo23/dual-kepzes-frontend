@@ -19,6 +19,8 @@ export type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
 export type DatePostedFilter = "ALL" | "24H" | "7D" | "30D";
 export type WorkTypeFilter = "ALL" | "REMOTE" | "ONSITE";
 
+export type PositionTypeFilter = "ALL" | "DUAL" | "FULL_TIME";
+
 /**
  * Custom hook for filtering and sorting positions
  * Extracts complex filtering logic from PositionsPage
@@ -32,6 +34,7 @@ export function usePositionsFilters(positions: Position[]) {
   const [datePostedFilter, setDatePostedFilter] =
     useState<DatePostedFilter>("ALL");
   const [workTypeFilter, setWorkTypeFilter] = useState<WorkTypeFilter>("ALL");
+  const [positionType, setPositionType] = useState<PositionTypeFilter>("ALL");
   const [activeOnly, setActiveOnly] = useState(true);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("RANDOM");
@@ -135,6 +138,12 @@ export function usePositionsFilters(positions: Position[]) {
         if (!hasAllTags) return false;
       }
 
+      // Position Type filter
+      if (positionType !== "ALL") {
+        if (positionType === "DUAL" && !p.isDual) return false;
+        if (positionType === "FULL_TIME" && p.isDual) return false;
+      }
+
       // Deadline filter
       if (deadlineFilter !== "ALL") {
         const deadline = parseDate(p.deadline);
@@ -215,6 +224,7 @@ export function usePositionsFilters(positions: Position[]) {
     deadlineFilter,
     datePostedFilter,
     workTypeFilter,
+    positionType,
     activeOnly,
     selectedTags,
   ]);
@@ -289,6 +299,7 @@ export function usePositionsFilters(positions: Position[]) {
     setDeadlineFilter("ALL");
     setDatePostedFilter("ALL");
     setWorkTypeFilter("ALL");
+    setPositionType("ALL");
     setActiveOnly(false);
     setSelectedTags([]);
     setSortKey("NEWEST");
@@ -312,6 +323,7 @@ export function usePositionsFilters(positions: Position[]) {
     deadlineFilter,
     datePostedFilter,
     workTypeFilter,
+    positionType,
     activeOnly,
     selectedTags,
     sortKey,
@@ -322,6 +334,7 @@ export function usePositionsFilters(positions: Position[]) {
     setDeadlineFilter,
     setDatePostedFilter,
     setWorkTypeFilter,
+    setPositionType,
     setActiveOnly,
     setSelectedTags,
     setSortKey,
