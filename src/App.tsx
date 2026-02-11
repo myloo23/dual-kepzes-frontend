@@ -8,7 +8,7 @@ import GlobalSearch from "./components/shared/GlobalSearch";
 import PageLoader from "./components/shared/PageLoader";
 import { useToast } from "./hooks/useToast";
 import { useGlobalSearch } from "./hooks/useGlobalSearch";
-import { AuthProvider } from "./features/auth";
+import { AuthProvider, ProtectedRoute } from "./features/auth";
 
 // Helper function to retry lazy imports with page reload on failure
 // This fixes "Failed to fetch dynamically imported module" errors after deployments
@@ -125,7 +125,14 @@ function App() {
                 element={<CompanyRegistrationPage />}
               />
 
-              <Route path="/admin" element={<AdminLayout />}>
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
                 <Route index element={<AdminDashboard />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="partnerships" element={<AdminPartnerships />} />
@@ -143,15 +150,47 @@ function App() {
 
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
-              <Route path="/student" element={<StudentDashboardPage />} />
-              <Route path="/student/news" element={<StudentDashboardPage />} />
+              <Route
+                path="/student"
+                element={
+                  <ProtectedRoute allowedRoles={["STUDENT"]}>
+                    <StudentDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/student/news"
+                element={
+                  <ProtectedRoute allowedRoles={["STUDENT"]}>
+                    <StudentDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/student/partnerships"
-                element={<StudentDashboardPage />}
+                element={
+                  <ProtectedRoute allowedRoles={["STUDENT"]}>
+                    <StudentDashboardPage />
+                  </ProtectedRoute>
+                }
               />
-              <Route path="/student/guide" element={<StudentDashboardPage />} />
+              <Route
+                path="/student/guide"
+                element={
+                  <ProtectedRoute allowedRoles={["STUDENT"]}>
+                    <StudentDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
 
-              <Route path="/teacher" element={<TeacherLayout />}>
+              <Route
+                path="/teacher"
+                element={
+                  <ProtectedRoute allowedRoles={["TEACHER"]}>
+                    <TeacherLayout />
+                  </ProtectedRoute>
+                }
+              >
                 <Route
                   index
                   element={<PlaceholderPage title="Oktatói kezdőlap" />}
@@ -170,7 +209,14 @@ function App() {
                 />
               </Route>
 
-              <Route path="/mentor" element={<MentorLayout />}>
+              <Route
+                path="/mentor"
+                element={
+                  <ProtectedRoute allowedRoles={["MENTOR"]}>
+                    <MentorLayout />
+                  </ProtectedRoute>
+                }
+              >
                 <Route
                   index
                   element={<PlaceholderPage title="Mentori kezdőlap" />}
@@ -195,7 +241,14 @@ function App() {
               </Route>
 
               {/* HR routes section */}
-              <Route path="/hr" element={<HrLayout />}>
+              <Route
+                path="/hr"
+                element={
+                  <ProtectedRoute allowedRoles={["COMPANY_ADMIN"]}>
+                    <HrLayout />
+                  </ProtectedRoute>
+                }
+              >
                 <Route index element={<HrDashboardPage />} />
                 <Route path="job-postings" element={<HrDashboardPage />} />
                 <Route path="applications" element={<HrDashboardPage />} />
@@ -208,7 +261,14 @@ function App() {
                 <Route path="guide" element={<HrGuidePage />} />
               </Route>
 
-              <Route path="/university" element={<UniversityLayout />}>
+              <Route
+                path="/university"
+                element={
+                  <ProtectedRoute allowedRoles={["UNIVERSITY_USER"]}>
+                    <UniversityLayout />
+                  </ProtectedRoute>
+                }
+              >
                 <Route index element={<UniversityDashboardPage />} />
                 <Route path="students" element={<UniversityDashboardPage />} />
                 <Route

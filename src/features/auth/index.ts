@@ -11,3 +11,5 @@ export { default as LoginCard } from "./components/LoginCard";
 
 // Context
 export { AuthProvider, useAuth } from "./context/AuthContext";
+
+export { default as ProtectedRoute } from "./components/ProtectedRoute";

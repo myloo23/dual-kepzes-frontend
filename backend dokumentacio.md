@@ -2,7 +2,7 @@
 
 Ez a repository a Duális Képzés rendszer backend szolgáltatását tartalmazza. Az alkalmazás célja a hallgatók, cégek, egyetemi szereplők és a duális képzés adminisztrációjának támogatása egy robusztus, biztonságos és skálázható REST API-n keresztül.
 
-## 🛠 Technológia Stack
+## Technológia Stack
 
 A projekt modern, iparági sztenderd technológiákra épül:
 
@@ -18,7 +18,7 @@ A projekt modern, iparági sztenderd technológiákra épül:
 - **Tesztelés**: [Jest](https://jestjs.io/) & [Supertest](https://github.com/ladjs/supertest) - Unit és integrációs tesztek a megbízhatóság érdekében.
 - **Dokumentáció**: [Swagger/OpenAPI](https://swagger.io/) - Interaktív API dokumentáció és végpont tesztelési felület.
 
-## 🚀 Előfeltételek
+## Előfeltételek
 
 A fejlesztői környezet futtatásához szükséges szoftverek:
 
@@ -27,7 +27,7 @@ A fejlesztői környezet futtatásához szükséges szoftverek:
 - **PostgreSQL**: Helyi adatbázis szerver vagy Docker konténer.
 - **Redis**: Opcionális, de ajánlott a háttérfolyamatokhoz (BullMQ).
 
-## 📥 Telepítés és Indítás
+## Telepítés és Indítás
 
 1.  **Repository klónozása**
 
@@ -67,6 +67,7 @@ A fejlesztői környezet futtatásához szükséges szoftverek:
     # Redis (Opcionális, BullMQ-hoz)
     REDIS_HOST="localhost"
     REDIS_PORT=6379
+    REDIS_ENABLED="false" # Állítsd true-ra a háttérfolyamatok engedélyezéséhez
     ```
 
 4.  **Adatbázis szinkronizáció**
@@ -82,7 +83,7 @@ A fejlesztői környezet futtatásához szükséges szoftverek:
     ```
     A szerver elindul a `http://localhost:3000` címen.
 
-## 📜 Elérhető Szkriptek
+## Elérhető Szkriptek
 
 A `package.json`-ben definiált főbb parancsok:
 
@@ -99,7 +100,7 @@ A `package.json`-ben definiált főbb parancsok:
 | `npm run format`        | Kód automatikus formázása (Prettier).                                     |
 | `npx prisma db seed`    | Adatbázis feltöltése tesztadatokkal (`prisma/seed.ts`).                   |
 
-## 🏗 Projekt Struktúra
+## Projekt Struktúra
 
 ```
 src/
@@ -118,56 +119,200 @@ prisma/
 
 Minden végpont a `/api` prefix alatt érhető el. A legtöbb végponthoz érvényes `Authorization: Bearer <token>` fejléc szükséges.
 
-## 📚 API Dokumentáció
+## API Dokumentáció
 
 Az összes API végpont **teljes dokumentációja interaktív Swagger felületen** keresztül érhető el:
 
-👉 **Helyi fejlesztés**: `http://localhost:3000/api-docs`  
-👉 **Production**: `https://dual-kepzes-backend.onrender.com/api-docs`
+**Helyi fejlesztés**: `http://localhost:3000/api-docs`  
+**Production**: `https://dual-kepzes-backend-production-7c45.up.railway.app/api-docs`
 
 A Swagger UI lehetőséget ad:
 
-- ✅ Végpontok részletes leírásának megtekintésére
-- ✅ Sémák és válaszok vizuális megjelenítésére
-- ✅ Interaktív tesztelésre (Try it out!)
-- ✅ Autentikációs token használatára
+- Végpontok részletes leírásának megtekintésére
+- Sémák és válaszok vizuális megjelenítésére
+- Interaktív tesztelésre (Try it out!)
+- Autentikációs token használatára
 
-### 📄 Lapozás (Pagination)
+### Lapozás (Pagination)
 
 A listázó végpontok egységes válaszstruktúrát és lekérdezési paramétereket használnak. Részleteket az [API_PAGINATION.md](API_PAGINATION.md) fájlban találsz.
 
-## 🔐 Szerepkörök és Jogosultságok
+## Szerepkörök és Jogosultságok
 
-| Szerepkör          | Leírás                  | Főbb jogosultságok                                                              |
-| :----------------- | :---------------------- | :------------------------------------------------------------------------------ |
-| `STUDENT`          | Hallgató                | Saját profil, jelentkezések, partnerségek megtekintése                          |
-| `COMPANY_EMPLOYEE` | Céges munkavállaló      | Cég pozíciói, jelentkezések megtekintése, mentor funkciók                       |
-| `COMPANY_ADMIN`    | Cégadmin                | Teljes cégkezelés, jelentkezések értékelése, pozíciók és munkavállalók kezelése |
-| `UNIVERSITY_USER`  | Egyetemi kapcsolattartó | Partnerségek jóváhagyása, hallgatók felügyelete                                 |
-| `SYSTEM_ADMIN`     | Rendszergazda           | Teljes rendszer adminisztráció, minden entitás kezelése                         |
+| Szerepkör         | Leírás                    | Főbb jogosultságok                                                                                      |
+| :---------------- | :------------------------ | :------------------------------------------------------------------------------------------------------ |
+| `STUDENT`         | Hallgató                  | Saját profil, jelentkezések, partnerségek megtekintése, **egyetemi profilra váltás**.                   |
+| `MENTOR`          | Céges munkavállaló/Mentor | Cég pozíciói, jelentkezések megtekintése, mentor funkciók.                                              |
+| `COMPANY_ADMIN`   | Cégadmin                  | Teljes cégkezelés, jelentkezések értékelése, pozíciók és munkavállalók kezelése.                        |
+| `UNIVERSITY_USER` | Egyetemi kapcsolattartó   | Partnerségek jóváhagyása, hallgatók felügyelete.                                                        |
+| `SYSTEM_ADMIN`    | Rendszergazda             | Teljes rendszer adminisztráció, minden entitás kezelése. (Email policy: Csak biztonsági emaileket kap). |
 
-## 🗄️ Adatbázis Séma Áttekintés
+## Adatbázis Séma Áttekintés
 
 A rendszer fő entitásai és kapcsolataik:
 
 ```mermaid
 erDiagram
-    User ||--o| StudentProfile : has
-    User ||--o| CompanyEmployee : has
-    Company ||--o{ CompanyEmployee : employs
-    Company ||--o{ Position : offers
-    Student ||--o{ Application : submits
-    Position ||--o{ Application : receives
-    Application ||--o| DualPartnership : creates
-    DualPartnership }o--|| Student : involves
-    DualPartnership }o--|| Position : involves
-    DualPartnership }o--o| CompanyEmployee : mentor
-    DualPartnership }o--o| UniversityUser : supervisor
+    User {
+        string id PK
+        string email UK
+        string password
+        string fullName
+        string phoneNumber
+        Role role
+        boolean isEmailVerified
+        boolean isActive
+        datetime createdAt
+        datetime updatedAt
+    }
+    StudentProfile {
+        string id PK
+        string userId FK
+        string mothersName
+        datetime birthDate
+        string highSchool
+        int graduationYear
+        string neptunCode
+        string majorId FK
+        string studyMode
+        boolean hasLanguageCert
+        boolean isInHighSchool
+        string firstChoiceId FK
+        string secondChoiceId FK
+        string language
+        string languageLevel
+        boolean isAvailableForWork
+    }
+    Company {
+        string id PK
+        string name
+        string taxId UK
+        string description
+        string contactName
+        string contactEmail
+        string website
+        string logoUrl
+        boolean hasOwnApplication
+        boolean isActive
+    }
+    CompanyEmployee {
+        string id PK
+        string userId FK
+        string companyId FK
+        string jobTitle
+    }
+    Location {
+        string id PK
+        string country
+        string zipCode
+        string city
+        string address
+        string companyId FK
+        string studentProfileId FK
+    }
+    Position {
+        string id PK
+        string companyId FK
+        string title
+        string description
+        string majorId FK
+        boolean isDual
+        datetime deadline
+        boolean isActive
+        string locationId FK
+    }
+    Tag {
+        string id PK
+        string name UK
+        string category
+    }
+    Application {
+        string id PK
+        string studentId FK
+        string positionId FK
+        ApplicationStatus status
+        string companyNote
+        datetime submittedAt
+    }
+    DualPartnership {
+        string id PK
+        string studentId FK
+        string mentorId FK
+        string uniEmployeeId FK
+        string positionId FK
+        string semester
+        string contractNumber
+        PartnershipStatus status
+        datetime startDate
+        datetime endDate
+    }
+    Notification {
+        string id PK
+        string userId FK
+        string title
+        string message
+        string type
+        boolean isRead
+        string status
+        datetime sentAt
+        boolean isArchived
+    }
+    AuditLog {
+        string id PK
+        string userId FK
+        string action
+        string entity
+        string entityId
+        json details
+        datetime timestamp
+    }
+    News {
+        string id PK
+        string title
+        string content
+        boolean isImportant
+        string targetGroup
+        string_array tags
+        boolean isArchived
+        datetime createdAt
+    }
+    Major {
+        string id PK
+        string name
+        string language
+    }
+
+    %% Mag / Fő folyamat (Center)
+    StudentProfile ||--o{ Application : "submits"
+    Position ||--o{ Application : "receives"
+    Application ||--o| DualPartnership : "promoted to"
+
+    %% Felhasználói oldal (Left/Top)
+    User ||--o| StudentProfile : "has profile"
+    User ||--o{ Notification : "receives"
+    User ||--o{ AuditLog : "triggers"
+
+    %% Céges oldal (Right/Bottom)
+    Company ||--o{ Position : "offers"
+    Company ||--o{ CompanyEmployee : "employs"
+    Location ||--o{ Position : "is at"
+
+    %% Összekötő és kiegészítő adatok
+    DualPartnership }o--|| StudentProfile : "participates"
+    DualPartnership }o--|| Position : "linked to"
+    DualPartnership }o--|| CompanyEmployee : "mentors"
+    DualPartnership }o--|| User : "uni supervisor"
+
+    Company ||--o{ Location : "has branches"
+    StudentProfile ||--o{ Location : "lives at"
+    StudentProfile }o--o| Major : "major mapping"
+    Position }o--o| Major : "linked to major"
+    Position }o--o{ Tag : "tagged with"
 ```
 
 **Részletes sémát** lásd: `prisma/schema.prisma` vagy Prisma Studio (`npm run prisma:studio`)
 
-## 🏛️ Rendszer Architektúra
+## Rendszer Architektúra
 
 A backend alkalmazás rétegelt architektúrát követ:
 
@@ -181,6 +326,7 @@ graph TB
     subgraph "API Layer"
         Router[Express Router]
         Auth[Auth Middleware]
+        RoleCheck[Role Middleware]
         Validation[Validation Middleware]
         RateLimit[Rate Limiting]
     end
@@ -203,7 +349,8 @@ graph TB
     FE -->|HTTP/REST| Router
     Swagger -->|HTTP/REST| Router
     Router --> Auth
-    Auth --> Validation
+    Auth --> RoleCheck
+    RoleCheck --> Validation
     Validation --> RateLimit
     RateLimit --> Controllers
     Controllers --> Services
@@ -213,7 +360,7 @@ graph TB
     Services -.->|Notifications| SMTP
 ```
 
-## 🔄 Request Processing Flow
+## Request Processing Flow
 
 Egy tipikus API kérés feldolgozásának menete:
 
@@ -252,7 +399,7 @@ sequenceDiagram
     end
 ```
 
-## 🔐 Autentikációs Flow
+## Autentikációs Flow
 
 JWT token alapú autentikáció működése:
 
@@ -273,8 +420,14 @@ sequenceDiagram
         API->>API: Hash password (bcrypt)
         API->>DB: Create new user
         DB-->>API: User created
-        API-->>User: 201 Created
+        API->>API: Send verification email
+        API-->>User: 201 Created (Verification required)
     end
+
+    User->>API: POST /api/auth/verify-email (token)
+    API->>DB: Check token & verify user
+    DB-->>API: User verified
+    API-->>User: 200 OK
 
     User->>API: POST /api/auth/login (email, password)
     API->>DB: Find user by email
@@ -297,50 +450,42 @@ sequenceDiagram
     API-->>User: 200 OK + User Profile
 ```
 
-## 🎯 Partnership Status Flow
+## Partnership Status Flow
 
 A duális partnerség életciklusa (státusz átmenetek):
 
 ```mermaid
 stateDiagram-v2
-    [*] --> PENDING_MENTOR: Application ACCEPTED
-
-    PENDING_MENTOR --> PENDING_UNIVERSITY: Mentor Assigned
-
-    PENDING_UNIVERSITY --> ACTIVE: University User Assigned
-
-    ACTIVE --> TERMINATED: Partnership Terminated
-    ACTIVE --> COMPLETED: Natural Completion
-
-    PENDING_MENTOR --> TERMINATED: Early Termination
-    PENDING_UNIVERSITY --> TERMINATED: Early Termination
-
+    [*] --> PENDING_MENTOR
+    PENDING_MENTOR --> PENDING_UNIVERSITY
+    PENDING_MENTOR --> TERMINATED
+    PENDING_UNIVERSITY --> ACTIVE
+    PENDING_UNIVERSITY --> TERMINATED
+    ACTIVE --> FINISHED
+    ACTIVE --> TERMINATED
+    FINISHED --> [*]
     TERMINATED --> [*]
-    COMPLETED --> [*]
-
-    note right of PENDING_MENTOR
-        Company has accepted
-        the student's application
-    end note
-
-    note right of PENDING_UNIVERSITY
-        Mentor assigned,
-        awaiting university approval
-    end note
-
-    note right of ACTIVE
-        Fully operational
-        dual education partnership
-    end note
-
-    style PENDING_MENTOR fill:#ff9800,stroke:#e65100,stroke-width:3px,color:#000
-    style PENDING_UNIVERSITY fill:#2196f3,stroke:#0d47a1,stroke-width:3px,color:#fff
-    style ACTIVE fill:#4caf50,stroke:#1b5e20,stroke-width:3px,color:#fff
-    style TERMINATED fill:#f44336,stroke:#b71c1c,stroke-width:3px,color:#fff
-    style COMPLETED fill:#00897b,stroke:#004d40,stroke-width:3px,color:#fff
 ```
 
-## 📊 Application to Partnership Process
+## Application Status Flow
+
+A jelentkezés folyamata és lehetséges állapotai:
+
+```mermaid
+stateDiagram-v2
+    [*] --> SUBMITTED
+    SUBMITTED --> ACCEPTED
+    SUBMITTED --> REJECTED
+    SUBMITTED --> NO_RESPONSE
+    SUBMITTED --> RETRACTED
+    NO_RESPONSE --> ACCEPTED
+    NO_RESPONSE --> REJECTED
+    ACCEPTED --> [*]
+    REJECTED --> [*]
+    RETRACTED --> [*]
+```
+
+## Application to Partnership Process
 
 A jelentkezéstől a partnerségig vezető üzleti folyamat:
 
@@ -364,9 +509,9 @@ flowchart TD
     P2 --> Notify1[Notify System Admins]
     Notify1 --> AssignUni{University Assigns Supervisor?}
     AssignUni -->|Yes| P3[Partnership: ACTIVE]
+    P3 --> SetAvail[Student: isAvailableForWork = false]
+    SetAvail --> Monitor[Ongoing Mentorship]
     AssignUni -->|No| P2
-
-    P3 --> Monitor[Ongoing Mentorship]
     Monitor --> Complete{Completion or Termination?}
     Complete -->|Terminated| End2([Partnership: TERMINATED])
     Complete -->|Completed| End3([Partnership: COMPLETED])
@@ -376,20 +521,39 @@ flowchart TD
     style Status fill:#ffc107,stroke:#f57f17,stroke-width:2px,color:#000
     style Wait fill:#ff9800,stroke:#e65100,stroke-width:2px,color:#000
     style End1 fill:#f44336,stroke:#b71c1c,stroke-width:3px,color:#fff
-    style CreatePartnership fill:#8bc34a,stroke:#33691e,stroke-width:2px,color:#000
-    style P1 fill:#ff9800,stroke:#e65100,stroke-width:3px,color:#000
-    style AssignMentor fill:#ffc107,stroke:#f57f17,stroke-width:2px,color:#000
-    style P2 fill:#2196f3,stroke:#0d47a1,stroke-width:3px,color:#fff
-    style Notify1 fill:#00bcd4,stroke:#006064,stroke-width:2px,color:#fff
-    style AssignUni fill:#2196f3,stroke:#0d47a1,stroke-width:2px,color:#fff
-    style P3 fill:#4caf50,stroke:#1b5e20,stroke-width:3px,color:#fff
-    style Monitor fill:#8bc34a,stroke:#33691e,stroke-width:2px,color:#000
-    style Complete fill:#cddc39,stroke:#827717,stroke-width:2px,color:#000
     style End2 fill:#f44336,stroke:#b71c1c,stroke-width:3px,color:#fff
     style End3 fill:#00897b,stroke:#004d40,stroke-width:3px,color:#fff
+
 ```
 
-## 🚀 Deployment Architecture
+## GDPR-Kompatibilis Fájlfeltöltési Folyamat
+
+A CV és motivációs levél feltöltése pass-through módon működik - a fájlok nem kerülnek tárolásra a szerveren:
+
+```mermaid
+sequenceDiagram
+    participant D as Diák (Browser)
+    participant S as Backend Server
+    participant M as Memory Buffer
+    participant E as Email Service
+    participant HR as Céges Admin(ok)
+
+    D->>S: POST /api/applications/submit-with-files
+    Note over D,S: multipart/form-data<br/>cv + motivationLetter + positionId
+    S->>M: Fájlok memóriába (multer)
+    S->>S: Cég adminok lekérése az adatbázisból
+    M->>E: Buffer-ből email attachment
+    E->>HR: Email küldés csatolmányokkal
+    Note over E,HR: Minden céges admin<br/>megkapja az emailt
+    E-->>S: Email elküldve
+    S->>S: Jelentkezés mentése (fájlok nélkül)
+    S->>M: Garbage Collection törli a buffert
+    S-->>D: 201 Created - Sikeres jelentkezés
+```
+
+> **GDPR megfelelőség**: A fájlok csak a memóriában (RAM) tárolódnak a feldolgozás idejére. Az email küldés után a JavaScript garbage collection automatikusan törli a buffer-eket. Semmilyen fájl nem kerül lemezre vagy adatbázisba.
+
+## Deployment Architecture
 
 Éles környezet (Railway) architektúrája:
 
@@ -430,7 +594,7 @@ graph LR
     style Redis fill:#dc382d,color:#fff
 ```
 
-## ⚠️ Hibakezelés
+## Hibakezelés
 
 ### Hibakódok
 
@@ -460,12 +624,40 @@ graph LR
 }
 ```
 
-## 🚀 Quick Start - API Használat
+## Biztonsági Funkciók
+
+A rendszer robusztus, több rétegű biztonsági architektúrát alkalmaz:
+
+### 1. Role-Based Access Control (RBAC)
+
+Minden API végpont szerepkör-alapú hozzáférés-vezérléssel van ellátva. A `requireRole` middleware és az előre definiált helper-ek (`isStudent`, `isCompanyAdmin`, `isCompanyEmployee`, `isMentor`, `isUniversityUser`, `isUniversityStaff`, `isSystemAdmin`, `isStaff`) biztosítják, hogy csak a megfelelő jogosultsággal rendelkező felhasználók férhessenek hozzá az adott végpontokhoz.
+
+### 2. Szerveroldali Validáció (Zod)
+
+Minden bejövő kérés szigorú séma-alapú validáción esik át. A kliens által küldött felesleges vagy tiltott mezők automatikusan eltávolításra kerülnek.
+
+### 3. Magic Bytes Fájlvalidáció
+
+A fájlfeltöltéseknél nem bízunk a kliens által küldött MIME típusban. A rendszer elemezni tudja a fájlok tényleges tartalmát (magic bytes), megelőzve ezzel a rosszindulatú fájlok feltöltését.
+
+### 4. Ownership Middleware
+
+Általános jogosultságkezelő réteg, amely biztosítja, hogy a felhasználók csak a saját erőforrásaikat (jelentkezések, profilok, értesítések stb.) módosíthassák vagy törölhessék.
+
+### 5. Idempotency Kulcsok
+
+A kritikus műveletek (pl. jelentkezés leadása, pozíció létrehozása) védve vannak a véletlen dupla beküldés ellen. A kliens egy egyedi kulcsot küldhet, amellyel a szerver azonosítani tudja az ismételt kéréseket.
+
+### 6. Audit és Biztonsági Naplózás
+
+Minden kritikus esemény és jogosultsági hiba (401, 403) automatikusan naplózásra kerül az adatbázisba, lehetővé téve a biztonsági auditokat és a rendellenes viselkedés észlelését.
+
+## Quick Start - API Használat
 
 ### 1. Regisztráció és bejelentkezés
 
 ```bash
-# Regisztráció
+# Regisztráció (Hallgató, Mentor, Egyetemi felhasználó)
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -473,6 +665,24 @@ curl -X POST http://localhost:3000/api/auth/register \
     "password": "Jelszo123!",
     "fullName": "Teszt Hallgató",
     "role": "STUDENT"
+  }'
+
+# Regisztráció (Cégadmin)
+curl -X POST http://localhost:3000/api/auth/register/company-admin \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@ceg.hu",
+    "password": "Jelszo123!",
+    "fullName": "Cégvezető Elek",
+    "companyId": "uuid-a-ceghez",
+    "jobTitle": "Ügyvezető"
+  }'
+
+# Email megerősítés (A kapott tokennel)
+curl -X POST http://localhost:3000/api/auth/verify-email \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2"
   }'
 
 # Bejelentkezés
@@ -492,201 +702,225 @@ curl http://localhost:3000/api/students/me \
   -H "Authorization: Bearer <your_token_here>"
 ```
 
-> **💡 Tipp**: A teljes API végpontokat és sémákat a [Swagger UI](#-api-dokumentáció)-n keresztül is kipróbálhatod!
+> **Tipp**: A teljes API végpontokat és sémákat a [Swagger UI](#-api-dokumentáció)-n keresztül is kipróbálhatod!
 
 ---
 
-## 📋 API Végpontok Referencia
+## API Végpontok Referencia
 
-### 🔐 Autentikáció (`/api/auth`)
+### Autentikáció (`/api/auth`)
 
-| Metódus | Végpont                   | Leírás                                    |
-| :------ | :------------------------ | :---------------------------------------- |
-| `POST`  | `/register`               | Új felhasználó regisztrációja.            |
-| `POST`  | `/login`                  | Bejelentkezés és JWT token igénylése.     |
-| `POST`  | `/request-password-reset` | Jelszó visszaállítás kérése email címmel. |
-| `POST`  | `/reset-password`         | Új jelszó beállítása tokennel.            |
+| Metódus | Végpont                   | Leírás                                                                  |
+| :------ | :------------------------ | :---------------------------------------------------------------------- |
+| `POST`  | `/register`               | Új felhasználó regisztrációja (`STUDENT`, `MENTOR`, `UNIVERSITY_USER`). |
+| `POST`  | `/register/company-admin` | Dedikált regisztráció cégadminisztrátoroknak.                           |
+| `POST`  | `/register/system-admin`  | Dedikált regisztráció rendszeradminisztrátoroknak.                      |
+| `POST`  | `/login`                  | Bejelentkezés és JWT token igénylése.                                   |
+| `POST`  | `/verify-email`           | Email cím megerősítése tokennel.                                        |
+| `POST`  | `/resend-verification`    | Megerősítő email újraküldése.                                           |
+| `POST`  | `/request-password-reset` | Jelszó visszaállítás kérése email címmel.                               |
+| `POST`  | `/reset-password`         | Új jelszó beállítása tokennel.                                          |
 
-### 👤 Hallgatók (`/api/students`)
+### Hallgatók (`/api/students`)
 
-| Metódus  | Végpont | Leírás                           |
-| :------- | :------ | :------------------------------- |
-| `GET`    | `/`     | Összes hallgató listázása.       |
-| `GET`    | `/me`   | Saját hallgatói profil lekérése. |
-| `PATCH`  | `/me`   | Saját profil frissítése.         |
-| `DELETE` | `/me`   | Saját profil törlése.            |
-| `GET`    | `/:id`  | Hallgató lekérése ID alapján.    |
-| `PATCH`  | `/:id`  | Hallgató módosítása (Admin).     |
-| `DELETE` | `/:id`  | Hallgató törlése (Soft delete).  |
+| Metódus  | Végpont                     | Leírás                                                                | Jogosultság     |
+| :------- | :-------------------------- | :-------------------------------------------------------------------- | :-------------- |
+| `GET`    | `/`                         | Összes hallgató listázása.                                            | UniversityStaff |
+| `GET`    | `/available`                | Munkakeresésre jelentkezett hallgatók listázása (Publikus adatokkal). | Staff           |
+| `GET`    | `/me`                       | Saját hallgatói profil lekérése.                                      | Student         |
+| `PATCH`  | `/me`                       | Saját profil frissítése.                                              | Student         |
+| `PATCH`  | `/me/university-transition` | Átváltás középiskolai profilról egyetemire (Neptun kód, Szak).        | Student         |
+| `DELETE` | `/me`                       | Saját profil törlése.                                                 | Student         |
+| `GET`    | `/:id`                      | Hallgató lekérése ID alapján.                                         | Staff           |
+| `PATCH`  | `/:id`                      | Hallgató módosítása (Admin).                                          | SystemAdmin     |
+| `DELETE` | `/:id`                      | Hallgató törlése (Soft delete).                                       | SystemAdmin     |
 
-### 🏢 Cégek (`/api/companies`)
+### Cégek (`/api/companies`)
 
 A cégek kezelése, beleértve a státuszkezelést és a munkavállalókat.
 
-| Metódus  | Végpont           | Leírás                     |
-| :------- | :---------------- | :------------------------- |
-| `GET`    | `/`               | Aktív cégek listázása.     |
-| `POST`   | `/`               | Új cég létrehozása.        |
-| `GET`    | `/inactive`       | Inaktív cégek listázása.   |
-| `GET`    | `/:id`            | Cég részletei.             |
-| `PATCH`  | `/:id`            | Cég adatainak frissítése.  |
-| `DELETE` | `/:id`            | Cég törlése (Soft delete). |
-| `PATCH`  | `/:id/reactivate` | Cég újraaktiválása.        |
-| `PATCH`  | `/:id/deactivate` | Cég inaktiválása.          |
+| Metódus  | Végpont            | Leírás                                                     | Jogosultság                |
+| :------- | :----------------- | :--------------------------------------------------------- | :------------------------- |
+| `GET`    | `/`                | Aktív cégek listázása.                                     | Auth                       |
+| `POST`   | `/`                | Új cég létrehozása.                                        | SystemAdmin                |
+| `POST`   | `/with-admin`      | Új cég és hozzá tartozó cégadmin létrehozása egy lépésben. | Publikus                   |
+| `GET`    | `/inactive`        | Inaktív cégek listázása.                                   | SystemAdmin                |
+| `GET`    | `/own-application` | Saját jelentkezési felülettel rendelkező cégek listázása.  | Auth                       |
+| `GET`    | `/:id`             | Cég részletei.                                             | Auth                       |
+| `PATCH`  | `/:id`             | Cég adatainak frissítése.                                  | CompanyAdmin / SystemAdmin |
+| `DELETE` | `/:id`             | Cég törlése (Soft delete).                                 | SystemAdmin                |
+| `PATCH`  | `/:id/reactivate`  | Cég újraaktiválása.                                        | SystemAdmin                |
+| `PATCH`  | `/:id/deactivate`  | Cég inaktiválása.                                          | SystemAdmin                |
 
-### 💼 Állások / Pozíciók (`/api/jobs/positions`)
+### Állások / Pozíciók (`/api/jobs/positions`)
 
-| Metódus  | Végpont               | Leírás                                                              |
-| :------- | :-------------------- | :------------------------------------------------------------------ |
-| `GET`    | `/`                   | Aktív pozíciók listázása. (Opcionális: `?isDual=true` vagy `false`) |
-| `GET`    | `/dual`               | Kizárólag duális pozíciók listázása.                                |
-| `GET`    | `/non-dual`           | Kizárólag nem duális pozíciók listázása.                            |
-| `POST`   | `/`                   | Új pozíció létrehozása.                                             |
-| `GET`    | `/:id`                | Pozíció részletei.                                                  |
-| `PATCH`  | `/:id`                | Pozíció frissítése.                                                 |
-| `DELETE` | `/:id`                | Pozíció törlése.                                                    |
-| `PATCH`  | `/:id/deactivate`     | Pozíció inaktiválása.                                               |
-| `GET`    | `/company/:companyId` | Egy adott cég pozíciói.                                             |
+| Metódus  | Végpont               | Leírás                                                              | Jogosultság             |
+| :------- | :-------------------- | :------------------------------------------------------------------ | :---------------------- |
+| `GET`    | `/`                   | Aktív pozíciók listázása. (Opcionális: `?isDual=true` vagy `false`) | Publikus                |
+| `GET`    | `/dual`               | Kizárólag duális pozíciók listázása.                                | Publikus                |
+| `GET`    | `/non-dual`           | Kizárólag nem duális pozíciók listázása.                            | Publikus                |
+| `POST`   | `/`                   | Új pozíció létrehozása.                                             | CompanyAdmin            |
+| `GET`    | `/:id`                | Pozíció részletei.                                                  | Publikus                |
+| `PATCH`  | `/:id`                | Pozíció frissítése.                                                 | CompanyEmployee + Owner |
+| `DELETE` | `/:id`                | Pozíció törlése.                                                    | CompanyEmployee + Owner |
+| `PATCH`  | `/:id/deactivate`     | Pozíció inaktiválása.                                               | CompanyEmployee + Owner |
+| `GET`    | `/company/:companyId` | Egy adott cég pozíciói.                                             | Publikus                |
 
-### 📝 Jelentkezések (`/api/applications`)
+### Jelentkezések (`/api/applications`)
 
-| Metódus | Végpont                 | Leírás                                                                           | Jogosultság |
-| :------ | :---------------------- | :------------------------------------------------------------------------------- | :---------- |
-| `POST`  | `/`                     | Jelentkezés leadása.                                                             | Student     |
-| `GET`   | `/`                     | Saját jelentkezések megtekintése.                                                | Student     |
-| `PATCH` | `/:id/retract`          | Jelentkezés visszavonása.                                                        | Student     |
-| `GET`   | `/company`              | Céghez érkezett jelentkezések.                                                   | Company     |
-| `PATCH` | `/company/:id/evaluate` | Jelentkezés értékelése. (`ACCEPTED` esetén automatikusan létrejön a partnerség). | Company     |
-| `PATCH` | `/company/:id`          | Értékelés módosítása.                                                            | Company     |
-| `GET`   | `/admin`                | Összes jelentkezés (Admin nézet).                                                | Admin       |
-| `GET`   | `/admin/:id`            | Jelentkezés részletei.                                                           | Admin       |
-| `PATCH` | `/admin/:id`            | Jelentkezés módosítása.                                                          | Admin       |
+| Metódus | Végpont                 | Leírás                                                                                                                                                                | Jogosultság |
+| :------ | :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------- |
+| `POST`  | `/`                     | Jelentkezés leadása.                                                                                                                                                  | Student     |
+| `GET`   | `/`                     | Saját jelentkezések megtekintése.                                                                                                                                     | Student     |
+| `PATCH` | `/:id/retract`          | Jelentkezés visszavonása.                                                                                                                                             | Student     |
+| `GET`   | `/company`              | Céghez érkezett jelentkezések.                                                                                                                                        | Company     |
+| `PATCH` | `/company/:id/evaluate` | Jelentkezés értékelése. (`ACCEPTED` esetén automatikusan létrejön a partnerség).                                                                                      | Company     |
+| `PATCH` | `/company/:id`          | Értékelés módosítása.                                                                                                                                                 | Company     |
+| `GET`   | `/admin`                | Összes jelentkezés (Admin nézet).                                                                                                                                     | Admin       |
+| `GET`   | `/admin/:id`            | Jelentkezés részletei.                                                                                                                                                | Admin       |
+| `PATCH` | `/admin/:id`            | Jelentkezés módosítása.                                                                                                                                               | Admin       |
+| `POST`  | `/submit-with-files`    | **[ÚJ]** Jelentkezés CV és motivációs levél fájlok feltöltésével. GDPR-kompatibilis: a fájlok nem kerülnek tárolásra, csak emailben továbbítódnak a céges adminoknak. | Student     |
 
-### 📰 Hírek (`/api/news`)
+### Hírek (`/api/news`)
 
-| Metódus  | Végpont                | Leírás                                          |
-| :------- | :--------------------- | :---------------------------------------------- |
-| `GET`    | `/`                    | Hírek listázása (hallgatóknak/felhasználóknak). |
-| `GET`    | `/:id`                 | Hír részletei.                                  |
-| `POST`   | `/admin`               | Hír létrehozása (Admin).                        |
-| `GET`    | `/admin`               | Hírek kezelése (Admin lista).                   |
-| `GET`    | `/admin/archived`      | Archivált hírek.                                |
-| `PATCH`  | `/admin/:id`           | Hír szerkesztése.                               |
-| `PATCH`  | `/admin/:id/archive`   | Hír archiválása.                                |
-| `PATCH`  | `/admin/:id/unarchive` | Hír visszaállítása.                             |
-| `DELETE` | `/admin/:id`           | Hír végleges törlése vagy soft delete.          |
+| Metódus  | Végpont                | Leírás                                                                        | Jogosultság |
+| :------- | :--------------------- | :---------------------------------------------------------------------------- | :---------- |
+| `GET`    | `/`                    | Hírek listázása (hallgatóknak/felhasználóknak). Szerepkör alapú szűréssel.    | Auth        |
+| `GET`    | `/:id`                 | Hír részletei.                                                                | Auth        |
+| `POST`   | `/admin`               | Hír létrehozása. Megcélozható vele mindenki (`ALL`) vagy konkrét szerepkörök. | SystemAdmin |
+| `GET`    | `/admin`               | Hírek kezelése (Admin lista).                                                 | SystemAdmin |
+| `GET`    | `/admin/archived`      | Archivált hírek.                                                              | SystemAdmin |
+| `PATCH`  | `/admin/:id`           | Hír szerkesztése.                                                             | SystemAdmin |
+| `PATCH`  | `/admin/:id/archive`   | Hír archiválása.                                                              | SystemAdmin |
+| `PATCH`  | `/admin/:id/unarchive` | Hír visszaállítása.                                                           | SystemAdmin |
+| `DELETE` | `/admin/:id`           | Hír végleges törlése vagy soft delete.                                        | SystemAdmin |
 
-### 🔔 Értesítések (`/api/notifications`)
+### Értesítések (`/api/notifications`)
 
-| Metódus  | Végpont          | Leírás                           |
-| :------- | :--------------- | :------------------------------- |
-| `GET`    | `/`              | Olvasatlan/Aktív értesítések.    |
-| `GET`    | `/archived`      | Archivált értesítések.           |
-| `GET`    | `/:id`           | Értesítés részletei.             |
-| `GET`    | `/unread-count`  | Olvasatlan értesítések száma.    |
-| `POST`   | `/`              | Új értesítés létrehozása.        |
-| `PUT`    | `/read-all`      | Minden megjelölése olvasottként. |
-| `PUT`    | `/:id/read`      | Egy elem olvasottnak jelölése.   |
-| `PUT`    | `/:id/archive`   | Értesítés archiválása.           |
-| `PUT`    | `/:id/unarchive` | Értesítés visszaállítása.        |
-| `DELETE` | `/:id`           | Értesítés törlése.               |
+| Metódus  | Végpont          | Leírás                           | Jogosultság |
+| :------- | :--------------- | :------------------------------- | :---------- |
+| `GET`    | `/`              | Olvasatlan/Aktív értesítések.    | Auth        |
+| `GET`    | `/archived`      | Archivált értesítések.           | Auth        |
+| `GET`    | `/:id`           | Értesítés részletei.             | Auth        |
+| `GET`    | `/unread-count`  | Olvasatlan értesítések száma.    | Auth        |
+| `POST`   | `/`              | Új értesítés létrehozása.        | SystemAdmin |
+| `PUT`    | `/read-all`      | Minden megjelölése olvasottként. | Auth        |
+| `PUT`    | `/:id/read`      | Egy elem olvasottnak jelölése.   | Auth        |
+| `PUT`    | `/:id/archive`   | Értesítés archiválása.           | Auth        |
+| `PUT`    | `/:id/unarchive` | Értesítés visszaállítása.        | Auth        |
+| `DELETE` | `/:id`           | Értesítés törlése.               | Auth        |
 
-### 📊 Statisztika (`/api/stats`)
+### Statisztika (`/api/stats`)
 
-| Metódus | Végpont         | Leírás                                                                                               |
-| :------ | :-------------- | :--------------------------------------------------------------------------------------------------- |
-| `GET`   | `/`             | Rendszerszintű statisztikák (felhasználók, cégek, pozíciók, partnerségek).                           |
-| `GET`   | `/applications` | Jelentkezési statisztikák (státusz szerinti bontás, konverziós arány, átlag/pozíció, elmúlt 30 nap). |
-| `GET`   | `/partnerships` | Partnerségi statisztikák (státusz és félév szerinti bontás, átlagos időtartam).                      |
-| `GET`   | `/positions`    | Pozíció statisztikák (7 napon belül lejáró, jelentkezés nélküli pozíciók).                           |
-| `GET`   | `/trends`       | Időbeli trendek (regisztrációk, jelentkezések, partnerségek az elmúlt 6 hónapban).                   |
+| Metódus | Végpont         | Leírás                                                                                               | Jogosultság |
+| :------ | :-------------- | :--------------------------------------------------------------------------------------------------- | :---------- |
+| `GET`   | `/`             | Rendszerszintű statisztikák (felhasználók, cégek, pozíciók, partnerségek).                           | SystemAdmin |
+| `GET`   | `/applications` | Jelentkezési statisztikák (státusz szerinti bontás, konverziós arány, átlag/pozíció, elmúlt 30 nap). | SystemAdmin |
+| `GET`   | `/partnerships` | Partnerségi statisztikák (státusz és félév szerinti bontás, átlagos időtartam).                      | SystemAdmin |
+| `GET`   | `/positions`    | Pozíció statisztikák (7 napon belül lejáró, jelentkezés nélküli pozíciók).                           | SystemAdmin |
+| `GET`   | `/trends`       | Időbeli trendek (regisztrációk, jelentkezések, partnerségek az elmúlt 6 hónapban).                   | SystemAdmin |
 
-### 🤝 Duális Partnerkapcsolatok (`/api/partnerships`)
+### Duális Partnerkapcsolatok (`/api/partnerships`)
 
 A hallgatók és cégek közötti duális képzési szerződések kezelése.
 A partnerség automatikusan létrejön `PENDING_MENTOR` státusszal, amikor a cég elfogad egy jelentkezést (`ACCEPTED`).
 
-| Metódus  | Végpont                       | Leírás                                              |
-| :------- | :---------------------------- | :-------------------------------------------------- |
-| `GET`    | `/student`                    | Hallgató saját partnerségeinek listázása.           |
-| `GET`    | `/company`                    | Céghez tartozó partnerségek listázása.              |
-| `GET`    | `/university`                 | Összes partnerség listázása (Egyetem).              |
-| `GET`    | `/:id`                        | Partnerkapcsolat részletei.                         |
-| `PATCH`  | `/:id`                        | Partnerkapcsolat adatainak frissítése.              |
-| `PATCH`  | `/:id/assign-mentor`          | Mentor hozzárendelése (Cégadmin).                   |
-| `PATCH`  | `/:id/assign-university-user` | Egyetemi felelős hozzárendelése (Admin).            |
-| `PATCH`  | `/:id/terminate`              | Partnerkapcsolat megszakítása (Terminated státusz). |
-| `DELETE` | `/:id`                        | Partnerkapcsolat törlése (Soft delete).             |
+| Metódus  | Végpont                       | Leírás                                              | Jogosultság             |
+| :------- | :---------------------------- | :-------------------------------------------------- | :---------------------- |
+| `GET`    | `/student`                    | Hallgató saját partnerségeinek listázása.           | Student                 |
+| `GET`    | `/company`                    | Céghez tartozó partnerségek listázása.              | CompanyEmployee         |
+| `GET`    | `/university`                 | Összes partnerség listázása (Egyetem).              | UniversityStaff         |
+| `GET`    | `/:id`                        | Partnerkapcsolat részletei.                         | Auth                    |
+| `PATCH`  | `/:id`                        | Partnerkapcsolat adatainak frissítése.              | UniversityStaff + Owner |
+| `PATCH`  | `/:id/assign-mentor`          | Mentor hozzárendelése.                              | CompanyAdmin            |
+| `PATCH`  | `/:id/complete`               | Partnerkapcsolat befejezetté tétele (FINISHED).     | UniversityStaff + Owner |
+| `PATCH`  | `/:id/assign-university-user` | Egyetemi felelős hozzárendelése.                    | UniversityStaff         |
+| `PATCH`  | `/:id/terminate`              | Partnerkapcsolat megszakítása (Terminated státusz). | UniversityStaff + Owner |
+| `DELETE` | `/:id`                        | Partnerkapcsolat törlése (Soft delete).             | SystemAdmin + Owner     |
 
-### 🏢 Cég Adminisztrátorok (`/api/company-admins`)
+### Szakok (`/api/majors`)
+
+A képzési szakok (Major) kezelése. A hallgatói profil szakválasztáshoz kapcsolódik.
+
+| Metódus  | Végpont | Leírás                     | Jogosultság |
+| :------- | :------ | :------------------------- | :---------- |
+| `GET`    | `/`     | Összes szak listázása.     | Publikus    |
+| `GET`    | `/:id`  | Szak részletei ID alapján. | Publikus    |
+| `POST`   | `/`     | Új szak létrehozása.       | SystemAdmin |
+| `PATCH`  | `/:id`  | Szak frissítése.           | SystemAdmin |
+| `DELETE` | `/:id`  | Szak törlése.              | SystemAdmin |
+
+### Cég Adminisztrátorok (`/api/company-admins`)
 
 A cégek adminisztrátorainak kezelése.
 
-| Metódus  | Végpont        | Leírás                          |
-| :------- | :------------- | :------------------------------ |
-| `GET`    | `/`            | Összes cégadmin listázása.      |
-| `GET`    | `/me`          | Saját profil lekérése.          |
-| `PATCH`  | `/me`          | Saját profil frissítése.        |
-| `DELETE` | `/me`          | Saját profil törlése.           |
-| `GET`    | `/:id`         | Cégadmin lekérése ID alapján.   |
-| `PATCH`  | `/:id`         | Adatok frissítése (Admin).      |
-| `DELETE` | `/:id`         | Cégadmin törlése (Admin).       |
-| `PATCH`  | `/restore/:id` | Törölt cégadmin visszaállítása. |
+| Metódus  | Végpont        | Leírás                          | Jogosultság  |
+| :------- | :------------- | :------------------------------ | :----------- |
+| `GET`    | `/`            | Összes cégadmin listázása.      | SystemAdmin  |
+| `GET`    | `/me`          | Saját profil lekérése.          | CompanyAdmin |
+| `PATCH`  | `/me`          | Saját profil frissítése.        | CompanyAdmin |
+| `DELETE` | `/me`          | Saját profil törlése.           | CompanyAdmin |
+| `GET`    | `/:id`         | Cégadmin lekérése ID alapján.   | SystemAdmin  |
+| `PATCH`  | `/:id`         | Adatok frissítése.              | SystemAdmin  |
+| `DELETE` | `/:id`         | Cégadmin törlése.               | SystemAdmin  |
+| `PATCH`  | `/restore/:id` | Törölt cégadmin visszaállítása. | SystemAdmin  |
 
-### 👨‍💼 Munkavállalók (`/api/employees`)
+### Munkavállalók (`/api/employees`)
 
 Céges munkavállalók (pl. mentorok) kezelése.
 
-| Metódus  | Végpont    | Leírás                                        |
-| :------- | :--------- | :-------------------------------------------- |
-| `GET`    | `/`        | Céghez tartozó munkavállalók listázása.       |
-| `GET`    | `/mentors` | Csak a mentorok listázása (Cégadminnak).      |
-| `GET`    | `/me`      | Saját profil lekérése.                        |
-| `PATCH`  | `/me`      | Saját profil frissítése.                      |
-| `DELETE` | `/me`      | Saját profil törlése.                         |
-| `GET`    | `/:id`     | Munkavállaló lekérése ID alapján.             |
-| `PATCH`  | `/:id`     | Munkavállaló frissítése (Admin/CompanyAdmin). |
-| `DELETE` | `/:id`     | Munkavállaló törlése (Admin/CompanyAdmin).    |
+| Metódus  | Végpont            | Leírás                                   | Jogosultság     |
+| :------- | :----------------- | :--------------------------------------- | :-------------- |
+| `GET`    | `/`                | Céghez tartozó munkavállalók listázása.  | CompanyEmployee |
+| `GET`    | `/mentors`         | Csak a mentorok listázása.               | CompanyEmployee |
+| `GET`    | `/me`              | Saját profil lekérése.                   | CompanyEmployee |
+| `PATCH`  | `/me`              | Saját profil frissítése.                 | CompanyEmployee |
+| `DELETE` | `/me`              | Saját profil törlése.                    | CompanyEmployee |
+| `GET`    | `/me/students`     | Mentorált hallgatók listázása.           | Mentor          |
+| `GET`    | `/me/students/:id` | Mentorált hallgató/partnerség részletei. | Mentor          |
+| `GET`    | `/:id`             | Munkavállaló lekérése ID alapján.        | CompanyEmployee |
+| `PATCH`  | `/:id`             | Munkavállaló frissítése.                 | CompanyAdmin    |
+| `DELETE` | `/:id`             | Munkavállaló törlése.                    | CompanyAdmin    |
 
-### 🎓 Egyetemi Felhasználók (`/api/university-users`)
+### Egyetemi Felhasználók (`/api/university-users`)
 
 Egyetemi kapcsolattartók és adminisztrátorok.
 
-| Metódus  | Végpont | Leírás                                    |
-| :------- | :------ | :---------------------------------------- |
-| `GET`    | `/`     | Összes egyetemi felhasználó listázása.    |
-| `GET`    | `/me`   | Saját profil lekérése.                    |
-| `PATCH`  | `/me`   | Saját profil frissítése.                  |
-| `DELETE` | `/me`   | Saját profil törlése.                     |
-| `GET`    | `/:id`  | Egyetemi felhasználó lekérése ID alapján. |
-| `PATCH`  | `/:id`  | Adatok frissítése (Admin).                |
-| `DELETE` | `/:id`  | Törlés (Admin).                           |
+| Metódus  | Végpont | Leírás                                    | Jogosultság     |
+| :------- | :------ | :---------------------------------------- | :-------------- |
+| `GET`    | `/`     | Összes egyetemi felhasználó listázása.    | UniversityStaff |
+| `GET`    | `/me`   | Saját profil lekérése.                    | UniversityUser  |
+| `PATCH`  | `/me`   | Saját profil frissítése.                  | UniversityUser  |
+| `DELETE` | `/me`   | Saját profil törlése.                     | UniversityUser  |
+| `GET`    | `/:id`  | Egyetemi felhasználó lekérése ID alapján. | UniversityStaff |
+| `PATCH`  | `/:id`  | Adatok frissítése.                        | SystemAdmin     |
+| `DELETE` | `/:id`  | Törlés.                                   | SystemAdmin     |
 
-### 🛠 Rendszer Adminisztrátorok (`/api/system-admins`)
+### Rendszer Adminisztrátorok (`/api/system-admins`)
 
-A platform üzemeltetői.
+A platform üzemeltetői. Minden végpont `SYSTEM_ADMIN` jogosultságot igényel.
 
-| Metódus  | Végpont        | Leírás                                           |
-| :------- | :------------- | :----------------------------------------------- |
-| `GET`    | `/`            | Összes rendszeradmin listázása.                  |
-| `GET`    | `/admin-users` | Minden admin (Rendszer, Cég, Egyetem) listázása. |
-| `GET`    | `/me`          | Saját admin profil lekérése.                     |
-| `PATCH`  | `/me`          | Saját admin profil frissítése.                   |
-| `DELETE` | `/me`          | Saját admin profil törlése.                      |
-| `GET`    | `/:id`         | Rendszeradmin lekérése ID alapján.               |
-| `PATCH`  | `/:id`         | Adatok frissítése (Superadmin).                  |
-| `DELETE` | `/:id`         | Admin törlése (Superadmin).                      |
+| Metódus  | Végpont        | Leírás                                           | Jogosultság |
+| :------- | :------------- | :----------------------------------------------- | :---------- |
+| `GET`    | `/`            | Összes rendszeradmin listázása.                  | SystemAdmin |
+| `GET`    | `/admin-users` | Minden admin (Rendszer, Cég, Egyetem) listázása. | SystemAdmin |
+| `GET`    | `/me`          | Saját admin profil lekérése.                     | SystemAdmin |
+| `PATCH`  | `/me`          | Saját admin profil frissítése.                   | SystemAdmin |
+| `DELETE` | `/me`          | Saját admin profil törlése.                      | SystemAdmin |
+| `GET`    | `/:id`         | Rendszeradmin lekérése ID alapján.               | SystemAdmin |
+| `PATCH`  | `/:id`         | Adatok frissítése.                               | SystemAdmin |
+| `DELETE` | `/:id`         | Admin törlése.                                   | SystemAdmin |
 
-### 👥 Felhasználók (`/api/users`)
+### Felhasználók (`/api/users`)
 
-Általános felhasználókezelés (pl. inaktív fiókok).
+Általános felhasználókezelés (pl. inaktív fiókok). Minden végpont `SYSTEM_ADMIN` jogosultságot igényel.
 
-| Metódus | Végpont           | Leírás                          |
-| :------ | :---------------- | :------------------------------ |
-| `GET`   | `/inactive`       | Inaktív felhasználók listázása. |
-| `PATCH` | `/:id/reactivate` | Felhasználó visszaállítása.     |
-| `PATCH` | `/:id/deactivate` | Felhasználó felfüggesztése.     |
+| Metódus | Végpont           | Leírás                          | Jogosultság |
+| :------ | :---------------- | :------------------------------ | :---------- |
+| `GET`   | `/inactive`       | Inaktív felhasználók listázása. | SystemAdmin |
+| `PATCH` | `/:id/reactivate` | Felhasználó visszaállítása.     | SystemAdmin |
+| `PATCH` | `/:id/deactivate` | Felhasználó felfüggesztése.     | SystemAdmin |
 
 ---
 
-**Megjegyzés**: Ez a dokumentáció a projekt jelenlegi állapotát tükrözi. API változtatások esetén kérjük a dokumentáció frissítését.
+**Megjegyzés**: Ez a dokumentáció a projekt 2026-02-11-i állapotát tükrözi. API változtatások esetén kérjük a dokumentáció frissítését.
