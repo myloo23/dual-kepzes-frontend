@@ -57,14 +57,22 @@ export interface Position {
   companyId: string;
   title: string;
   description: string;
+  locationId: string;
   location: Location;
   deadline: string; // ISO 8601 format
   isDual?: boolean;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  majorId: string;
+  major?: {
+    id: string;
+    name: string;
+    language?: string;
+  };
   tags: Tag[];
   company?: {
+    id: Id;
     name: string;
     logoUrl?: string | null;
     locations: Location[];

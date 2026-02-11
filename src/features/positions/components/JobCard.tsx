@@ -1,24 +1,10 @@
-// src/components/landing/JobCard.tsx
 import {
   formatHuDate,
   toTagName,
   isExpired,
   norm,
 } from "../utils/positions.utils";
-
-type Position = {
-  id?: string | number;
-  title?: string;
-  description?: string;
-  city?: string;
-  zipCode?: string;
-  address?: string;
-  deadline?: string;
-  tags?: any[];
-  companyId?: string | number;
-  company?: { id?: string | number; name?: string; logoUrl?: string | null };
-  [key: string]: any;
-};
+import type { Position, Tag } from "../../../types/api.types";
 
 interface JobCardProps {
   position: Position;
@@ -28,11 +14,12 @@ interface JobCardProps {
 export default function JobCard({ position: p, onViewDetails }: JobCardProps) {
   const companyName = norm(p.company?.name) || "Ismeretlen cég";
   const title = norm(p.title) || "Névtelen pozíció";
-  const cityText = norm(p.city) || norm(p.location?.city) || "—";
+  const cityText = norm(p.location?.city) || "—";
   const deadlineText = formatHuDate(p.deadline);
+  const majorName = norm(p.major?.name);
 
   const tags = (Array.isArray(p.tags) ? p.tags : [])
-    .map((t) => norm(toTagName(t)))
+    .map((t: Tag) => norm(toTagName(t)))
     .filter(Boolean);
 
   const previewTags = tags.slice(0, 3);
@@ -67,6 +54,11 @@ export default function JobCard({ position: p, onViewDetails }: JobCardProps) {
             <h3 className="text-sm font-semibold text-slate-900 leading-tight truncate group-hover:text-dkk-blue transition">
               {title}
             </h3>
+            {majorName && (
+              <p className="text-[10px] font-medium text-blue-600 mt-0.5 truncate uppercase tracking-wide">
+                {majorName}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -89,7 +81,7 @@ export default function JobCard({ position: p, onViewDetails }: JobCardProps) {
         {/* Tags */}
         {previewTags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
-            {previewTags.map((t) => (
+            {previewTags.map((t: string) => (
               <span
                 key={t}
                 className="inline-flex items-center rounded-full bg-dkk-green/10 px-2 py-0.5 text-[10px] font-medium text-dkk-green"

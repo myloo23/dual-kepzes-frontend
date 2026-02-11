@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { type Position, type Tag, type Location } from "../../../../lib/api";
 import { api } from "../../../../lib/api";
 import { Modal } from "../../../../components/ui/Modal";
+import { useMajors } from "../../../majors";
 
 interface PositionFormModalProps {
   isOpen: boolean;
@@ -12,8 +13,9 @@ interface PositionFormModalProps {
 }
 
 // Update state matching the new requirement
-interface PositionFormData extends Omit<Position, "id" | "location"> {
+interface PositionFormData extends Omit<Position, "id" | "location" | "major"> {
   locationId: string;
+  majorId: string;
 }
 
 const INITIAL_FORM_STATE: PositionFormData = {
@@ -21,6 +23,7 @@ const INITIAL_FORM_STATE: PositionFormData = {
   title: "",
   description: "",
   locationId: "",
+  majorId: "",
   deadline: "",
   isDual: false,
   tags: [],
@@ -46,6 +49,8 @@ export default function PositionFormModal({
   const [error, setError] = useState<string | null>(null);
   const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
 
+  const { majors, loading: majorsLoading } = useMajors();
+
   useEffect(() => {
     if (isOpen) {
       setError(null);
@@ -55,9 +60,12 @@ export default function PositionFormModal({
           companyId:
             initialData.companyId ||
             (companies.length === 1 ? String(companies[0].id) : ""),
-          locationId: initialData.location?.id
-            ? String(initialData.location.id)
-            : "",
+          locationId:
+            initialData.locationId ||
+            (initialData.location?.id ? String(initialData.location.id) : ""),
+          majorId:
+            initialData.majorId ||
+            (initialData.major?.id ? String(initialData.major.id) : ""),
           deadline: formatDeadlineForInput(initialData.deadline),
           tags: initialData.tags || [],
         });
@@ -144,6 +152,10 @@ export default function PositionFormModal({
       setError("A munkavégzés helyének kiválasztása kötelező.");
       return;
     }
+    if (!formData.majorId.trim()) {
+      setError("A szak kiválasztása kötelező.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -206,16 +218,37 @@ export default function PositionFormModal({
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">
-              Megnevezés *
-            </label>
-            <input
-              name="title"
-              value={formData.title}
+            <label className="text-xs font-medium text-slate-700">Szak *</label>
+            <select
+              name="majorId"
+              value={formData.majorId}
               onChange={handleFormChange}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+              disabled={majorsLoading}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-100 disabled:text-slate-500"
+            >
+              <option value="">Válassz szakot...</option>
+              {majors.map((m) => (
+                <option key={String(m.id)} value={String(m.id)}>
+                  {m.name} {m.language ? `(${m.language})` : ""}
+                </option>
+              ))}
+            </select>
+            {majorsLoading && (
+              <p className="text-xs text-slate-500 mt-1">Szakok betöltése...</p>
+            )}
           </div>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-slate-700">
+            Megnevezés *
+          </label>
+          <input
+            name="title"
+            value={formData.title}
+            onChange={handleFormChange}
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          />
         </div>
 
         <div className="space-y-1">

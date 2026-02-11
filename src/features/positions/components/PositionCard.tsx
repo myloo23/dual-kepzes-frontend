@@ -1,29 +1,10 @@
-// src/components/positions/PositionCard.tsx
 import {
   formatHuDate,
   isExpired,
   toTagName,
   norm,
 } from "../utils/positions.utils";
-
-type Position = {
-  id?: string | number;
-  title?: string;
-  description?: string;
-  location?: { city?: string; zipCode?: string | number; address?: string };
-  deadline?: string;
-  tags?: any[];
-  companyId?: string | number;
-  company?: {
-    id?: string | number;
-    name: string;
-    locations?: Array<{ city?: string }>;
-    logoUrl?: string | null;
-    website?: string | null;
-    hasOwnApplication?: boolean;
-  };
-  [key: string]: any;
-};
+import type { Position, Tag } from "../../../types/api.types";
 
 interface PositionCardProps {
   position: Position;
@@ -46,7 +27,7 @@ export default function PositionCard({
   const deadlineText = formatHuDate(p.deadline);
 
   const tags = (Array.isArray(p.tags) ? p.tags : [])
-    .map((t) => norm(toTagName(t)))
+    .map((t: Tag) => norm(toTagName(t)))
     .filter(Boolean);
 
   const previewTags = tags.slice(0, 6);
