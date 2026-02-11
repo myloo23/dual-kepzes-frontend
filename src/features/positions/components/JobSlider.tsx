@@ -1,23 +1,8 @@
-// src/components/landing/JobSlider.tsx
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import JobCard from "./JobCard";
 import { api } from "../../../lib/api";
-
-type Position = {
-  id?: string | number;
-  title?: string;
-  description?: string;
-  city?: string;
-  zipCode?: string;
-  address?: string;
-  deadline?: string;
-  isDual?: boolean;
-  isActive?: boolean;
-  tags?: any[];
-  company?: { id?: string | number; name?: string; logoUrl?: string | null };
-  [key: string]: any;
-};
+import type { Position } from "../../../types/api.types";
 
 interface JobSliderProps {
   onViewDetails: (positionId: string | number) => void;

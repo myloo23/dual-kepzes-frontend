@@ -52,17 +52,19 @@ export default function PublicCompanyProfilePage() {
         });
 
         // Enrich positions with company data (to ensure hasOwnApplication is present)
-        const enrichedPositions = companyPositions.map((p) => ({
+        const enrichedPositions: Position[] = companyPositions.map((p) => ({
           ...p,
+          companyId: String(companyData.id), // Ensure companyId is present
           company: {
             ...p.company,
+            id: companyData.id,
             name: companyData.name,
             logoUrl: companyData.logoUrl,
             locations: companyData.locations,
             hasOwnApplication: companyData.hasOwnApplication,
             website: companyData.website,
           },
-        }));
+        })) as Position[]; // Cast as Position to satisfy strict type checks (api response might be slightly loose)
 
         setPositions(enrichedPositions);
       } catch (err) {
