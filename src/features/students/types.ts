@@ -13,12 +13,12 @@ export interface StudentProfile {
   id: string;
   highSchool: string;
   graduationYear: number;
-  major: StudentMajor;
+  major: StudentMajor | null;
   studyMode: string;
   hasLanguageCert: boolean;
   isInHighSchool: boolean;
-  language: string;
-  languageLevel: string;
+  language: string | null;
+  languageLevel: string | null;
   isAvailableForWork: boolean;
 }
 

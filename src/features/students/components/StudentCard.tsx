@@ -30,9 +30,9 @@ export const StudentCard = ({ student, onViewDetails }: StudentCardProps) => {
   // Determine if student is in high school or university
   // Logic: If they have a major (university program), they're a university student
   // Otherwise, check if graduation year is in the future (still in high school)
-  const currentYear = new Date().getFullYear();
-  const isHighSchoolStudent =
-    !profile.major && profile.graduationYear >= currentYear;
+
+  // API provides explicit boolean for high school status
+  const isHighSchoolStudent = profile.isInHighSchool;
 
   return (
     <article className="h-full rounded-xl border border-dkk-gray/30 bg-white shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group">
