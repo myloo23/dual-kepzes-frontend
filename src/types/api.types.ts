@@ -107,6 +107,7 @@ export interface StudentProfile {
   neptunCode?: string | null;
   currentMajor: string;
   studyMode: StudyMode;
+  isAvailableForWork?: boolean; // New field
   hasLanguageCert: boolean;
   languageExams?: {
     language: string;

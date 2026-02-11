@@ -96,6 +96,7 @@ function normalizeStudentProfile(
     currentMajor: merged.currentMajor ?? "",
     studyMode:
       (merged.studyMode?.toUpperCase() as "NAPPALI" | "LEVELEZŐ") ?? "NAPPALI",
+    isAvailableForWork: merged.isAvailableForWork ?? false,
     hasLanguageCert: Boolean(merged.hasLanguageCert),
     languageExams: merged.languageExams || [],
     firstChoiceId:
@@ -526,6 +527,33 @@ export default function StudentDashboardPage() {
     }
   };
 
+  const handleToggleAvailability = async () => {
+    if (!profile) return;
+    try {
+      // Optimistic update
+      const newValue = !profile.isAvailableForWork;
+      setProfile((prev) =>
+        prev ? { ...prev, isAvailableForWork: newValue } : null,
+      );
+
+      const updated = await api.me.toggleAvailability();
+      const normalized = normalizeStudentProfile(
+        updated as StudentProfilePayload,
+      );
+      setProfile(normalized);
+      // Sync form just in case, though this field isn't in the form state explicitly
+    } catch (err) {
+      console.error("Failed to toggle availability:", err);
+      // Revert on error
+      const message =
+        err instanceof Error ? err.message : "Hiba az állapot módosításakor.";
+      setProfileError(message);
+      // Reload profile to ensure sync
+      const data = await api.me.get();
+      setProfile(normalizeStudentProfile(data as StudentProfilePayload));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-6xl px-4 lg:px-8 py-6">
@@ -771,6 +799,38 @@ export default function StudentDashboardPage() {
                     profilodat.
                   </p>
                 </header>
+
+                {!profileLoading && profile && (
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4">
+                    <div>
+                      <h3 className="text-sm font-semibold text-slate-900">
+                        Munkakeresési státusz
+                      </h3>
+                      <p className="text-sm text-slate-500 max-w-xl">
+                        {profile.isAvailableForWork
+                          ? "Jelenleg aktívan keresel munkát. A cégek láthatják a profilodat a keresőben."
+                          : "Nem keresel munkát. A profilod rejtve van a cégek elől (kivéve ha jelentkezel hozzájuk)."}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleToggleAvailability}
+                      type="button"
+                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                        profile.isAvailableForWork
+                          ? "bg-blue-600"
+                          : "bg-slate-200"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                          profile.isAvailableForWork
+                            ? "translate-x-6"
+                            : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                )}
 
                 {profileLoading && (
                   <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">

@@ -188,6 +188,9 @@ export const api = {
       apiPatch<StudentProfile>(PATHS.me, body),
 
     remove: () => apiDelete<{ message?: string }>(PATHS.me),
+
+    toggleAvailability: () =>
+      apiPatch<StudentProfile>(`${PATHS.me}/toggle-availability`, {}),
   },
 
   // ============= Generic Users (Admin) =============

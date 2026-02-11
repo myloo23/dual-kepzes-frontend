@@ -723,17 +723,18 @@ curl http://localhost:3000/api/students/me \
 
 ### Hallgatók (`/api/students`)
 
-| Metódus  | Végpont                     | Leírás                                                                | Jogosultság     |
-| :------- | :-------------------------- | :-------------------------------------------------------------------- | :-------------- |
-| `GET`    | `/`                         | Összes hallgató listázása.                                            | UniversityStaff |
-| `GET`    | `/available`                | Munkakeresésre jelentkezett hallgatók listázása (Publikus adatokkal). | Staff           |
-| `GET`    | `/me`                       | Saját hallgatói profil lekérése.                                      | Student         |
-| `PATCH`  | `/me`                       | Saját profil frissítése.                                              | Student         |
-| `PATCH`  | `/me/university-transition` | Átváltás középiskolai profilról egyetemire (Neptun kód, Szak).        | Student         |
-| `DELETE` | `/me`                       | Saját profil törlése.                                                 | Student         |
-| `GET`    | `/:id`                      | Hallgató lekérése ID alapján.                                         | Staff           |
-| `PATCH`  | `/:id`                      | Hallgató módosítása (Admin).                                          | SystemAdmin     |
-| `DELETE` | `/:id`                      | Hallgató törlése (Soft delete).                                       | SystemAdmin     |
+| Metódus  | Végpont                     | Leírás                                                                    | Jogosultság     |
+| :------- | :-------------------------- | :------------------------------------------------------------------------ | :-------------- |
+| `GET`    | `/`                         | Összes hallgató listázása.                                                | UniversityStaff |
+| `GET`    | `/available`                | Munkakeresésre jelentkezett hallgatók listázása (Publikus adatokkal).     | Staff           |
+| `GET`    | `/me`                       | Saját hallgatói profil lekérése.                                          | Student         |
+| `PATCH`  | `/me`                       | Saját profil frissítése.                                                  | Student         |
+| `PATCH`  | `/me/university-transition` | Átváltás középiskolai profilról egyetemire (Neptun kód, Szak).            | Student         |
+| `PATCH`  | `/me/toggle-availability`   | Munkakeresési elérhetőség ki-/bekapcsolása (`isAvailableForWork` toggle). | Student         |
+| `DELETE` | `/me`                       | Saját profil törlése.                                                     | Student         |
+| `GET`    | `/:id`                      | Hallgató lekérése ID alapján.                                             | Staff           |
+| `PATCH`  | `/:id`                      | Hallgató módosítása (Admin).                                              | SystemAdmin     |
+| `DELETE` | `/:id`                      | Hallgató törlése (Soft delete).                                           | SystemAdmin     |
 
 ### Cégek (`/api/companies`)
 
