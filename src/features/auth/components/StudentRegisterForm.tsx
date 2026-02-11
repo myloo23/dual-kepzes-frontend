@@ -118,8 +118,9 @@ export default function StudentRegisterForm() {
       // User request JSON had both. I will make second choice optional in UI but recommended?
       // Wait, prompt JSON had both key-values. I will enforce both if logically sound, but better to allow unticked?
       // The user JSON example has "secondChoiceId": "..." so I'll assume it's expected.
-      if (!secondChoiceId)
-        return setError("Második helyen megjelölt szak kiválasztása kötelező.");
+      // Second choice is now optional based on user request "a második maradhat üresen"
+      // if (!secondChoiceId)
+      //   return setError("Második helyen megjelölt szak kiválasztása kötelező.");
 
       if (hasLanguageCert) {
         if (!language) return setError("Nyelv kiválasztása kötelező.");
@@ -426,21 +427,7 @@ export default function StudentRegisterForm() {
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
-                Képzési forma *
-              </label>
-              <select
-                value={studyMode}
-                onChange={(e) =>
-                  setStudyMode(e.target.value as "NAPPALI" | "LEVELEZŐ")
-                }
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="NAPPALI">NAPPALI</option>
-                <option value="LEVELEZŐ">LEVELEZŐ</option>
-              </select>
-            </div>
+            {/* MOVED: Képzési forma is now under the new section below */}
 
             {/* Conditional Fields based on Student Type */}
             {studentType === "UNIVERSITY" ? (
@@ -462,32 +449,83 @@ export default function StudentRegisterForm() {
                 </div>
 
                 {/* MAJOR (Uni - single select) */}
-                <div className="space-y-1 md:col-span-2">
-                  <label className="text-xs font-medium text-slate-700">
-                    Szak megnevezése *
-                  </label>
-                  <select
-                    value={majorId}
-                    onChange={(e) => setMajorId(e.target.value)}
-                    disabled={majorsLoading}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
-                  >
-                    <option value="">
-                      {majorsLoading ? "Betöltés..." : "Válassz szakot..."}
-                    </option>
-                    {majors.map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.name}
-                        {m.language ? ` (${m.language})` : ""}
+                <div className="md:col-span-2 mt-4 mb-2">
+                  <h3 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2">
+                    Egyetemi jelentkezés / Szak
+                  </h3>
+                </div>
+
+                <div className="space-y-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Képzési forma MOVED HERE ALSO for consistency */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-700">
+                      Képzési forma *
+                    </label>
+                    <select
+                      value={studyMode}
+                      onChange={(e) =>
+                        setStudyMode(e.target.value as "NAPPALI" | "LEVELEZŐ")
+                      }
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="NAPPALI">NAPPALI</option>
+                      <option value="LEVELEZŐ">LEVELEZŐ</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-700">
+                      Szak megnevezése *
+                    </label>
+                    <select
+                      value={majorId}
+                      onChange={(e) => setMajorId(e.target.value)}
+                      disabled={majorsLoading}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
+                    >
+                      <option value="">
+                        {majorsLoading ? "Betöltés..." : "Válassz szakot..."}
                       </option>
-                    ))}
-                  </select>
+                      {majors.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name}
+                          {m.language ? ` (${m.language})` : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </>
             ) : (
               <>
                 {/* HIGH SCHOOL - First & Second Choice */}
-                <div className="space-y-1 md:col-span-2 grid grid-cols-1 gap-4">
+                <div className="md:col-span-2 mt-4 mb-2">
+                  <h3 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2">
+                    Egyetemi jelentkezés / Szak
+                  </h3>
+                </div>
+
+                <div className="space-y-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Képzési forma MOVED HERE */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-700">
+                      Képzési forma *
+                    </label>
+                    <select
+                      value={studyMode}
+                      onChange={(e) =>
+                        setStudyMode(e.target.value as "NAPPALI" | "LEVELEZŐ")
+                      }
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="NAPPALI">NAPPALI</option>
+                      <option value="LEVELEZŐ">LEVELEZŐ</option>
+                    </select>
+                  </div>
+
+                  {/* Spacer to align grid if needed, or just let them flow */}
+                  <div className="hidden md:block"></div>
+
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-slate-700">
                       Helyszín 1. választás (Szak) *
@@ -512,7 +550,10 @@ export default function StudentRegisterForm() {
 
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-slate-700">
-                      Helyszín 2. választás (Szak) *
+                      Helyszín 2. választás (Szak)
+                      <span className="text-slate-400 font-normal ml-1">
+                        (Opcionális)
+                      </span>
                     </label>
                     <select
                       value={secondChoiceId}
@@ -521,7 +562,9 @@ export default function StudentRegisterForm() {
                       className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                     >
                       <option value="">
-                        {majorsLoading ? "Betöltés..." : "Válassz szakot..."}
+                        {majorsLoading
+                          ? "Betöltés..."
+                          : "Válassz szakot (nem kötelező)..."}
                       </option>
                       {majors.map((m) => (
                         <option
