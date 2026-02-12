@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { api } from "../../../lib/api";
+import { companyApi } from "../../../features/companies/services/companyApi";
 import { useAuth } from "../../../features/auth";
 import type { SearchResult } from "../types";
 
@@ -107,7 +108,7 @@ export function useGlobalSearch() {
             .listPublic({ limit: 50 })
             .then((res) => res || [])
             .catch(() => []),
-          api.companies
+          companyApi
             .list({ limit: 50 })
             .then((res) => res || [])
             .catch(() => []),

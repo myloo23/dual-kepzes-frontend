@@ -1,6 +1,7 @@
 // src/pages/hr/CompanyProfilePage.tsx
 import { useEffect, useState } from "react";
 import { api, type Company } from "../../lib/api";
+import { companyApi } from "../../features/companies/services/companyApi";
 import ErrorAlert from "../../features/companies/components/ErrorAlert";
 import CompanyProfileForm from "../../features/companies/components/CompanyProfileForm";
 import CompanyProfileDisplay from "../../features/companies/components/CompanyProfileDisplay";
@@ -32,7 +33,7 @@ export default function CompanyProfilePage() {
         const companyId = adminProfile.companyEmployee?.company?.id;
 
         if (companyId) {
-          const companyData = await api.companies.get(companyId);
+          const companyData = await companyApi.get(companyId);
           setCompany(companyData);
           setFormData({
             name: companyData.name,
@@ -112,7 +113,7 @@ export default function CompanyProfilePage() {
         hasOwnApplication: formData.hasOwnApplication,
         website: formData.website || undefined,
       };
-      await api.companies.update(company.id, payload);
+      await companyApi.update(company.id, payload);
       // We need to re-fetch or construct the full object manually if updating local state
       // Simpler to just re-fetch or assume success and mix in new data
       const updatedCompany = {

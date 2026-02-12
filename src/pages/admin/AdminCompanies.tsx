@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { api } from "../../lib/api";
+import { companyApi } from "../../features/companies/services/companyApi";
 import type { Company } from "../../lib/api";
 import { useCRUD, useModal } from "../../hooks";
 import CompanyFormModal from "../../features/companies/components/modals/CompanyFormModal";
@@ -19,11 +19,11 @@ import { useCompanyExport } from "../../features/companies/hooks/useCompanyExpor
 import ExportButton from "../../components/shared/ExportButton";
 export default function AdminCompaniesPage() {
   const companies = useCRUD<Company>({
-    listFn: api.companies.list,
-    getFn: api.companies.get,
-    createFn: api.companies.create,
-    updateFn: api.companies.update,
-    deleteFn: api.companies.remove,
+    listFn: companyApi.list,
+    getFn: companyApi.get,
+    createFn: companyApi.create,
+    updateFn: companyApi.update,
+    deleteFn: companyApi.remove,
   });
 
   const modal = useModal<Company>();

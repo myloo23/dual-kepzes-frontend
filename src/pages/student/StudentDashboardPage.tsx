@@ -5,6 +5,7 @@ import StudentPartnershipsList from "../../features/partnerships/components/Stud
 import { useAuth } from "../../features/auth";
 import StudentNewsPage from "./StudentNewsPage";
 import { GuidePlayer } from "../../features/guide";
+import { studentsApi } from "../../features/students/services/studentsApi";
 import { api, type StudentProfile } from "../../lib/api";
 import {
   normalizeNeptun,
@@ -268,7 +269,7 @@ export default function StudentDashboardPage() {
       setProfileError(null);
       setProfileSuccess(null);
       try {
-        const data = await api.me.get();
+        const data = await studentsApi.me.get();
         if (!mounted) return;
         const normalized = normalizeStudentProfile(
           data as StudentProfilePayload,
@@ -494,7 +495,20 @@ export default function StudentDashboardPage() {
     }
 
     try {
-      const updated = await api.me.update(buildProfilePayload(profileForm));
+      let updated;
+      const wasHighSchool = !profile?.neptunCode;
+      const isBecomingUniversity = profileForm.studentType === "UNIVERSITY";
+
+      if (wasHighSchool && isBecomingUniversity) {
+        await studentsApi.me.transitionToUniversity({
+          neptunCode: neptunCode!,
+          majorId: universityMajor!,
+        });
+        updated = await studentsApi.me.update(buildProfilePayload(profileForm));
+      } else {
+        updated = await studentsApi.me.update(buildProfilePayload(profileForm));
+      }
+
       const normalized = normalizeStudentProfile(
         updated as StudentProfilePayload,
       );
@@ -521,7 +535,7 @@ export default function StudentDashboardPage() {
     setProfileError(null);
     setProfileSuccess(null);
     try {
-      await api.me.remove();
+      await studentsApi.me.remove();
       authLogout();
     } catch (err) {
       const message =
@@ -541,7 +555,7 @@ export default function StudentDashboardPage() {
         prev ? { ...prev, isAvailableForWork: newValue } : null,
       );
 
-      const updated = await api.me.toggleAvailability();
+      const updated = await studentsApi.me.toggleAvailability();
       const normalized = normalizeStudentProfile(
         updated as StudentProfilePayload,
       );
@@ -554,7 +568,7 @@ export default function StudentDashboardPage() {
         err instanceof Error ? err.message : "Hiba az állapot módosításakor.";
       setProfileError(message);
       // Reload profile to ensure sync
-      const data = await api.me.get();
+      const data = await studentsApi.me.get();
       setProfile(normalizeStudentProfile(data as StudentProfilePayload));
     }
   };

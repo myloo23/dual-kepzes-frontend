@@ -5,7 +5,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { api } from "../../lib/api";
+import { companyApi } from "../../features/companies/services/companyApi";
 import { usePositions } from "../../features/positions/hooks/usePositions";
 import { usePositionsFilters } from "../../features/positions/hooks/usePositionsFilters";
 import { useModal } from "../../hooks";
@@ -130,7 +130,7 @@ export default function PositionsPage() {
       // If no ID, try to find it from the list of companies
       if (!targetId) {
         try {
-          const allCompanies = await api.companies.list();
+          const allCompanies = await companyApi.list();
           const matchingCompany = allCompanies.find(
             (c) =>
               c.name.trim().toLowerCase() ===
@@ -169,7 +169,7 @@ export default function PositionsPage() {
           position.company?.website === undefined)
       ) {
         try {
-          const companyDetails = await api.companies.get(position.companyId);
+          const companyDetails = await companyApi.get(position.companyId);
           if (companyDetails.hasOwnApplication && companyDetails.website) {
             toast.showInfo(
               `Átirányítás a(z) ${companyDetails.name} karrier oldalára...`,

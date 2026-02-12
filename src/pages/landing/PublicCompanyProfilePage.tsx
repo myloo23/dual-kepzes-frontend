@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Globe, MapPin, User, Building2 } from "lucide-react";
 import { api, type Company, type Position } from "../../lib/api";
+import { companyApi } from "../../features/companies/services/companyApi";
 import PositionCard from "../../features/positions/components/PositionCard";
 import { pickLogo } from "../../features/positions/utils/positions.utils";
 import abcTechLogo from "../../assets/logos/abc-tech.jpg";
@@ -26,7 +27,7 @@ export default function PublicCompanyProfilePage() {
       try {
         setLoading(true);
         // Fetch company details
-        const companyData = await api.companies.get(id);
+        const companyData = await companyApi.get(id);
         console.log("Fetched company data:", companyData);
         setCompany(companyData);
 
@@ -90,7 +91,7 @@ export default function PublicCompanyProfilePage() {
         try {
           // Strategy 1: Global Company List
           console.log("1. Checking Global Company List...");
-          const companies = await api.companies.list();
+          const companies = await companyApi.list();
           const foundInList = companies.find(
             (c) => String(c.id) === String(company.id),
           );

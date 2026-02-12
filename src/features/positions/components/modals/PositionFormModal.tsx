@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { type Position, type Tag, type Location } from "../../../../lib/api";
-import { api } from "../../../../lib/api";
+import { companyApi } from "../../../../features/companies/services/companyApi";
 import { Modal } from "../../../../components/ui/Modal";
 import { useMajors } from "../../../majors";
 
@@ -87,7 +87,7 @@ export default function PositionFormModal({
       }
 
       try {
-        const company = await api.companies.get(formData.companyId);
+        const company = await companyApi.get(formData.companyId);
         if (company && company.locations) {
           setAvailableLocations(company.locations);
         } else {

@@ -8,9 +8,7 @@ import type {
   LoginResponse,
   RegisterResponse,
   StudentRegisterPayload,
-  Company,
   Position,
-  StudentProfile,
   CompanyAdminProfile,
   EmployeeProfile,
   UniversityUserProfile,
@@ -105,27 +103,7 @@ export const api = {
   },
 
   // ============= Companies =============
-  companies: {
-    list: (params?: PaginationQuery) =>
-      apiGet<Company[]>(PATHS.companies, params),
-
-    get: (id: Id) =>
-      apiGet<Company>(`${PATHS.companies}/${ensureId(id, "companyId")}`),
-
-    create: (payload: Omit<Company, "id">) =>
-      apiPost<Company>(PATHS.companies, payload),
-
-    update: (id: Id, body: Partial<Omit<Company, "id">>) =>
-      apiPatch<Company>(
-        `${PATHS.companies}/${ensureId(id, "companyId")}`,
-        body,
-      ),
-
-    remove: (id: Id) =>
-      apiDelete<{ message?: string }>(
-        `${PATHS.companies}/${ensureId(id, "companyId")}`,
-      ),
-  },
+  // Moved to features/companies/services/companyApi.ts
 
   // ============= Positions =============
   positions: {
@@ -167,31 +145,10 @@ export const api = {
   },
 
   // ============= Students =============
-  students: {
-    list: (params?: PaginationQuery) =>
-      apiGet<StudentProfile[]>(PATHS.students, params),
-
-    get: (id: Id) => apiGet<StudentProfile>(`${PATHS.students}/${id}`),
-
-    update: (id: Id, body: Partial<StudentProfile>) =>
-      apiPatch<StudentProfile>(`${PATHS.students}/${id}`, body),
-
-    remove: (id: Id) =>
-      apiDelete<{ message?: string }>(`${PATHS.students}/${id}`),
-  },
+  // Moved to features/students/services/studentsApi.ts
 
   // ============= Current User Profile =============
-  me: {
-    get: () => apiGet<StudentProfile>(PATHS.me),
-
-    update: (body: Partial<StudentProfile>) =>
-      apiPatch<StudentProfile>(PATHS.me, body),
-
-    remove: () => apiDelete<{ message?: string }>(PATHS.me),
-
-    toggleAvailability: () =>
-      apiPatch<StudentProfile>(`${PATHS.me}/toggle-availability`, {}),
-  },
+  // Moved to features/students/services/studentsApi.ts
 
   // ============= Generic Users (Admin) =============
   users: {
