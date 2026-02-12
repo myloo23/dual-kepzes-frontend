@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { api } from "../../lib/api";
+import { studentsApi } from "../../features/students/services/studentsApi";
 
 export default function AdminSettings() {
   const [me, setMe] = useState<any>(null);
@@ -27,7 +28,7 @@ export default function AdminSettings() {
         res = await api.universityUsers.me.get();
       } else {
         // Default fallack
-        res = await api.me.get();
+        res = await studentsApi.me.get();
       }
       setMe(res);
       const fullName =
@@ -70,7 +71,7 @@ export default function AdminSettings() {
       } else if (role === "UNIVERSITY_USER") {
         await api.universityUsers.me.update(payload);
       } else {
-        await api.me.update(payload);
+        await studentsApi.me.update(payload);
       }
 
       setMsg("Saját profil frissítve.");

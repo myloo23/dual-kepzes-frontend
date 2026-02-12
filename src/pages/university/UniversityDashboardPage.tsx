@@ -7,6 +7,7 @@ import {
   type Partnership,
 } from "../../lib/api";
 import { useAuth } from "../../features/auth";
+import { studentsApi } from "../../features/students/services/studentsApi";
 import UniversityPartnershipsTable from "../../features/partnerships/components/UniversityPartnershipsTable";
 
 export default function UniversityDashboardPage() {
@@ -75,7 +76,7 @@ export default function UniversityDashboardPage() {
       setStudentsLoading(true);
       setStudentsError(null);
       try {
-        const list = await api.students.list();
+        const list = await studentsApi.list();
         setStudents(Array.isArray(list) ? list : []);
       } catch (err) {
         const message =

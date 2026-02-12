@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import { Briefcase } from "lucide-react";
 import { api } from "../../lib/api";
+import { companyApi } from "../../features/companies/services/companyApi";
 import type { Position, Company } from "../../lib/api";
 import { useCRUD, useModal } from "../../hooks";
 import PositionFormModal from "../../features/positions/components/modals/PositionFormModal";
@@ -37,7 +38,7 @@ export default function AdminPositionsPage() {
   useEffect(() => {
     const loadCompanies = async () => {
       try {
-        const data = await api.companies.list();
+        const data = await companyApi.list();
         setCompanies(data);
       } catch (err) {
         console.error("Failed to load companies:", err);

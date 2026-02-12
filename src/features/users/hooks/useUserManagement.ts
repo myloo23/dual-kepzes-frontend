@@ -5,6 +5,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { api } from "../../../lib/api";
+import { studentsApi } from "../../students/services/studentsApi";
 import type {
   StudentProfile,
   CompanyAdminProfile,
@@ -71,7 +72,7 @@ export function useUserManagement(
 
       switch (activeTab) {
         case "STUDENT":
-          res = await api.students.list();
+          res = await studentsApi.list();
           break;
         case "COMPANY_ADMIN":
           res = await api.companyAdmins.list();
@@ -111,7 +112,7 @@ export function useUserManagement(
 
         switch (activeTab) {
           case "STUDENT":
-            item = await api.students.get(id);
+            item = await studentsApi.get(id);
             break;
           case "COMPANY_ADMIN":
             item = await api.companyAdmins.get(id);
@@ -147,7 +148,7 @@ export function useUserManagement(
       try {
         switch (activeTab) {
           case "STUDENT":
-            await api.students.remove(id);
+            await studentsApi.remove(id);
             break;
           case "COMPANY_ADMIN":
             await api.companyAdmins.remove(id);
@@ -201,7 +202,7 @@ export function useUserManagement(
   const updateStudent = useCallback(
     async (id: Id, data: Partial<StudentProfile>): Promise<boolean> => {
       try {
-        await api.students.update(id, data);
+        await studentsApi.update(id, data);
         setMessage(SUCCESS_MESSAGES.STUDENT_UPDATED);
         await load();
         return true;

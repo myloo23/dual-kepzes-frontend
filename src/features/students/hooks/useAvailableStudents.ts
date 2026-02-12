@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { getAvailableStudents } from "../services/studentsApi";
+import { studentsApi } from "../services/studentsApi";
 import type { AvailableStudent } from "../types";
 
 interface UseAvailableStudentsResult {
@@ -24,7 +24,7 @@ export const useAvailableStudents = (): UseAvailableStudentsResult => {
       setIsLoading(true);
       setError(null);
       console.log("[useAvailableStudents] Fetching students...");
-      const response = await getAvailableStudents();
+      const response = await studentsApi.getAvailableStudents();
       console.log("[useAvailableStudents] API Response:", response);
       // The api-client auto-unwraps the response, so response is already the data array
       const studentsData = Array.isArray(response)
