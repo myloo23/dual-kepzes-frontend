@@ -118,6 +118,7 @@ export interface StudentProfile {
   // Backend returns objects sometimes
   firstChoice?: { id: string; name: string; language?: string };
   secondChoice?: { id: string; name: string; language?: string };
+  major?: Major;
 }
 
 export interface CompanyEmployee {

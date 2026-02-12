@@ -23,6 +23,11 @@ type StudentProfilePayload = Partial<StudentProfile> & {
     phoneNumber?: string;
   };
   birthDate?: string;
+  major?: {
+    id: string;
+    name: string;
+    language?: string;
+  };
 };
 
 type StudentFormState = {
@@ -93,7 +98,7 @@ function normalizeStudentProfile(
     highSchool: merged.highSchool ?? "",
     graduationYear: toNumber(merged.graduationYear) || 0,
     neptunCode: merged.neptunCode ?? "",
-    currentMajor: merged.currentMajor ?? "",
+    currentMajor: merged.major?.name ?? merged.currentMajor ?? "",
     studyMode:
       (merged.studyMode?.toUpperCase() as "NAPPALI" | "LEVELEZŐ") ?? "NAPPALI",
     isAvailableForWork: merged.isAvailableForWork ?? false,
