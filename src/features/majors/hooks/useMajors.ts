@@ -12,7 +12,10 @@ export function useMajors() {
       try {
         setLoading(true);
         // Cast API response to any to handle the wrapper structure without changing global types yet
-        const response = (await api.majors.list()) as any;
+        const response = (await api.majors.list({
+          limit: 1000,
+          page: 1,
+        })) as any;
 
         let data: Major[] = [];
         if (response?.data && Array.isArray(response.data)) {

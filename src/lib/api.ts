@@ -91,7 +91,7 @@ export const api = {
 
   // ============= Majors =============
   majors: {
-    list: () => apiGet<Major[]>(PATHS.majors),
+    list: (params?: PaginationQuery) => apiGet<Major[]>(PATHS.majors, params),
     get: (id: Id) =>
       apiGet<Major>(`${PATHS.majors}/${ensureId(id, "majorId")}`),
     create: (payload: { name: string; code?: string }) =>

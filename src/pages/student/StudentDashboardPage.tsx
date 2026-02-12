@@ -98,7 +98,7 @@ function normalizeStudentProfile(
     highSchool: merged.highSchool ?? "",
     graduationYear: toNumber(merged.graduationYear) || 0,
     neptunCode: merged.neptunCode ?? "",
-    currentMajor: merged.major?.name ?? merged.currentMajor ?? "",
+    currentMajor: merged.major?.id ?? merged.currentMajor ?? "",
     studyMode:
       (merged.studyMode?.toUpperCase() as "NAPPALI" | "LEVELEZŐ") ?? "NAPPALI",
     isAvailableForWork: merged.isAvailableForWork ?? false,
