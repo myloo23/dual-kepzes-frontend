@@ -9,7 +9,8 @@ type ButtonVariant =
   | "success"
   | "warning"
   | "danger"
-  | "caution";
+  | "caution"
+  | "ghost";
 
 type ButtonSize = "xs" | "sm";
 
@@ -33,6 +34,8 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
     "border border-red-200 bg-white text-red-600 hover:bg-red-50 font-medium",
   caution:
     "border border-orange-200 bg-white text-orange-600 hover:bg-orange-50 font-medium",
+  ghost:
+    "bg-transparent hover:bg-slate-100 text-slate-600 font-medium border-transparent",
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {

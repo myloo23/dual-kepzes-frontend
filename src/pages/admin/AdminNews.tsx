@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api, type NewsCreatePayload, type NewsItem } from "../../lib/api";
 import NewsFormModal from "../../features/news/components/modals/NewsFormModal";
 import Button from "../../components/ui/Button";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
 type Id = string | number;
 type Tab = "active" | "archived";
@@ -21,6 +22,12 @@ export default function AdminNews() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+
+  // Sorting state
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
 
   // Helper to extract list from response
   const extractList = (response: any): NewsItem[] => {
@@ -145,16 +152,71 @@ export default function AdminNews() {
     }
   };
 
+  // Sorting Logic
+  const handleSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
   const items = currentTab === "active" ? activeItems : archivedItems;
-  const rows = useMemo(() => items ?? [], [items]);
+
+  // ... (keep logic above)
+
+  const rows = useMemo(() => {
+    let sortableItems = [...(items ?? [])];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        // @ts-ignore
+        const aValue = a[sortConfig.key] ?? "";
+        // @ts-ignore
+        const bValue = b[sortConfig.key] ?? "";
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "asc" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [items, sortConfig]);
+
+  // Format date helper
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "";
+    return new Date(dateStr).toLocaleDateString("hu-HU", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-lg font-semibold">Hírek kezelése</h1>
-        <p className="text-sm text-slate-600">
-          Új hírek létrehozása, szerkesztése, archiválása és törlése.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Hírek kezelése</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Hírek, értesítések és közlemények publikálása a hallgatók számára.
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <Button onClick={load} variant="outline" size="sm">
+            Frissítés
+          </Button>
+          <Button onClick={handleCreateNew} variant="primary" size="sm">
+            + Új hír létrehozása
+          </Button>
+        </div>
       </div>
 
       {err && (
@@ -168,151 +230,172 @@ export default function AdminNews() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-          <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-lg">
-            <button
-              onClick={() => setCurrentTab("active")}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                currentTab === "active"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              Aktív hírek
-            </button>
-            <button
-              onClick={() => setCurrentTab("archived")}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                currentTab === "archived"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              Archivált
-            </button>
-          </div>
-
-          <div className="flex gap-2">
-            <Button onClick={load} variant="outline" size="xs">
-              Frissítés
-            </Button>
-            <Button onClick={handleCreateNew} variant="primary" size="xs">
-              + Új hír
-            </Button>
-          </div>
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-200 pb-4">
+        {/* Tabs */}
+        <div className="flex p-1 bg-slate-100 rounded-xl">
+          <button
+            onClick={() => setCurrentTab("active")}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              currentTab === "active"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            Aktív hírek
+            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+              {activeItems.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setCurrentTab("archived")}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              currentTab === "archived"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            Archivált
+            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+              {archivedItems.length}
+            </span>
+          </button>
         </div>
 
-        <div className="overflow-auto rounded-xl border border-slate-200 max-h-[600px]">
-          <table className="min-w-full text-sm relative">
-            <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
-              <tr>
-                <th className="px-4 py-3 text-left font-semibold">
-                  Cím / Részletek
-                </th>
-                <th className="px-4 py-3 text-left font-semibold">Címkék</th>
-                <th className="px-4 py-3 text-right font-semibold">Művelet</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {rows.map((n) => (
-                <tr
-                  key={String(n.id)}
-                  className="hover:bg-slate-50 transition-colors"
-                >
-                  <td className="px-4 py-3 align-top max-w-md">
-                    <div className="flex items-start gap-2">
-                      <div className="font-semibold text-slate-900">
-                        {n.title}
-                      </div>
-                      {n.important && (
-                        <span className="flex-shrink-0 inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-700 border border-red-100">
-                          !
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-xs text-slate-500 mt-1 line-clamp-2">
-                      {n.content}
-                    </div>
-                    <div className="text-[10px] text-slate-400 mt-1.5">
-                      Célközönség:{" "}
-                      <span className="font-mono bg-slate-100 px-1 rounded">
-                        {n.targetGroup || "STUDENT"}
-                      </span>
-                      {n.createdAt &&
-                        ` • Létrehozva: ${new Date(n.createdAt).toLocaleDateString()}`}
-                    </div>
-                  </td>
+        {/* Sorting Dropdown (Simplified for List View) */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">
+            Rendezés:
+          </span>
+          <select
+            className="text-sm border-none bg-transparent font-medium text-slate-700 focus:ring-0 cursor-pointer hover:text-blue-600 transition-colors"
+            onChange={(e) => handleSort(e.target.value)}
+            value={sortConfig?.key || ""}
+          >
+            <option value="">Alapértelmezett</option>
+            <option value="title">Cím</option>
+            <option value="createdAt">Dátum</option>
+            <option value="targetGroup">Célcsoport</option>
+          </select>
+          <button
+            onClick={() =>
+              setSortConfig((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      direction: prev.direction === "asc" ? "desc" : "asc",
+                    }
+                  : null,
+              )
+            }
+            className="p-1 hover:bg-slate-100 rounded text-slate-500"
+            title="Irány váltása"
+          >
+            {sortConfig?.direction === "desc" ? (
+              <ArrowDown className="h-4 w-4" />
+            ) : (
+              <ArrowUp className="h-4 w-4" />
+            )}
+          </button>
+        </div>
+      </div>
 
-                  <td className="px-4 py-3 align-top">
-                    <div className="flex flex-wrap gap-1.5">
-                      {(n.tags || []).slice(0, 5).map((t) => (
-                        <Chip key={t} text={t} />
-                      ))}
-                      {(n.tags || []).length > 5 && (
-                        <span className="text-xs text-slate-400">
-                          +{(n.tags || []).length - 5}
-                        </span>
-                      )}
-                    </div>
-                  </td>
+      {/* Content List */}
+      <div className="space-y-4">
+        {rows.length === 0 && !loading && (
+          <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            <p className="text-slate-500">
+              Nincs megjeleníthető{" "}
+              {currentTab === "active" ? "aktív" : "archivált"} hír.
+            </p>
+          </div>
+        )}
 
-                  <td className="px-4 py-3 align-top">
-                    <div className="flex justify-end gap-2">
-                      {currentTab === "active" ? (
-                        <>
-                          <Button
-                            onClick={() => startEdit(n)}
-                            variant="outlineAccent"
-                            size="xs"
-                          >
-                            Szerkesztés
-                          </Button>
-                          <Button
-                            onClick={() => onArchive(n.id)}
-                            variant="warning"
-                            size="xs"
-                            title="Archiválás (eltüntetés a hallgatók elől)"
-                          >
-                            Archivál
-                          </Button>
-                        </>
-                      ) : (
-                        <Button
-                          onClick={() => onRestore(n.id)}
-                          variant="success"
-                          size="xs"
-                        >
-                          Visszaállítás
-                        </Button>
-                      )}
+        {rows.map((n) => (
+          <div
+            key={String(n.id)}
+            className="group relative flex flex-col sm:flex-row sm:items-start gap-4 p-5 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200"
+          >
+            {/* Left Color Bar Indicator for Priority */}
+            {n.isImportant && (
+              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500 rounded-l-2xl" />
+            )}
 
-                      <Button
-                        onClick={() => onDelete(n.id)}
-                        variant="danger"
-                        size="xs"
-                        title="Végleges törlés"
-                      >
-                        Törlés
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+            {/* Main Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                {n.isImportant && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase tracking-wide">
+                    Fontos
+                  </span>
+                )}
+                <span className="text-xs font-medium text-slate-400">
+                  {formatDate(n.createdAt)}
+                </span>
+                <span className="text-slate-300">•</span>
+                <span className="text-xs font-semibold text-slate-500 uppercase">
+                  {n.targetGroup === "ALL" ? "Mindenkinek" : n.targetGroup}
+                </span>
+              </div>
 
-              {!loading && rows.length === 0 && (
-                <tr>
-                  <td
-                    className="px-4 py-12 text-center text-slate-500"
-                    colSpan={3}
+              <h3 className="text-lg font-bold text-slate-900 mb-2 leading-tight group-hover:text-blue-700 transition-colors">
+                {n.title}
+              </h3>
+              <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                {n.content}
+              </p>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mt-3">
+                {(n.tags || []).map((t) => (
+                  <Chip key={t} text={t} />
+                ))}
+              </div>
+            </div>
+
+            {/* Actions Panel - Validated by Hover or Flex layout */}
+            <div className="flex sm:flex-col items-center sm:items-end justify-center gap-2 border-t sm:border-t-0 sm:border-l border-slate-100 pt-4 sm:pt-0 sm:pl-4 mt-4 sm:mt-0 min-w-[120px]">
+              {currentTab === "active" ? (
+                <>
+                  <Button
+                    onClick={() => startEdit(n)}
+                    variant="outlineAccent"
+                    size="sm"
+                    className="w-full justify-center"
                   >
-                    Nincs {currentTab === "active" ? "aktív" : "archivált"} hír.
-                  </td>
-                </tr>
+                    Szerkesztés
+                  </Button>
+                  <Button
+                    onClick={() => onArchive(n.id)}
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-center text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                  >
+                    Archiválás
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  onClick={() => onRestore(n.id)}
+                  variant="success"
+                  size="sm"
+                  className="w-full justify-center"
+                >
+                  Visszaállítás
+                </Button>
               )}
-            </tbody>
-          </table>
-        </div>
+
+              <Button
+                onClick={() => onDelete(n.id)}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-center text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+              >
+                Törlés
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
 
       <NewsFormModal

@@ -19,7 +19,7 @@ interface NewsCardProps {
 }
 
 export default function NewsCard({ news }: NewsCardProps) {
-  const isImportant = news.important;
+  const isImportant = news.isImportant;
 
   return (
     <article

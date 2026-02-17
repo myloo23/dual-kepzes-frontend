@@ -282,7 +282,8 @@ export interface NewsItem {
   content: string;
   tags: string[];
   targetGroup: NewsTargetGroup;
-  important?: boolean;
+  isImportant?: boolean;
+  isArchived?: boolean; // Also adding isArchived as per docs
   createdAt?: string;
   updatedAt?: string;
 }
@@ -292,7 +293,7 @@ export interface NewsCreatePayload {
   content: string;
   tags: string[];
   targetGroup: NewsTargetGroup;
-  important?: boolean;
+  isImportant?: boolean;
 }
 
 // ============= Application Types =============

@@ -3,8 +3,8 @@
  * Manages position CRUD operations
  */
 
-import { useState, useEffect } from "react";
-import { Briefcase } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Briefcase, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { api } from "../../lib/api";
 import { companyApi } from "../../features/companies/services/companyApi";
 import type { Position, Company } from "../../lib/api";
@@ -14,6 +14,7 @@ import Button from "../../components/ui/Button";
 import { PAGE_TITLES, LABELS, CONFIRM_MESSAGES } from "../../constants";
 import { usePositionExport } from "../../features/positions/hooks/usePositionExport";
 import ExportButton from "../../components/shared/ExportButton";
+
 export default function AdminPositionsPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const { handleExport } = usePositionExport();
@@ -28,6 +29,12 @@ export default function AdminPositionsPage() {
 
   const modal = useModal<Position>();
   const [lookupId, setLookupId] = useState("");
+
+  // Sorting state
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
 
   // Load positions on mount
   useEffect(() => {
@@ -148,6 +155,76 @@ export default function AdminPositionsPage() {
     );
   };
 
+  // Sorting Logic
+  const handleSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortValue = (item: Position, key: string) => {
+    if (key === "city") {
+      return item.location?.city ?? "";
+    }
+    if (key === "status") {
+      // Status sorting is tricky because it's derived.
+      // We can sort by isActive, then deadline.
+      // For simplicity, let's sort by isActive boolean for now, or just not support it fully if complexity is high.
+      // User asked for "upper parts e.g. name or id", so simple fields are priority.
+      return item.isActive ? "1" : "0";
+    }
+    // @ts-ignore
+    return item[key] ?? "";
+  };
+
+  const sortedItems = useMemo(() => {
+    let sortableItems = [...positions.items];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = getSortValue(a, sortConfig.key);
+        const bValue = getSortValue(b, sortConfig.key);
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "asc" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [positions.items, sortConfig]);
+
+  const renderSortIcon = (key: string) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return <ArrowUpDown className="ml-1 h-3 w-3 text-slate-400" />;
+    }
+    return sortConfig.direction === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3 text-blue-600" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3 text-blue-600" />
+    );
+  };
+
+  const renderHeader = (label: string, sortKey: string) => (
+    <th
+      className="px-4 py-3 text-left font-semibold bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors group"
+      onClick={() => handleSort(sortKey)}
+    >
+      <div className="flex items-center">
+        {label}
+        {renderSortIcon(sortKey)}
+      </div>
+    </th>
+  );
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -211,25 +288,17 @@ export default function AdminPositionsPage() {
           <table className="min-w-full text-sm relative">
             <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  ID
-                </th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  Cím
-                </th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  Város
-                </th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  Státusz
-                </th>
+                {renderHeader("ID", "id")}
+                {renderHeader("Cím", "title")}
+                {renderHeader("Város", "city")}
+                {renderHeader("Státusz", "status")}
                 <th className="px-4 py-3 text-right font-semibold bg-slate-50">
                   Művelet
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {positions.items.map((position) => (
+              {sortedItems.map((position) => (
                 <tr
                   key={String(position.id)}
                   className="hover:bg-slate-50 transition-colors"

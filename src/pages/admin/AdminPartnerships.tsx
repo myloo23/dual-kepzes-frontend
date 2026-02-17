@@ -23,6 +23,12 @@ export default function AdminPartnerships() {
   const [searchQuery, setSearchQuery] = useState("");
   const { handleExport } = usePartnershipExport();
 
+  // Sorting state
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
+
   const loadData = async () => {
     setIsLoading(true);
     try {
@@ -44,7 +50,7 @@ export default function AdminPartnerships() {
   }, []);
 
   const filteredPartnerships = useMemo(() => {
-    return partnerships.filter((p) => {
+    const filtered = partnerships.filter((p) => {
       // Status filter
       if (statusFilter !== "ALL" && p.status !== statusFilter) {
         return false;
@@ -61,7 +67,57 @@ export default function AdminPartnerships() {
 
       return true;
     });
-  }, [partnerships, statusFilter, searchQuery]);
+
+    if (sortConfig !== null) {
+      filtered.sort((a, b) => {
+        let aValue = "";
+        let bValue = "";
+
+        if (sortConfig.key === "student") {
+          aValue = a.student?.fullName ?? "";
+          bValue = b.student?.fullName ?? "";
+        } else if (sortConfig.key === "company") {
+          aValue = a.position?.company?.name ?? "";
+          bValue = b.position?.company?.name ?? "";
+        } else if (sortConfig.key === "semester") {
+          aValue = a.semester ?? "";
+          bValue = b.semester ?? "";
+        } else if (sortConfig.key === "mentor") {
+          aValue = a.mentor?.fullName ?? "";
+          bValue = b.mentor?.fullName ?? "";
+        } else if (sortConfig.key === "uniEmployee") {
+          aValue = a.uniEmployee?.fullName ?? "";
+          bValue = b.uniEmployee?.fullName ?? "";
+        } else if (sortConfig.key === "status") {
+          aValue = a.status ?? "";
+          bValue = b.status ?? "";
+        }
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "asc" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+
+    return filtered;
+  }, [partnerships, statusFilter, searchQuery, sortConfig]);
+
+  // Sorting Logic
+  const handleSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
 
   return (
     <div className="space-y-6">
@@ -102,6 +158,8 @@ export default function AdminPartnerships() {
         universityUsers={universityUsers}
         onRefresh={loadData}
         isLoading={isLoading}
+        sortConfig={sortConfig}
+        onSort={handleSort}
       />
     </div>
   );

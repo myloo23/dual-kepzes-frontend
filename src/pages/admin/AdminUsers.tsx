@@ -3,7 +3,7 @@
  * Manages users across different roles (Students, Company Admins, University Users, Inactive Users)
  */
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { StudentProfile } from "../../lib/api";
 import { useUserManagement } from "../../features/users/hooks/useUserManagement";
 import { useModal } from "../../hooks";
@@ -11,6 +11,7 @@ import StudentFormModal from "../../features/users/components/modals/StudentForm
 import AdminUserModal from "../../features/users/components/modals/AdminUserModal";
 import Button from "../../components/ui/Button";
 import ExportButton from "../../components/shared/ExportButton";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 import { useUserExport } from "../../features/users/hooks/useUserExport";
 import {
@@ -30,9 +31,16 @@ export default function AdminUsersPage() {
   const [lookupId, setLookupId] = useState("");
   const { handleExport } = useUserExport();
 
+  // Sorting state
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
+
   const handleTabChange = (tab: TabType) => {
     userManagement.clearMessages();
     userManagement.setActiveTab(tab);
+    setSortConfig(null); // Reset sorting when changing tabs
   };
 
   const handleOpenItem = (item: any) => {
@@ -87,16 +95,103 @@ export default function AdminUsersPage() {
     }
   };
 
+  // Sorting Logic
+  const handleSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortValue = (item: any, key: string) => {
+    if (userManagement.activeTab === "STUDENT") {
+      const neptun = item.neptunCode ?? item.studentProfile?.neptunCode;
+      if (key === "neptunCode") return neptun ?? "";
+      if (key === "type") return neptun ? "Egyetemista" : "Középiskolás";
+    }
+    if (userManagement.activeTab === "COMPANY_ADMIN") {
+      if (key === "company") return item.companyEmployee?.company?.id ?? "";
+      if (key === "name")
+        return item.user?.fullName ?? item.fullName ?? item.name ?? "";
+      if (key === "email") return item.user?.email ?? item.email ?? "";
+    }
+    if (userManagement.activeTab === "UNIVERSITY_USER") {
+      if (key === "name")
+        return item.user?.fullName ?? item.fullName ?? item.name ?? "";
+      if (key === "email") return item.user?.email ?? item.email ?? "";
+    }
+    // Default / Inactive
+    if (key === "name") return item.fullName ?? item.name ?? "";
+    return item[key] ?? "";
+  };
+
+  const sortedItems = useMemo(() => {
+    let sortableItems = [...userManagement.items];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = getSortValue(a, sortConfig.key);
+        const bValue = getSortValue(b, sortConfig.key);
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "asc" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [userManagement.items, sortConfig, userManagement.activeTab]);
+
+  const renderSortIcon = (key: string) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return <ArrowUpDown className="ml-1 h-3 w-3 text-slate-400" />;
+    }
+    return sortConfig.direction === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3 text-blue-600" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3 text-blue-600" />
+    );
+  };
+
+  const renderHeader = (label: string, sortKey: string) => (
+    <th
+      className="px-4 py-3 text-left font-semibold bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors group"
+      onClick={() => handleSort(sortKey)}
+    >
+      <div className="flex items-center">
+        {label}
+        {renderSortIcon(sortKey)}
+      </div>
+    </th>
+  );
+
   const renderColumns = (item: any) => {
     if (userManagement.activeTab === "STUDENT") {
+      const neptun = item.neptunCode ?? item.studentProfile?.neptunCode;
       return (
         <>
           <td className="px-4 py-3 font-medium text-slate-900">
             {item.fullName ?? item.name ?? "User"}
           </td>
           <td className="px-4 py-3 text-slate-600">{item.email ?? "-"}</td>
+          <td className="px-4 py-3 text-slate-500">{neptun ?? "-"}</td>
           <td className="px-4 py-3 text-slate-500">
-            {item.neptunCode ?? item.studentProfile?.neptunCode ?? "-"}
+            {neptun ? (
+              <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                Egyetemista
+              </span>
+            ) : (
+              <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+                Középiskolás
+              </span>
+            )}
           </td>
         </>
       );
@@ -138,12 +233,6 @@ export default function AdminUsersPage() {
         </>
       );
     }
-  };
-
-  const getColumnHeader = () => {
-    if (userManagement.activeTab === "STUDENT") return "Neptun";
-    if (userManagement.activeTab === "COMPANY_ADMIN") return "Cég";
-    return "Egyéb";
   };
 
   return (
@@ -232,25 +321,31 @@ export default function AdminUsersPage() {
           <table className="min-w-full text-sm relative">
             <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  ID
-                </th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  Név
-                </th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  Email
-                </th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  {getColumnHeader()}
-                </th>
+                {renderHeader("ID", "id")}
+                {renderHeader("Név", "name")}
+                {renderHeader("Email", "email")}
+
+                {/* Conditional Headers */}
+                {userManagement.activeTab === "STUDENT" && (
+                  <>
+                    {renderHeader("Neptun", "neptunCode")}
+                    {renderHeader("Típus", "type")}
+                  </>
+                )}
+                {userManagement.activeTab === "COMPANY_ADMIN" &&
+                  renderHeader("Cég", "company")}
+                {userManagement.activeTab === "UNIVERSITY_USER" &&
+                  renderHeader("Egyéb", "other")}
+                {userManagement.activeTab === "INACTIVE_USER" &&
+                  renderHeader("Szerepkör", "role")}
+
                 <th className="px-4 py-3 text-right font-semibold bg-slate-50">
                   Művelet
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {userManagement.items.map((item) => (
+              {sortedItems.map((item) => (
                 <tr
                   key={String(item.id)}
                   className="hover:bg-slate-50 transition-colors"
@@ -298,7 +393,7 @@ export default function AdminUsersPage() {
                 <tr>
                   <td
                     className="px-4 py-12 text-center text-slate-500"
-                    colSpan={5}
+                    colSpan={6}
                   >
                     {LABELS.EMPTY_CATEGORY}
                   </td>

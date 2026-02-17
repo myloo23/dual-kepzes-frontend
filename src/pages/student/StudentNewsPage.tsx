@@ -51,7 +51,7 @@ export default function StudentNewsPage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return items.filter((n) => {
-      if (onlyImportant && !n.important) return false;
+      if (onlyImportant && !n.isImportant) return false;
       if (tag !== "ALL" && !(n.tags || []).includes(tag)) return false;
 
       if (!q) return true;

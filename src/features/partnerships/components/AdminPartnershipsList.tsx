@@ -6,12 +6,15 @@ import type {
 } from "../../../types/api.types";
 import { api } from "../../../lib/api";
 import AssignUniversityUserModal from "./modals/AssignUniversityUserModal";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 interface AdminPartnershipsListProps {
   partnerships: Partnership[];
   universityUsers: UniversityUserProfile[];
   onRefresh: () => void;
   isLoading: boolean;
+  sortConfig: { key: string; direction: "asc" | "desc" } | null;
+  onSort: (key: string) => void;
 }
 
 export default function AdminPartnershipsList({
@@ -19,6 +22,8 @@ export default function AdminPartnershipsList({
   universityUsers,
   onRefresh,
   isLoading,
+  sortConfig,
+  onSort,
 }: AdminPartnershipsListProps) {
   const [selectedPartnership, setSelectedPartnership] =
     useState<Partnership | null>(null);
@@ -50,6 +55,30 @@ export default function AdminPartnershipsList({
     }
   };
 
+  const renderSortIcon = (key: string) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return <ArrowUpDown className="ml-1 h-3 w-3 text-slate-400" />;
+    }
+    return sortConfig.direction === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3 text-blue-600" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3 text-blue-600" />
+    );
+  };
+
+  const renderHeader = (label: string, sortKey: string) => (
+    <th
+      scope="col"
+      className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 cursor-pointer hover:bg-slate-100 transition-colors group"
+      onClick={() => onSort(sortKey)}
+    >
+      <div className="flex items-center">
+        {label}
+        {renderSortIcon(sortKey)}
+      </div>
+    </th>
+  );
+
   if (isLoading) {
     return <div className="p-8 text-center text-slate-500">Betöltés...</div>;
   }
@@ -74,42 +103,12 @@ export default function AdminPartnershipsList({
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Hallgató
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Cég / Pozíció
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Időszak
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Mentor
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Egyetemi Felelős
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-                >
-                  Státusz
-                </th>
+                {renderHeader("Hallgató", "student")}
+                {renderHeader("Cég / Pozíció", "company")}
+                {renderHeader("Időszak", "semester")}
+                {renderHeader("Mentor", "mentor")}
+                {renderHeader("Egyetemi Felelős", "uniEmployee")}
+                {renderHeader("Státusz", "status")}
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">Műveletek</span>
                 </th>

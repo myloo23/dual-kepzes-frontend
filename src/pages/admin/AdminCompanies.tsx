@@ -3,7 +3,7 @@
  * Manages company CRUD operations
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { companyApi } from "../../features/companies/services/companyApi";
 import type { Company } from "../../lib/api";
 import { useCRUD, useModal } from "../../hooks";
@@ -17,6 +17,8 @@ import {
 } from "../../constants";
 import { useCompanyExport } from "../../features/companies/hooks/useCompanyExport";
 import ExportButton from "../../components/shared/ExportButton";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+
 export default function AdminCompaniesPage() {
   const companies = useCRUD<Company>({
     listFn: companyApi.list,
@@ -29,6 +31,12 @@ export default function AdminCompaniesPage() {
   const modal = useModal<Company>();
   const [lookupId, setLookupId] = useState("");
   const { handleExport } = useCompanyExport();
+
+  // Sorting state
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
 
   // Load companies on mount
   useEffect(() => {
@@ -85,6 +93,63 @@ export default function AdminCompaniesPage() {
       modal.open(company);
     }
   };
+
+  // Sorting Logic
+  const handleSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedItems = useMemo(() => {
+    let sortableItems = [...companies.items];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        // @ts-ignore - dynamic sorting
+        const aValue = a[sortConfig.key] ?? "";
+        // @ts-ignore - dynamic sorting
+        const bValue = b[sortConfig.key] ?? "";
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "asc" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [companies.items, sortConfig]);
+
+  const renderSortIcon = (key: string) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return <ArrowUpDown className="ml-1 h-3 w-3 text-slate-400" />;
+    }
+    return sortConfig.direction === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3 text-blue-600" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3 text-blue-600" />
+    );
+  };
+
+  const renderHeader = (label: string, sortKey: string) => (
+    <th
+      className="px-4 py-3 text-left font-semibold bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors group"
+      onClick={() => handleSort(sortKey)}
+    >
+      <div className="flex items-center">
+        {label}
+        {renderSortIcon(sortKey)}
+      </div>
+    </th>
+  );
 
   return (
     <div className="space-y-6">
@@ -149,22 +214,16 @@ export default function AdminCompaniesPage() {
           <table className="min-w-full text-sm relative">
             <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  ID
-                </th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  Név
-                </th>
-                <th className="px-4 py-3 text-left font-semibold bg-slate-50">
-                  Kapcsolattartó
-                </th>
+                {renderHeader("ID", "id")}
+                {renderHeader("Név", "name")}
+                {renderHeader("Kapcsolattartó", "contactName")}
                 <th className="px-4 py-3 text-right font-semibold bg-slate-50">
                   Művelet
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {companies.items.map((company) => (
+              {sortedItems.map((company) => (
                 <tr
                   key={String(company.id)}
                   className="hover:bg-slate-50 transition-colors"

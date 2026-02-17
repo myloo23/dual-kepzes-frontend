@@ -18,7 +18,7 @@ const INITIAL_FORM_STATE: NewsCreatePayload = {
   content: "",
   tags: [],
   targetGroup: "STUDENT",
-  important: false,
+  isImportant: false,
 };
 
 function Chip({ text, onRemove }: { text: string; onRemove?: () => void }) {
@@ -61,7 +61,7 @@ export default function NewsFormModal({
           content: initialData.content || "",
           tags: initialData.tags || [],
           targetGroup: initialData.targetGroup || "STUDENT",
-          important: !!initialData.important,
+          isImportant: !!initialData.isImportant,
         });
       } else {
         setFormData(INITIAL_FORM_STATE);
@@ -180,9 +180,9 @@ export default function NewsFormModal({
             <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
               <input
                 type="checkbox"
-                checked={!!formData.important}
+                checked={!!formData.isImportant}
                 onChange={(e) =>
-                  setFormData((p) => ({ ...p, important: e.target.checked }))
+                  setFormData((p) => ({ ...p, isImportant: e.target.checked }))
                 }
                 className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
               />
