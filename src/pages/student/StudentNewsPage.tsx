@@ -99,7 +99,7 @@ export default function StudentNewsPage() {
         </div>
       )}
 
-      <div className="grid gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
         {filtered.map((n) => (
           <NewsCard key={String(n.id)} news={n} />
         ))}

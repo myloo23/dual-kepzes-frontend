@@ -36,7 +36,9 @@ export default function ApplicationsList() {
   const [confirmDialogId, setConfirmDialogId] = useState<string | null>(null);
   const [retractError, setRetractError] = useState<string | null>(null);
 
-  // Filtering states
+  // ... (previous code)
+
+  // Status Filter, Search, Sort states...
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | "ALL">(
     "ALL",
   );
@@ -44,6 +46,16 @@ export default function ApplicationsList() {
   const [sortBy, setSortBy] = useState<
     "newest" | "oldest" | "position-asc" | "position-desc"
   >("newest");
+
+  // Pagination / Load More state
+  const [visibleCount, setVisibleCount] = useState(5);
+
+  // ... (load useEffect)
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(5);
+  }, [statusFilter, searchQuery, sortBy]);
 
   useEffect(() => {
     const load = async () => {
@@ -141,6 +153,17 @@ export default function ApplicationsList() {
     return filtered;
   }, [applications, statusFilter, searchQuery, sortBy]);
 
+  const visibleApplications = filteredApplications.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredApplications.length;
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => prev + 5);
+  };
+
+  const handleShowLess = () => {
+    setVisibleCount(5);
+  };
+
   // Clear all filters
   const clearFilters = () => {
     setStatusFilter("ALL");
@@ -182,8 +205,9 @@ export default function ApplicationsList() {
         </h2>
       </div>
 
-      {/* Filters Section */}
+      {/* Filters Section (unchanged) */}
       <div className="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+        {/* ... (search input) ... */}
         {/* Search */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -200,6 +224,7 @@ export default function ApplicationsList() {
 
         {/* Status Filters */}
         <div className="flex flex-wrap gap-2">
+          {/* ... (buttons unchanged) ... */}
           <button
             onClick={() => setStatusFilter("ALL")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -296,7 +321,7 @@ export default function ApplicationsList() {
         </div>
       </div>
 
-      {/* No results message */}
+      {/* No results message (unchanged) */}
       {filteredApplications.length === 0 && applications.length > 0 && (
         <div className="text-center py-10">
           <div className="text-5xl mb-4">🔍</div>
@@ -315,8 +340,9 @@ export default function ApplicationsList() {
         </div>
       )}
 
+      {/* List */}
       <div className="grid gap-4">
-        {filteredApplications.map((app) => {
+        {visibleApplications.map((app) => {
           const statusConfig =
             STATUS_CONFIG[app.status as keyof typeof STATUS_CONFIG] ||
             STATUS_CONFIG.SUBMITTED;
@@ -407,7 +433,27 @@ export default function ApplicationsList() {
         })}
       </div>
 
-      {/* Confirmation Dialog */}
+      {/* Pagination Controls */}
+      <div className="flex justify-center gap-4 pt-4">
+        {hasMore && (
+          <button
+            onClick={handleShowMore}
+            className="px-6 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm"
+          >
+            Mutass többet ({filteredApplications.length - visibleCount})
+          </button>
+        )}
+        {visibleCount > 5 && (
+          <button
+            onClick={handleShowLess}
+            className="px-6 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm"
+          >
+            Kevesebb mutatása
+          </button>
+        )}
+      </div>
+
+      {/* Confirmation Dialog (unchanged) */}
       {confirmDialogId && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
