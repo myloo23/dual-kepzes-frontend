@@ -262,6 +262,11 @@ export const api = {
         `/api/partnerships/${ensureId(id, "partnershipId")}/terminate`,
         {},
       ),
+    complete: (id: Id) =>
+      apiPatch<Partnership>(
+        `/api/partnerships/${ensureId(id, "partnershipId")}/complete`,
+        {},
+      ),
   },
 
   // ============= Notifications =============

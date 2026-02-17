@@ -353,7 +353,11 @@ export interface StatsResponse {
 }
 
 // ============= Partnership Types =============
-export type PartnershipStatus = "PENDING_MENTOR" | "ACTIVE" | "TERMINATED";
+export type PartnershipStatus =
+  | "PENDING_MENTOR"
+  | "ACTIVE"
+  | "TERMINATED"
+  | "FINISHED";
 
 export interface Partnership {
   id: Id;

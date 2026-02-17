@@ -24,6 +24,7 @@ export default function PartnershipsList({
     useState<Partnership | null>(null);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [terminatingId, setTerminatingId] = useState<Id | null>(null);
+  const [completingId, setCompletingId] = useState<Id | null>(null);
 
   const handleOpenAssign = (partnership: Partnership) => {
     setSelectedPartnership(partnership);
@@ -36,7 +37,11 @@ export default function PartnershipsList({
   };
 
   const handleTerminate = async (partnershipId: Id) => {
-    if (!window.confirm("Biztosan le szeretné zárni ezt a partnerséget?"))
+    if (
+      !window.confirm(
+        "Biztosan le szeretné zárni ezt a partnerséget? Ez megszakítást jelent (TERMINATED állapot).",
+      )
+    )
       return;
     try {
       setTerminatingId(partnershipId);
@@ -47,6 +52,25 @@ export default function PartnershipsList({
       alert("Hiba történt a partnerség lezárásakor.");
     } finally {
       setTerminatingId(null);
+    }
+  };
+
+  const handleComplete = async (partnershipId: Id) => {
+    if (
+      !window.confirm(
+        "Biztosan be szeretné fejezni ezt a partnerséget? Ez sikeres teljesítést jelent (FINISHED állapot).",
+      )
+    )
+      return;
+    try {
+      setCompletingId(partnershipId);
+      await api.partnerships.complete(partnershipId);
+      onRefresh();
+    } catch (error) {
+      console.error("Failed to complete partnership:", error);
+      alert("Hiba történt a partnerség befejezésekor.");
+    } finally {
+      setCompletingId(null);
     }
   };
 
@@ -195,27 +219,44 @@ export default function PartnershipsList({
                           ? "bg-emerald-100 text-emerald-800"
                           : partnership.status === "TERMINATED"
                             ? "bg-rose-100 text-rose-800"
-                            : "bg-amber-100 text-amber-800"
+                            : partnership.status === "FINISHED"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-amber-100 text-amber-800"
                       }`}
                     >
                       {partnership.status === "ACTIVE" && "Aktív"}
                       {partnership.status === "TERMINATED" && "Lezárt"}
+                      {partnership.status === "FINISHED" && "Befejezve"}
                       {partnership.status === "PENDING_MENTOR" &&
                         "Mentor jóváhagyásra vár"}
                     </span>
                   </td>
                   <td className="px-6 py-3 text-right align-middle">
                     <div className="flex justify-end gap-2">
-                      {partnership.status !== "TERMINATED" && (
-                        <button
-                          onClick={() => handleTerminate(partnership.id)}
-                          disabled={terminatingId === partnership.id}
-                          className="text-sm font-medium text-slate-400 hover:text-red-600 transition-colors"
-                          title="Partnerség lezárása"
-                        >
-                          Lezárás
-                        </button>
+                      {partnership.status === "ACTIVE" && (
+                        <>
+                          <button
+                            onClick={() => handleComplete(partnership.id)}
+                            disabled={completingId === partnership.id}
+                            className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                            title="Partnerség sikeres befejezése"
+                          >
+                            Befejezés
+                          </button>
+                          <span className="text-slate-300">|</span>
+                        </>
                       )}
+                      {partnership.status !== "TERMINATED" &&
+                        partnership.status !== "FINISHED" && (
+                          <button
+                            onClick={() => handleTerminate(partnership.id)}
+                            disabled={terminatingId === partnership.id}
+                            className="text-sm font-medium text-slate-400 hover:text-red-600 transition-colors"
+                            title="Partnerség megszakítása"
+                          >
+                            Lezárás
+                          </button>
+                        )}
                     </div>
                   </td>
                 </tr>
