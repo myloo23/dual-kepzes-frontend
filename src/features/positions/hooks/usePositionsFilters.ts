@@ -3,7 +3,6 @@ import type { Position } from "../../../lib/api";
 import {
   norm,
   parseDate,
-  toTagCategory,
   isExpired,
   type TagLike,
 } from "../utils/positions.utils";
@@ -29,7 +28,6 @@ export function usePositionsFilters(positions: Position[]) {
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("ALL");
   const [company, setCompany] = useState("ALL");
-  const [tagCategory, setTagCategory] = useState("ALL");
   const [deadlineFilter, setDeadlineFilter] = useState<DeadlineFilter>("ALL");
   const [datePostedFilter, setDatePostedFilter] =
     useState<DatePostedFilter>("ALL");
@@ -50,44 +48,42 @@ export function usePositionsFilters(positions: Position[]) {
 
   // Extract unique values for filters
   const cities = useMemo(() => {
+    const relevantPositions = activeOnly
+      ? positions.filter((p) => !isExpired(p.deadline))
+      : positions;
     const citySet = new Set(
-      positions
+      relevantPositions
         .map((p) => p.location?.city)
         .filter((city): city is string => Boolean(city)),
     );
     return Array.from(citySet).sort();
-  }, [positions]);
+  }, [positions, activeOnly]);
 
   const companies = useMemo(() => {
+    const relevantPositions = activeOnly
+      ? positions.filter((p) => !isExpired(p.deadline))
+      : positions;
     const companySet = new Set(
-      positions
+      relevantPositions
         .map((p) => p.company?.name)
         .filter((name): name is string => Boolean(name)),
     );
     return Array.from(companySet).sort();
-  }, [positions]);
-
-  const tagCategories = useMemo(() => {
-    const categorySet = new Set<string>();
-    positions.forEach((p) => {
-      p.tags?.forEach((t: TagLike) => {
-        const cat = toTagCategory(t);
-        if (cat) categorySet.add(cat);
-      });
-    });
-    return Array.from(categorySet).sort();
-  }, [positions]);
+  }, [positions, activeOnly]);
 
   const allTags = useMemo(() => {
+    const relevantPositions = activeOnly
+      ? positions.filter((p) => !isExpired(p.deadline))
+      : positions;
     const tagSet = new Set<string>();
-    positions.forEach((p) => {
+    relevantPositions.forEach((p) => {
       p.tags?.forEach((t: TagLike) => {
         const name = toTagName(t);
         if (name) tagSet.add(name);
       });
     });
     return Array.from(tagSet).sort();
-  }, [positions]);
+  }, [positions, activeOnly]);
 
   const filteredPositions = useMemo(() => {
     return positions.filter((p) => {
@@ -120,14 +116,6 @@ export function usePositionsFilters(positions: Position[]) {
         (!p.company?.name || norm(p.company.name) !== norm(company))
       )
         return false;
-
-      // Tag category filter
-      if (tagCategory !== "ALL") {
-        const hasCategory = p.tags?.some(
-          (t: TagLike) => toTagCategory(t) === tagCategory,
-        );
-        if (!hasCategory) return false;
-      }
 
       // Selected tags filter
       if (selectedTags.length > 0) {
@@ -220,7 +208,6 @@ export function usePositionsFilters(positions: Position[]) {
     search,
     city,
     company,
-    tagCategory,
     deadlineFilter,
     datePostedFilter,
     workTypeFilter,
@@ -284,18 +271,16 @@ export function usePositionsFilters(positions: Position[]) {
       cities,
       companies,
       tags: allTags,
-      categories: tagCategories,
       showCityChips: cities.length <= 10,
       showCompanyChips: companies.length <= 10,
     }),
-    [cities, companies, allTags, tagCategories],
+    [cities, companies, allTags],
   );
 
   const resetFilters = useCallback(() => {
     setSearch("");
     setCity("ALL");
     setCompany("ALL");
-    setTagCategory("ALL");
     setDeadlineFilter("ALL");
     setDatePostedFilter("ALL");
     setWorkTypeFilter("ALL");
@@ -319,7 +304,6 @@ export function usePositionsFilters(positions: Position[]) {
     search,
     city,
     company,
-    tagCategory,
     deadlineFilter,
     datePostedFilter,
     workTypeFilter,
@@ -330,7 +314,6 @@ export function usePositionsFilters(positions: Position[]) {
     setSearch,
     setCity,
     setCompany,
-    setTagCategory,
     setDeadlineFilter,
     setDatePostedFilter,
     setWorkTypeFilter,

@@ -1,6 +1,7 @@
 // src/components/positions/FilterSidebar.tsx
 import ChipButton from "../../../components/shared/ChipButton";
 import { lower } from "../utils/positions.utils";
+import { Combobox } from "../../../components/ui/Combobox";
 
 type SortKey =
   | "NEWEST"
@@ -14,7 +15,6 @@ interface DerivedData {
   cities: string[];
   companies: string[];
   tags: string[];
-  categories: string[];
   showCityChips: boolean;
   showCompanyChips: boolean;
 }
@@ -26,7 +26,6 @@ interface FilterSidebarProps {
   search: string;
   city: string;
   company: string;
-  tagCategory: string;
   deadlineFilter: DeadlineFilter;
   positionType: PositionTypeFilter;
   activeOnly: boolean;
@@ -37,7 +36,6 @@ interface FilterSidebarProps {
   setSearch: (value: string) => void;
   setCity: (value: string) => void;
   setCompany: (value: string) => void;
-  setTagCategory: (value: string) => void;
   setDeadlineFilter: (value: DeadlineFilter) => void;
   setPositionType: (value: PositionTypeFilter) => void;
   setActiveOnly: (value: boolean | ((prev: boolean) => boolean)) => void;
@@ -56,7 +54,6 @@ export default function FilterSidebar({
   search,
   city,
   company,
-  tagCategory,
   deadlineFilter,
   positionType,
   activeOnly,
@@ -65,7 +62,6 @@ export default function FilterSidebar({
   setSearch,
   setCity,
   setCompany,
-  setTagCategory,
   setDeadlineFilter,
   setPositionType,
   setActiveOnly,
@@ -75,6 +71,18 @@ export default function FilterSidebar({
   onResetFilters,
   onToggleTag,
 }: FilterSidebarProps) {
+  // Map cities to Combobox options
+  const cityOptions = [
+    { value: "ALL", label: "Bármely" },
+    ...derived.cities.map((c) => ({ value: c, label: c })),
+  ];
+
+  // Map companies to Combobox options
+  const companyOptions = [
+    { value: "ALL", label: "Bármely" },
+    ...derived.companies.map((c) => ({ value: c, label: c })),
+  ];
+
   return (
     <aside className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-5">
       <div className="flex items-center justify-between">
@@ -88,7 +96,7 @@ export default function FilterSidebar({
         </button>
       </div>
 
-      {/* keresés */}
+      {/* 1. Keresés */}
       <div className="space-y-1">
         <label className="text-xs font-medium text-slate-700">
           Keresés cím vagy cég alapján
@@ -101,83 +109,65 @@ export default function FilterSidebar({
         />
       </div>
 
-      {/* város */}
+      {/* 2. Város (Scalable Combobox) */}
       <div className="space-y-2">
         <div className="text-xs font-medium text-slate-700">
           Képzés helyszíne
         </div>
-
-        {derived.showCityChips ? (
-          <div className="flex flex-wrap gap-1.5">
-            <ChipButton active={city === "ALL"} onClick={() => setCity("ALL")}>
-              Bármely
-            </ChipButton>
-            {derived.cities.map((c) => (
-              <ChipButton
-                key={c}
-                active={city === c}
-                onClick={() => setCity(c)}
-              >
-                {c}
-              </ChipButton>
-            ))}
-          </div>
-        ) : (
-          <select
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="ALL">Bármely</option>
-            {derived.cities.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        )}
+        <Combobox
+          options={cityOptions}
+          value={city === "ALL" ? "" : city}
+          onChange={(val) => setCity(val || "ALL")}
+          placeholder="Válassz várost vagy Bármely"
+          searchPlaceholder="Város keresése..."
+          className="w-full"
+        />
       </div>
 
-      {/* cég */}
+      {/* 3. Cég neve (Scalable Combobox) */}
       <div className="space-y-2">
         <div className="text-xs font-medium text-slate-700">Cég neve</div>
-
-        {derived.showCompanyChips ? (
-          <div className="flex flex-wrap gap-1.5">
-            <ChipButton
-              active={company === "ALL"}
-              onClick={() => setCompany("ALL")}
-            >
-              Bármely
-            </ChipButton>
-            {derived.companies.map((c) => (
-              <ChipButton
-                key={c}
-                active={company === c}
-                onClick={() => setCompany(c)}
-                title={c}
-              >
-                {c.length > 22 ? c.slice(0, 22) + "…" : c}
-              </ChipButton>
-            ))}
-          </div>
-        ) : (
-          <select
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="ALL">Bármely</option>
-            {derived.companies.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        )}
+        <Combobox
+          options={companyOptions}
+          value={company === "ALL" ? "" : company}
+          onChange={(val) => setCompany(val || "ALL")}
+          placeholder="Válassz céget vagy Bármely"
+          searchPlaceholder="Cég keresése..."
+          className="w-full"
+        />
       </div>
 
-      {/* határidő */}
+      {/* 4. Jelentkezési határidő (Active Only inside here or separate?) */}
+      {/* Kept Active Only separate near top of sections or just before filters that care about it?
+          Request order: City -> Company -> Deadline -> Position Type -> Category -> Tags.
+          I'll place 'Active Only' toggle here as a utility before detailed properties.
+       */}
+      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+        <div>
+          <div className="text-xs font-semibold text-slate-900">Csak aktív</div>
+          <div className="text-[11px] text-slate-500">
+            Lejárt határidő ne látszódjon
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setActiveOnly((p) => !p)}
+          className={[
+            "relative inline-flex h-6 w-11 items-center rounded-full transition",
+            activeOnly ? "bg-blue-600" : "bg-slate-300",
+          ].join(" ")}
+          aria-label="Csak aktív kapcsoló"
+        >
+          <span
+            className={[
+              "inline-block h-5 w-5 transform rounded-full bg-white transition",
+              activeOnly ? "translate-x-5" : "translate-x-1",
+            ].join(" ")}
+          />
+        </button>
+      </div>
+
       <div className="space-y-2">
         <div className="text-xs font-medium text-slate-700">
           Jelentkezési határidő
@@ -216,7 +206,7 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* pozíció típusa */}
+      {/* 5. Pozíció típusa */}
       <div className="space-y-2">
         <div className="text-xs font-medium text-slate-700">Pozíció típusa</div>
         <div className="flex flex-wrap gap-1.5">
@@ -241,67 +231,7 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* tag kategória */}
-      <div className="space-y-2">
-        <div className="text-xs font-medium text-slate-700">Tag kategória</div>
-        <select
-          value={tagCategory}
-          onChange={(e) => setTagCategory(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="ALL">Bármely</option>
-          {derived.categories.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* csak aktív */}
-      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-        <div>
-          <div className="text-xs font-semibold text-slate-900">Csak aktív</div>
-          <div className="text-[11px] text-slate-500">
-            Lejárt határidő ne látszódjon
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setActiveOnly((p) => !p)}
-          className={[
-            "relative inline-flex h-6 w-11 items-center rounded-full transition",
-            activeOnly ? "bg-blue-600" : "bg-slate-300",
-          ].join(" ")}
-          aria-label="Csak aktív kapcsoló"
-        >
-          <span
-            className={[
-              "inline-block h-5 w-5 transform rounded-full bg-white transition",
-              activeOnly ? "translate-x-5" : "translate-x-1",
-            ].join(" ")}
-          />
-        </button>
-      </div>
-
-      {/* rendezés */}
-      <div className="space-y-2">
-        <div className="text-xs font-medium text-slate-700">Rendezés</div>
-        <select
-          value={sortKey}
-          onChange={(e) => setSortKey(e.target.value as SortKey)}
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="RANDOM">Véletlenszerű</option>
-          <option value="NEWEST">Legújabb elöl</option>
-          <option value="DEADLINE_ASC">Határidő (hamarabb)</option>
-          <option value="DEADLINE_DESC">Határidő (később)</option>
-          <option value="TITLE_ASC">Cím (A–Z)</option>
-        </select>
-      </div>
-
-      {/* címkék (multi AND) */}
+      {/* 7. Címkék (multi AND) */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div className="text-xs font-medium text-slate-700">Címkék</div>
@@ -338,6 +268,22 @@ export default function FilterSidebar({
         <div className="text-[11px] text-slate-500">
           Tipp: több címke is kiválasztható (AND).
         </div>
+      </div>
+
+      {/* Rendezés (kept at bottom or move to top? kept at bottom for now as it affects the list) */}
+      <div className="space-y-2 pt-4 border-t border-slate-100">
+        <div className="text-xs font-medium text-slate-700">Rendezés</div>
+        <select
+          value={sortKey}
+          onChange={(e) => setSortKey(e.target.value as SortKey)}
+          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="RANDOM">Véletlenszerű</option>
+          <option value="NEWEST">Legújabb elöl</option>
+          <option value="DEADLINE_ASC">Határidő (hamarabb)</option>
+          <option value="DEADLINE_DESC">Határidő (később)</option>
+          <option value="TITLE_ASC">Cím (A–Z)</option>
+        </select>
       </div>
     </aside>
   );

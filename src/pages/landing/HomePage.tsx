@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { useAuth } from "../../features/auth";
 import LoginCard from "../../features/auth/components/LoginCard";
@@ -77,19 +77,22 @@ function HomePage() {
         >
           {/* Left Content */}
           <div className="space-y-10 animate-fade-in">
-            <div className="flex items-center gap-8">
+            <Link
+              to="/"
+              className="flex items-center gap-8 group/logos cursor-pointer w-fit"
+            >
               <img
                 src={logoImage}
                 alt="Duális Képzési Központ"
-                className="h-16 sm:h-20 w-auto object-contain"
+                className="h-16 sm:h-20 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105"
               />
               <div className="w-px h-12 bg-slate-300"></div>
               <img
                 src={njeLogoImage}
                 alt="Neumann János Egyetem"
-                className="h-20 sm:h-24 w-auto object-contain"
+                className="h-20 sm:h-24 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105"
               />
-            </div>
+            </Link>
 
             <div className="space-y-6">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tighter text-slate-900 leading-[1.05] text-balance">

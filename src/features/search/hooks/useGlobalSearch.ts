@@ -48,7 +48,7 @@ export function useGlobalSearch() {
         id: "login",
         type: "page",
         title: "Bejelentkezés",
-        link: "/login",
+        link: "/",
         subtitle: "Belépés a fiókba",
       });
       pages.push({
