@@ -1,14 +1,62 @@
 import type { Partnership } from "../../../types/api.types";
 
+import { ChevronDown, ChevronUp } from "lucide-react";
+
+type SortKey =
+  | "student"
+  | "company"
+  | "semester"
+  | "mentor"
+  | "uniEmployee"
+  | "status";
+
+export type SortConfig = {
+  key: SortKey;
+  direction: "asc" | "desc";
+};
+
 interface UniversityPartnershipsTableProps {
   partnerships: Partnership[];
   isLoading: boolean;
+  sortConfig: SortConfig;
+  onSort: (key: SortKey) => void;
 }
 
 export default function UniversityPartnershipsTable({
   partnerships,
   isLoading,
+  sortConfig,
+  onSort,
 }: UniversityPartnershipsTableProps) {
+  const renderSortIcon = (columnKey: SortKey) => {
+    if (sortConfig.key !== columnKey)
+      return <ChevronUp className="w-3 h-3 text-slate-300 opacity-50" />;
+    return sortConfig.direction === "asc" ? (
+      <ChevronUp className="w-3 h-3 text-blue-600" />
+    ) : (
+      <ChevronDown className="w-3 h-3 text-blue-600" />
+    );
+  };
+
+  const SortableHeader = ({
+    label,
+    sortKey,
+  }: {
+    label: string;
+    sortKey: SortKey;
+  }) => (
+    <th
+      scope="col"
+      className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 cursor-pointer hover:bg-slate-100 transition-colors group select-none"
+      onClick={() => onSort(sortKey)}
+    >
+      <div className="flex items-center gap-1">
+        {label}
+        {renderSortIcon(sortKey)}
+      </div>
+    </th>
+  );
+
   if (isLoading) {
     return <div className="p-8 text-center text-slate-500">Betöltés...</div>;
   }
@@ -32,42 +80,12 @@ export default function UniversityPartnershipsTable({
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
             <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-              >
-                Hallgató
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-              >
-                Cég / Pozíció
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-              >
-                Időszak
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-              >
-                Mentor
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-              >
-                Egyetemi Felelős
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-              >
-                Státusz
-              </th>
+              <SortableHeader label="Hallgató" sortKey="student" />
+              <SortableHeader label="Cég / Pozíció" sortKey="company" />
+              <SortableHeader label="Időszak" sortKey="semester" />
+              <SortableHeader label="Mentor" sortKey="mentor" />
+              <SortableHeader label="Egyetemi Felelős" sortKey="uniEmployee" />
+              <SortableHeader label="Státusz" sortKey="status" />
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">

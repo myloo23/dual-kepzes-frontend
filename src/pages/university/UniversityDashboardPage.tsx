@@ -7,8 +7,9 @@ import {
   type Partnership,
 } from "../../lib/api";
 import { useAuth } from "../../features/auth";
-import { studentsApi } from "../../features/students/services/studentsApi";
-import UniversityPartnershipsTable from "../../features/partnerships/components/UniversityPartnershipsTable";
+import UniversityPartnershipsTable, {
+  type SortConfig,
+} from "../../features/partnerships/components/UniversityPartnershipsTable";
 
 export default function UniversityDashboardPage() {
   const location = useLocation();
@@ -23,7 +24,9 @@ export default function UniversityDashboardPage() {
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
 
+  // Note: We derive students FROM partnerships to only show relevant ones
   const [students, setStudents] = useState<StudentProfile[]>([]);
+  // We keep studentsLoading to match previous behavior structure, though it depends on partnerships now
   const [studentsLoading, setStudentsLoading] = useState(false);
   const [studentsError, setStudentsError] = useState<string | null>(null);
 
@@ -32,6 +35,17 @@ export default function UniversityDashboardPage() {
   const [partnershipsError, setPartnershipsError] = useState<string | null>(
     null,
   );
+
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: "student",
+    direction: "asc",
+  });
+
+  // Filtering & Pagination State
+  const [studentSearch, setStudentSearch] = useState("");
+  const [studentMajorFilter, setStudentMajorFilter] = useState<string>("");
+  const [studentPage, setStudentPage] = useState(1);
+  const STUDENT_PAGE_SIZE = 10;
 
   const activeTab = useMemo(() => {
     const path = location.pathname;
@@ -44,6 +58,41 @@ export default function UniversityDashboardPage() {
     if (hash === "#profile") return "profile";
     return "overview";
   }, [location.pathname, location.hash]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setStudentPage(1);
+  }, [studentSearch, studentMajorFilter]);
+
+  const uniqueMajors = useMemo(() => {
+    const majors = new Set<string>();
+    students.forEach((s) => {
+      if (s.currentMajor) majors.add(s.currentMajor);
+    });
+    return Array.from(majors).sort();
+  }, [students]);
+
+  const filteredStudents = useMemo(() => {
+    return students.filter((student) => {
+      const matchesSearch =
+        studentSearch === "" ||
+        student.fullName.toLowerCase().includes(studentSearch.toLowerCase()) ||
+        student.email.toLowerCase().includes(studentSearch.toLowerCase());
+      const matchesMajor =
+        studentMajorFilter === "" ||
+        student.currentMajor === studentMajorFilter;
+      return matchesSearch && matchesMajor;
+    });
+  }, [students, studentSearch, studentMajorFilter]);
+
+  const paginatedStudents = useMemo(() => {
+    const startIndex = (studentPage - 1) * STUDENT_PAGE_SIZE;
+    return filteredStudents.slice(startIndex, startIndex + STUDENT_PAGE_SIZE);
+  }, [filteredStudents, studentPage]);
+
+  const totalStudentPages = Math.ceil(
+    filteredStudents.length / STUDENT_PAGE_SIZE,
+  );
 
   const loadProfile = async () => {
     setProfileLoading(true);
@@ -70,47 +119,104 @@ export default function UniversityDashboardPage() {
     void loadProfile();
   }, [activeTab]);
 
+  // Unified loading for partnerships (which also feeds students list)
   useEffect(() => {
-    if (activeTab !== "students") return;
+    if (activeTab !== "partnerships" && activeTab !== "students") return;
+
+    // If we already have partnerships, don't reload unless force refresh needed
+    // But simplistic approach: reload on tab switch to be safe
     const load = async () => {
-      setStudentsLoading(true);
-      setStudentsError(null);
+      setPartnershipsLoading(true);
+      setPartnershipsError(null);
+      // If looking at students, we also need to load partnerships to derive them
+      if (activeTab === "students") {
+        setStudentsLoading(true);
+        setStudentsError(null);
+      }
+
       try {
-        const list = await studentsApi.list();
-        setStudents(Array.isArray(list) ? list : []);
+        const list = await api.partnerships.listUniversity();
+        const pList = Array.isArray(list) ? list : [];
+        setPartnerships(pList);
+
+        // Derive unique students from partnerships
+        const uniqueStudentsMap = new Map<string, StudentProfile>();
+        pList.forEach((p) => {
+          if (p.student && p.student.studentProfile) {
+            // p.student is the User object, p.student.studentProfile is the Profile
+            // We ensure we have the User fields (email, name, id) merged in
+            const profile = {
+              ...p.student.studentProfile,
+              email: p.student.email,
+              fullName: p.student.fullName,
+              userId: p.student.id,
+            };
+            uniqueStudentsMap.set(String(profile.id), profile);
+          }
+        });
+        setStudents(Array.from(uniqueStudentsMap.values()));
       } catch (err) {
         const message =
           err instanceof Error
             ? err.message
-            : "Hiba a hallgatok betoltese kozben.";
-        setStudentsError(message);
+            : "Hiba az adatok betoltese kozben.";
+        setPartnershipsError(message);
+        if (activeTab === "students") setStudentsError(message);
       } finally {
-        setStudentsLoading(false);
+        setPartnershipsLoading(false);
+        if (activeTab === "students") setStudentsLoading(false);
       }
     };
     void load();
   }, [activeTab]);
 
-  useEffect(() => {
-    if (activeTab !== "partnerships") return;
-    const load = async () => {
-      setPartnershipsLoading(true);
-      setPartnershipsError(null);
-      try {
-        const list = await api.partnerships.listUniversity();
-        setPartnerships(Array.isArray(list) ? list : []);
-      } catch (err) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : "Hiba a partnerkapcsolatok betoltese kozben.";
-        setPartnershipsError(message);
-      } finally {
-        setPartnershipsLoading(false);
+  const sortedPartnerships = useMemo(() => {
+    const sorted = [...partnerships];
+    sorted.sort((a, b) => {
+      let aValue = "";
+      let bValue = "";
+
+      switch (sortConfig.key) {
+        case "student":
+          aValue = a.student?.fullName || "";
+          bValue = b.student?.fullName || "";
+          break;
+        case "company":
+          aValue = a.position?.company?.name || "";
+          bValue = b.position?.company?.name || "";
+          break;
+        case "semester":
+          aValue = a.semester || "";
+          bValue = b.semester || "";
+          break;
+        case "mentor":
+          aValue = a.mentor?.fullName || "";
+          bValue = b.mentor?.fullName || "";
+          break;
+        case "uniEmployee":
+          aValue = a.uniEmployee?.fullName || "";
+          bValue = b.uniEmployee?.fullName || "";
+          break;
+        case "status":
+          aValue = a.status || "";
+          bValue = b.status || "";
+          break;
       }
-    };
-    void load();
-  }, [activeTab]);
+
+      return sortConfig.direction === "asc"
+        ? aValue.localeCompare(bValue, "hu")
+        : bValue.localeCompare(aValue, "hu");
+    });
+    return sorted;
+  }, [partnerships, sortConfig]);
+
+  const handleSort = (key: SortConfig["key"]) => {
+    setSortConfig((current) => ({
+      key,
+      direction:
+        current.key === key && current.direction === "asc" ? "desc" : "asc",
+    }));
+  };
 
   const handleProfileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -180,9 +286,37 @@ export default function UniversityDashboardPage() {
           <div>
             <h2 className="text-lg font-semibold text-slate-900">Hallgatok</h2>
             <p className="text-sm text-slate-600">
-              Aktiv hallgatoi profilok listaja.
+              Aktiv hallgatoi profilok listaja (partnerkapcsolatok alapjan).
             </p>
           </div>
+
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Kereses nev vagy email alapjan..."
+                value={studentSearch}
+                onChange={(e) => setStudentSearch(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="w-full md:w-64">
+              <select
+                value={studentMajorFilter}
+                onChange={(e) => setStudentMajorFilter(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">-- Minden szak --</option>
+                {uniqueMajors.map((major) => (
+                  <option key={major} value={major}>
+                    {major}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           {studentsLoading && (
             <div className="text-sm text-slate-600">Betoltes...</div>
           )}
@@ -191,13 +325,15 @@ export default function UniversityDashboardPage() {
               {studentsError}
             </div>
           )}
-          {!studentsLoading && !studentsError && students.length === 0 && (
-            <div className="text-sm text-slate-600">
-              Nincs megjelenitheto hallgato.
-            </div>
-          )}
+          {!studentsLoading &&
+            !studentsError &&
+            filteredStudents.length === 0 && (
+              <div className="text-sm text-slate-600">
+                Nincs a keresesnek megfelelo hallgato.
+              </div>
+            )}
           <div className="grid gap-3">
-            {students.map((student) => (
+            {paginatedStudents.map((student) => (
               <div
                 key={String(student.id)}
                 className="rounded-lg border border-slate-200 p-4"
@@ -216,6 +352,31 @@ export default function UniversityDashboardPage() {
               </div>
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalStudentPages > 1 && (
+            <div className="flex items-center justify-between border-t border-slate-200 pt-4">
+              <button
+                onClick={() => setStudentPage((p) => Math.max(1, p - 1))}
+                disabled={studentPage === 1}
+                className="rounded-lg border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
+              >
+                Elozo
+              </button>
+              <span className="text-sm text-slate-600">
+                {studentPage} / {totalStudentPages} oldal
+              </span>
+              <button
+                onClick={() =>
+                  setStudentPage((p) => Math.min(totalStudentPages, p + 1))
+                }
+                disabled={studentPage === totalStudentPages}
+                className="rounded-lg border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
+              >
+                Kovetkezo
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -237,8 +398,10 @@ export default function UniversityDashboardPage() {
           )}
 
           <UniversityPartnershipsTable
-            partnerships={partnerships}
+            partnerships={sortedPartnerships}
             isLoading={partnershipsLoading}
+            sortConfig={sortConfig}
+            onSort={handleSort}
           />
         </div>
       )}
