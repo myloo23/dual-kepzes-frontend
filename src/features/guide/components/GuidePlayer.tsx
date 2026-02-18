@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { GuideEmbed } from "./GuideEmbed";
-import { GuideFormEmbed } from "./GuideFormEmbed";
 
 export function GuidePlayer() {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -20,15 +19,9 @@ export function GuidePlayer() {
   const steps = [
     {
       id: "presentation",
-      title: "Tananyag megtekintése",
+      title: "Tananyag és Teszt",
       component: <GuideEmbed />,
-      actionText: "A prezentációt végignéztem",
-    },
-    {
-      id: "feedback",
-      title: "Kérdőív kitöltése",
-      component: <GuideFormEmbed />,
-      actionText: "A kérdőívet kitöltöttem",
+      actionText: "A tananyagot és a tesztet sikeresen teljesítettem",
     },
   ];
 

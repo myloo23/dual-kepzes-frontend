@@ -9,7 +9,7 @@ export function GuideEmbed({ title = "Tananyag" }: GuideEmbedProps) {
         <iframe
           loading="lazy"
           className="absolute inset-0 w-full h-full border-0 p-0 m-0"
-          src="https://www.canva.com/design/DAHAWIQXn10/A7w23ousYwiKKpHynOUPmQ/view?embed"
+          src="https://www.canva.com/design/DAHBAAK86Kc/9vTO1exI26OpupqJ7es-Mg/view?embed"
           allowFullScreen
           allow="fullscreen"
           title={title}
@@ -17,14 +17,14 @@ export function GuideEmbed({ title = "Tananyag" }: GuideEmbedProps) {
       </div>
       <div className="text-center text-xs text-slate-400">
         <a
-          href="https://www.canva.com/design/DAHAWIQXn10/A7w23ousYwiKKpHynOUPmQ/view?utm_content=DAHAWIQXn10&utm_campaign=designshare&utm_medium=embeds&utm_source=link"
+          href="https://www.canva.com/design/DAHBAAK86Kc/9vTO1exI26OpupqJ7es-Mg/view?utm_content=DAHBAAK86Kc&utm_campaign=designshare&utm_medium=embeds&utm_source=link"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:underline"
         >
           Green Yellow Pink Creative Employee Training Presentation
         </a>{" "}
-        by Betty B
+        by Bettina B
       </div>
     </div>
   );
