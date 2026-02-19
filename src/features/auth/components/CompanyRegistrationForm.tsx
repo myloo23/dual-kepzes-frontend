@@ -430,7 +430,12 @@ export const CompanyRegistrationForm = () => {
                 </div>
                 <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">
                   Kijelentem, hogy elolvastam és elfogadom az{" "}
-                  <a href="#" className="text-blue-600 hover:underline">
+                  <a
+                    href="https://nje.hu/adatkezelesi-nyilatkozat"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
                     Adatkezelési Tájékoztatót
                   </a>
                   , valamint hozzájárulok a megadott adatok kezeléséhez.
