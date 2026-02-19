@@ -25,7 +25,7 @@ export default function StudentLayout() {
     {
       to: "/student/applications",
       label: "Megpályázott állások",
-      hint: "Státusz: megkapta / elutasítva / folyamatban",
+      hint: "Státusz: megkapta / betöltött pozíció / folyamatban",
     },
     {
       to: "/student/faq",

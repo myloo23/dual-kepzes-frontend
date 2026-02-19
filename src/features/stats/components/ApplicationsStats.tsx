@@ -56,7 +56,7 @@ export function ApplicationsChart() {
               PENDING: "Elbírálás alatt",
               SUBMITTED: "Benyújtva",
               ACCEPTED: "Elfogadva",
-              REJECTED: "Elutasítva",
+              REJECTED: "Betöltött pozíció",
               INTERVIEW: "Interjú",
               RETRACTED: "Visszavonva",
             };

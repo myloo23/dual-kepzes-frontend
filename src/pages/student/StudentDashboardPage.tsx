@@ -49,10 +49,11 @@ type StudentFormState = {
   studyMode: string;
   hasLanguageCert: boolean;
   languageExams: { language: string; level: string }[];
-  studentType: "HIGHSCHOOL" | "UNIVERSITY";
+  studentType: "HIGHSCHOOL" | "UNIVERSITY"; // Restored
   firstChoiceId: string; // For High School
   secondChoiceId: string; // For High School
   universityMajor: string; // For University
+  motivationLetter: string; // Renamed from motivation
 };
 
 // Returns standard nested StudentProfile
@@ -109,6 +110,8 @@ function normalizeStudentProfile(
       (merged as any).firstChoice?.id || (merged as any).firstChoiceId || "",
     secondChoiceId:
       (merged as any).secondChoice?.id || (merged as any).secondChoiceId || "",
+    universityMajor: merged.currentMajor || "",
+    motivationLetter: merged.motivationLetter ?? "",
   } as Partial<StudentProfile>;
 }
 
@@ -173,6 +176,7 @@ function buildProfileForm(
     firstChoiceId,
     secondChoiceId,
     universityMajor,
+    motivationLetter: data.motivationLetter ?? "",
   };
 }
 
@@ -225,6 +229,7 @@ function buildProfilePayload(form: StudentFormState) {
       city,
       address: streetAddress,
     },
+    motivationLetter: rest.motivationLetter,
   };
 }
 
@@ -378,7 +383,9 @@ export default function StudentDashboardPage() {
   }, [activeTab]);
 
   const handleProfileChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    event: ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const target = event.target;
     // Handle checkbox vs text/select
@@ -1239,22 +1246,46 @@ export default function StudentDashboardPage() {
                 )}
 
                 {!profileLoading && (
-                  <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 pt-4">
-                    <button
-                      onClick={handleProfileSave}
-                      disabled={profileSaving}
-                      className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
-                    >
-                      {profileSaving ? "Mentés..." : "Mentés"}
-                    </button>
-                    <button
-                      onClick={handleProfileDelete}
-                      disabled={profileDeleting}
-                      className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
-                    >
-                      {profileDeleting ? "Törlés..." : "Profil törlése"}
-                    </button>
-                  </div>
+                  <>
+                    {/* Motivation Letter */}
+                    <label className="space-y-1 text-sm text-slate-700 md:col-span-2 block mt-6">
+                      <span className="text-xs font-semibold text-slate-600 block mb-2">
+                        Motivációs levél (max 500 karakter)
+                        <span className="ml-2 font-normal text-slate-400">
+                          {profileForm.motivationLetter?.length || 0}/500
+                        </span>
+                      </span>
+                      <textarea
+                        name="motivationLetter"
+                        value={profileForm.motivationLetter ?? ""}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 500) {
+                            handleProfileChange(e);
+                          }
+                        }}
+                        rows={6}
+                        placeholder="Röviden mutatkozz be a cégeknek... Miért szeretnél duális képzésben részt venni? Milyen területek érdekelnek?"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y min-h-[100px]"
+                      />
+                    </label>
+
+                    <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 pt-4 mt-6">
+                      <button
+                        onClick={handleProfileSave}
+                        disabled={profileSaving}
+                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                      >
+                        {profileSaving ? "Mentés..." : "Mentés"}
+                      </button>
+                      <button
+                        onClick={handleProfileDelete}
+                        disabled={profileDeleting}
+                        className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
+                      >
+                        {profileDeleting ? "Törlés..." : "Profil törlése"}
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
             )}

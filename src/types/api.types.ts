@@ -113,6 +113,7 @@ export interface StudentProfile {
     language: string;
     level: string;
   }[];
+  motivationLetter?: string; // Renamed from motivation based on backend response
   firstChoiceId?: string;
   secondChoiceId?: string;
   // Backend returns objects sometimes

@@ -5,11 +5,15 @@
 
 import { useState } from "react";
 import { StudentCard } from "./StudentCard";
+import StudentDetailModal from "./StudentDetailModal";
 import { StudentFilters, type StudentFiltersState } from "./StudentFilters";
 import { useAvailableStudents } from "../hooks/useAvailableStudents";
+import type { AvailableStudent } from "../types";
 
 export const StudentList = () => {
   const { students, isLoading, error, refetch } = useAvailableStudents();
+  const [selectedStudent, setSelectedStudent] =
+    useState<AvailableStudent | null>(null);
   const [filters, setFilters] = useState<StudentFiltersState>({
     search: "",
     type: "ALL",
@@ -139,13 +143,33 @@ export const StudentList = () => {
             <StudentCard
               key={student.id}
               student={student}
-              onViewDetails={(id) => {
-                // TODO: Implement details modal or navigation
-                console.log("View student details:", id);
-              }}
+              onViewDetails={() => setSelectedStudent(student)}
             />
           ))}
         </div>
+      )}
+
+      {selectedStudent && (
+        <StudentDetailModal
+          isOpen={!!selectedStudent}
+          onClose={() => setSelectedStudent(null)}
+          student={{
+            ...selectedStudent.studentProfile,
+            id: selectedStudent.studentProfile.id,
+            userId: selectedStudent.id,
+            fullName: selectedStudent.fullName,
+            email: selectedStudent.email,
+            // Defaults for fields missing in AvailableStudent but required in StudentProfile
+            phoneNumber: "",
+            mothersName: "",
+            dateOfBirth: "",
+            location: { country: "", zipCode: 0, city: "", address: "" },
+            currentMajor: selectedStudent.studentProfile.major?.name || "",
+            major: selectedStudent.studentProfile.major || undefined,
+            studyMode: selectedStudent.studentProfile.studyMode as any,
+            motivationLetter: selectedStudent.studentProfile.motivationLetter,
+          }}
+        />
       )}
     </div>
   );

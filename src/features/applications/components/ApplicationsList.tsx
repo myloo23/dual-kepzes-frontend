@@ -17,7 +17,7 @@ const STATUS_CONFIG = {
     icon: "✅",
   },
   REJECTED: {
-    label: "Elutasítva",
+    label: "Betöltött pozíció",
     color: "bg-red-100 text-red-800 border-red-200",
     icon: "❌",
   },
@@ -265,7 +265,7 @@ export default function ApplicationsList() {
                 : "bg-white text-slate-700 border border-slate-300 hover:bg-slate-100"
             }`}
           >
-            ❌ Elutasítva (
+            ❌ Betöltött pozíció (
             {applications.filter((a) => a.status === "REJECTED").length})
           </button>
           <button

@@ -1,4 +1,4 @@
-import { apiGet, apiPatch, apiDelete } from "@/lib/api-client";
+import { apiGet, apiPatch, apiDelete, apiPost } from "@/lib/api-client";
 import type { Id, PaginationQuery, StudentProfile } from "@/types/api.types";
 import type { AvailableStudentsResponse, AvailableStudent } from "../types";
 
@@ -24,6 +24,9 @@ export const studentsApi = {
     apiPatch<StudentProfile>(`${STUDENTS_PATH}/${id}`, body),
 
   remove: (id: Id) => apiDelete<{ message?: string }>(`${STUDENTS_PATH}/${id}`),
+
+  interest: (id: Id) =>
+    apiPost<{ message: string }>(`${STUDENTS_PATH}/${id}/interest`, {}),
 
   // Current User (Me)
   me: {

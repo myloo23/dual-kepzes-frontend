@@ -20,6 +20,7 @@ export interface StudentProfile {
   language: string | null;
   languageLevel: string | null;
   isAvailableForWork: boolean;
+  motivationLetter?: string;
 }
 
 export interface AvailableStudent {

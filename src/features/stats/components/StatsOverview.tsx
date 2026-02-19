@@ -48,7 +48,7 @@ export function StatsOverview() {
         loading={loading}
       />
       <StatCard
-        title="Aktív együttműködések"
+        title="Van duális hallgató a cégnél"
         value={data?.totals?.activePartnerships}
         loading={loading}
       />
