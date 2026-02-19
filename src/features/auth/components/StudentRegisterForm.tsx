@@ -32,6 +32,7 @@ export default function StudentRegisterForm() {
   const [city, setCity] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [highSchool, setHighSchool] = useState("");
+  const [highSchoolCity, setHighSchoolCity] = useState("");
   const [graduationYear, setGraduationYear] = useState<number | "">("");
 
   // University specific
@@ -76,8 +77,15 @@ export default function StudentRegisterForm() {
       { value: zipCode, name: "Irányítószám" },
       { value: city, name: "Település" },
       { value: streetAddress, name: "Utca/házszám" },
-      { value: highSchool, name: "Középiskola" },
+      { value: streetAddress, name: "Utca/házszám" },
     ];
+
+    if (studentType === "HIGHSCHOOL") {
+      requiredFields.push(
+        { value: highSchool, name: "Középiskola" },
+        { value: highSchoolCity, name: "Középiskola városa" },
+      );
+    }
 
     for (const field of requiredFields) {
       const err = validateRequired(field.value, field.name);
@@ -131,7 +139,7 @@ export default function StudentRegisterForm() {
       payload = {
         ...commonData,
         isInHighSchool: true,
-        highSchool: highSchool.trim(),
+        highSchool: `${highSchool.trim()}, ${highSchoolCity.trim()}`,
         graduationYear: Number(graduationYear),
         studyMode,
         firstChoiceId,
@@ -398,7 +406,7 @@ export default function StudentRegisterForm() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1 md:col-span-2">
+            <div className="space-y-1">
               <label className="text-xs font-medium text-slate-700">
                 Középiskola *
               </label>
@@ -406,6 +414,18 @@ export default function StudentRegisterForm() {
                 value={highSchool}
                 onChange={(e) => setHighSchool(e.target.value)}
                 placeholder="Tóth Árpád Gimnázium"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-slate-700">
+                Középiskola városa *
+              </label>
+              <input
+                value={highSchoolCity}
+                onChange={(e) => setHighSchoolCity(e.target.value)}
+                placeholder="Debrecen"
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -654,9 +674,14 @@ export default function StudentRegisterForm() {
             className="text-sm text-blue-900 cursor-pointer"
           >
             Elfogadom az{" "}
-            <span className="font-semibold underline">
+            <a
+              href="https://nje.hu/adatkezelesi-nyilatkozat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold underline hover:text-blue-700"
+            >
               adatkezelési tájékoztatót
-            </span>
+            </a>
             , és hozzájárulok adataim kezeléséhez a regisztráció során.
           </label>
         </div>
