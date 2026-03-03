@@ -8,6 +8,7 @@ import GlobalSearch from "./components/shared/GlobalSearch";
 import PageLoader from "./components/shared/PageLoader";
 import { useToast } from "./hooks/useToast";
 import { useGlobalSearch } from "./hooks/useGlobalSearch";
+import { useTheme } from "./hooks/useTheme";
 import { AuthProvider, ProtectedRoute } from "./features/auth";
 
 // Helper function to retry lazy imports with page reload on failure
@@ -104,10 +105,12 @@ const ResetPasswordPage = lazyRetry(
 function App() {
   const { toasts, removeToast } = useToast();
   const { isOpen: isSearchOpen, close: closeSearch } = useGlobalSearch();
+  // Initialize theme
+  useTheme();
 
   return (
     <AuthProvider>
-      <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+      <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 transition-colors duration-300">
         <Navbar />
 
         <main className="flex-1">

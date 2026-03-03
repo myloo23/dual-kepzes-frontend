@@ -3,18 +3,18 @@ import njeLogoImage from "../../assets/logos/nje_logos/nje_logo2.png";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-50/50 py-6 mt-auto">
+    <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 py-6 mt-auto transition-colors duration-300">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* DKK Logo */}
           <img
             src={dkkLogoImage}
             alt="Duális Képzési Központ"
-            className="h-10 w-auto object-contain hover:scale-110 transition-transform duration-300"
+            className="h-10 w-auto object-contain hover:scale-110 transition-transform duration-300 dark:brightness-0 dark:invert"
           />
 
           {/* Copyright */}
-          <p className="text-center text-[13px] text-slate-400 font-medium tracking-wide">
+          <p className="text-center text-[13px] text-slate-400 dark:text-slate-500 font-medium tracking-wide transition-colors">
             © {new Date().getFullYear()} Duális Képzési Központ - Neumann János
             Egyetem
           </p>
@@ -23,7 +23,7 @@ export default function Footer() {
           <img
             src={njeLogoImage}
             alt="Neumann János Egyetem"
-            className="h-14 w-auto object-contain hover:scale-110 transition-transform duration-300"
+            className="h-14 w-auto object-contain hover:scale-110 transition-transform duration-300 dark:brightness-0 dark:invert"
           />
         </div>
       </div>

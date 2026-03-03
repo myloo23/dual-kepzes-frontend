@@ -128,12 +128,12 @@ export const CompanyRegistrationForm = () => {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-8 w-full max-w-4xl mx-auto">
+    <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-slate-800/50 p-8 w-full max-w-4xl mx-auto transition-colors">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-2 transition-colors">
           Céges Partner Regisztráció
         </h1>
-        <p className="text-slate-500">
+        <p className="text-slate-500 dark:text-slate-400 transition-colors">
           Csatlakozzon duális képzési rendszerünkhöz vállalati partnerként
         </p>
       </div>
@@ -143,34 +143,38 @@ export const CompanyRegistrationForm = () => {
         <div
           className={cn(
             "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors",
-            step === 1 ? "bg-blue-100 text-blue-700" : "text-slate-500",
+            step === 1
+              ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400"
+              : "text-slate-500 dark:text-slate-400",
           )}
         >
           <div
             className={cn(
-              "w-6 h-6 rounded-full flex items-center justify-center text-xs",
+              "w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors",
               step === 1
                 ? "bg-blue-600 text-white"
-                : "bg-slate-200 text-slate-500",
+                : "bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400",
             )}
           >
             1
           </div>
           Adminisztrátor adatok
         </div>
-        <div className="w-12 h-px bg-slate-200 mx-2" />
+        <div className="w-12 h-px bg-slate-200 dark:bg-slate-800 mx-2 transition-colors" />
         <div
           className={cn(
             "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors",
-            step === 2 ? "bg-blue-100 text-blue-700" : "text-slate-500",
+            step === 2
+              ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400"
+              : "text-slate-500 dark:text-slate-400",
           )}
         >
           <div
             className={cn(
-              "w-6 h-6 rounded-full flex items-center justify-center text-xs",
+              "w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors",
               step === 2
                 ? "bg-blue-600 text-white"
-                : "bg-slate-200 text-slate-500",
+                : "bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400",
             )}
           >
             2
@@ -185,24 +189,24 @@ export const CompanyRegistrationForm = () => {
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                   Teljes név *
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
+                  <User className="absolute left-3 top-2.5 h-5 w-5 text-slate-400 dark:text-slate-500 transition-colors" />
                   <input
                     required
                     type="text"
                     value={formData.admin.fullName}
                     onChange={(e) => updateAdmin("fullName", e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                    className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                     placeholder="Az adminisztrátor neve"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                   Telefonszám *
                 </label>
                 <input
@@ -210,13 +214,13 @@ export const CompanyRegistrationForm = () => {
                   type="tel"
                   value={formData.admin.phoneNumber}
                   onChange={(e) => updateAdmin("phoneNumber", e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                  className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                   placeholder="+36 30 123 4567"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                   Email cím *
                 </label>
                 <input
@@ -230,13 +234,13 @@ export const CompanyRegistrationForm = () => {
                       updateCompany("contactEmail", e.target.value);
                     }
                   }}
-                  className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                  className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                   placeholder="admin@ceg.hu"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                   Jelszó *
                 </label>
                 <input
@@ -244,13 +248,13 @@ export const CompanyRegistrationForm = () => {
                   type="password"
                   value={formData.admin.password}
                   onChange={(e) => updateAdmin("password", e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                  className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                   placeholder="Legalább 8 karakter"
                 />
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                   Munkakör / Pozíció *
                 </label>
                 <input
@@ -258,7 +262,7 @@ export const CompanyRegistrationForm = () => {
                   type="text"
                   value={formData.admin.jobTitle}
                   onChange={(e) => updateAdmin("jobTitle", e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                  className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                   placeholder="pl. HR Igazgató"
                 />
               </div>
@@ -288,52 +292,52 @@ export const CompanyRegistrationForm = () => {
         {/* STEP 2: COMPANY INFO */}
         {step === 2 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-100 space-y-6">
+            <div className="bg-slate-50/50 dark:bg-slate-800/30 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/50 space-y-6 transition-colors">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2 space-y-2">
-                  <label className="text-sm font-medium text-slate-700">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                     Cég neve *
                   </label>
                   <div className="relative">
-                    <Building2 className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
+                    <Building2 className="absolute left-3 top-2.5 h-5 w-5 text-slate-400 dark:text-slate-500 transition-colors" />
                     <input
                       required
                       value={formData.company.name}
                       onChange={(e) => updateCompany("name", e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                       placeholder="Hivatalos cégnév"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                     Adószám *
                   </label>
                   <input
                     required
                     value={formData.company.taxId}
                     onChange={(e) => updateCompany("taxId", e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                     placeholder="xxxxxxxx-x-xx"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                     Weboldal
                   </label>
                   <input
                     type="url"
                     value={formData.company.website || ""}
                     onChange={(e) => updateCompany("website", e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                     placeholder="https://..."
                   />
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <label className="text-sm font-medium text-slate-700">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                     Kapcsolattartó Név *
                   </label>
                   <input
@@ -342,16 +346,16 @@ export const CompanyRegistrationForm = () => {
                     onChange={(e) =>
                       updateCompany("contactName", e.target.value)
                     }
-                    className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                   />
                 </div>
               </div>
             </div>
 
             {/* Locations */}
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-100 space-y-4">
+            <div className="bg-slate-50/50 dark:bg-slate-800/30 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/50 space-y-4 transition-colors">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 transition-colors">
                   <MapPin className="h-4 w-4" />
                   Telephelyek címek
                 </h3>
@@ -374,7 +378,7 @@ export const CompanyRegistrationForm = () => {
                       <button
                         type="button"
                         onClick={() => removeLocation(index)}
-                        className="absolute top-0 right-0 text-slate-400 hover:text-red-500 text-xs"
+                        className="absolute top-0 right-0 text-slate-400 hover:text-red-500 dark:hover:text-red-400 text-xs transition-colors"
                       >
                         Törlés
                       </button>
@@ -387,7 +391,7 @@ export const CompanyRegistrationForm = () => {
                           updateLocation(index, "zipCode", e.target.value)
                         }
                         placeholder="Ir.szám"
-                        className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                       />
                     </div>
                     <div className="md:col-span-2">
@@ -398,7 +402,7 @@ export const CompanyRegistrationForm = () => {
                           updateLocation(index, "city", e.target.value)
                         }
                         placeholder="Város"
-                        className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                       />
                     </div>
                     <div className="md:col-span-3">
@@ -409,7 +413,7 @@ export const CompanyRegistrationForm = () => {
                           updateLocation(index, "address", e.target.value)
                         }
                         placeholder="Utca, házszám"
-                        className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -417,7 +421,7 @@ export const CompanyRegistrationForm = () => {
               )}
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-slate-100">
+            <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800 transition-colors">
               <label className="flex items-start gap-3 cursor-pointer group">
                 <div className="relative flex items-center">
                   <input
@@ -428,13 +432,13 @@ export const CompanyRegistrationForm = () => {
                     className="peer h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
                 </div>
-                <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">
+                <span className="text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors">
                   Kijelentem, hogy elolvastam és elfogadom az{" "}
                   <a
                     href="https://nje.hu/adatkezelesi-nyilatkozat"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-600 dark:text-blue-400 hover:underline transition-colors"
                   >
                     Adatkezelési Tájékoztatót
                   </a>
