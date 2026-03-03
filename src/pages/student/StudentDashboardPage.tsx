@@ -832,11 +832,17 @@ export default function StudentDashboardPage() {
                       <h3 className="text-sm font-semibold text-slate-900">
                         Munkakeresési státusz
                       </h3>
-                      <p className="text-sm text-slate-500 max-w-xl">
-                        {profile.isAvailableForWork
-                          ? "Jelenleg aktívan keresel munkát. A cégek láthatják a profilodat a keresőben."
-                          : "Nem keresel munkát. A profilod rejtve van a cégek elől (kivéve ha jelentkezel hozzájuk)."}
-                      </p>
+                      <div className="mt-1">
+                        {profile.isAvailableForWork ? (
+                          <p className="text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded inline-block">
+                            A munkáltatók most látják a profilodat.
+                          </p>
+                        ) : (
+                          <p className="text-sm font-medium text-red-600 bg-red-50 px-2 py-1 rounded inline-block">
+                            A profilod rejtve van a munkáltatók elől.
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <button
                       onClick={handleToggleAvailability}
