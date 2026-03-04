@@ -3,8 +3,18 @@ import { useTrendStats } from "../hooks/useStats";
 export function TrendsChart() {
   const { data, loading, error } = useTrendStats();
 
-  if (loading) return <div className="text-sm text-slate-500">Betöltés...</div>;
-  if (error) return <div className="text-sm text-red-500">Hiba: {error}</div>;
+  if (loading)
+    return (
+      <div className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+        Betöltés...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="text-sm text-red-500 dark:text-red-400 transition-colors">
+        Hiba: {error}
+      </div>
+    );
 
   if (!data) return null;
 
@@ -44,36 +54,42 @@ export function TrendsChart() {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 shadow-sm dark:shadow-none transition-colors">
+      <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
         Trendek (elmúlt 6 hónap)
       </h3>
 
       <div className="mb-6 flex flex-wrap gap-4 text-sm">
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-blue-500" />
-          <span className="text-slate-600">Regisztrációk</span>
+          <div className="h-3 w-3 rounded-full bg-blue-500 dark:bg-blue-400 transition-colors" />
+          <span className="text-slate-600 dark:text-slate-400 transition-colors">
+            Regisztrációk
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-green-500" />
-          <span className="text-slate-600">Jelentkezések</span>
+          <div className="h-3 w-3 rounded-full bg-green-500 dark:bg-green-400 transition-colors" />
+          <span className="text-slate-600 dark:text-slate-400 transition-colors">
+            Jelentkezések
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-purple-500" />
-          <span className="text-slate-600">Partnerségek</span>
+          <div className="h-3 w-3 rounded-full bg-purple-500 dark:bg-purple-400 transition-colors" />
+          <span className="text-slate-600 dark:text-slate-400 transition-colors">
+            Partnerségek
+          </span>
         </div>
       </div>
 
       <div className="relative h-64 w-full">
         {/* Grid lines */}
-        <div className="absolute inset-0 flex flex-col justify-between text-xs text-slate-400">
+        <div className="absolute inset-0 flex flex-col justify-between text-xs text-slate-400 dark:text-slate-500 transition-colors">
           {[100, 75, 50, 25, 0].map((pct) => (
             <div
               key={pct}
-              className="flex items-center border-b border-slate-100 last:border-0 h-6"
+              className="flex items-center border-b border-slate-100 dark:border-slate-800 last:border-0 h-6 transition-colors"
             >
               <span className="w-8">{Math.round((maxValue * pct) / 100)}</span>
-              <div className="flex-1 border-t border-dashed border-slate-200 ml-2"></div>
+              <div className="flex-1 border-t border-dashed border-slate-200 dark:border-slate-800 ml-2 transition-colors"></div>
             </div>
           ))}
         </div>
@@ -92,7 +108,7 @@ export function TrendsChart() {
         </div>
 
         {/* X Axis Labels */}
-        <div className="absolute bottom-0 left-10 right-0 flex justify-between text-xs text-slate-500">
+        <div className="absolute bottom-0 left-10 right-0 flex justify-between text-xs text-slate-500 dark:text-slate-400 transition-colors">
           {(months || []).map((month, i) => (
             <div key={i} className="text-center w-8">
               {month}

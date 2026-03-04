@@ -128,9 +128,9 @@ export default function PositionsMap({
       <div className="flex gap-4 text-sm">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-          <span className="text-slate-600">
+          <span className="text-slate-600 dark:text-slate-400 transition-colors">
             Pozíciók:{" "}
-            <span className="font-semibold text-slate-900">
+            <span className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
               {positionsWithCoords.length}
             </span>
           </span>
@@ -138,16 +138,20 @@ export default function PositionsMap({
         {userLocation && (
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-            <span className="text-slate-600">Az Ön helyzete</span>
+            <span className="text-slate-600 dark:text-slate-400 transition-colors">
+              Az Ön helyzete
+            </span>
           </div>
         )}
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-          <span className="text-slate-600">Egyetem</span>
+          <span className="text-slate-600 dark:text-slate-400 transition-colors">
+            Egyetem
+          </span>
         </div>
       </div>
 
-      <div className="relative z-0 h-[400px] w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+      <div className="relative z-0 h-[400px] w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none dark:[&_.leaflet-tile-pane]:invert dark:[&_.leaflet-tile-pane]:hue-rotate-180 dark:[&_.leaflet-tile-pane]:opacity-80 transition-colors">
         <MapContainer
           center={mapCenter}
           zoom={7}

@@ -22,29 +22,29 @@ export default function NewsFilter({
   onRefresh,
 }: NewsFilterProps) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-5 shadow-sm dark:shadow-none transition-colors">
       <div className="grid gap-4 lg:grid-cols-4 items-end">
         <div className="lg:col-span-2 space-y-1.5">
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
             Keresés
           </label>
           <input
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Cím, tartalom, címke..."
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           />
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
             Címke
           </label>
           <div className="relative">
             <select
               value={tag}
               onChange={(e) => onTagChange(e.target.value)}
-              className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 transition-all focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               <option value="ALL">Összes címke</option>
               {allTags.map((t) => (
@@ -80,10 +80,10 @@ export default function NewsFilter({
                 onChange={(e) => onImportantChange(e.target.checked)}
                 className="peer sr-only"
               />
-              <div className="h-6 w-11 rounded-full bg-slate-200 transition-all peer-checked:bg-red-500 peer-focus:ring-2 peer-focus:ring-red-500/20"></div>
+              <div className="h-6 w-11 rounded-full bg-slate-200 dark:bg-slate-700 transition-all peer-checked:bg-red-500 peer-focus:ring-2 peer-focus:ring-red-500/20"></div>
               <div className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition-all peer-checked:translate-x-5 shadow-sm"></div>
             </div>
-            <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">
               Csak fontos
             </span>
           </label>
@@ -91,7 +91,7 @@ export default function NewsFilter({
           <button
             type="button"
             onClick={onRefresh}
-            className="ml-auto inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition-all hover:bg-slate-800 hover:shadow-slate-900/20 active:scale-95"
+            className="ml-auto inline-flex items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 dark:shadow-none transition-all hover:bg-slate-800 dark:hover:bg-slate-700 hover:shadow-slate-900/20 active:scale-95"
           >
             Frissítés
           </button>

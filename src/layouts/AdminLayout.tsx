@@ -24,7 +24,7 @@ export default function AdminLayout() {
       homeLink="/admin"
       navItems={navItems}
       sidebarTop={
-        <div className="mb-2 px-2 py-1 text-[11px] text-slate-500">
+        <div className="mb-2 px-2 py-1 text-[11px] text-slate-500 dark:text-slate-400 transition-colors">
           Adminisztrációs felület
         </div>
       }

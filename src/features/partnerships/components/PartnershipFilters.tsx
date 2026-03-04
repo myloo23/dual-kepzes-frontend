@@ -19,7 +19,7 @@ export default function PartnershipFilters({
       <div className="relative flex-1 max-w-sm">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <svg
-            className="h-5 w-5 text-gray-400"
+            className="h-5 w-5 text-gray-400 dark:text-gray-500 transition-colors"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -36,7 +36,7 @@ export default function PartnershipFilters({
           value={searchQuery}
           onChange={(e) => onSearchQueryChange(e.target.value)}
           placeholder="Keresés név vagy email alapján..."
-          className="block w-full rounded-lg border border-slate-300 bg-white py-2 pl-10 pr-3 text-sm placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="block w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 py-2 pl-10 pr-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition-colors"
         />
       </div>
 
@@ -44,7 +44,7 @@ export default function PartnershipFilters({
       <div className="flex items-center gap-2">
         <label
           htmlFor="status-filter"
-          className="text-sm font-medium text-slate-700"
+          className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors"
         >
           Státusz:
         </label>
@@ -54,7 +54,7 @@ export default function PartnershipFilters({
           onChange={(e) =>
             onStatusFilterChange(e.target.value as PartnershipStatus | "ALL")
           }
-          className="rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-8 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 py-2 pl-3 pr-8 text-sm text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition-colors"
         >
           <option value="ALL">Összes</option>
           <option value="PENDING_MENTOR">Mentor jóváhagyásra vár</option>

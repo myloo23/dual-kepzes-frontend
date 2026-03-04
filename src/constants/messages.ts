@@ -163,5 +163,6 @@ export const PAGE_DESCRIPTIONS = {
   ADMIN_USERS: "Különböző szerepkörű felhasználók listázása és szerkesztése.",
   ADMIN_COMPANIES: "Összes cég, cég létrehozás / módosítás / törlés.",
   ADMIN_POSITIONS: "Összes pozíció kezelése.",
-  POSITIONS: "A jelenleg elérhető pozíciók a backendből töltődnek be.",
+  POSITIONS:
+    "Böngéssz partnercégeink aktuális duális képzési ajánlatai között, és találd meg a számodra legmegfelelőbb pozíciót.",
 } as const;

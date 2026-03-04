@@ -131,7 +131,7 @@ export default function AdminPositionsPage() {
   const getStatusBadge = (position: Position) => {
     if (!position.isActive) {
       return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 transition-colors">
           Inaktív
         </span>
       );
@@ -142,14 +142,14 @@ export default function AdminPositionsPage() {
 
     if (isExpired) {
       return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 transition-colors">
           Lejárt
         </span>
       );
     }
 
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 dark:bg-emerald-900/30 text-green-800 dark:text-emerald-400 transition-colors">
         Aktív
       </span>
     );
@@ -204,18 +204,20 @@ export default function AdminPositionsPage() {
 
   const renderSortIcon = (key: string) => {
     if (!sortConfig || sortConfig.key !== key) {
-      return <ArrowUpDown className="ml-1 h-3 w-3 text-slate-400" />;
+      return (
+        <ArrowUpDown className="ml-1 h-3 w-3 text-slate-400 dark:text-slate-500 transition-colors" />
+      );
     }
     return sortConfig.direction === "asc" ? (
-      <ArrowUp className="ml-1 h-3 w-3 text-blue-600" />
+      <ArrowUp className="ml-1 h-3 w-3 text-blue-600 dark:text-blue-400 transition-colors" />
     ) : (
-      <ArrowDown className="ml-1 h-3 w-3 text-blue-600" />
+      <ArrowDown className="ml-1 h-3 w-3 text-blue-600 dark:text-blue-400 transition-colors" />
     );
   };
 
   const renderHeader = (label: string, sortKey: string) => (
     <th
-      className="px-4 py-3 text-left font-semibold bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors group"
+      className="px-4 py-3 text-left font-semibold bg-slate-50 dark:bg-slate-900/80 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group text-slate-700 dark:text-slate-300"
       onClick={() => handleSort(sortKey)}
     >
       <div className="flex items-center">
@@ -229,28 +231,32 @@ export default function AdminPositionsPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-lg font-semibold">{PAGE_TITLES.ADMIN_POSITIONS}</h1>
-        <p className="text-sm text-slate-600">Összes pozíció kezelése.</p>
+        <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+          {PAGE_TITLES.ADMIN_POSITIONS}
+        </h1>
+        <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+          Összes pozíció kezelése.
+        </p>
       </div>
 
       {/* Feedback Messages */}
       {positions.error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
           {positions.error}
         </div>
       )}
       {positions.message && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400 transition-colors">
           {positions.message}
         </div>
       )}
 
       {/* Main Content */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm dark:shadow-none transition-colors">
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
-            <h2 className="text-base font-bold text-slate-800">
+            <h2 className="text-base font-bold text-slate-800 dark:text-slate-200 transition-colors">
               Összes pozíció
             </h2>
             <Button onClick={handleCreateNew} variant="primary" size="xs">
@@ -276,7 +282,7 @@ export default function AdminPositionsPage() {
             value={lookupId}
             onChange={(e) => setLookupId(e.target.value)}
             placeholder="Pozíció keresése ID alapján..."
-            className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+            className="w-full max-w-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all shadow-sm"
           />
           <Button type="button" onClick={handleLookup} variant="dark" size="sm">
             {LABELS.SEARCH}
@@ -284,32 +290,32 @@ export default function AdminPositionsPage() {
         </div>
 
         {/* Table */}
-        <div className="overflow-y-auto max-h-[600px] rounded-xl border border-slate-200 shadow-sm">
+        <div className="overflow-y-auto max-h-[600px] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
           <table className="min-w-full text-sm relative">
-            <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
+            <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 sticky top-0 z-10 shadow-sm transition-colors">
               <tr>
                 {renderHeader("ID", "id")}
                 {renderHeader("Cím", "title")}
                 {renderHeader("Város", "city")}
                 {renderHeader("Státusz", "status")}
-                <th className="px-4 py-3 text-right font-semibold bg-slate-50">
+                <th className="px-4 py-3 text-right font-semibold bg-slate-50 dark:bg-slate-900/80 transition-colors">
                   Művelet
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 transition-colors">
               {sortedItems.map((position) => (
                 <tr
                   key={String(position.id)}
-                  className="hover:bg-slate-50 transition-colors"
+                  className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                 >
-                  <td className="px-4 py-3 text-slate-500 font-mono text-xs">
+                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400 font-mono text-xs transition-colors">
                     {String(position.id).slice(0, 8)}...
                   </td>
-                  <td className="px-4 py-3 font-medium text-slate-900">
+                  <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
                     {position.title}
                   </td>
-                  <td className="px-4 py-3 text-slate-600">
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                     {position.location?.city || "-"}
                   </td>
                   <td className="px-4 py-3">
@@ -318,7 +324,7 @@ export default function AdminPositionsPage() {
                       {!position.isDual && (
                         <span
                           title="Full-time"
-                          className="inline-flex items-center justify-center w-6 h-6 rounded text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 transition-colors"
                         >
                           <Briefcase size={12} />
                         </span>
@@ -357,7 +363,7 @@ export default function AdminPositionsPage() {
               {!positions.loading && positions.items.length === 0 && (
                 <tr>
                   <td
-                    className="px-4 py-12 text-center text-slate-500"
+                    className="px-4 py-12 text-center text-slate-500 dark:text-slate-400 transition-colors"
                     colSpan={5}
                   >
                     {LABELS.NO_DATA}

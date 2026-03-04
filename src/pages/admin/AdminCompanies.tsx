@@ -130,18 +130,20 @@ export default function AdminCompaniesPage() {
 
   const renderSortIcon = (key: string) => {
     if (!sortConfig || sortConfig.key !== key) {
-      return <ArrowUpDown className="ml-1 h-3 w-3 text-slate-400" />;
+      return (
+        <ArrowUpDown className="ml-1 h-3 w-3 text-slate-400 dark:text-slate-500 transition-colors" />
+      );
     }
     return sortConfig.direction === "asc" ? (
-      <ArrowUp className="ml-1 h-3 w-3 text-blue-600" />
+      <ArrowUp className="ml-1 h-3 w-3 text-blue-600 dark:text-blue-400 transition-colors" />
     ) : (
-      <ArrowDown className="ml-1 h-3 w-3 text-blue-600" />
+      <ArrowDown className="ml-1 h-3 w-3 text-blue-600 dark:text-blue-400 transition-colors" />
     );
   };
 
   const renderHeader = (label: string, sortKey: string) => (
     <th
-      className="px-4 py-3 text-left font-semibold bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors group"
+      className="px-4 py-3 text-left font-semibold bg-slate-50 dark:bg-slate-900/80 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group text-slate-700 dark:text-slate-300"
       onClick={() => handleSort(sortKey)}
     >
       <div className="flex items-center">
@@ -155,30 +157,34 @@ export default function AdminCompaniesPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-lg font-semibold">{PAGE_TITLES.ADMIN_COMPANIES}</h1>
-        <p className="text-sm text-slate-600">
+        <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+          {PAGE_TITLES.ADMIN_COMPANIES}
+        </h1>
+        <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
           {PAGE_DESCRIPTIONS.ADMIN_COMPANIES}
         </p>
       </div>
 
       {/* Feedback Messages */}
       {companies.error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
           {companies.error}
         </div>
       )}
       {companies.message && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400 transition-colors">
           {companies.message}
         </div>
       )}
 
       {/* Main Content */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm dark:shadow-none transition-colors">
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
-            <h2 className="text-base font-bold text-slate-800">Összes cég</h2>
+            <h2 className="text-base font-bold text-slate-800 dark:text-slate-200 transition-colors">
+              Összes cég
+            </h2>
             <Button onClick={handleCreateNew} variant="primary" size="xs">
               + Új cég
             </Button>
@@ -202,7 +208,7 @@ export default function AdminCompaniesPage() {
             value={lookupId}
             onChange={(e) => setLookupId(e.target.value)}
             placeholder={LABELS.SEARCH_COMPANY_BY_ID}
-            className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+            className="w-full max-w-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all shadow-sm"
           />
           <Button type="button" onClick={handleLookup} variant="dark" size="sm">
             {LABELS.SEARCH}
@@ -210,33 +216,33 @@ export default function AdminCompaniesPage() {
         </div>
 
         {/* Table */}
-        <div className="overflow-y-auto max-h-[600px] rounded-xl border border-slate-200 shadow-sm">
+        <div className="overflow-y-auto max-h-[600px] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
           <table className="min-w-full text-sm relative">
-            <thead className="bg-slate-50 text-slate-600 sticky top-0 z-10 shadow-sm">
+            <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 sticky top-0 z-10 shadow-sm transition-colors">
               <tr>
                 {renderHeader("ID", "id")}
                 {renderHeader("Név", "name")}
                 {renderHeader("Kapcsolattartó", "contactName")}
-                <th className="px-4 py-3 text-right font-semibold bg-slate-50">
+                <th className="px-4 py-3 text-right font-semibold bg-slate-50 dark:bg-slate-900/80 transition-colors">
                   Művelet
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 transition-colors">
               {sortedItems.map((company) => (
                 <tr
                   key={String(company.id)}
-                  className="hover:bg-slate-50 transition-colors"
+                  className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                 >
-                  <td className="px-4 py-3 text-slate-500 font-mono text-xs">
+                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400 font-mono text-xs transition-colors">
                     {String(company.id).slice(0, 8)}...
                   </td>
-                  <td className="px-4 py-3 font-medium text-slate-900">
+                  <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
                     {company.name}
                   </td>
-                  <td className="px-4 py-3 text-slate-600">
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                     <div className="text-xs">{company.contactName}</div>
-                    <div className="text-[10px] text-slate-400">
+                    <div className="text-[10px] text-slate-400 dark:text-slate-500 transition-colors">
                       {company.contactEmail}
                     </div>
                   </td>
@@ -263,7 +269,7 @@ export default function AdminCompaniesPage() {
               {!companies.loading && companies.items.length === 0 && (
                 <tr>
                   <td
-                    className="px-4 py-12 text-center text-slate-500"
+                    className="px-4 py-12 text-center text-slate-500 dark:text-slate-400 transition-colors"
                     colSpan={5}
                   >
                     {LABELS.NO_DATA}

@@ -16,14 +16,14 @@ export function NotificationFilters({
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <div className="relative">
-        <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+        <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500 pointer-events-none transition-colors" />
         <select
           value={filters.role}
           onChange={(e) => onFilterChange("role", e.target.value)}
           className={cn(
-            "appearance-none pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-700",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all",
-            "hover:bg-slate-50 cursor-pointer min-w-[200px]",
+            "appearance-none pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium text-slate-700 dark:text-slate-300",
+            "focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 transition-all",
+            "hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer min-w-[200px]",
           )}
         >
           <option value="">Összes szerepkör</option>
@@ -32,7 +32,7 @@ export function NotificationFilters({
           <option value="ROLE_UNIVERSITY_USER">Egyetem</option>
           <option value="ROLE_SYSTEM_ADMIN">Rendszergazda</option>
         </select>
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-slate-500 transition-colors">
           <svg
             className="h-4 w-4"
             fill="none"
@@ -50,14 +50,14 @@ export function NotificationFilters({
       </div>
 
       <div className="relative">
-        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500 pointer-events-none transition-colors" />
         <select
           value={filters.type}
           onChange={(e) => onFilterChange("type", e.target.value)}
           className={cn(
-            "appearance-none pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-700",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all",
-            "hover:bg-slate-50 cursor-pointer min-w-[200px]",
+            "appearance-none pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium text-slate-700 dark:text-slate-300",
+            "focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 transition-all",
+            "hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer min-w-[200px]",
           )}
         >
           <option value="">Összes típus</option>
@@ -66,7 +66,7 @@ export function NotificationFilters({
           <option value="APPLICATION">Jelentkezés</option>
           <option value="POSITION">Pozíció</option>
         </select>
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-slate-500 transition-colors">
           <svg
             className="h-4 w-4"
             fill="none"

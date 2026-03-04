@@ -64,8 +64,10 @@ export default function StudentNewsPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-xl font-semibold text-slate-900">Hírek</h1>
-        <p className="text-sm text-slate-600">
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+          Hírek
+        </h1>
+        <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
           Admin által kiküldött hírek és értesítések.
         </p>
       </header>
@@ -82,19 +84,19 @@ export default function StudentNewsPage() {
       />
 
       {loading && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 text-sm text-slate-600 dark:text-slate-400 transition-colors">
           Betöltés...
         </div>
       )}
 
       {err && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-2xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400 transition-colors">
           {err}
         </div>
       )}
 
       {!loading && !err && filtered.length === 0 && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 text-sm text-slate-600 dark:text-slate-400 transition-colors">
           Nincs megjeleníthető hír.
         </div>
       )}

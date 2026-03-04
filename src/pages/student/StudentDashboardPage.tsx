@@ -581,17 +581,19 @@ export default function StudentDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
       <div className="mx-auto max-w-6xl px-4 lg:px-8 py-6">
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm dark:shadow-none overflow-hidden transition-colors">
           {/* TOP BAR */}
-          <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-10">
+          <header className="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur sticky top-0 z-10 transition-colors">
             <div className="px-4 lg:px-8 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-emerald-500" />
                 <div>
-                  <div className="text-sm text-slate-500">Diák felület</div>
-                  <div className="font-semibold text-slate-900">
+                  <div className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                    Diák felület
+                  </div>
+                  <div className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                     Üdv, {user?.email ?? "Hallgató"} 👋
                   </div>
                 </div>
@@ -600,7 +602,7 @@ export default function StudentDashboardPage() {
               <div className="flex items-center gap-2">
                 <Link
                   to="/positions"
-                  className="hidden sm:inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                  className="hidden sm:inline-flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Állások böngészése
                 </Link>
@@ -618,14 +620,14 @@ export default function StudentDashboardPage() {
           {/* CONTENT */}
           <main className="px-4 lg:px-8 py-8 space-y-6">
             {/* TAB NAVIGATION */}
-            <div className="border-b border-slate-200">
-              <nav className="flex gap-8">
+            <div className="border-b border-slate-200 dark:border-slate-800 transition-colors shrink-0 overflow-x-auto scrollbar-none">
+              <nav className="flex gap-8 min-w-max">
                 <Link
                   to="/student"
                   className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${
                     activeTab === "overview"
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-slate-600 hover:text-slate-900"
+                      ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
                   Áttekintés
@@ -634,8 +636,8 @@ export default function StudentDashboardPage() {
                   to="/student#applications"
                   className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${
                     activeTab === "applications"
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-slate-600 hover:text-slate-900"
+                      ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
                   Jelentkezéseim
@@ -645,8 +647,8 @@ export default function StudentDashboardPage() {
                   to="/student/news"
                   className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${
                     activeTab === "news"
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-slate-600 hover:text-slate-900"
+                      ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
                   Hírek
@@ -656,8 +658,8 @@ export default function StudentDashboardPage() {
                   to="/student/partnerships"
                   className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${
                     activeTab === "partnerships"
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-slate-600 hover:text-slate-900"
+                      ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
                   Partnerek
@@ -667,8 +669,8 @@ export default function StudentDashboardPage() {
                   to="/student#profile"
                   className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${
                     activeTab === "profile"
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-slate-600 hover:text-slate-900"
+                      ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
                   Saját profil
@@ -678,8 +680,8 @@ export default function StudentDashboardPage() {
                   to="/student/guide"
                   className={`pb-4 px-1 text-sm font-semibold border-b-2 transition ${
                     activeTab === "guide"
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-slate-600 hover:text-slate-900"
+                      ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
                   Tananyag
@@ -691,11 +693,11 @@ export default function StudentDashboardPage() {
             {activeTab === "overview" && (
               <>
                 {/* HERO CARD */}
-                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <h1 className="text-2xl font-semibold text-slate-900">
+                <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 shadow-sm dark:shadow-none transition-colors">
+                  <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                     Kezdjük el a jelentkezést!
                   </h1>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                     Itt fogod látni a jelentkezéseidet, státuszokat, határidőket
                     és a mentett pozíciókat.
                   </p>
@@ -710,7 +712,7 @@ export default function StudentDashboardPage() {
 
                     <button
                       onClick={() => alert("Később: profil kitöltése oldal")}
-                      className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                      className="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-2.5 text-sm font-semibold text-slate-900 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Profil kitöltése
                     </button>
@@ -720,23 +722,23 @@ export default function StudentDashboardPage() {
                 {/* GRID */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   {/* My applications */}
-                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <div className="text-sm font-semibold text-slate-900">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-5 shadow-sm dark:shadow-none transition-colors">
+                    <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                       Jelentkezéseim
                     </div>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                       Gyors áttekintés a jelentkezéseidről.
                     </p>
 
                     <div className="mt-4 space-y-2">
                       <Link
                         to="/student#applications"
-                        className="block w-full text-left rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm hover:bg-slate-100 transition"
+                        className="block w-full text-left rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-3 text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                       >
-                        <div className="font-medium text-slate-900">
+                        <div className="font-medium text-slate-900 dark:text-slate-200 transition-colors">
                           Jelentkezések megtekintése →
                         </div>
-                        <div className="text-slate-600">
+                        <div className="text-slate-600 dark:text-slate-400 transition-colors">
                           Kattints ide a részletekért
                         </div>
                       </Link>
@@ -744,29 +746,29 @@ export default function StudentDashboardPage() {
                   </div>
 
                   {/* Deadlines */}
-                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <div className="text-sm font-semibold text-slate-900">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-5 shadow-sm dark:shadow-none transition-colors">
+                    <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                       Határidők
                     </div>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                       (Mock) Később ide jönnek a leadási / jelentkezési
                       határidők.
                     </p>
 
                     <div className="mt-4 space-y-2">
-                      <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-3 text-sm">
-                        <span className="text-slate-700">
+                      <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-sm transition-colors">
+                        <span className="text-slate-700 dark:text-slate-300 transition-colors">
                           Önéletrajz frissítése
                         </span>
-                        <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+                        <span className="rounded-full bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 transition-colors">
                           jövő hét
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-3 text-sm">
-                        <span className="text-slate-700">
+                      <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-sm transition-colors">
+                        <span className="text-slate-700 dark:text-slate-300 transition-colors">
                           Mentett pozíciók átnézése
                         </span>
-                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+                        <span className="rounded-full bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 transition-colors">
                           ma
                         </span>
                       </div>
@@ -774,32 +776,32 @@ export default function StudentDashboardPage() {
                   </div>
 
                   {/* Quick actions */}
-                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <div className="text-sm font-semibold text-slate-900">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-5 shadow-sm dark:shadow-none transition-colors">
+                    <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                       Gyors műveletek
                     </div>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                       Hasznos linkek és műveletek.
                     </p>
 
                     <div className="mt-4 grid grid-cols-1 gap-2">
                       <Link
                         to="/positions"
-                        className="rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                        className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-sm font-semibold text-slate-900 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
                         Állások böngészése →
                       </Link>
 
                       <Link
                         to="/student#applications"
-                        className="block text-left rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                        className="block text-left rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-sm font-semibold text-slate-900 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
                         Jelentkezéseim →
                       </Link>
 
                       <button
                         onClick={() => alert("Később: beállítások oldal")}
-                        className="text-left rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                        className="text-left rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-sm font-semibold text-slate-900 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
                         Beállítások →
                       </button>
@@ -810,35 +812,35 @@ export default function StudentDashboardPage() {
             )}
 
             {activeTab === "applications" && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 shadow-sm dark:shadow-none transition-colors">
                 <ApplicationsList />
               </div>
             )}
             {activeTab === "profile" && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 shadow-sm dark:shadow-none space-y-6 transition-colors">
                 <header className="space-y-1">
-                  <h1 className="text-xl font-semibold text-slate-900">
+                  <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                     Saját profil
                   </h1>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
                     Itt frissítheted a saját adataidat, vagy törölheted a
                     profilodat.
                   </p>
                 </header>
 
                 {!profileLoading && profile && (
-                  <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4">
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-900">
+                      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-200 transition-colors">
                         Munkakeresési státusz
                       </h3>
                       <div className="mt-1">
                         {profile.isAvailableForWork ? (
-                          <p className="text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded inline-block">
+                          <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded inline-block transition-colors">
                             A munkáltatók most látják a profilodat.
                           </p>
                         ) : (
-                          <p className="text-sm font-medium text-red-600 bg-red-50 px-2 py-1 rounded inline-block">
+                          <p className="text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded inline-block transition-colors">
                             A profilod rejtve van a munkáltatók elől.
                           </p>
                         )}
@@ -847,10 +849,10 @@ export default function StudentDashboardPage() {
                     <button
                       onClick={handleToggleAvailability}
                       type="button"
-                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 ${
                         profile.isAvailableForWork
-                          ? "bg-blue-600"
-                          : "bg-slate-200"
+                          ? "bg-blue-600 border-blue-600 dark:bg-blue-500"
+                          : "bg-slate-200 dark:bg-slate-700"
                       }`}
                     >
                       <span
@@ -865,38 +867,38 @@ export default function StudentDashboardPage() {
                 )}
 
                 {profileLoading && (
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                  <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-4 text-sm text-slate-600 dark:text-slate-400">
                     Betöltés...
                   </div>
                 )}
 
                 {!profileLoading && profileError && (
-                  <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                  <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400 transition-colors">
                     {profileError}
                   </div>
                 )}
 
                 {!profileLoading && profileSuccess && (
-                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+                  <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 p-4 text-sm text-emerald-700 dark:text-emerald-400 transition-colors">
                     {profileSuccess}
                   </div>
                 )}
 
                 {!profileLoading && !profileError && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Teljes név
                       </span>
                       <input
                         name="fullName"
                         value={profileForm.fullName ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         E-mail
                       </span>
                       <input
@@ -904,33 +906,33 @@ export default function StudentDashboardPage() {
                         name="email"
                         value={profileForm.email ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Telefonszám
                       </span>
                       <input
                         name="phoneNumber"
                         value={profileForm.phoneNumber ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Anyja neve
                       </span>
                       <input
                         name="mothersName"
                         value={profileForm.mothersName ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Születési dátum
                       </span>
                       <input
@@ -938,78 +940,78 @@ export default function StudentDashboardPage() {
                         name="dateOfBirth"
                         value={profileForm.dateOfBirth ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Ország
                       </span>
                       <input
                         name="country"
                         value={profileForm.country ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Irányítószám
                       </span>
                       <input
                         name="zipCode"
                         value={profileForm.zipCode ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Város
                       </span>
                       <input
                         name="city"
                         value={profileForm.city ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700 md:col-span-2">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 md:col-span-2 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Utca, házszám
                       </span>
                       <input
                         name="streetAddress"
                         value={profileForm.streetAddress ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700 md:col-span-2">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 md:col-span-2 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Középiskola
                       </span>
                       <input
                         name="highSchool"
                         value={profileForm.highSchool ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Érettségi éve
                       </span>
                       <input
                         name="graduationYear"
                         value={profileForm.graduationYear ?? ""}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </label>
 
                     {/* Student Type Switch */}
-                    <div className="md:col-span-2 flex gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div className="md:col-span-2 flex gap-6 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
@@ -1021,9 +1023,9 @@ export default function StudentDashboardPage() {
                               studentType: "HIGHSCHOOL",
                             }))
                           }
-                          className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                          className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-slate-600"
                         />
-                        <span className="text-sm font-medium text-slate-700">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                           Középiskolás
                         </span>
                       </label>
@@ -1038,17 +1040,17 @@ export default function StudentDashboardPage() {
                               studentType: "UNIVERSITY",
                             }))
                           }
-                          className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                          className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-slate-600"
                         />
-                        <span className="text-sm font-medium text-slate-700">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                           Egyetemista
                         </span>
                       </label>
                     </div>
 
                     {profileForm.studentType === "UNIVERSITY" && (
-                      <label className="space-y-1 text-sm text-slate-700">
-                        <span className="text-xs font-semibold text-slate-600">
+                      <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                           Neptun kód
                         </span>
                         <input
@@ -1056,13 +1058,13 @@ export default function StudentDashboardPage() {
                           value={profileForm.neptunCode ?? ""}
                           onChange={handleProfileChange}
                           placeholder="ABC123"
-                          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                         />
                       </label>
                     )}
 
                     <div className="space-y-1 text-sm text-slate-700 md:col-span-2">
-                      <span className="text-xs font-semibold text-slate-600">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         {profileForm.studentType === "HIGHSCHOOL"
                           ? "Megjelölt szakok"
                           : "Szak megnevezése"}
@@ -1082,7 +1084,7 @@ export default function StudentDashboardPage() {
                                   firstChoiceId: e.target.value,
                                 }))
                               }
-                              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             >
                               <option value="">
                                 {majorsLoading
@@ -1110,7 +1112,7 @@ export default function StudentDashboardPage() {
                                   secondChoiceId: e.target.value,
                                 }))
                               }
-                              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             >
                               <option value="">
                                 {majorsLoading
@@ -1139,7 +1141,7 @@ export default function StudentDashboardPage() {
                               universityMajor: e.target.value,
                             }))
                           }
-                          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                         >
                           <option value="">
                             {majorsLoading
@@ -1155,38 +1157,38 @@ export default function StudentDashboardPage() {
                         </select>
                       )}
                     </div>
-                    <label className="space-y-1 text-sm text-slate-700">
-                      <span className="text-xs font-semibold text-slate-600">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                         Képzési forma
                       </span>
                       <select
                         name="studyMode"
                         value={profileForm.studyMode ?? "NAPPALI"}
                         onChange={handleProfileChange}
-                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                       >
                         <option value="NAPPALI">Nappali</option>
                         <option value="LEVELEZŐ">Levelező</option>
                       </select>
                     </label>
-                    <label className="flex items-center gap-3 text-sm text-slate-700 md:col-span-2">
+                    <label className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300 md:col-span-2 transition-colors">
                       <input
                         type="checkbox"
                         name="hasLanguageCert"
                         checked={Boolean(profileForm.hasLanguageCert)}
                         onChange={handleProfileChange}
-                        className="h-4 w-4"
+                        className="h-4 w-4 rounded border-gray-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"
                       />
                       Van nyelvvizsga
                     </label>
 
                     {/* Language Exams */}
                     {profileForm.hasLanguageCert && (
-                      <div className="md:col-span-2 space-y-3 pl-7 border-l-2 border-slate-100">
+                      <div className="md:col-span-2 space-y-3 pl-7 border-l-2 border-slate-100 dark:border-slate-800 transition-colors">
                         {profileForm.languageExams?.map((exam, idx) => (
                           <div key={idx} className="flex gap-3 items-end">
                             <label className="space-y-1 text-sm text-slate-700 flex-1">
-                              <span className="text-xs font-semibold text-slate-600">
+                              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                                 Nyelv
                               </span>
                               <select
@@ -1198,7 +1200,7 @@ export default function StudentDashboardPage() {
                                     e.target.value,
                                   )
                                 }
-                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                               >
                                 {LANGUAGES.map((l) => (
                                   <option key={l} value={l}>
@@ -1208,7 +1210,7 @@ export default function StudentDashboardPage() {
                               </select>
                             </label>
                             <label className="space-y-1 text-sm text-slate-700 w-32">
-                              <span className="text-xs font-semibold text-slate-600">
+                              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
                                 Szint
                               </span>
                               <select
@@ -1220,7 +1222,7 @@ export default function StudentDashboardPage() {
                                     e.target.value,
                                   )
                                 }
-                                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                               >
                                 {LANGUAGE_LEVELS.map((l) => (
                                   <option key={l} value={l}>
@@ -1232,7 +1234,7 @@ export default function StudentDashboardPage() {
                             <button
                               type="button"
                               onClick={() => removeLanguageExam(idx)}
-                              className="mb-2 p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                              className="mb-2 p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                               title="Törlés"
                             >
                               ✕
@@ -1254,10 +1256,10 @@ export default function StudentDashboardPage() {
                 {!profileLoading && (
                   <>
                     {/* Motivation Letter */}
-                    <label className="space-y-1 text-sm text-slate-700 md:col-span-2 block mt-6">
-                      <span className="text-xs font-semibold text-slate-600 block mb-2">
+                    <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 md:col-span-2 block mt-6 transition-colors">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 block mb-2 transition-colors">
                         Motivációs levél (max 500 karakter)
-                        <span className="ml-2 font-normal text-slate-400">
+                        <span className="ml-2 font-normal text-slate-400 dark:text-slate-500">
                           {profileForm.motivationLetter?.length || 0}/500
                         </span>
                       </span>
@@ -1271,22 +1273,22 @@ export default function StudentDashboardPage() {
                         }}
                         rows={6}
                         placeholder="Röviden mutatkozz be a cégeknek... Miért szeretnél duális képzésben részt venni? Milyen területek érdekelnek?"
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y min-h-[100px]"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-y min-h-[100px]"
                       />
                     </label>
 
-                    <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 pt-4 mt-6">
+                    <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 dark:border-slate-800 pt-4 mt-6 transition-colors">
                       <button
                         onClick={handleProfileSave}
                         disabled={profileSaving}
-                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
                       >
                         {profileSaving ? "Mentés..." : "Mentés"}
                       </button>
                       <button
                         onClick={handleProfileDelete}
                         disabled={profileDeleting}
-                        className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
+                        className="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-2 text-sm font-semibold text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 disabled:opacity-60 transition-colors"
                       >
                         {profileDeleting ? "Törlés..." : "Profil törlése"}
                       </button>
@@ -1296,7 +1298,7 @@ export default function StudentDashboardPage() {
               </div>
             )}
             {activeTab === "news" && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 shadow-sm dark:shadow-none transition-colors">
                 <StudentNewsPage />
               </div>
             )}
@@ -1304,10 +1306,10 @@ export default function StudentDashboardPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold text-slate-900">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 transition-colors">
                       Partnerkapcsolatok
                     </h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors">
                       Az Önhöz kapcsolódó partnerkapcsolatok és együttműködések.
                     </p>
                   </div>
@@ -1321,17 +1323,17 @@ export default function StudentDashboardPage() {
             )}
             {activeTab === "guide" && (
               <div className="space-y-6">
-                <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+                <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-8 shadow-sm dark:shadow-none transition-colors">
                   <div className="text-center mb-8">
-                    <div className="mx-auto w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                    <div className="mx-auto w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-4 transition-colors">
                       <span className="text-3xl">📚</span>
                     </div>
 
-                    <h1 className="text-2xl font-semibold text-slate-900 mb-2">
+                    <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
                       Tananyag és útmutató
                     </h1>
 
-                    <p className="text-slate-600 max-w-md mx-auto">
+                    <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto transition-colors">
                       Kövesd a lépéseket a tananyag elsajátításához.
                     </p>
                   </div>

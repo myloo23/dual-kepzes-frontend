@@ -19,10 +19,14 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const ROLE_COLORS: Record<string, string> = {
-  ROLE_STUDENT: "bg-blue-100 text-blue-700 border-blue-200",
-  ROLE_COMPANY_ADMIN: "bg-purple-100 text-purple-700 border-purple-200",
-  ROLE_UNIVERSITY_USER: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  ROLE_SYSTEM_ADMIN: "bg-orange-100 text-orange-700 border-orange-200",
+  ROLE_STUDENT:
+    "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800/50",
+  ROLE_COMPANY_ADMIN:
+    "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800/50",
+  ROLE_UNIVERSITY_USER:
+    "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/50",
+  ROLE_SYSTEM_ADMIN:
+    "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800/50",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -67,7 +71,7 @@ export function NotificationList({
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="animate-pulse bg-white rounded-xl border border-slate-200 p-6 h-32"
+            className="animate-pulse bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 h-32 transition-colors"
           />
         ))}
       </div>
@@ -76,8 +80,8 @@ export function NotificationList({
 
   if (notifications.length === 0) {
     return (
-      <div className="text-center py-20 bg-white rounded-xl border border-slate-200">
-        <div className="mx-auto h-16 w-16 text-slate-200 mb-4">
+      <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
+        <div className="mx-auto h-16 w-16 text-slate-200 dark:text-slate-700 mb-4 transition-colors">
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
@@ -87,10 +91,10 @@ export function NotificationList({
             />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-slate-900">
+        <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 transition-colors">
           Nincs megjeleníthető értesítés
         </h3>
-        <p className="text-slate-500 mt-1">
+        <p className="text-slate-500 dark:text-slate-400 mt-1 transition-colors">
           Jelenleg nincs az új üzeneted a kiválasztott szűrők alapján.
         </p>
       </div>
@@ -104,7 +108,7 @@ export function NotificationList({
         const roleLabel = ROLE_LABELS[notification.senderRole || ""];
         const roleClass =
           ROLE_COLORS[notification.senderRole || ""] ||
-          "bg-slate-100 text-slate-600 border-slate-200";
+          "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700";
         const typeLabel =
           TYPE_LABELS[notification.type || ""] || notification.type || "Egyéb";
         const actionLink = getActionLink(notification);
@@ -113,10 +117,10 @@ export function NotificationList({
           <div
             key={notification.id}
             className={cn(
-              "group relative bg-white rounded-xl border p-5 transition-all hover:shadow-md",
+              "group relative bg-white dark:bg-slate-900 rounded-xl border p-5 transition-all hover:shadow-md",
               isRead
-                ? "border-slate-200"
-                : "border-blue-200 bg-blue-50/10 shadow-sm",
+                ? "border-slate-200 dark:border-slate-800"
+                : "border-blue-200 dark:border-blue-800/50 bg-blue-50/10 dark:bg-blue-900/10 shadow-sm",
             )}
           >
             <div className="flex items-start justify-between gap-4">
@@ -132,10 +136,10 @@ export function NotificationList({
                       {roleLabel}
                     </span>
                   )}
-                  <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 transition-colors">
                     {typeLabel}
                   </span>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-400 dark:text-slate-500 transition-colors">
                     {notification.createdAt
                       ? new Date(notification.createdAt).toLocaleDateString(
                           "hu-HU",
@@ -149,26 +153,28 @@ export function NotificationList({
                       : ""}
                   </span>
                   {!isRead && (
-                    <span className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                    <span className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-500 dark:bg-blue-400 animate-pulse transition-colors" />
                   )}
                 </div>
 
                 <h4
                   className={cn(
-                    "text-base font-semibold mb-1",
-                    isRead ? "text-slate-900" : "text-blue-900",
+                    "text-base font-semibold mb-1 transition-colors",
+                    isRead
+                      ? "text-slate-900 dark:text-slate-100"
+                      : "text-blue-900 dark:text-blue-400",
                   )}
                 >
                   {notification.title || "Értesítés"}
                 </h4>
-                <p className="text-sm text-slate-600 leading-relaxed max-w-3xl">
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl transition-colors">
                   {notification.message || notification.body}
                 </p>
 
                 {actionLink && (
                   <Link
                     to={actionLink}
-                    className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline"
+                    className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
                   >
                     Művelet megtekintése
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -180,7 +186,7 @@ export function NotificationList({
                 {!isRead && (
                   <button
                     onClick={() => onMarkRead(String(notification.id))}
-                    className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                    className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
                     title="Megjelölés olvasottként"
                   >
                     <Check className="h-5 w-5" />
@@ -188,14 +194,14 @@ export function NotificationList({
                 )}
                 <button
                   onClick={() => onArchive(String(notification.id))}
-                  className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                   title="Archiválás"
                 >
                   <Archive className="h-5 w-5" />
                 </button>
                 <button
                   onClick={() => onDelete(String(notification.id))}
-                  className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                  className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                   title="Törlés"
                 >
                   <Trash2 className="h-5 w-5" />
