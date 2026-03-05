@@ -55,12 +55,12 @@ export const StudentList = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-20 rounded-xl border border-slate-200 bg-slate-50 animate-pulse" />
+        <div className="h-20 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 animate-pulse transition-colors" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
             <div
               key={i}
-              className="h-80 rounded-xl border border-slate-200 bg-slate-50 animate-pulse"
+              className="h-80 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 animate-pulse transition-colors"
             />
           ))}
         </div>
@@ -74,10 +74,12 @@ export const StudentList = () => {
       <div className="flex flex-col items-center justify-center py-12 px-4">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">⚠️</div>
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
             Hiba történt
           </h3>
-          <p className="text-sm text-slate-600 mb-4">{error}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 transition-colors">
+            {error}
+          </p>
           <button
             onClick={() => refetch()}
             className="rounded-lg bg-dkk-blue px-4 py-2 text-sm font-semibold text-white hover:bg-dkk-blue/90 transition-colors"
@@ -93,9 +95,9 @@ export const StudentList = () => {
     <div className="space-y-6">
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 transition-colors">
             Elérhető Hallgatók
-            <span className="ml-2 text-sm font-normal text-slate-500">
+            <span className="ml-2 text-sm font-normal text-slate-500 dark:text-slate-400 transition-colors">
               ({filteredStudents.length} / {students.length})
             </span>
           </h2>
@@ -111,13 +113,13 @@ export const StudentList = () => {
       </div>
 
       {filteredStudents.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 px-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+        <div className="flex flex-col items-center justify-center py-12 px-4 border border-dashed border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-800/30 transition-colors">
           <div className="text-center max-w-md">
             <div className="text-4xl mb-3">🔍</div>
-            <h3 className="text-base font-semibold text-slate-900 mb-1">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1 transition-colors">
               Nincs találat
             </h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
               A keresési feltételeknek egyetlen hallgató sem felel meg.
               <br />
               Próbáld meg módosítani a szűrőket.

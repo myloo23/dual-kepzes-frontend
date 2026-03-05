@@ -39,7 +39,7 @@ export const StudentFilters = ({
   ].filter(Boolean).length;
 
   return (
-    <div className="space-y-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+    <div className="space-y-4 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
       <div className="flex flex-col md:flex-row gap-4">
         {/* Search Bar */}
         <div className="relative flex-1">
@@ -49,14 +49,14 @@ export const StudentFilters = ({
             placeholder="Keresés név vagy email alapján..."
             value={filters.search}
             onChange={(e) => updateFilter("search", e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:border-dkk-blue focus:ring-1 focus:ring-dkk-blue outline-none transition-all placeholder:text-slate-400 text-sm"
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder-slate-400 focus:border-dkk-blue focus:ring-1 focus:ring-dkk-blue outline-none transition-colors text-sm"
           />
         </div>
 
         {/* Filter Toggle Mobile */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+          className="md:hidden flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
           <Filter className="h-4 w-4" />
           Szűrők
@@ -77,7 +77,7 @@ export const StudentFilters = ({
           <select
             value={filters.type}
             onChange={(e) => updateFilter("type", e.target.value)}
-            className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 outline-none focus:border-dkk-blue focus:ring-1 focus:ring-dkk-blue cursor-pointer"
+            className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-700 dark:text-slate-300 outline-none focus:border-dkk-blue focus:ring-1 focus:ring-dkk-blue cursor-pointer transition-colors"
           >
             <option value="ALL">Minden diák</option>
             <option value="HIGH_SCHOOL">Középiskolás</option>
@@ -90,9 +90,11 @@ export const StudentFilters = ({
               type="checkbox"
               checked={filters.isAvailable}
               onChange={(e) => updateFilter("isAvailable", e.target.checked)}
-              className="rounded border-slate-300 text-dkk-blue focus:ring-dkk-blue h-4 w-4"
+              className="rounded border-slate-300 dark:border-slate-700 text-dkk-blue focus:ring-dkk-blue h-4 w-4"
             />
-            <span className="text-sm text-slate-700">Elérhető</span>
+            <span className="text-sm text-slate-700 dark:text-slate-300 transition-colors">
+              Elérhető
+            </span>
           </label>
 
           <label className="flex items-center gap-2 cursor-pointer select-none">
@@ -102,16 +104,18 @@ export const StudentFilters = ({
               onChange={(e) =>
                 updateFilter("hasLanguageCert", e.target.checked)
               }
-              className="rounded border-slate-300 text-dkk-blue focus:ring-dkk-blue h-4 w-4"
+              className="rounded border-slate-300 dark:border-slate-700 text-dkk-blue focus:ring-dkk-blue h-4 w-4"
             />
-            <span className="text-sm text-slate-700">Nyelvvizsga</span>
+            <span className="text-sm text-slate-700 dark:text-slate-300 transition-colors">
+              Nyelvvizsga
+            </span>
           </label>
 
           {/* Clear Button */}
           {(filters.search || activeFiltersCount > 0) && (
             <button
               onClick={clearFilters}
-              className="flex items-center gap-1.5 text-sm text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
+              className="flex items-center gap-1.5 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
             >
               <X className="h-3.5 w-3.5" />
               Törlés

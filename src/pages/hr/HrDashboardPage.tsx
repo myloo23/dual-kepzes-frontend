@@ -74,10 +74,10 @@ export default function HrDashboardPage() {
 
   if (error && !companyAdmin) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center bg-white rounded-2xl border border-red-100 shadow-sm">
-        <div className="rounded-full bg-red-50 p-3 mb-4">
+      <div className="flex flex-col items-center justify-center p-8 text-center bg-white dark:bg-slate-900 rounded-2xl border border-red-100 dark:border-red-900/50 shadow-sm transition-colors">
+        <div className="rounded-full bg-red-50 dark:bg-red-900/20 p-3 mb-4 transition-colors">
           <svg
-            className="w-8 h-8 text-red-500"
+            className="w-8 h-8 text-red-500 dark:text-red-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -90,10 +90,12 @@ export default function HrDashboardPage() {
             />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-slate-900 mb-2">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
           Hiba történt
         </h3>
-        <p className="text-slate-600 mb-6 max-w-md">{error}</p>
+        <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md transition-colors">
+          {error}
+        </p>
         <button
           onClick={() => loadCompanyAdmin()}
           className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
@@ -110,7 +112,9 @@ export default function HrDashboardPage() {
       {activeTab === "positions" && (
         <>
           {loading && !companyAdmin ? (
-            <div className="text-slate-600">Admin adatok betöltése...</div>
+            <div className="text-slate-600 dark:text-slate-400 transition-colors">
+              Admin adatok betöltése...
+            </div>
           ) : (
             <CompanyPositionList companyAdmin={companyAdmin} />
           )}
@@ -121,7 +125,7 @@ export default function HrDashboardPage() {
       {activeTab === "partnerships" && <CompanyPartnershipList />}
       {activeTab === "employees" && <CompanyEmployeeList />}
       {activeTab === "company" && (
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition-colors">
           <CompanyProfilePage />
         </div>
       )}
