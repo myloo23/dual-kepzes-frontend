@@ -80,12 +80,12 @@ export function SearchModal({
       className="overflow-hidden flex flex-col max-h-[70vh]"
     >
       {/* Header / Input */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
-        <Search className="w-5 h-5 text-gray-400" />
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-10 transition-colors">
+        <Search className="w-5 h-5 text-gray-400 dark:text-gray-500" />
         <input
           ref={inputRef}
           type="text"
-          className="flex-1 bg-transparent border-none text-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0"
+          className="flex-1 bg-transparent border-none text-lg text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 transition-colors"
           placeholder="Keresés bármire (állások, cégek, oldalak)..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -97,9 +97,9 @@ export function SearchModal({
           )}
           <button
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-gray-100 text-gray-500 transition-colors"
+            className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-gray-400 transition-colors"
           >
-            <kbd className="hidden sm:inline-block px-2 py-0.5 text-xs font-medium text-gray-500 bg-gray-100 rounded border border-gray-200 mr-2">
+            <kbd className="hidden sm:inline-block px-2 py-0.5 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-700 mr-2 transition-colors">
               ESC
             </kbd>
             <X className="w-5 h-5 inline-block" />
@@ -108,9 +108,9 @@ export function SearchModal({
       </div>
 
       {/* Results List */}
-      <div className="flex-1 p-2 space-y-1">
+      <div className="flex-1 p-2 space-y-1 bg-white dark:bg-slate-900 transition-colors">
         {results.length === 0 && !loading && (
-          <div className="py-12 text-center text-gray-500">
+          <div className="py-12 text-center text-gray-500 dark:text-gray-400 transition-colors">
             {query ? (
               <p>Nincs találat erre: "{query}"</p>
             ) : (
@@ -128,15 +128,17 @@ export function SearchModal({
               onMouseEnter={() => setSelectedIndex(index)}
               className={cn(
                 "w-full flex items-center gap-4 px-4 py-3 text-left rounded-lg transition-colors group",
-                isSelected ? "bg-dkk-blue/5" : "hover:bg-gray-50",
+                isSelected
+                  ? "bg-dkk-blue/5 dark:bg-blue-500/10"
+                  : "hover:bg-gray-50 dark:hover:bg-slate-800/50",
               )}
             >
               <div
                 className={cn(
                   "p-2 rounded-lg border shadow-sm transition-colors",
                   isSelected
-                    ? "bg-white border-dkk-blue/20 text-dkk-blue"
-                    : "bg-white border-gray-100 text-gray-400 group-hover:border-gray-200 group-hover:text-gray-600",
+                    ? "bg-white dark:bg-slate-800 border-dkk-blue/20 dark:border-blue-500/30 text-dkk-blue dark:text-blue-400"
+                    : "bg-white dark:bg-slate-800 border-gray-100 dark:border-slate-700 text-gray-400 dark:text-gray-500 group-hover:border-gray-200 dark:group-hover:border-slate-600 group-hover:text-gray-600 dark:group-hover:text-gray-300",
                 )}
               >
                 {getIconForType(result.type)}
@@ -145,14 +147,16 @@ export function SearchModal({
               <div className="flex-1 min-w-0">
                 <div
                   className={cn(
-                    "font-medium truncate",
-                    isSelected ? "text-dkk-blue" : "text-gray-900",
+                    "font-medium truncate transition-colors",
+                    isSelected
+                      ? "text-dkk-blue dark:text-blue-400"
+                      : "text-gray-900 dark:text-slate-100",
                   )}
                 >
                   {result.title}
                 </div>
                 {result.subtitle && (
-                  <div className="text-sm text-gray-500 truncate">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 truncate transition-colors">
                     {result.subtitle}
                   </div>
                 )}
@@ -160,8 +164,10 @@ export function SearchModal({
 
               <ChevronRight
                 className={cn(
-                  "w-4 h-4 transition-opacity",
-                  isSelected ? "opacity-100 text-dkk-blue" : "opacity-0",
+                  "w-4 h-4 transition-all duration-200",
+                  isSelected
+                    ? "opacity-100 text-dkk-blue dark:text-blue-400 translate-x-1"
+                    : "opacity-0 -translate-x-1 group-hover:translate-x-0 group-hover:opacity-50 dark:text-gray-500 text-gray-400",
                 )}
               />
             </button>
@@ -170,7 +176,7 @@ export function SearchModal({
 
         {/* Footer Hint */}
         {results.length > 0 && (
-          <div className="px-4 py-2 mt-2 text-xs text-gray-400 border-t border-gray-50 flex justify-between">
+          <div className="px-4 py-2 mt-2 text-xs text-gray-400 dark:text-gray-500 border-t border-gray-50 dark:border-slate-800 flex justify-between transition-colors">
             <span>Nyilakkal navigálhatsz</span>
             <span>Enter a kiválasztáshoz</span>
           </div>

@@ -2,7 +2,7 @@ import { ArrowRight, Building2, GraduationCap } from "lucide-react";
 
 export default function DualInfoSection() {
   return (
-    <section className="py-8 md:py-16 bg-slate-50 dark:bg-transparent overflow-hidden transition-colors duration-300">
+    <section className="py-8 md:py-16 bg-transparent overflow-hidden transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full overflow-x-hidden">
         <div className="grid gap-6 md:gap-12 lg:grid-cols-2 w-full max-w-full">
           {/* Duális Képzés Leírás */}

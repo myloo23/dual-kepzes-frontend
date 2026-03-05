@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useNotifications } from "../../features/notifications/hooks/useNotifications";
 import { useAuth } from "../../features/auth";
 import { useNavigation } from "../../hooks/useNavigation";
+import { useTheme } from "../../hooks/useTheme";
+import { Moon, Sun } from "lucide-react";
 import type { NotificationItem } from "../../lib/api";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import { GlobalSearch } from "../../features/search";
@@ -21,6 +23,7 @@ export default function Navbar() {
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
   const { isAuthenticated, logout, user } = useAuth();
+  const { theme, setTheme } = useTheme();
 
   // Use auth state directly
   const isLoggedIn = isAuthenticated;
@@ -229,6 +232,18 @@ export default function Navbar() {
                 Kijelentkezés
               </button>
             )}
+
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
+              aria-label="Téma váltása"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
           </nav>
 
           {isLoggedIn && !isSystemAdmin && (
@@ -473,6 +488,19 @@ export default function Navbar() {
               )}
             </div>
           )}
+
+          {/* Mobile theme toggle */}
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="sm:hidden relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none mr-1"
+            aria-label="Téma váltása"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </button>
 
           {/* Mobile hamburger */}
           <button

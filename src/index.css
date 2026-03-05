@@ -99,3 +99,21 @@ select {
 .hover-scale {
   @apply transition-transform duration-200 hover:scale-105;
 }
+
+/* Fix browser autofill styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  -webkit-text-fill-color: #0f172a !important; /* text-slate-900 */
+}
+
+/* For dark mode */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1e293b inset !important; /* bg-slate-800 */
+  -webkit-text-fill-color: #f8fafc !important; /* text-slate-50 */
+}
