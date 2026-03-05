@@ -87,53 +87,59 @@ export default function AdminSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-lg font-semibold">Beállítások</h1>
-        <p className="text-sm text-slate-600">Saját profil adatok kezelése.</p>
+        <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+          Beállítások
+        </h1>
+        <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+          Saját profil adatok kezelése.
+        </p>
       </div>
 
       {err && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
           {err}
         </div>
       )}
       {msg && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400 transition-colors">
           {msg}
         </div>
       )}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 max-w-2xl">
-        <h2 className="text-base font-semibold text-slate-800 mb-4">
+      <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 max-w-2xl transition-colors">
+        <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-4 transition-colors">
           Saját profil
         </h2>
 
         {loading && !me ? (
-          <div className="text-sm text-slate-500">Betöltés...</div>
+          <div className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+            Betöltés...
+          </div>
         ) : (
           <form onSubmit={handleUpdate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">
+                <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                   Email cím (nem módosítható)
                 </label>
                 <input
                   disabled
                   value={me?.email || ""}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 cursor-not-allowed"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-3 py-2 text-sm text-slate-500 dark:text-slate-400 cursor-not-allowed transition-colors"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700">
+                <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                   Szerepkör
                 </label>
-                <div className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">
+                <div className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-3 py-2 text-sm text-slate-500 dark:text-slate-400 transition-colors">
                   {role || "Ismeretlen"}
                 </div>
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Teljes név
               </label>
               <input
@@ -141,13 +147,13 @@ export default function AdminSettings() {
                 onChange={(e) =>
                   setFormData({ ...formData, fullName: e.target.value })
                 }
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-white transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
                 placeholder="Pl. Kovács János"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Telefonszám
               </label>
               <input
@@ -155,7 +161,7 @@ export default function AdminSettings() {
                 onChange={(e) =>
                   setFormData({ ...formData, phoneNumber: e.target.value })
                 }
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-white transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
                 placeholder="+36..."
               />
             </div>

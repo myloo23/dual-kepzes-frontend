@@ -220,26 +220,26 @@ export default function StudentRegisterForm() {
   return (
     <div>
       {error && (
-        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-4 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
           {error}
         </div>
       )}
       {okMsg && (
-        <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <div className="mb-4 rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400 transition-colors">
           {okMsg}
         </div>
       )}
 
       <form onSubmit={onSubmit} className="space-y-6">
         {/* Fiók adatok */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-slate-900 mb-4">
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm dark:shadow-none transition-colors">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4 transition-colors">
             Fiók adatok
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 E-mail *
               </label>
               <input
@@ -247,7 +247,7 @@ export default function StudentRegisterForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="diak@student.com"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
@@ -257,125 +257,127 @@ export default function StudentRegisterForm() {
             />
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Teljes név *
               </label>
               <input
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Példa Diák"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Telefonszám *
               </label>
               <input
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="+36301234567"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
           </div>
 
-          <p className="mt-3 text-[11px] text-slate-500">
+          <p className="mt-3 text-[11px] text-slate-500 dark:text-slate-400 transition-colors">
             Szerepkör automatikusan: <span className="font-mono">STUDENT</span>
           </p>
         </section>
 
         {/* Személyes adatok */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-slate-900 mb-4">
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm dark:shadow-none transition-colors">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4 transition-colors">
             Személyes adatok
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Anyja neve *
               </label>
               <input
                 value={mothersName}
                 onChange={(e) => setMothersName(e.target.value)}
                 placeholder="Példa Anya"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Születési dátum *
               </label>
               <input
                 type="date"
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
           </div>
         </section>
 
         {/* Lakcím */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-slate-900 mb-4">Lakcím</h2>
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm dark:shadow-none transition-colors">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4 transition-colors">
+            Lakcím
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Ország *
               </label>
               <input
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Irányítószám *
               </label>
               <input
                 value={zipCode}
                 onChange={(e) => setZipCode(e.target.value)}
                 placeholder="4028"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Település *
               </label>
               <input
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="Debrecen"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
             <div className="space-y-1 md:col-span-2">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Utca, házszám *
               </label>
               <input
                 value={streetAddress}
                 onChange={(e) => setStreetAddress(e.target.value)}
                 placeholder="Kassai út 26."
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
           </div>
         </section>
 
         {/* Tanulmányok */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-slate-900 mb-4">
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm dark:shadow-none transition-colors">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4 transition-colors">
             Tanulmányok
           </h2>
 
@@ -390,7 +392,9 @@ export default function StudentRegisterForm() {
                 onChange={() => setStudentType("HIGHSCHOOL")}
                 className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
               />
-              <span className="text-sm text-slate-700">Középiskolás</span>
+              <span className="text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                Középiskolás
+              </span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -401,37 +405,39 @@ export default function StudentRegisterForm() {
                 onChange={() => setStudentType("UNIVERSITY")}
                 className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
               />
-              <span className="text-sm text-slate-700">Egyetemista</span>
+              <span className="text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                Egyetemista
+              </span>
             </label>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Középiskola *
               </label>
               <input
                 value={highSchool}
                 onChange={(e) => setHighSchool(e.target.value)}
                 placeholder="Tóth Árpád Gimnázium"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Középiskola városa *
               </label>
               <input
                 value={highSchoolCity}
                 onChange={(e) => setHighSchoolCity(e.target.value)}
                 placeholder="Debrecen"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                 Érettségi éve *
               </label>
               <input
@@ -443,7 +449,7 @@ export default function StudentRegisterForm() {
                   )
                 }
                 placeholder="2026"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
@@ -454,23 +460,23 @@ export default function StudentRegisterForm() {
               <>
                 {/* NEPTUN (Uni only) */}
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-700">
+                  <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                     Neptun kód *
                   </label>
                   <input
                     value={neptunCode}
                     onChange={(e) => setNeptunCode(e.target.value)}
                     placeholder="ABC123"
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                   />
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 transition-colors">
                     6 karakter (A–Z, 0–9).
                   </p>
                 </div>
 
                 {/* MAJOR (Uni - single select) */}
                 <div className="md:col-span-2 mt-4 mb-2">
-                  <h3 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-800 pb-2 transition-colors">
                     Egyetemi jelentkezés / Szak
                   </h3>
                 </div>
@@ -478,7 +484,7 @@ export default function StudentRegisterForm() {
                 <div className="space-y-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Képzési forma MOVED HERE ALSO for consistency */}
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-700">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                       Képzési forma *
                     </label>
                     <select
@@ -486,7 +492,7 @@ export default function StudentRegisterForm() {
                       onChange={(e) =>
                         setStudyMode(e.target.value as "NAPPALI" | "LEVELEZŐ")
                       }
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     >
                       <option value="NAPPALI">NAPPALI</option>
                       <option value="LEVELEZŐ">LEVELEZŐ</option>
@@ -494,14 +500,14 @@ export default function StudentRegisterForm() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-700">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                       Szak megnevezése *
                     </label>
                     <select
                       value={majorId}
                       onChange={(e) => setMajorId(e.target.value)}
                       disabled={majorsLoading}
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 dark:disabled:bg-slate-800 transition-colors"
                     >
                       <option value="">
                         {majorsLoading ? "Betöltés..." : "Válassz szakot..."}
@@ -520,7 +526,7 @@ export default function StudentRegisterForm() {
               <>
                 {/* HIGH SCHOOL - First & Second Choice */}
                 <div className="md:col-span-2 mt-4 mb-2">
-                  <h3 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-800 pb-2 transition-colors">
                     Egyetemi jelentkezés / Szak
                   </h3>
                 </div>
@@ -528,7 +534,7 @@ export default function StudentRegisterForm() {
                 <div className="space-y-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Képzési forma MOVED HERE */}
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-700">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                       Képzési forma *
                     </label>
                     <select
@@ -536,7 +542,7 @@ export default function StudentRegisterForm() {
                       onChange={(e) =>
                         setStudyMode(e.target.value as "NAPPALI" | "LEVELEZŐ")
                       }
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     >
                       <option value="NAPPALI">NAPPALI</option>
                       <option value="LEVELEZŐ">LEVELEZŐ</option>
@@ -547,14 +553,14 @@ export default function StudentRegisterForm() {
                   <div className="hidden md:block"></div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-700">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                       Helyszín 1. választás (Szak) *
                     </label>
                     <select
                       value={firstChoiceId}
                       onChange={(e) => setFirstChoiceId(e.target.value)}
                       disabled={majorsLoading}
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 dark:disabled:bg-slate-800 transition-colors"
                     >
                       <option value="">
                         {majorsLoading ? "Betöltés..." : "Válassz szakot..."}
@@ -569,7 +575,7 @@ export default function StudentRegisterForm() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-700">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                       Helyszín 2. választás (Szak)
                       <span className="text-slate-400 font-normal ml-1">
                         (Opcionális)
@@ -579,7 +585,7 @@ export default function StudentRegisterForm() {
                       value={secondChoiceId}
                       onChange={(e) => setSecondChoiceId(e.target.value)}
                       disabled={majorsLoading}
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 dark:disabled:bg-slate-800 transition-colors"
                     >
                       <option value="">
                         {majorsLoading
@@ -615,7 +621,10 @@ export default function StudentRegisterForm() {
                   onChange={(e) => setHasLanguageCert(e.target.checked)}
                   className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label htmlFor="langCert" className="text-sm text-slate-700">
+                <label
+                  htmlFor="langCert"
+                  className="text-sm text-slate-700 dark:text-slate-300 transition-colors"
+                >
                   Van nyelvvizsgám
                 </label>
               </div>
@@ -623,13 +632,13 @@ export default function StudentRegisterForm() {
               {hasLanguageCert && (
                 <div className="grid grid-cols-2 gap-4 pl-7">
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-700">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                       Nyelv *
                     </label>
                     <select
                       value={language}
                       onChange={(e) => setLanguage(e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     >
                       {LANGUAGES.map((l) => (
                         <option key={l} value={l}>
@@ -639,13 +648,13 @@ export default function StudentRegisterForm() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-700">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
                       Szint *
                     </label>
                     <select
                       value={languageLevel}
                       onChange={(e) => setLanguageLevel(e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     >
                       {LANGUAGE_LEVELS.map((l) => (
                         <option key={l} value={l}>
@@ -661,7 +670,7 @@ export default function StudentRegisterForm() {
         </section>
 
         {/* GDPR */}
-        <div className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4">
+        <div className="flex items-start gap-3 rounded-xl border border-blue-100 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-900/20 p-4 transition-colors">
           <input
             id="gdpr"
             type="checkbox"
@@ -671,14 +680,14 @@ export default function StudentRegisterForm() {
           />
           <label
             htmlFor="gdpr"
-            className="text-sm text-blue-900 cursor-pointer"
+            className="text-sm text-blue-900 dark:text-blue-100 cursor-pointer transition-colors"
           >
             Elfogadom az{" "}
             <a
               href="https://nje.hu/adatkezelesi-nyilatkozat"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold underline hover:text-blue-700"
+              className="font-semibold underline hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
             >
               adatkezelési tájékoztatót
             </a>
@@ -687,7 +696,10 @@ export default function StudentRegisterForm() {
         </div>
 
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-sm text-slate-600 hover:text-slate-900">
+          <Link
+            to="/"
+            className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
+          >
             Vissza a belépéshez
           </Link>
 

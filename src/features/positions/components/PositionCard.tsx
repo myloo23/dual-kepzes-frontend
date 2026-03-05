@@ -38,7 +38,7 @@ export default function PositionCard({
   return (
     <article
       key={String(p.id ?? `${companyName}-${title}-${cityText}`)}
-      className="h-full rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col"
+      className="h-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-glow transition-all overflow-hidden flex flex-col"
     >
       <div className="p-5 flex-grow">
         {/* felső sor */}
@@ -55,13 +55,13 @@ export default function PositionCard({
                 console.log("🖱️ Logo clicked! company data:", companyData);
                 onCompanyClick(companyData);
               }}
-              className="h-20 w-20 rounded-2xl border border-slate-200 bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-blue-500 hover:shadow-md transition cursor-pointer"
+              className="h-20 w-20 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition cursor-pointer"
               title={`${companyName} információi`}
             >
               <img
                 src={logo}
                 alt={`${companyName} logó`}
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain dark:opacity-90 dark:mix-blend-lighten"
                 loading="lazy"
                 decoding="async"
               />
@@ -69,7 +69,7 @@ export default function PositionCard({
           )}
 
           <div className="min-w-0">
-            <div className="text-xs text-slate-500 mb-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 mb-1 transition-colors">
               {!hideCompanyInfo && (
                 <>
                   <button
@@ -97,7 +97,7 @@ export default function PositionCard({
               {cityText}
             </div>
 
-            <h3 className="text-base font-semibold text-slate-900 leading-snug break-words">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 leading-snug break-words transition-colors">
               {title}
             </h3>
           </div>
@@ -105,14 +105,16 @@ export default function PositionCard({
 
         {/* meta chip sor */}
         <div className="mt-3 flex flex-wrap gap-2">
-          <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-700">
+          <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-slate-700 dark:text-slate-300 transition-colors">
             📍 {cityText}
           </span>
 
           <span
             className={[
-              "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium",
-              expired ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-800",
+              "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors",
+              expired
+                ? "bg-red-50 dark:bg-red-900/40 text-red-700 dark:text-red-400"
+                : "bg-amber-50 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400",
             ].join(" ")}
           >
             ⏳ Határidő: {deadlineText}
@@ -125,13 +127,13 @@ export default function PositionCard({
             {previewTags.map((t) => (
               <span
                 key={t}
-                className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-700"
+                className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/40 px-2.5 py-1 text-[11px] font-medium text-blue-700 dark:text-blue-400 transition-colors"
               >
                 {t}
               </span>
             ))}
             {hiddenCount > 0 && (
-              <span className="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+              <span className="inline-flex items-center rounded-full bg-slate-50 dark:bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-slate-600 dark:text-slate-400 transition-colors">
                 +{hiddenCount}
               </span>
             )}
@@ -140,7 +142,7 @@ export default function PositionCard({
 
         {/* leírás */}
         {norm(p.description) && (
-          <p className="mt-4 text-sm text-slate-600 leading-relaxed">
+          <p className="mt-4 text-sm text-slate-600 dark:text-slate-400 leading-relaxed transition-colors">
             {String(p.description).length > 140
               ? String(p.description).slice(0, 140) + "…"
               : String(p.description)}
@@ -148,7 +150,7 @@ export default function PositionCard({
         )}
 
         {/* alsó meta */}
-        <div className="mt-4 space-y-1 text-xs text-slate-600">
+        <div className="mt-4 space-y-1 text-xs text-slate-600 dark:text-slate-400 transition-colors">
           {norm(p.location?.address) && (
             <div>📌 {norm(p.location?.address)}</div>
           )}

@@ -45,13 +45,13 @@ export default function ImageModal({
       onClick={onClose}
     >
       <div
-        className="relative max-w-5xl max-h-[90vh] w-full bg-white rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+        className="relative max-w-5xl max-h-[90vh] w-full bg-white dark:bg-slate-950 rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 transition-colors"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-slate-900 shadow-lg transition-all"
+          className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/90 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 shadow-lg transition-all"
           aria-label="Bezárás"
         >
           <X className="h-5 w-5" />

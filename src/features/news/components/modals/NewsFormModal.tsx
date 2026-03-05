@@ -23,13 +23,13 @@ const INITIAL_FORM_STATE: NewsCreatePayload = {
 
 function Chip({ text, onRemove }: { text: string; onRemove?: () => void }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] text-slate-700">
+    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1 text-[11px] text-slate-700 dark:text-slate-300 transition-colors">
       {text}
       {onRemove && (
         <button
           type="button"
           onClick={onRemove}
-          className="rounded-full px-1 text-slate-500 hover:text-slate-900"
+          className="rounded-full px-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
           aria-label="Eltávolítás"
         >
           ×
@@ -116,39 +116,43 @@ export default function NewsFormModal({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
             {error}
           </div>
         )}
 
         <div className="space-y-1">
-          <label className="text-xs font-medium text-slate-700">Cím *</label>
+          <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+            Cím *
+          </label>
           <input
             value={formData.title}
             onChange={(e) =>
               setFormData((p) => ({ ...p, title: e.target.value }))
             }
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none placeholder-slate-400 transition-colors"
             placeholder="Pl. Félév végi értékelés – határidő"
           />
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-medium text-slate-700">Szöveg *</label>
+          <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+            Szöveg *
+          </label>
           <textarea
             value={formData.content}
             onChange={(e) =>
               setFormData((p) => ({ ...p, content: e.target.value }))
             }
             rows={6}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none placeholder-slate-400 transition-colors"
             placeholder="Hír részletei..."
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
               Célközönség
             </label>
             <select
@@ -159,7 +163,7 @@ export default function NewsFormModal({
                   targetGroup: e.target.value as NewsTargetGroup,
                 }))
               }
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
             >
               <option value="STUDENT">Hallgatók (STUDENT)</option>
               <option value="COMPANY_ADMIN">
@@ -177,22 +181,22 @@ export default function NewsFormModal({
           </div>
 
           <div className="flex items-end pb-2">
-            <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300 cursor-pointer transition-colors">
               <input
                 type="checkbox"
                 checked={!!formData.isImportant}
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, isImportant: e.target.checked }))
                 }
-                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-2 focus:ring-blue-500"
               />
               <span className="font-medium">Fontos kiemelés</span>
             </label>
           </div>
         </div>
 
-        <div className="space-y-2 rounded-lg border border-slate-200 p-3 bg-slate-50">
-          <label className="text-xs font-medium text-slate-700 block mb-2">
+        <div className="space-y-2 rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-slate-50 dark:bg-slate-900/50 transition-colors">
+          <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-2 transition-colors">
             Címkék
           </label>
 
@@ -208,7 +212,7 @@ export default function NewsFormModal({
                 }
               }}
               placeholder='Pl. "fontos", "vizsga"...'
-              className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none placeholder-slate-400 transition-colors"
             />
             <button
               type="button"
@@ -216,7 +220,7 @@ export default function NewsFormModal({
                 addTag(tagInput);
                 setTagInput("");
               }}
-              className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900 transition"
+              className="rounded-lg bg-slate-800 dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900 dark:hover:bg-slate-600 transition-colors"
             >
               + Hozzáad
             </button>
@@ -229,23 +233,25 @@ export default function NewsFormModal({
               ))}
             </div>
           ) : (
-            <p className="text-xs text-slate-500 italic">Nincsenek címkék.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 italic transition-colors">
+              Nincsenek címkék.
+            </p>
           )}
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800 transition-colors">
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60 transition-colors"
           >
             Mégse
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
           >
             {loading
               ? "Mentés..."

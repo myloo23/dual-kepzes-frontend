@@ -41,10 +41,10 @@ export default function MaterialsGallery() {
   return (
     <>
       <section id="materials" className="py-16">
-        <h2 className="text-xl lg:text-2xl font-semibold text-slate-900 mb-3 text-center">
+        <h2 className="text-xl lg:text-2xl font-semibold text-slate-900 dark:text-slate-50 mb-3 text-center transition-colors">
           Információs anyagok
         </h2>
-        <p className="text-sm text-slate-600 max-w-xl mb-8 text-center mx-auto">
+        <p className="text-sm text-slate-600 dark:text-slate-400 max-w-xl mb-8 text-center mx-auto transition-colors">
           Tudj meg többet a duális képzési programról!
         </p>
 
@@ -53,10 +53,10 @@ export default function MaterialsGallery() {
             <button
               key={material.id}
               onClick={() => setSelectedMaterial(material)}
-              className="group relative rounded-lg border border-dkk-gray/30 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 text-left w-40 sm:w-48"
+              className="group relative rounded-lg border border-dkk-gray/30 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm hover:shadow-md dark:shadow-none dark:hover:border-slate-700 transition-all duration-300 text-left w-40 sm:w-48"
             >
               {/* Image preview */}
-              <div className="aspect-[3/4] overflow-hidden bg-slate-50">
+              <div className="aspect-[3/4] overflow-hidden bg-slate-50 dark:bg-slate-800 transition-colors">
                 <img
                   src={material.image}
                   alt={material.title}
@@ -72,11 +72,11 @@ export default function MaterialsGallery() {
               </div>
 
               {/* Card footer */}
-              <div className="p-2 border-t border-dkk-gray/20">
-                <h3 className="text-xs font-semibold text-slate-900 group-hover:text-dkk-blue transition-colors truncate">
+              <div className="p-2 border-t border-dkk-gray/20 dark:border-slate-800 transition-colors">
+                <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 group-hover:text-dkk-blue dark:group-hover:text-blue-400 transition-colors truncate">
                   {material.title}
                 </h3>
-                <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 truncate transition-colors">
                   {material.description}
                 </p>
               </div>

@@ -119,7 +119,7 @@ export default function JobSlider({ onViewDetails }: JobSliderProps) {
   if (positions.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-500 text-sm">
+        <p className="text-slate-500 dark:text-slate-400 text-sm transition-colors">
           Jelenleg nincsenek elérhető állásajánlatok.
         </p>
       </div>
@@ -151,7 +151,7 @@ export default function JobSlider({ onViewDetails }: JobSliderProps) {
           <button
             onClick={handlePrev}
             disabled={!canGoPrev}
-            className="p-2 rounded-full border border-dkk-gray/50 bg-white text-slate-700 hover:bg-slate-50 hover:border-dkk-gray disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-full border border-dkk-gray/50 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-dkk-gray dark:hover:border-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             aria-label="Előző"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -166,8 +166,8 @@ export default function JobSlider({ onViewDetails }: JobSliderProps) {
                 className={[
                   "h-2 rounded-full transition-all",
                   idx === currentIndex
-                    ? "w-8 bg-dkk-blue"
-                    : "w-2 bg-slate-300 hover:bg-slate-400",
+                    ? "w-8 bg-dkk-blue dark:bg-blue-500"
+                    : "w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600",
                 ].join(" ")}
                 aria-label={`Oldal ${idx + 1}`}
               />
@@ -178,7 +178,7 @@ export default function JobSlider({ onViewDetails }: JobSliderProps) {
           <button
             onClick={handleNext}
             disabled={!canGoNext}
-            className="p-2 rounded-full border border-dkk-gray/50 bg-white text-slate-700 hover:bg-slate-50 hover:border-dkk-gray disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-full border border-dkk-gray/50 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-dkk-gray dark:hover:border-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             aria-label="Következő"
           >
             <ChevronRight className="h-5 w-5" />
@@ -188,7 +188,7 @@ export default function JobSlider({ onViewDetails }: JobSliderProps) {
 
       {/* Position Counter */}
       <div className="text-center mt-4">
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
           {positions.length} elérhető állásajánlat
         </p>
       </div>

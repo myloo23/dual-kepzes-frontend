@@ -88,10 +88,12 @@ export default function LocationMap({
 
   if (isLoading) {
     return (
-      <div className="w-full h-[400px] rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center">
+      <div className="w-full h-[400px] rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center transition-colors">
         <div className="text-center space-y-2">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="text-sm text-slate-600">Térkép betöltése...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
+          <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            Térkép betöltése...
+          </p>
         </div>
       </div>
     );
@@ -99,10 +101,12 @@ export default function LocationMap({
 
   if (geocodingError) {
     return (
-      <div className="w-full h-[400px] rounded-xl border border-red-200 bg-red-50 flex items-center justify-center">
+      <div className="w-full h-[400px] rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 flex items-center justify-center transition-colors">
         <div className="text-center space-y-2 p-4">
-          <MapPin className="w-8 h-8 text-red-600 mx-auto" />
-          <p className="text-sm text-red-800 font-medium">{geocodingError}</p>
+          <MapPin className="w-8 h-8 text-red-600 dark:text-red-400 mx-auto transition-colors" />
+          <p className="text-sm text-red-800 dark:text-red-300 font-medium transition-colors">
+            {geocodingError}
+          </p>
         </div>
       </div>
     );
@@ -114,7 +118,7 @@ export default function LocationMap({
 
   return (
     <div className="space-y-3">
-      <div className="w-full h-[400px] rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+      <div className="w-full h-[400px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none dark:[&_.leaflet-tile-pane]:invert dark:[&_.leaflet-tile-pane]:hue-rotate-180 dark:[&_.leaflet-tile-pane]:opacity-80 transition-colors">
         <MapContainer
           center={mapCenter}
           zoom={mapZoom}
@@ -163,14 +167,14 @@ export default function LocationMap({
 
       {/* Distance display */}
       {distance && userCoords && (
-        <div className="rounded-lg bg-green-50 border border-green-200 p-4">
+        <div className="rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/50 p-4 transition-colors">
           <div className="flex items-center gap-3">
-            <MapPin className="w-5 h-5 text-green-700 flex-shrink-0" />
+            <MapPin className="w-5 h-5 text-green-700 dark:text-green-500 flex-shrink-0 transition-colors" />
             <div>
-              <p className="text-sm font-medium text-green-900">
+              <p className="text-sm font-medium text-green-900 dark:text-green-300 transition-colors">
                 Távolság a munkahelytől
               </p>
-              <p className="text-2xl font-bold text-green-700">
+              <p className="text-2xl font-bold text-green-700 dark:text-green-400 transition-colors">
                 {distance.toFixed(1)} km
               </p>
             </div>
@@ -180,7 +184,9 @@ export default function LocationMap({
 
       {/* Location error (optional - user location not critical) */}
       {locationError && !userCoords && (
-        <div className="text-xs text-slate-500 italic">{locationError}</div>
+        <div className="text-xs text-slate-500 dark:text-slate-400 italic transition-colors">
+          {locationError}
+        </div>
       )}
     </div>
   );

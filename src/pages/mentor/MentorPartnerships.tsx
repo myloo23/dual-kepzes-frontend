@@ -38,14 +38,16 @@ export default function MentorPartnerships() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Saját Partnerek</h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 transition-colors">
+            Saját Partnerek
+          </h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors">
             Az Önhöz rendelt hallgatók és együttműködések.
           </p>
         </div>
         <button
           onClick={loadData}
-          className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
+          className="rounded-lg bg-indigo-50 dark:bg-indigo-900/20 px-4 py-2 text-sm font-medium text-indigo-700 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors"
         >
           Frissítés
         </button>

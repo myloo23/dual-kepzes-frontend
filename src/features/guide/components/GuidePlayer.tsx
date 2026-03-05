@@ -30,10 +30,10 @@ export function GuidePlayer() {
 
   if (isFinished) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm animate-in fade-in duration-500">
-        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
+      <div className="flex flex-col items-center justify-center p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none animate-in fade-in duration-500 transition-colors">
+        <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mb-6 transition-colors">
           <svg
-            className="w-8 h-8 text-emerald-600"
+            className="w-8 h-8 text-emerald-600 dark:text-emerald-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -46,19 +46,21 @@ export function GuidePlayer() {
             />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Gratulálunk!</h2>
-        <p className="text-slate-600 mb-6 font-medium">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
+          Gratulálunk!
+        </h2>
+        <p className="text-slate-600 dark:text-slate-400 mb-6 font-medium transition-colors">
           Sikeresen teljesítetted az első modult.
         </p>
-        <div className="p-4 bg-slate-50 rounded-lg border border-slate-100 max-w-md">
-          <p className="text-sm text-slate-500">
+        <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 max-w-md transition-colors">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             A következő tananyag hamarosan elérhető lesz. Értesítést fogunk
             küldeni, amint folytathatod a tanulást.
           </p>
         </div>
         <button
           onClick={() => setActiveStep(0)}
-          className="mt-8 text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
+          className="mt-8 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium hover:underline transition-colors"
         >
           Anyagok újranézése
         </button>
@@ -70,13 +72,13 @@ export function GuidePlayer() {
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Progress Bar */}
       <div className="relative">
-        <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-slate-100">
+        <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-slate-100 dark:bg-slate-800 transition-colors">
           <div
             style={{ width: `${(activeStep / steps.length) * 100}%` }}
             className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-600 transition-all duration-500 ease-out"
           />
         </div>
-        <div className="flex justify-between text-xs font-medium text-slate-500 uppercase tracking-wide">
+        <div className="flex justify-between text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide transition-colors">
           <span>
             {activeStep + 1}. Lépés: {currentStep.title}
           </span>
@@ -89,7 +91,7 @@ export function GuidePlayer() {
         {currentStep.component}
 
         {/* Action / Navigation */}
-        <div className="mt-8 flex flex-col items-center gap-4 p-6 bg-slate-50 rounded-xl border border-slate-200">
+        <div className="mt-8 flex flex-col items-center gap-4 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
           <label className="flex items-center gap-3 cursor-pointer group select-none">
             <div className="relative">
               <input
@@ -98,7 +100,7 @@ export function GuidePlayer() {
                 onChange={() => markComplete(activeStep)}
                 className="peer sr-only"
               />
-              <div className="w-6 h-6 border-2 border-slate-300 rounded transition-colors peer-checked:bg-emerald-500 peer-checked:border-emerald-500 peer-focus:ring-2 peer-focus:ring-emerald-500/20"></div>
+              <div className="w-6 h-6 border-2 border-slate-300 dark:border-slate-600 rounded transition-colors peer-checked:bg-emerald-500 peer-checked:border-emerald-500 peer-focus:ring-2 peer-focus:ring-emerald-500/20"></div>
               <svg
                 className="absolute top-1 left-1 w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
                 fill="none"
@@ -114,7 +116,7 @@ export function GuidePlayer() {
               </svg>
             </div>
             <span
-              className={`text-sm font-medium transition-colors ${completedSteps[activeStep] ? "text-slate-900" : "text-slate-600 group-hover:text-slate-900"}`}
+              className={`text-sm font-medium transition-colors ${completedSteps[activeStep] ? "text-slate-900 dark:text-slate-100" : "text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200"}`}
             >
               {currentStep.actionText}
             </span>
@@ -128,7 +130,7 @@ export function GuidePlayer() {
               ${
                 completedSteps[activeStep]
                   ? "bg-blue-600 text-white hover:bg-blue-700 shadow-sm transform hover:-translate-y-0.5"
-                  : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                  : "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
               }
             `}
           >

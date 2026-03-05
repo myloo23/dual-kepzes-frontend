@@ -193,20 +193,22 @@ export default function PositionFormModal({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
             {error}
           </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Cég *</label>
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+              Cég *
+            </label>
             <select
               name="companyId"
               value={formData.companyId}
               onChange={handleFormChange}
               disabled={companies.length === 1}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-100 disabled:text-slate-500"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-100 dark:disabled:bg-slate-900/50 disabled:text-slate-500 dark:disabled:text-slate-500 transition-colors"
             >
               <option value="">Válassz céget...</option>
               {companies.map((c) => (
@@ -218,13 +220,15 @@ export default function PositionFormModal({
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Szak *</label>
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+              Szak *
+            </label>
             <select
               name="majorId"
               value={formData.majorId}
               onChange={handleFormChange}
               disabled={majorsLoading}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-100 disabled:text-slate-500"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-100 dark:disabled:bg-slate-900/50 disabled:text-slate-500 dark:disabled:text-slate-500 transition-colors"
             >
               <option value="">Válassz szakot...</option>
               {majors.map((m) => (
@@ -234,44 +238,48 @@ export default function PositionFormModal({
               ))}
             </select>
             {majorsLoading && (
-              <p className="text-xs text-slate-500 mt-1">Szakok betöltése...</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 transition-colors">
+                Szakok betöltése...
+              </p>
             )}
           </div>
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-medium text-slate-700">
+          <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
             Megnevezés *
           </label>
           <input
             name="title"
             value={formData.title}
             onChange={handleFormChange}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
           />
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-medium text-slate-700">Leírás *</label>
+          <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+            Leírás *
+          </label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleFormChange}
             rows={5}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
           />
         </div>
 
         {/* Location Selection - Simplified */}
         <div className="space-y-1">
-          <label className="text-xs font-medium text-slate-700">
+          <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
             Munkavégzés helye *
           </label>
           <select
             name="locationId"
             value={formData.locationId}
             onChange={handleFormChange}
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-100 dark:disabled:bg-slate-900/50 disabled:text-slate-500 dark:disabled:text-slate-500 transition-colors"
             disabled={availableLocations.length === 0}
           >
             <option value="">
@@ -308,20 +316,20 @@ export default function PositionFormModal({
           />
         </div>
 
-        <div className="space-y-2 rounded-lg border border-slate-200 p-3 bg-white">
+        <div className="space-y-2 rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 transition-colors">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
               name="isDual"
               checked={formData.isDual || false}
               onChange={handleFormChange}
-              className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-2 focus:ring-blue-500"
             />
             <div>
-              <span className="text-sm font-medium text-slate-900">
+              <span className="text-sm font-medium text-slate-900 dark:text-slate-100 transition-colors">
                 Duális képzés pozíció
               </span>
-              <p className="text-xs text-slate-600 mt-0.5">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 transition-colors">
                 Ha nincs bejelölve, akkor rendes teljes munkaidős állásként
                 jelenik meg a főoldalon.
               </p>
@@ -329,15 +337,15 @@ export default function PositionFormModal({
           </label>
         </div>
 
-        <div className="space-y-3 rounded-lg border border-slate-200 p-4 bg-white">
+        <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 transition-colors">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold text-slate-800">
+            <label className="text-sm font-semibold text-slate-800 dark:text-slate-200 transition-colors">
               Címkék
             </label>
             <button
               type="button"
               onClick={addTag}
-              className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-200"
+              className="rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             >
               + Címke
             </button>
@@ -348,7 +356,7 @@ export default function PositionFormModal({
                 placeholder="Név (pl. React)"
                 value={tag.name}
                 onChange={(e) => handleTagChange(index, "name", e.target.value)}
-                className="flex-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                className="flex-1 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-2 py-1.5 text-sm transition-colors"
               />
               <input
                 placeholder="Kategória (opcionális)"
@@ -356,12 +364,12 @@ export default function PositionFormModal({
                 onChange={(e) =>
                   handleTagChange(index, "category", e.target.value)
                 }
-                className="flex-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                className="flex-1 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-2 py-1.5 text-sm transition-colors"
               />
               <button
                 type="button"
                 onClick={() => removeTag(index)}
-                className="rounded-md bg-red-50 p-2 text-red-600 hover:bg-red-100"
+                className="rounded-md bg-red-50 dark:bg-red-900/20 p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -382,25 +390,25 @@ export default function PositionFormModal({
             </div>
           ))}
           {formData.tags.length === 0 && (
-            <p className="text-center text-xs text-slate-500 py-2">
+            <p className="text-center text-xs text-slate-500 dark:text-slate-400 py-2 transition-colors">
               Nincsenek címkék hozzáadva.
             </p>
           )}
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800 transition-colors">
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60 transition-colors"
           >
             Mégse
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+            className="rounded-xl bg-blue-600 hover:bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 transition-colors"
           >
             {loading
               ? "Mentés..."

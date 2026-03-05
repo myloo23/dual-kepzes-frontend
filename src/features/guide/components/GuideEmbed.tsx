@@ -15,12 +15,12 @@ export function GuideEmbed({ title = "Tananyag" }: GuideEmbedProps) {
           title={title}
         />
       </div>
-      <div className="text-center text-xs text-slate-400">
+      <div className="text-center text-xs text-slate-400 dark:text-slate-500 transition-colors">
         <a
           href="https://www.canva.com/design/DAHBAAK86Kc/9vTO1exI26OpupqJ7es-Mg/view?utm_content=DAHBAAK86Kc&utm_campaign=designshare&utm_medium=embeds&utm_source=link"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:underline"
+          className="hover:text-slate-300 transition-colors hover:underline"
         >
           Green Yellow Pink Creative Employee Training Presentation
         </a>{" "}

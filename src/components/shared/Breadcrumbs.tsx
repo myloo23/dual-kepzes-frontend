@@ -77,7 +77,7 @@ export default function Breadcrumbs({ items, className }: BreadcrumbsProps) {
             >
               {index > 0 && (
                 <ChevronRight
-                  className="h-4 w-4 text-slate-400"
+                  className="h-4 w-4 text-slate-400 dark:text-slate-500"
                   aria-hidden="true"
                 />
               )}
@@ -86,15 +86,17 @@ export default function Breadcrumbs({ items, className }: BreadcrumbsProps) {
                 <Link
                   to={item.path}
                   className={cn(
-                    "flex items-center gap-1.5 hover:text-dkk-blue transition-colors",
-                    isFirst ? "text-slate-600" : "text-slate-500",
+                    "flex items-center gap-1.5 hover:text-dkk-blue dark:hover:text-blue-400 transition-colors",
+                    isFirst
+                      ? "text-slate-600 dark:text-slate-400"
+                      : "text-slate-500 dark:text-slate-400",
                   )}
                 >
                   {isFirst && <Home className="h-4 w-4" />}
                   <span>{item.label}</span>
                 </Link>
               ) : (
-                <span className="text-slate-900 font-medium flex items-center gap-1.5">
+                <span className="text-slate-900 dark:text-slate-100 font-medium flex items-center gap-1.5 transition-colors">
                   {isFirst && <Home className="h-4 w-4" />}
                   {item.label}
                 </span>

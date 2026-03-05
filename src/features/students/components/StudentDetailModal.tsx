@@ -63,16 +63,16 @@ export default function StudentDetailModal({
         aria-hidden="true"
       />
 
-      <div className="relative w-full max-w-2xl rounded-2xl bg-white shadow-2xl flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl flex flex-col max-h-[90vh] transition-colors">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/50 rounded-t-2xl">
-          <div className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl transition-colors">
+          <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 transition-colors">
             <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
             Hallgatói profil
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-500 transition-colors"
+            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-500 dark:hover:text-slate-300 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -82,15 +82,15 @@ export default function StudentDetailModal({
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
           {/* Main Info */}
           <div className="flex flex-col sm:flex-row gap-6 items-start">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center text-3xl shrink-0 border border-blue-200/50 shadow-sm">
+            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/20 flex items-center justify-center text-3xl shrink-0 border border-blue-200/50 dark:border-blue-800/30 shadow-sm transition-colors">
               🎓
             </div>
             <div className="space-y-4 flex-1">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight transition-colors">
                   {student.fullName}
                 </h2>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-600 mt-2">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-600 dark:text-slate-400 mt-2 transition-colors">
                   <div className="flex items-center gap-1.5">
                     <GraduationCap className="h-4 w-4 text-slate-400" />
                     {student.currentMajor}
@@ -110,13 +110,13 @@ export default function StudentDetailModal({
                 {student.languageExams?.map((exam, i) => (
                   <span
                     key={i}
-                    className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10"
+                    className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-900/20 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-400 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-400/20 transition-colors"
                   >
                     {exam.language} {exam.level}
                   </span>
                 ))}
                 {student.studyMode && (
-                  <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10">
+                  <span className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-900/20 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-700/10 dark:ring-emerald-400/20 transition-colors">
                     {student.studyMode === "NAPPALI" ? "Nappali" : "Levelező"}
                   </span>
                 )}
@@ -126,18 +126,18 @@ export default function StudentDetailModal({
 
           {/* Motivation */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-              <span className="h-px w-8 bg-slate-200"></span>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 transition-colors">
+              <span className="h-px w-8 bg-slate-200 dark:bg-slate-700"></span>
               Motivációs levél
-              <span className="h-px flex-1 bg-slate-200"></span>
+              <span className="h-px flex-1 bg-slate-200 dark:bg-slate-700"></span>
             </h3>
-            <div className="rounded-xl bg-slate-50 p-5 text-sm text-slate-700 leading-relaxed border border-slate-100">
+            <div className="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-5 text-sm text-slate-700 dark:text-slate-300 leading-relaxed border border-slate-100 dark:border-slate-800 transition-colors">
               {student.motivationLetter ? (
                 <p className="whitespace-pre-wrap">
                   {student.motivationLetter}
                 </p>
               ) : (
-                <p className="text-slate-400 italic">
+                <p className="text-slate-400 dark:text-slate-500 italic transition-colors">
                   A hallgató nem töltött fel motivációs levelet.
                 </p>
               )}
@@ -146,20 +146,20 @@ export default function StudentDetailModal({
 
           {/* School Info Block */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="rounded-xl border border-slate-200 p-4 space-y-1">
-              <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 space-y-1 transition-colors">
+              <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
                 Intézmény
               </div>
-              <div className="font-semibold text-slate-900 flex items-center gap-2">
+              <div className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 transition-colors">
                 <Building2 className="h-4 w-4 text-slate-400" />
                 {student.highSchool || "Egyetem"}
               </div>
             </div>
-            <div className="rounded-xl border border-slate-200 p-4 space-y-1">
-              <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 space-y-1 transition-colors">
+              <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
                 Végzés éve
               </div>
-              <div className="font-semibold text-slate-900">
+              <div className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                 {student.graduationYear}
               </div>
             </div>
@@ -167,10 +167,10 @@ export default function StudentDetailModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="bg-slate-50 px-6 py-4 flex items-center justify-end gap-3 border-t border-slate-200 rounded-b-2xl">
+        <div className="bg-slate-50 dark:bg-slate-800/50 px-6 py-4 flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 rounded-b-2xl transition-colors">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
+            className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
           >
             Bezárás
           </button>

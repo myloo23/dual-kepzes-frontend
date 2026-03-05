@@ -77,33 +77,37 @@ export default function CompanyPositionList({
   const companiesForModal = currentCompany ? [currentCompany] : [];
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm space-y-4 transition-colors">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
             Álláshirdetések
           </h2>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
             Saját céghez tartozó pozíciók.
           </p>
         </div>
         <button
           onClick={handleCreate}
           disabled={!currentCompany}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           + Új pozíció
         </button>
       </div>
 
-      {loading && <div className="text-sm text-slate-600">Betöltés...</div>}
+      {loading && (
+        <div className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+          Betöltés...
+        </div>
+      )}
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-3 py-2 text-sm text-red-700 dark:text-red-400 transition-colors">
           {error}
         </div>
       )}
       {!loading && !error && positions.length === 0 && (
-        <div className="text-sm text-slate-600">
+        <div className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
           Nincs megjeleníthető pozíció.
         </div>
       )}
@@ -111,20 +115,20 @@ export default function CompanyPositionList({
         {positions.map((position) => (
           <div
             key={String(position.id)}
-            className="flex items-center justify-between rounded-lg border border-slate-200 p-4 hover:bg-slate-50 transition-colors"
+            className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800 p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
           >
             <div>
-              <div className="font-semibold text-slate-900">
+              <div className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                 {position.title}
               </div>
-              <div className="text-sm text-slate-600">
+              <div className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 {position.location?.city ?? "Ismeretlen város"} •{" "}
                 {position.isDual ? "Duális" : "Nem duális"}
               </div>
             </div>
             <button
               onClick={() => handleEdit(position)}
-              className="text-sm font-medium text-blue-600 hover:text-blue-800"
+              className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
             >
               Szerkesztés
             </button>

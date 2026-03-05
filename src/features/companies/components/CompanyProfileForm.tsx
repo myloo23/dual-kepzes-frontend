@@ -24,6 +24,11 @@ interface CompanyProfileFormProps {
   onCancel: () => void;
 }
 
+const inputClasses =
+  "w-full p-2 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-950 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition-colors";
+const labelClasses =
+  "block text-sm font-medium text-gray-700 dark:text-slate-300 transition-colors";
+
 export default function CompanyProfileForm({
   formData,
   loading,
@@ -35,117 +40,101 @@ export default function CompanyProfileForm({
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Cég neve *
-          </label>
+          <label className={labelClasses}>Cég neve *</label>
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={onChange}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
             required
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Adószám *
-          </label>
+          <label className={labelClasses}>Adószám *</label>
           <input
             type="text"
             name="taxId"
             value={formData.taxId}
             onChange={onChange}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
             required
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Ország *
-          </label>
+          <label className={labelClasses}>Ország *</label>
           <input
             type="text"
             name="hqCountry"
             value={formData.hqCountry}
             onChange={onChange}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
             required
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Irányítószám *
-          </label>
+          <label className={labelClasses}>Irányítószám *</label>
           <input
             type="text"
             name="hqZipCode"
             value={formData.hqZipCode}
             onChange={onChange}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
             required
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Város *
-          </label>
+          <label className={labelClasses}>Város *</label>
           <input
             type="text"
             name="hqCity"
             value={formData.hqCity}
             onChange={onChange}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
             required
           />
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Cím *
-          </label>
+          <label className={labelClasses}>Cím *</label>
           <input
             type="text"
             name="hqAddress"
             value={formData.hqAddress}
             onChange={onChange}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
             required
           />
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Weboldal
-          </label>
+          <label className={labelClasses}>Weboldal</label>
           <input
             type="url"
             name="website"
             value={formData.website || ""}
             onChange={onChange}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
             placeholder="https://pelda.hu"
           />
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Cég leírása
-          </label>
+          <label className={labelClasses}>Cég leírása</label>
           <textarea
             name="description"
             value={formData.description || ""}
             onChange={onChange}
             rows={4}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
           />
         </div>
 
-        <div className="md:col-span-2 space-y-3 pt-2 border-t border-gray-200">
+        <div className="md:col-span-2 space-y-3 pt-2 border-t border-gray-200 dark:border-slate-800 transition-colors">
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -153,17 +142,13 @@ export default function CompanyProfileForm({
               name="hasOwnApplication"
               checked={!!formData.hasOwnApplication}
               onChange={(e) => {
-                // Create a synthetic event or handle check explicitly
-                // Since logic expects ChangeEvent, we might need a wrapper or handle it in parent.
-                // But onChange prop type is strictly React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-                // Checkbox is HTMLInputElement.
                 onChange(e);
               }}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-gray-300 dark:border-slate-700 text-blue-600 focus:ring-blue-500"
             />
             <label
               htmlFor="hasOwnApplication"
-              className="text-sm font-medium text-gray-700 cursor-pointer select-none"
+              className="text-sm font-medium text-gray-700 dark:text-slate-300 cursor-pointer select-none transition-colors"
             >
               Saját jelentkezési felület használata
             </label>
@@ -171,7 +156,7 @@ export default function CompanyProfileForm({
 
           {formData.hasOwnApplication && (
             <div className="space-y-2">
-              <p className="text-sm text-gray-500 bg-blue-50 p-2 rounded border border-blue-100">
+              <p className="text-sm text-gray-500 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-100 dark:border-blue-800/50 transition-colors">
                 Bekapcsolt állapotban a "Jelentkezés" gomb a fent megadott{" "}
                 <strong>Weboldal</strong> linkre fog átirányítani. Kérjük,
                 ellenőrizze, hogy a Weboldal mező és a "Kapcsolattartó e-mail"
@@ -182,29 +167,25 @@ export default function CompanyProfileForm({
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Kapcsolattartó neve *
-          </label>
+          <label className={labelClasses}>Kapcsolattartó neve *</label>
           <input
             type="text"
             name="contactName"
             value={formData.contactName}
             onChange={onChange}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
             required
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Kapcsolattartó e-mail *
-          </label>
+          <label className={labelClasses}>Kapcsolattartó e-mail *</label>
           <input
             type="email"
             name="contactEmail"
             value={formData.contactEmail}
             onChange={onChange}
-            className="w-full p-2 border rounded-lg"
+            className={inputClasses}
             required
           />
         </div>
@@ -214,14 +195,14 @@ export default function CompanyProfileForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+          className="px-4 py-2 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
         >
           Mégse
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
         >
           {loading ? "Mentés..." : "Mentés"}
         </button>

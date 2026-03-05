@@ -10,10 +10,10 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 transition-colors">
           Rendszer Statisztikák
         </h1>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
           Áttekintés a rendszer fő mutatóiról és aktivitásáról.
         </p>
       </header>

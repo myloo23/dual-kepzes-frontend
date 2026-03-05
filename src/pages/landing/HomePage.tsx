@@ -68,7 +68,7 @@ function HomePage() {
     : null;
 
   return (
-    <div className="bg-white">
+    <div className="bg-white dark:bg-slate-950 transition-colors duration-300">
       <div className="max-w-[1240px] mx-auto px-6 lg:px-8">
         {/* HERO SECTION */}
         <section
@@ -84,22 +84,22 @@ function HomePage() {
               <img
                 src={logoImage}
                 alt="Duális Képzési Központ"
-                className="h-16 sm:h-20 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105"
+                className="h-16 sm:h-20 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105 dark:brightness-0 dark:invert"
               />
-              <div className="w-px h-12 bg-slate-300"></div>
+              <div className="w-px h-12 bg-slate-300 dark:bg-slate-700"></div>
               <img
                 src={njeLogoImage}
                 alt="Neumann János Egyetem"
-                className="h-20 sm:h-24 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105"
+                className="h-20 sm:h-24 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105 dark:brightness-0 dark:invert"
               />
             </Link>
 
             <div className="space-y-6">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tighter text-slate-900 leading-[1.05] text-balance">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tighter text-slate-900 dark:text-slate-50 leading-[1.05] text-balance transition-colors">
                 Duális képzési <br />
                 <span className="text-dkk-blue">online rendszer</span>
               </h1>
-              <p className="text-xl leading-relaxed text-slate-500 max-w-lg font-normal">
+              <p className="text-xl leading-relaxed text-slate-500 dark:text-slate-400 max-w-lg font-normal transition-colors">
                 Egy egységes platform a hallgatók, céges partnerek és az
                 egységes adminisztráció számára.
               </p>
@@ -117,10 +117,12 @@ function HomePage() {
               ].map((feature, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-colors hover:bg-slate-100/80"
+                  className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 transition-colors hover:bg-slate-100/80 dark:hover:bg-slate-800/80 group"
                 >
-                  <span className="text-2xl">{feature.icon}</span>
-                  <span className="text-sm font-medium text-slate-700 leading-snug">
+                  <span className="text-2xl transition-transform group-hover:scale-110">
+                    {feature.icon}
+                  </span>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300 leading-snug transition-colors">
                     {feature.text}
                   </span>
                 </div>
@@ -130,7 +132,7 @@ function HomePage() {
 
           {/* Right Content - Login/User Card */}
           <div className="relative animate-slide-in-from-right lg:pl-10">
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-50 to-purple-50 rounded-[3rem] blur-3xl opacity-60 -z-10 transform translate-y-10"></div>
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-[3rem] blur-3xl opacity-60 dark:opacity-40 -z-10 transform translate-y-10 transition-all"></div>
 
             {!isAuthenticated ? (
               <div className="relative transform transition-all hover:scale-[1.01] duration-500">
@@ -145,19 +147,21 @@ function HomePage() {
                 />
               </div>
             ) : userInfo ? (
-              <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-2xl p-10 text-center border border-white/50 relative overflow-hidden ring-1 ring-slate-900/5">
+              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-[2rem] shadow-2xl dark:shadow-none p-10 text-center border border-white/50 dark:border-slate-800 relative overflow-hidden ring-1 ring-slate-900/5 dark:ring-white/10 transition-colors">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-400"></div>
-                <div className="w-24 h-24 bg-gradient-to-br from-slate-50 to-slate-100 rounded-full flex items-center justify-center text-4xl font-bold text-slate-700 mx-auto mb-6 shadow-inner ring-4 ring-white">
+                <div className="w-24 h-24 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-full flex items-center justify-center text-4xl font-bold text-slate-700 dark:text-slate-200 mx-auto mb-6 shadow-inner ring-4 ring-white dark:ring-slate-900 transition-colors">
                   {userInfo.name.charAt(0).toUpperCase()}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
                   {userInfo.name}
                 </h3>
-                <p className="text-slate-500 mb-8">Bejelentkezve</p>
+                <p className="text-slate-500 dark:text-slate-400 mb-8 transition-colors">
+                  Bejelentkezve
+                </p>
 
                 <button
                   onClick={() => navigate(userInfo.dashboardPath)}
-                  className="w-full bg-slate-900 text-white font-medium py-4 px-6 rounded-xl hover:bg-slate-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 active:scale-95"
+                  className="w-full bg-slate-900 dark:bg-dkk-blue text-white font-medium py-4 px-6 rounded-xl hover:bg-slate-800 dark:hover:bg-blue-500 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 dark:shadow-blue-900/20 active:scale-95"
                 >
                   <span>Irányítópult megnyitása</span>
                   <svg
@@ -177,7 +181,7 @@ function HomePage() {
 
                 <button
                   onClick={logout}
-                  className="mt-4 text-sm font-medium text-slate-500 hover:text-red-600 transition-colors duration-200"
+                  className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-200"
                 >
                   Kijelentkezés
                 </button>
@@ -187,15 +191,18 @@ function HomePage() {
         </section>
 
         {/* JOBS SECTION */}
-        <section id="jobs" className="py-24 border-t border-slate-100">
+        <section
+          id="jobs"
+          className="py-24 border-t border-slate-100 dark:border-slate-800/50 transition-colors"
+        >
           <div className="text-center mb-16 space-y-4">
-            <span className="text-sm font-bold tracking-widest text-blue-600 uppercase">
+            <span className="text-sm font-bold tracking-widest text-blue-600 dark:text-blue-400 uppercase transition-colors">
               Lehetőségek
             </span>
-            <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900">
+            <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 transition-colors">
               Aktuális Állásajánlatok
             </h2>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed transition-colors">
               Partnercégeink által meghirdetett teljes munkaidős
               álláslehetőségek. Fedezd fel a legújabb nyitott pozíciókat.
             </p>
@@ -206,7 +213,7 @@ function HomePage() {
           <div className="text-center mt-12">
             <button
               onClick={() => navigate("/positions")}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-100 text-slate-900 text-sm font-medium hover:bg-slate-200 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             >
               Összes állás megtekintése
               <svg
@@ -227,12 +234,12 @@ function HomePage() {
         </section>
 
         {/* INFO SECTION */}
-        <section className="py-12 border-t border-slate-100">
+        <section className="py-12 border-t border-slate-100 dark:border-slate-800/50 transition-colors">
           <DualInfoSection />
         </section>
 
         {/* REFERENCES */}
-        <section className="py-12">
+        <section className="py-12 border-t border-slate-100 dark:border-slate-800/50 transition-colors lg:border-none">
           <ReferencesSlider />
         </section>
 
@@ -244,19 +251,19 @@ function HomePage() {
         {/* CONTACT */}
         <section
           id="contact"
-          className="py-24 border-t border-slate-100 text-center"
+          className="py-24 border-t border-slate-100 dark:border-slate-800/50 text-center transition-colors"
         >
           <div className="max-w-2xl mx-auto space-y-6">
-            <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
+            <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 transition-colors">
               Kérdése van?
             </h2>
-            <p className="text-lg text-slate-500">
+            <p className="text-lg text-slate-500 dark:text-slate-400 transition-colors">
               A rendszer egyetemi pilot projekt részeként készül. Kérdés esetén
               forduljon az egyetem duális képzési koordinátorához.
             </p>
             <a
               href="mailto:dualis@nje.hu"
-              className="inline-block text-blue-600 font-medium hover:underline"
+              className="inline-block text-blue-600 dark:text-blue-400 font-medium hover:underline transition-colors"
             >
               Kapcsolatfelvétel
             </a>

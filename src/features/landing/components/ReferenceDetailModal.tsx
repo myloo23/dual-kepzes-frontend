@@ -50,9 +50,9 @@ export default function ReferenceDetailModal({
     >
       <div className="flex flex-col md:flex-row h-full">
         {/* Left Side: Photo & Quick Info */}
-        <div className="w-full md:w-2/5 bg-slate-50 border-r border-slate-100 p-8 flex flex-col items-center text-center">
+        <div className="w-full md:w-2/5 bg-slate-50 dark:bg-slate-900/50 border-r border-slate-100 dark:border-slate-800 p-8 flex flex-col items-center text-center transition-colors">
           <div
-            className={`h-40 w-40 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-4xl shadow-lg border-4 border-white mb-6 overflow-hidden ${!person.image ? getRandomColor(person.name) : "bg-white"}`}
+            className={`h-40 w-40 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-4xl shadow-lg border-4 border-white dark:border-slate-800 mb-6 overflow-hidden transition-colors ${!person.image ? getRandomColor(person.name) : "bg-white dark:bg-slate-800"}`}
           >
             {person.image ? (
               <img
@@ -65,32 +65,35 @@ export default function ReferenceDetailModal({
             )}
           </div>
 
-          <h3 className="text-xl font-bold text-slate-900 mb-1">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-1 transition-colors">
             {person.name}
           </h3>
-          <p className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-6">
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-6 transition-colors">
             {person.group || "Referens"}
           </p>
 
           <div className="w-full space-y-3 text-left">
-            <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm transition-colors">
               <div className="flex items-start gap-3">
-                <Briefcase size={18} className="text-slate-400 mt-0.5" />
-                <p className="text-sm text-slate-700 font-medium leading-snug">
+                <Briefcase
+                  size={18}
+                  className="text-slate-400 dark:text-slate-500 mt-0.5 transition-colors"
+                />
+                <p className="text-sm text-slate-700 dark:text-slate-300 font-medium leading-snug transition-colors">
                   {person.title}
                 </p>
               </div>
             </div>
 
-            <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:border-dkk-blue/30 transition-colors group">
+            <div className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm hover:border-dkk-blue/30 dark:hover:border-blue-500/50 transition-colors group">
               <div className="flex items-center gap-3">
                 <Mail
                   size={18}
-                  className="text-dkk-blue group-hover:scale-110 transition-transform"
+                  className="text-dkk-blue dark:text-blue-400 group-hover:scale-110 transition-transform"
                 />
                 <a
                   href={`mailto:${person.email}`}
-                  className="text-sm font-medium text-slate-600 hover:text-dkk-blue truncate"
+                  className="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-dkk-blue dark:hover:text-blue-400 truncate transition-colors"
                 >
                   {person.email}
                 </a>
@@ -100,14 +103,14 @@ export default function ReferenceDetailModal({
         </div>
 
         {/* Right Side: Description */}
-        <div className="w-full md:w-3/5 p-8 flex flex-col bg-white">
+        <div className="w-full md:w-3/5 p-8 flex flex-col bg-white dark:bg-slate-900 transition-colors">
           <div className="flex items-center justify-between mb-6">
-            <h4 className="text-lg font-bold text-slate-800 border-b-2 border-dkk-blue/20 pb-1">
+            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b-2 border-dkk-blue/20 dark:border-blue-500/30 pb-1 transition-colors">
               Bemutatkozás
             </h4>
           </div>
 
-          <div className="prose prose-slate prose-sm text-slate-600 leading-relaxed overflow-y-auto max-h-[60vh] pr-2 scrollbar-thin scrollbar-thumb-slate-200 text-justify">
+          <div className="prose prose-slate prose-sm text-slate-600 dark:text-slate-300 leading-relaxed overflow-y-auto max-h-[60vh] pr-2 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700 text-justify transition-colors">
             {person.description ? (
               person.description
                 .split("\n")
@@ -123,7 +126,7 @@ export default function ReferenceDetailModal({
                         key={idx}
                         className="flex items-start gap-2 mb-2 pl-4"
                       >
-                        <span className="text-dkk-blue mt-1.5 h-1.5 w-1.5 rounded-full bg-current flex-shrink-0" />
+                        <span className="text-dkk-blue dark:text-blue-400 mt-1.5 h-1.5 w-1.5 rounded-full bg-current flex-shrink-0 transition-colors" />
                         <span>{line.replace(/^[-•]\s+/, "")}</span>
                       </div>
                     );
@@ -134,7 +137,7 @@ export default function ReferenceDetailModal({
                     return (
                       <p
                         key={idx}
-                        className="mb-2 font-bold text-slate-800 mt-4"
+                        className="mb-2 font-bold text-slate-800 dark:text-slate-100 mt-4 transition-colors"
                       >
                         {line}
                       </p>
@@ -148,7 +151,7 @@ export default function ReferenceDetailModal({
                   );
                 })
             ) : (
-              <p className="italic text-slate-400">
+              <p className="italic text-slate-400 dark:text-slate-500 transition-colors">
                 Nincs elérhető bemutatkozás.
               </p>
             )}

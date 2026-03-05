@@ -9,7 +9,7 @@ type Tab = "active" | "archived";
 
 function Chip({ text }: { text: string }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] text-slate-700">
+    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 px-2.5 py-1 text-[11px] text-slate-700 dark:text-slate-300 transition-colors">
       {text}
     </span>
   );
@@ -204,8 +204,10 @@ export default function AdminNews() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Hírek kezelése</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 transition-colors">
+            Hírek kezelése
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 transition-colors">
             Hírek, értesítések és közlemények publikálása a hallgatók számára.
           </p>
         </div>
@@ -220,30 +222,30 @@ export default function AdminNews() {
       </div>
 
       {err && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
           {err}
         </div>
       )}
       {msg && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400 transition-colors">
           {msg}
         </div>
       )}
 
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4 transition-colors">
         {/* Tabs */}
-        <div className="flex p-1 bg-slate-100 rounded-xl">
+        <div className="flex p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl transition-colors">
           <button
             onClick={() => setCurrentTab("active")}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
               currentTab === "active"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             }`}
           >
             Aktív hírek
-            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs text-slate-600 dark:text-slate-300 transition-colors">
               {activeItems.length}
             </span>
           </button>
@@ -251,12 +253,12 @@ export default function AdminNews() {
             onClick={() => setCurrentTab("archived")}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
               currentTab === "archived"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             }`}
           >
             Archivált
-            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs text-slate-600 dark:text-slate-300 transition-colors">
               {archivedItems.length}
             </span>
           </button>
@@ -264,11 +266,11 @@ export default function AdminNews() {
 
         {/* Sorting Dropdown (Simplified for List View) */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider transition-colors">
             Rendezés:
           </span>
           <select
-            className="text-sm border-none bg-transparent font-medium text-slate-700 focus:ring-0 cursor-pointer hover:text-blue-600 transition-colors"
+            className="text-sm border-none bg-transparent dark:bg-slate-900 font-medium text-slate-700 dark:text-slate-300 focus:ring-0 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             onChange={(e) => handleSort(e.target.value)}
             value={sortConfig?.key || ""}
           >
@@ -288,7 +290,7 @@ export default function AdminNews() {
                   : null,
               )
             }
-            className="p-1 hover:bg-slate-100 rounded text-slate-500"
+            className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-500 dark:text-slate-400 transition-colors"
             title="Irány váltása"
           >
             {sortConfig?.direction === "desc" ? (
@@ -303,8 +305,8 @@ export default function AdminNews() {
       {/* Content List */}
       <div className="space-y-4">
         {rows.length === 0 && !loading && (
-          <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-            <p className="text-slate-500">
+          <div className="text-center py-12 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 transition-colors">
+            <p className="text-slate-500 dark:text-slate-400 transition-colors">
               Nincs megjeleníthető{" "}
               {currentTab === "active" ? "aktív" : "archivált"} hír.
             </p>
@@ -314,34 +316,36 @@ export default function AdminNews() {
         {rows.map((n) => (
           <div
             key={String(n.id)}
-            className="group relative flex flex-col sm:flex-row sm:items-start gap-4 p-5 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200"
+            className="group relative flex flex-col sm:flex-row sm:items-start gap-4 p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900/50 transition-all duration-200"
           >
             {/* Left Color Bar Indicator for Priority */}
             {n.isImportant && (
-              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500 rounded-l-2xl" />
+              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500 dark:bg-red-600 rounded-l-2xl transition-colors" />
             )}
 
             {/* Main Content */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 {n.isImportant && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase tracking-wide">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 uppercase tracking-wide transition-colors">
                     Fontos
                   </span>
                 )}
-                <span className="text-xs font-medium text-slate-400">
+                <span className="text-xs font-medium text-slate-400 dark:text-slate-500 transition-colors">
                   {formatDate(n.createdAt)}
                 </span>
-                <span className="text-slate-300">•</span>
-                <span className="text-xs font-semibold text-slate-500 uppercase">
+                <span className="text-slate-300 dark:text-slate-600 transition-colors">
+                  •
+                </span>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase transition-colors">
                   {n.targetGroup === "ALL" ? "Mindenkinek" : n.targetGroup}
                 </span>
               </div>
 
-              <h3 className="text-lg font-bold text-slate-900 mb-2 leading-tight group-hover:text-blue-700 transition-colors">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 leading-tight group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
                 {n.title}
               </h3>
-              <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
+              <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed transition-colors">
                 {n.content}
               </p>
 
@@ -354,7 +358,7 @@ export default function AdminNews() {
             </div>
 
             {/* Actions Panel - Validated by Hover or Flex layout */}
-            <div className="flex sm:flex-col items-center sm:items-end justify-center gap-2 border-t sm:border-t-0 sm:border-l border-slate-100 pt-4 sm:pt-0 sm:pl-4 mt-4 sm:mt-0 min-w-[120px]">
+            <div className="flex sm:flex-col items-center sm:items-end justify-center gap-2 border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-4 sm:pt-0 sm:pl-4 mt-4 sm:mt-0 min-w-[120px] transition-colors">
               {currentTab === "active" ? (
                 <>
                   <Button
@@ -369,7 +373,7 @@ export default function AdminNews() {
                     onClick={() => onArchive(n.id)}
                     variant="ghost"
                     size="sm"
-                    className="w-full justify-center text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                    className="w-full justify-center text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
                   >
                     Archiválás
                   </Button>
@@ -389,7 +393,7 @@ export default function AdminNews() {
                 onClick={() => onDelete(n.id)}
                 variant="ghost"
                 size="sm"
-                className="w-full justify-center text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                className="w-full justify-center text-rose-600 dark:text-rose-500 hover:text-rose-700 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20"
               >
                 Törlés
               </Button>

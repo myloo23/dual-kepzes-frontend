@@ -84,9 +84,11 @@ export default function FilterSidebar({
   ];
 
   return (
-    <aside className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-5">
+    <aside className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm dark:shadow-none space-y-5 transition-colors scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
       <div className="flex items-center justify-between">
-        <div className="text-sm font-semibold text-slate-900">Szűrők</div>
+        <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+          Szűrők
+        </div>
         <button
           type="button"
           onClick={onResetFilters}
@@ -98,20 +100,20 @@ export default function FilterSidebar({
 
       {/* 1. Keresés */}
       <div className="space-y-1">
-        <label className="text-xs font-medium text-slate-700">
+        <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
           Keresés cím vagy cég alapján
         </label>
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Pl. szoftverfejlesztő, rendszer…"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         />
       </div>
 
       {/* 2. Város (Scalable Combobox) */}
       <div className="space-y-2">
-        <div className="text-xs font-medium text-slate-700">
+        <div className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
           Képzés helyszíne
         </div>
         <Combobox
@@ -126,7 +128,9 @@ export default function FilterSidebar({
 
       {/* 3. Cég neve (Scalable Combobox) */}
       <div className="space-y-2">
-        <div className="text-xs font-medium text-slate-700">Cég neve</div>
+        <div className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+          Cég neve
+        </div>
         <Combobox
           options={companyOptions}
           value={company === "ALL" ? "" : company}
@@ -142,10 +146,12 @@ export default function FilterSidebar({
           Request order: City -> Company -> Deadline -> Position Type -> Category -> Tags.
           I'll place 'Active Only' toggle here as a utility before detailed properties.
        */}
-      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+      <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-3 py-2 transition-colors">
         <div>
-          <div className="text-xs font-semibold text-slate-900">Csak aktív</div>
-          <div className="text-[11px] text-slate-500">
+          <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+            Csak aktív
+          </div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 transition-colors">
             Lejárt határidő ne látszódjon
           </div>
         </div>
@@ -155,7 +161,7 @@ export default function FilterSidebar({
           onClick={() => setActiveOnly((p) => !p)}
           className={[
             "relative inline-flex h-6 w-11 items-center rounded-full transition",
-            activeOnly ? "bg-blue-600" : "bg-slate-300",
+            activeOnly ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-600",
           ].join(" ")}
           aria-label="Csak aktív kapcsoló"
         >
@@ -169,7 +175,7 @@ export default function FilterSidebar({
       </div>
 
       <div className="space-y-2">
-        <div className="text-xs font-medium text-slate-700">
+        <div className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
           Jelentkezési határidő
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -208,7 +214,9 @@ export default function FilterSidebar({
 
       {/* 5. Pozíció típusa */}
       <div className="space-y-2">
-        <div className="text-xs font-medium text-slate-700">Pozíció típusa</div>
+        <div className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+          Pozíció típusa
+        </div>
         <div className="flex flex-wrap gap-1.5">
           <ChipButton
             active={positionType === "ALL"}
@@ -234,7 +242,9 @@ export default function FilterSidebar({
       {/* 7. Címkék (multi AND) */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <div className="text-xs font-medium text-slate-700">Címkék</div>
+          <div className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+            Címkék
+          </div>
           {selectedTags.length > 0 && (
             <button
               type="button"
@@ -247,9 +257,11 @@ export default function FilterSidebar({
         </div>
 
         {derived.tags.length === 0 ? (
-          <div className="text-xs text-slate-500">Nincsenek címkék.</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+            Nincsenek címkék.
+          </div>
         ) : (
-          <div className="flex flex-wrap gap-1.5 max-h-40 overflow-auto pr-1">
+          <div className="flex flex-wrap gap-1.5 max-h-40 overflow-auto pr-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
             {derived.tags.map((t) => {
               const active = selectedTags.some((x) => lower(x) === lower(t));
               return (
@@ -265,18 +277,20 @@ export default function FilterSidebar({
           </div>
         )}
 
-        <div className="text-[11px] text-slate-500">
+        <div className="text-[11px] text-slate-500 dark:text-slate-400 transition-colors">
           Tipp: több címke is kiválasztható (AND).
         </div>
       </div>
 
       {/* Rendezés (kept at bottom or move to top? kept at bottom for now as it affects the list) */}
-      <div className="space-y-2 pt-4 border-t border-slate-100">
-        <div className="text-xs font-medium text-slate-700">Rendezés</div>
+      <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800 transition-colors">
+        <div className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+          Rendezés
+        </div>
         <select
           value={sortKey}
           onChange={(e) => setSortKey(e.target.value as SortKey)}
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         >
           <option value="RANDOM">Véletlenszerű</option>
           <option value="NEWEST">Legújabb elöl</option>

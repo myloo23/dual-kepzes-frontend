@@ -109,7 +109,7 @@ export default function ApplicationModal({
     >
       <div className="space-y-6">
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
             {error}
           </div>
         )}
@@ -117,7 +117,7 @@ export default function ApplicationModal({
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* CV Upload */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700 block">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 block transition-colors">
               Önéletrajz
             </label>
             <input
@@ -132,28 +132,28 @@ export default function ApplicationModal({
               <button
                 onClick={() => cvInputRef.current?.click()}
                 disabled={loading}
-                className="w-full flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-6 text-slate-600 transition-all hover:bg-slate-100 hover:border-blue-300 hover:text-blue-600 disabled:opacity-50"
+                className="w-full flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-6 text-slate-600 dark:text-slate-400 transition-all hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-blue-300 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-50"
               >
-                <div className="rounded-full bg-white p-2 shadow-sm">
+                <div className="rounded-full bg-white dark:bg-slate-950 p-2 shadow-sm dark:shadow-none transition-colors">
                   <Upload className="h-5 w-5" />
                 </div>
                 <span className="text-sm font-medium">
                   Önéletrajz feltöltése
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-400 dark:text-slate-500 transition-colors">
                   PDF, DOCX (max 5MB)
                 </span>
               </button>
             ) : (
-              <div className="relative flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3">
-                <div className="rounded-lg bg-blue-100 p-2 text-blue-600">
+              <div className="relative flex items-center gap-3 rounded-xl border border-blue-100 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-900/20 p-3 transition-colors">
+                <div className="rounded-lg bg-blue-100 dark:bg-blue-900/60 p-2 text-blue-600 dark:text-blue-400 transition-colors">
                   <FileText className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-blue-900">
+                  <p className="truncate text-sm font-medium text-blue-900 dark:text-blue-100 transition-colors">
                     {cvFile.name}
                   </p>
-                  <p className="text-xs text-blue-700">
+                  <p className="text-xs text-blue-700 dark:text-blue-400 transition-colors">
                     {(cvFile.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
@@ -162,7 +162,7 @@ export default function ApplicationModal({
                     setCvFile(null);
                     if (cvInputRef.current) cvInputRef.current.value = "";
                   }}
-                  className="rounded-full p-1 text-blue-400 hover:bg-blue-100 hover:text-blue-600"
+                  className="rounded-full p-1 text-blue-400 dark:text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900/60 hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -172,9 +172,11 @@ export default function ApplicationModal({
 
           {/* Motivation Letter Upload */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700 block">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 block transition-colors">
               Motivációs levél{" "}
-              <span className="text-slate-400 font-normal">(opcionális)</span>
+              <span className="text-slate-400 dark:text-slate-500 font-normal transition-colors">
+                (opcionális)
+              </span>
             </label>
             <input
               type="file"
@@ -188,28 +190,28 @@ export default function ApplicationModal({
               <button
                 onClick={() => motivationInputRef.current?.click()}
                 disabled={loading}
-                className="w-full flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-6 text-slate-600 transition-all hover:bg-slate-100 hover:border-blue-300 hover:text-blue-600 disabled:opacity-50"
+                className="w-full flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-6 text-slate-600 dark:text-slate-400 transition-all hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-blue-300 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-50"
               >
-                <div className="rounded-full bg-white p-2 shadow-sm">
+                <div className="rounded-full bg-white dark:bg-slate-950 p-2 shadow-sm dark:shadow-none transition-colors">
                   <Upload className="h-5 w-5" />
                 </div>
                 <span className="text-sm font-medium">
                   Motivációs levél feltöltése
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-400 dark:text-slate-500 transition-colors">
                   PDF, DOCX (max 5MB)
                 </span>
               </button>
             ) : (
-              <div className="relative flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3">
-                <div className="rounded-lg bg-blue-100 p-2 text-blue-600">
+              <div className="relative flex items-center gap-3 rounded-xl border border-blue-100 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-900/20 p-3 transition-colors">
+                <div className="rounded-lg bg-blue-100 dark:bg-blue-900/60 p-2 text-blue-600 dark:text-blue-400 transition-colors">
                   <FileText className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-blue-900">
+                  <p className="truncate text-sm font-medium text-blue-900 dark:text-blue-100 transition-colors">
                     {motivationFile.name}
                   </p>
-                  <p className="text-xs text-blue-700">
+                  <p className="text-xs text-blue-700 dark:text-blue-400 transition-colors">
                     {(motivationFile.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
@@ -219,7 +221,7 @@ export default function ApplicationModal({
                     if (motivationInputRef.current)
                       motivationInputRef.current.value = "";
                   }}
-                  className="rounded-full p-1 text-blue-400 hover:bg-blue-100 hover:text-blue-600"
+                  className="rounded-full p-1 text-blue-400 dark:text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900/60 hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -228,8 +230,8 @@ export default function ApplicationModal({
           </div>
         </div>
 
-        <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
-          <p className="text-sm text-blue-800">
+        <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-900/50 p-4 transition-colors">
+          <p className="text-sm text-blue-800 dark:text-blue-300 transition-colors">
             <strong>Tipp:</strong> Tölts fel PDF formátumú dokumentumokat a
             legjobb kompatibilitás érdekében.
           </p>
@@ -245,11 +247,11 @@ export default function ApplicationModal({
         )}
 
         {/* Footer */}
-        <div className="border-t border-slate-200 pt-4 flex gap-3 justify-end">
+        <div className="border-t border-slate-200 dark:border-slate-800 pt-4 flex gap-3 justify-end transition-colors">
           <button
             onClick={handleClose}
             disabled={loading}
-            className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Mégse
           </button>

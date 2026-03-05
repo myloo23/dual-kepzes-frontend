@@ -10,9 +10,11 @@ function StatCard({
   loading: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-sm font-medium text-slate-500">{title}</div>
-      <div className="mt-2 text-3xl font-bold text-slate-900">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-5 shadow-sm dark:shadow-none transition-colors">
+      <div className="text-sm font-medium text-slate-500 dark:text-slate-400 transition-colors">
+        {title}
+      </div>
+      <div className="mt-2 text-3xl font-bold text-slate-900 dark:text-slate-100 transition-colors">
         {loading ? "..." : (value ?? "—")}
       </div>
     </div>

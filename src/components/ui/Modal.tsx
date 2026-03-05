@@ -97,7 +97,7 @@ export function Modal({
       {/* Modal Content */}
       <div
         className={cn(
-          "relative w-full transform rounded-2xl bg-white shadow-2xl transition-all duration-300 flex flex-col max-h-[90vh]",
+          "relative w-full transform rounded-2xl bg-white dark:bg-slate-900 shadow-2xl dark:shadow-none transition-all duration-300 flex flex-col max-h-[90vh] border border-transparent dark:border-slate-800",
           sizeClasses[size],
           isOpen
             ? "scale-100 opacity-100 translate-y-0"
@@ -110,20 +110,22 @@ export function Modal({
       >
         {/* Header */}
         {!hideHeader && (
-          <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 shrink-0">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4 shrink-0 transition-colors">
             <div>
               {title && (
-                <h2 className="text-xl font-semibold text-slate-900 leading-none tracking-tight">
+                <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 leading-none tracking-tight transition-colors">
                   {title}
                 </h2>
               )}
               {description && (
-                <p className="mt-1.5 text-sm text-slate-500">{description}</p>
+                <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                  {description}
+                </p>
               )}
             </div>
             <button
               onClick={onClose}
-              className="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-200"
+              className="rounded-full p-2 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700"
               aria-label="Close modal"
             >
               <X className="h-5 w-5" />
@@ -134,7 +136,7 @@ export function Modal({
         {/* Scrollable Content */}
         <div
           className={cn(
-            "flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent",
+            "flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700 scrollbar-track-transparent",
             !hideHeader ? "p-6" : "",
           )}
         >

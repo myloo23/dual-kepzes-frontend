@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useNotifications } from "../../features/notifications/hooks/useNotifications";
 import { useAuth } from "../../features/auth";
 import { useNavigation } from "../../hooks/useNavigation";
+import { useTheme } from "../../hooks/useTheme";
+import { Moon, Sun } from "lucide-react";
 import type { NotificationItem } from "../../lib/api";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import { GlobalSearch } from "../../features/search";
@@ -21,6 +23,7 @@ export default function Navbar() {
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
   const { isAuthenticated, logout, user } = useAuth();
+  const { theme, setTheme } = useTheme();
 
   // Use auth state directly
   const isLoggedIn = isAuthenticated;
@@ -107,8 +110,9 @@ export default function Navbar() {
     // Apple-style: Clean, subtle transition, weight change
     const baseClass =
       "transition-all duration-300 text-[13px] tracking-wide font-medium";
-    const activeClass = "text-slate-900";
-    const inactiveClass = "text-slate-500 hover:text-slate-900";
+    const activeClass = "text-slate-900 dark:text-slate-50";
+    const inactiveClass =
+      "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50";
 
     return `${baseClass} ${isActive ? activeClass : inactiveClass}`;
   };
@@ -120,9 +124,10 @@ export default function Navbar() {
         : location.pathname.startsWith(path);
 
     const baseClass =
-      "py-3 block transition-colors duration-200 text-lg border-b border-gray-100 last:border-0";
+      "py-3 block transition-colors duration-200 text-lg border-b border-gray-100 dark:border-slate-800 last:border-0";
     const activeClass = "text-dkk-blue font-semibold";
-    const inactiveClass = "text-slate-600 hover:text-dkk-blue";
+    const inactiveClass =
+      "text-slate-600 dark:text-slate-400 hover:text-dkk-blue";
 
     return `${baseClass} ${isActive ? activeClass : inactiveClass}`;
   };
@@ -178,7 +183,7 @@ export default function Navbar() {
   }, [notificationsTab]);
 
   return (
-    <header className="sticky top-0 z-[1100] border-b border-slate-200/60 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
+    <header className="sticky top-0 z-[1100] border-b border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60 transition-colors duration-300">
       <div className="max-w-6xl mx-auto flex items-center gap-6 px-6 lg:px-8 h-16">
         <Link
           to="/"
@@ -188,7 +193,7 @@ export default function Navbar() {
           <img
             src={logoImage}
             alt="Duális Képzési Központ"
-            className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert"
           />
         </Link>
 
@@ -222,18 +227,30 @@ export default function Navbar() {
             {isLoggedIn && (
               <button
                 onClick={logout}
-                className="text-[13px] tracking-wide font-medium text-slate-500 hover:text-red-600 transition-colors duration-300"
+                className="text-[13px] tracking-wide font-medium text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-300"
               >
                 Kijelentkezés
               </button>
             )}
+
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
+              aria-label="Téma váltása"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
           </nav>
 
           {isLoggedIn && !isSystemAdmin && (
             <div className="relative" ref={notificationsRef}>
               <button
                 type="button"
-                className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 focus:outline-none"
+                className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
                 aria-label="Értesítések"
                 onClick={() => setNotificationsOpen((prev) => !prev)}
               >
@@ -259,9 +276,9 @@ export default function Navbar() {
               </button>
 
               {notificationsOpen && (
-                <div className="absolute right-0 mt-4 w-80 sm:w-96 origin-top-right rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl ring-1 ring-slate-900/5 focus:outline-none overflow-hidden animate-scale-in">
-                  <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 bg-slate-50/50">
-                    <span className="text-sm font-semibold text-slate-900">
+                <div className="absolute right-0 mt-4 w-80 sm:w-96 origin-top-right rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl ring-1 ring-slate-900/5 dark:ring-white/10 focus:outline-none overflow-hidden animate-scale-in">
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-4 py-3 bg-slate-50/50 dark:bg-slate-800/50">
+                    <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                       Értesítések
                     </span>
                     <div className="flex items-center gap-1">
@@ -282,13 +299,13 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  <div className="p-1.5 flex gap-1 bg-slate-50/50 border-b border-slate-100">
+                  <div className="p-1.5 flex gap-1 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                     <button
                       type="button"
                       className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                         notificationsTab === "active"
-                          ? "bg-white text-slate-900 shadow-sm"
-                          : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/30"
+                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-50 shadow-sm"
+                          : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/30 dark:hover:bg-slate-700/30"
                       }`}
                       onClick={() => setNotificationsTab("active")}
                     >
@@ -343,8 +360,8 @@ export default function Navbar() {
                       return (
                         <div
                           key={item.id}
-                          className={`group relative border-b border-slate-50 p-4 transition-colors last:border-b-0 hover:bg-slate-50/80 ${
-                            isUnread ? "bg-blue-50/30" : ""
+                          className={`group relative border-b border-slate-50 dark:border-slate-800/50 p-4 transition-colors last:border-b-0 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 ${
+                            isUnread ? "bg-blue-50/30 dark:bg-blue-900/10" : ""
                           }`}
                         >
                           <button
@@ -357,12 +374,12 @@ export default function Navbar() {
                             <div className="flex items-start gap-3">
                               <div className="flex-1 space-y-1">
                                 <p
-                                  className={`text-sm leading-tight ${isUnread ? "font-semibold text-slate-900" : "text-slate-700"}`}
+                                  className={`text-sm leading-tight ${isUnread ? "font-semibold text-slate-900 dark:text-slate-50" : "text-slate-700 dark:text-slate-300"}`}
                                 >
                                   {getNotificationTitle(item)}
                                 </p>
                                 {getNotificationPreview(item) && (
-                                  <p className="line-clamp-2 text-xs text-slate-500">
+                                  <p className="line-clamp-2 text-xs text-slate-500 dark:text-slate-400">
                                     {getNotificationPreview(item)}
                                   </p>
                                 )}
@@ -437,11 +454,11 @@ export default function Navbar() {
                   )}
 
                   {selectedNotification && !detailsLoading && (
-                    <div className="border-t border-slate-100 bg-slate-50/50 px-4 py-3">
-                      <h4 className="text-sm font-semibold text-slate-900 mb-1">
+                    <div className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-4 py-3">
+                      <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
                         {getNotificationTitle(selectedNotification)}
                       </h4>
-                      <p className="text-xs text-slate-600 leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                         {getNotificationPreview(selectedNotification)}
                       </p>
                       {selectedNotification.link && (
@@ -472,10 +489,23 @@ export default function Navbar() {
             </div>
           )}
 
+          {/* Mobile theme toggle */}
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="sm:hidden relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none mr-1"
+            aria-label="Téma váltása"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </button>
+
           {/* Mobile hamburger */}
           <button
             type="button"
-            className="sm:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+            className="sm:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             onClick={() => setMobileOpen((prev) => !prev)}
             aria-label="Menü megnyitása"
           >
@@ -502,7 +532,7 @@ export default function Navbar() {
 
       {/* Mobile nav dropdown */}
       {mobileOpen && (
-        <nav className="sm:hidden absolute top-full left-0 right-0 border-b border-gray-200 bg-white/95 backdrop-blur-xl animate-fade-in shadow-xl h-screen">
+        <nav className="sm:hidden absolute top-full left-0 right-0 border-b border-gray-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl animate-fade-in shadow-xl h-screen">
           <div className="px-6 py-6 flex flex-col gap-2">
             <Link
               to="/"
