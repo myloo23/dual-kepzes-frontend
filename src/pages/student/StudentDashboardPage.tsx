@@ -570,7 +570,11 @@ export default function StudentDashboardPage() {
         prev ? { ...prev, isAvailableForWork: newValue } : null,
       );
 
-      const updated = await studentsApi.me.toggleAvailability();
+      const updated = await studentsApi.me.toggleAvailability({
+        isAvailableForWork: newValue,
+        motivationLetter:
+          profileForm.motivationLetter || profile.motivationLetter,
+      });
       const normalized = normalizeStudentProfile(
         updated as StudentProfilePayload,
       );

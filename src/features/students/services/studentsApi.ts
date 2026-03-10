@@ -37,8 +37,11 @@ export const studentsApi = {
 
     remove: () => apiDelete<{ message?: string }>(ME_PATH),
 
-    toggleAvailability: () =>
-      apiPatch<StudentProfile>(`${ME_PATH}/toggle-availability`, {}),
+    toggleAvailability: (body?: {
+      motivationLetter?: string;
+      isAvailableForWork?: boolean;
+    }) =>
+      apiPatch<StudentProfile>(`${ME_PATH}/toggle-availability`, body || {}),
 
     transitionToUniversity: (data: { neptunCode: string; majorId: string }) =>
       apiPatch<StudentProfile>(`${ME_PATH}/university-transition`, data),
