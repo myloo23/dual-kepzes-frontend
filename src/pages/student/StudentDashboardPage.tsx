@@ -4,7 +4,12 @@ import ApplicationsList from "../../features/applications/components/Application
 import StudentPartnershipsList from "../../features/partnerships/components/StudentPartnershipsList";
 import { useAuth } from "../../features/auth";
 import StudentNewsPage from "./StudentNewsPage";
-import { GuidePlayer } from "../../features/guide";
+import {
+  GuidePlayer,
+  GuideSelector,
+  AVAILABLE_COURSES,
+  type GuideCourse,
+} from "../../features/guide";
 import { studentsApi } from "../../features/students/services/studentsApi";
 import { api, type StudentProfile } from "../../lib/api";
 import {
@@ -238,6 +243,9 @@ export default function StudentDashboardPage() {
   const { user, logout: authLogout } = useAuth();
   const { majors, loading: majorsLoading } = useMajors();
   const [profile, setProfile] = useState<Partial<StudentProfile> | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<GuideCourse | null>(
+    null,
+  );
   const [profileForm, setProfileForm] = useState<StudentFormState>(
     {} as StudentFormState,
   );
@@ -1334,11 +1342,23 @@ export default function StudentDashboardPage() {
                     </h1>
 
                     <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto transition-colors">
-                      Kövesd a lépéseket a tananyag elsajátításához.
+                      {selectedCourse
+                        ? "Kövesd a lépéseket a tananyag elsajátításához."
+                        : "Válassz a rendelkezésre álló tananyagok közül."}
                     </p>
                   </div>
 
-                  <GuidePlayer />
+                  {selectedCourse ? (
+                    <GuidePlayer
+                      course={selectedCourse}
+                      onBack={() => setSelectedCourse(null)}
+                    />
+                  ) : (
+                    <GuideSelector
+                      courses={AVAILABLE_COURSES}
+                      onSelect={setSelectedCourse}
+                    />
+                  )}
                 </div>
               </div>
             )}

@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { GuideEmbed } from "./GuideEmbed";
+import type { GuideCourse } from "../types";
 
-export function GuidePlayer() {
+interface GuidePlayerProps {
+  course: GuideCourse;
+  onBack: () => void;
+}
+
+export function GuidePlayer({ course, onBack }: GuidePlayerProps) {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [completedSteps, setCompletedSteps] = useState<Record<number, boolean>>(
     {},
@@ -20,7 +26,7 @@ export function GuidePlayer() {
     {
       id: "presentation",
       title: "Tananyag és Teszt",
-      component: <GuideEmbed />,
+      component: <GuideEmbed course={course} />,
       actionText: "A tananyagot és a tesztet sikeresen teljesítettem",
     },
   ];
@@ -50,7 +56,7 @@ export function GuidePlayer() {
           Gratulálunk!
         </h2>
         <p className="text-slate-600 dark:text-slate-400 mb-6 font-medium transition-colors">
-          Sikeresen teljesítetted az első modult.
+          Sikeresen teljesítetted a modult: {course.title}.
         </p>
         <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 max-w-md transition-colors">
           <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -58,18 +64,47 @@ export function GuidePlayer() {
             küldeni, amint folytathatod a tanulást.
           </p>
         </div>
-        <button
-          onClick={() => setActiveStep(0)}
-          className="mt-8 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium hover:underline transition-colors"
-        >
-          Anyagok újranézése
-        </button>
+        <div className="mt-8 flex gap-4">
+          <button
+            onClick={() => setActiveStep(0)}
+            className="text-sm px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg font-medium transition-colors"
+          >
+            Újrakezdés
+          </button>
+          <button
+            onClick={onBack}
+            className="text-sm px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg font-medium transition-colors"
+          >
+            Vissza a választóhoz
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Back Button */}
+      <button
+        onClick={onBack}
+        className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        Vissza a választóhoz
+      </button>
+
       {/* Progress Bar */}
       <div className="relative">
         <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-slate-100 dark:bg-slate-800 transition-colors">
