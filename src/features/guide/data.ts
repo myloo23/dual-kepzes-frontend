@@ -14,14 +14,28 @@ export const AVAILABLE_COURSES: GuideCourse[] = [
     author: "Bettina B",
   },
   {
-    id: "canva-advanced",
-    title: "Haladó Tananyag",
-    description: "Mélységi ismeretek és specifikus útmutatók a munkavégzéshez.",
+    id: "mentor-fogalma",
+    title: "A mentor fogalma és szerepe",
+    description:
+      "Ismerd meg a mentorálás alapjait és a mentorok legfontosabb feladatait a gyakorlatban.",
     embedUrl:
-      "https://www.canva.com/design/DAHBAAK86Kc/9vTO1exI26OpupqJ7es-Mg/view?embed", // Duplicate for now
+      "https://www.canva.com/design/DAHDcJYlKnc/z3Rv_PzP7rRJ2dwfseMCsw/view?embed",
     sourceUrl:
-      "https://www.canva.com/design/DAHBAAK86Kc/9vTO1exI26OpupqJ7es-Mg/view?utm_content=DAHBAAK86Kc&utm_campaign=designshare&utm_medium=embeds&utm_source=link",
-    presentationName: "Haladó Canva Prezentáció (Minta)",
+      "https://www.canva.com/design/DAHDcJYlKnc/z3Rv_PzP7rRJ2dwfseMCsw/view?utm_content=DAHDcJYlKnc&utm_campaign=designshare&utm_medium=embeds&utm_source=link",
+    presentationName: "A mentor fogalma és szerepe",
+    author: "Bettina B",
+  },
+  {
+    id: "mentoralas-elonyei",
+    title: "A mentorálás előnyei a vállalat számára a duális képzésben",
+    description:
+      "Miért hasznos a mentorálás a vállalat számára a duális képzés folyamán?",
+    embedUrl:
+      "https://www.canva.com/design/DAHDEIGTbnA/QNAAh6fv4B_vP-Y2E3usuw/view?embed",
+    sourceUrl:
+      "https://www.canva.com/design/DAHDEIGTbnA/QNAAh6fv4B_vP-Y2E3usuw/view?utm_content=DAHDEIGTbnA&utm_campaign=designshare&utm_medium=embeds&utm_source=link",
+    presentationName:
+      "A mentorálás előnyei a vállalat számára a duális képzésben",
     author: "Bettina B",
   },
 ];
