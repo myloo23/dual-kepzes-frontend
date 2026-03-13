@@ -13,6 +13,7 @@ type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
 
 interface DerivedData {
   cities: string[];
+  counties: string[];
   companies: string[];
   tags: string[];
   showCityChips: boolean;
@@ -25,6 +26,7 @@ interface FilterSidebarProps {
   // Filter states
   search: string;
   city: string;
+  county: string;
   company: string;
   deadlineFilter: DeadlineFilter;
   positionType: PositionTypeFilter;
@@ -35,6 +37,7 @@ interface FilterSidebarProps {
   // Filter setters
   setSearch: (value: string) => void;
   setCity: (value: string) => void;
+  setCounty: (value: string) => void;
   setCompany: (value: string) => void;
   setDeadlineFilter: (value: DeadlineFilter) => void;
   setPositionType: (value: PositionTypeFilter) => void;
@@ -53,6 +56,7 @@ interface FilterSidebarProps {
 export default function FilterSidebar({
   search,
   city,
+  county,
   company,
   deadlineFilter,
   positionType,
@@ -61,6 +65,7 @@ export default function FilterSidebar({
   sortKey,
   setSearch,
   setCity,
+  setCounty,
   setCompany,
   setDeadlineFilter,
   setPositionType,
@@ -81,6 +86,12 @@ export default function FilterSidebar({
   const companyOptions = [
     { value: "ALL", label: "Bármely" },
     ...derived.companies.map((c) => ({ value: c, label: c })),
+  ];
+
+  // Map counties to Combobox options
+  const countyOptions = [
+    { value: "ALL", label: "Bármely" },
+    ...derived.counties.map((c) => ({ value: c, label: c })),
   ];
 
   return (
@@ -108,6 +119,21 @@ export default function FilterSidebar({
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Pl. szoftverfejlesztő, rendszer…"
           className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+        />
+      </div>
+
+      {/* 1.5. Megye (Scalable Combobox) */}
+      <div className="space-y-2">
+        <div className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+          Megye
+        </div>
+        <Combobox
+          options={countyOptions}
+          value={county === "ALL" ? "" : county}
+          onChange={(val) => setCounty(val || "ALL")}
+          placeholder="Válassz megyét vagy Bármely"
+          searchPlaceholder="Megye keresése..."
+          className="w-full"
         />
       </div>
 

@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import type { Position } from "../../../lib/api";
+import HUCities from "../../../assets/hu.json";
 import {
   norm,
   parseDate,
@@ -20,6 +21,28 @@ export type WorkTypeFilter = "ALL" | "REMOTE" | "ONSITE";
 
 export type PositionTypeFilter = "ALL" | "DUAL" | "FULL_TIME";
 
+const ALL_HUNGARIAN_COUNTIES = [
+  "Bács-Kiskun",
+  "Baranya",
+  "Békés",
+  "Borsod-Abaúj-Zemplén",
+  "Csongrád-Csanád",
+  "Fejér",
+  "Győr-Moson-Sopron",
+  "Hajdú-Bihar",
+  "Heves",
+  "Jász-Nagykun-Szolnok",
+  "Komárom-Esztergom",
+  "Nógrád",
+  "Pest",
+  "Somogy",
+  "Szabolcs-Szatmár-Bereg",
+  "Tolna",
+  "Vas",
+  "Veszprém",
+  "Zala"
+];
+
 /**
  * Custom hook for filtering and sorting positions
  * Extracts complex filtering logic from PositionsPage
@@ -27,6 +50,7 @@ export type PositionTypeFilter = "ALL" | "DUAL" | "FULL_TIME";
 export function usePositionsFilters(positions: Position[]) {
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("ALL");
+  const [county, setCounty] = useState("ALL");
   const [company, setCompany] = useState("ALL");
   const [deadlineFilter, setDeadlineFilter] = useState<DeadlineFilter>("ALL");
   const [datePostedFilter, setDatePostedFilter] =
@@ -58,6 +82,8 @@ export function usePositionsFilters(positions: Position[]) {
     );
     return Array.from(citySet).sort();
   }, [positions, activeOnly]);
+
+  const counties = ALL_HUNGARIAN_COUNTIES;
 
   const companies = useMemo(() => {
     const relevantPositions = activeOnly
@@ -109,6 +135,19 @@ export function usePositionsFilters(positions: Position[]) {
         (!p.location?.city || norm(p.location.city) !== norm(city))
       )
         return false;
+
+      // County filter
+      if (county !== "ALL") {
+        const positionCity = p.location?.city;
+        if (!positionCity) return false;
+        
+        const cityData = HUCities.find(
+          (c) => lower(c.city) === lower(positionCity)
+        );
+        if (!cityData || norm(cityData.admin_name) !== norm(county)) {
+          return false;
+        }
+      }
 
       // Company filter
       if (
@@ -207,6 +246,7 @@ export function usePositionsFilters(positions: Position[]) {
     positions,
     search,
     city,
+    county,
     company,
     deadlineFilter,
     datePostedFilter,
@@ -269,17 +309,19 @@ export function usePositionsFilters(positions: Position[]) {
   const derived = useMemo(
     () => ({
       cities,
+      counties,
       companies,
       tags: allTags,
       showCityChips: cities.length <= 10,
       showCompanyChips: companies.length <= 10,
     }),
-    [cities, companies, allTags],
+    [cities, counties, companies, allTags],
   );
 
   const resetFilters = useCallback(() => {
     setSearch("");
     setCity("ALL");
+    setCounty("ALL");
     setCompany("ALL");
     setDeadlineFilter("ALL");
     setDatePostedFilter("ALL");
@@ -303,6 +345,7 @@ export function usePositionsFilters(positions: Position[]) {
   return {
     search,
     city,
+    county,
     company,
     deadlineFilter,
     datePostedFilter,
@@ -313,6 +356,7 @@ export function usePositionsFilters(positions: Position[]) {
     sortKey,
     setSearch,
     setCity,
+    setCounty,
     setCompany,
     setDeadlineFilter,
     setDatePostedFilter,
