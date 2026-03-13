@@ -218,6 +218,10 @@ export default function Navbar() {
               Állásajánlatok
             </Link>
 
+            <Link to="/gallery" className={getLinkClass("/gallery")}>
+              Életképek
+            </Link>
+
             {newsLink && (
               <Link to={newsLink} className={getLinkClass(newsLink)}>
                 Hírek
@@ -558,6 +562,14 @@ export default function Navbar() {
               onClick={closeMobileMenu}
             >
               Állásajánlatok
+            </Link>
+
+            <Link
+              to="/gallery"
+              className={getMobileLinkClass("/gallery")}
+              onClick={closeMobileMenu}
+            >
+              Életképek
             </Link>
 
             {newsLink && (
