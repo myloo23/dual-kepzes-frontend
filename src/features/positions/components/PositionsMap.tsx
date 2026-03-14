@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { type Position } from "../../../lib/api";
-import { useGeocoding } from "../hooks/useGeocoding";
+import { useGeocoding, type PositionWithCoords } from "../hooks/useGeocoding";
+import { isExpired } from "../utils/positions.utils";
 
 // Default blue marker for positions
 const defaultIcon = L.icon({
@@ -14,6 +15,34 @@ const defaultIcon = L.icon({
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
+});
+
+// Gray marker for inactive jobs
+const inactiveIcon = L.icon({
+  iconRetinaUrl: "/leaflet/marker-icon-2x.png",
+  iconUrl: "/leaflet/marker-icon.png",
+  shadowUrl: "/leaflet/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+  className: "grayscale opacity-75",
+});
+
+// Grouped marker with count custom icon
+const createGroupedIcon = (count: number, hasActive: boolean) => L.divIcon({
+  className: "custom-grouped-marker",
+  html: `
+    <div class="relative flex justify-center items-end" style="width: 25px; height: 41px;">
+       <img src="/leaflet/marker-icon.png" style="width: 25px; height: 41px;" class="${!hasActive ? 'grayscale opacity-75' : ''}" />
+       <div class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border border-white shadow-sm z-10">
+         ${count}
+       </div>
+    </div>
+  `,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
 });
 
 // Red marker for user location
@@ -62,6 +91,25 @@ export default function PositionsMap({
 }: PositionsMapProps) {
   // Use custom geocoding hook
   const { positionsWithCoords, loading, progress } = useGeocoding(positions);
+
+  // Group positions by coordinates
+  const groupedPositions = useMemo(() => {
+    const groups = new Map<string, PositionWithCoords[]>();
+    
+    positionsWithCoords.forEach((p) => {
+      // Create a unique key for the coordinate
+      const lat = p.latitude?.toFixed(4);
+      const lng = p.longitude?.toFixed(4);
+      const key = `${lat},${lng}`;
+      
+      if (!groups.has(key)) {
+        groups.set(key, []);
+      }
+      groups.get(key)!.push(p);
+    });
+    
+    return Array.from(groups.values());
+  }, [positionsWithCoords]);
 
   // Calculate map center
   const mapCenter: [number, number] = useMemo(() => {
@@ -163,33 +211,50 @@ export default function PositionsMap({
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {positionsWithCoords.map((p) => (
-            <Marker
-              key={p.id}
-              position={[p.latitude!, p.longitude!]}
-              icon={defaultIcon}
-            >
-              <Popup>
-                <div className="text-xs space-y-2 min-w-[200px]">
-                  <div className="font-semibold text-slate-900 text-sm">
-                    {p.title}
+
+          {groupedPositions.map((group) => {
+            const first = group[0];
+            const hasActive = group.some(p => !isExpired(p.deadline));
+            const icon = group.length > 1 
+              ? createGroupedIcon(group.length, hasActive) 
+              : (!hasActive ? inactiveIcon : defaultIcon);
+
+            return (
+              <Marker
+                key={first.id}
+                position={[first.latitude!, first.longitude!]}
+                icon={icon}
+              >
+                <Popup>
+                  <div className="text-xs min-w-[220px] max-h-[300px] overflow-y-auto pr-1">
+                    {group.map((p, index) => {
+                      const active = !isExpired(p.deadline);
+                      return (
+                        <div key={p.id} className={`space-y-1 pb-3 ${index !== group.length - 1 ? 'border-b border-slate-200 mb-3' : ''} ${!active ? 'opacity-70' : ''}`}>
+                          <div className="font-semibold text-slate-900 text-sm leading-tight">
+                            {p.title}
+                            {!active && <span className="ml-2 text-[10px] text-red-500 font-bold px-1.5 py-0.5 bg-red-50 border border-red-200 rounded-md">Lejárt</span>}
+                          </div>
+                          {p.company?.name && (
+                            <div className="text-slate-600 font-medium">{p.company.name}</div>
+                          )}
+                          <div className="text-slate-500">
+                            {p.location?.address}, {p.location?.city}
+                          </div>
+                          <button
+                            onClick={() => handleViewPosition(p.id!)}
+                            className="w-full mt-2 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors"
+                          >
+                            Megnézem az állást
+                          </button>
+                        </div>
+                      )
+                    })}
                   </div>
-                  {p.company?.name && (
-                    <div className="text-slate-600">{p.company.name}</div>
-                  )}
-                  <div className="text-slate-500">
-                    {p.location?.address}, {p.location?.city}
-                  </div>
-                  <button
-                    onClick={() => handleViewPosition(p.id!)}
-                    className="w-full mt-2 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors"
-                  >
-                    Megnézem az állást
-                  </button>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
+                </Popup>
+              </Marker>
+            );
+          })}
 
           {userLocation && (
             <Marker

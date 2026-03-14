@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getCityCoordinates } from "../../../utils/city-coordinates";
 import type { Position } from "../../../lib/api";
 
-interface PositionWithCoords extends Position {
+export interface PositionWithCoords extends Position {
   latitude?: number;
   longitude?: number;
 }

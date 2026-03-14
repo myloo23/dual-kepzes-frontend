@@ -333,6 +333,7 @@ export default function PositionsPage() {
         <FilterSidebar
           search={filters.search}
           city={filters.city}
+          county={filters.county}
           company={filters.company}
           deadlineFilter={filters.deadlineFilter}
           positionType={filters.positionType}
@@ -341,6 +342,7 @@ export default function PositionsPage() {
           sortKey={filters.sortKey}
           setSearch={filters.setSearch}
           setCity={filters.setCity}
+          setCounty={filters.setCounty}
           setCompany={filters.setCompany}
           setDeadlineFilter={filters.setDeadlineFilter}
           setPositionType={filters.setPositionType}
