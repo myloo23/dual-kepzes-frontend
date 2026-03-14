@@ -8,6 +8,7 @@ import MaterialsGallery from "../../features/landing/components/MaterialsGallery
 import ReferencesSlider from "../../features/landing/components/ReferencesSlider";
 import DualInfoSection from "../../features/landing/components/DualInfoSection";
 import HowToUseVideo from "../../features/landing/components/HowToUseVideo";
+import RegistrationPromo from "../../features/landing/components/RegistrationPromo";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import njeLogoImage from "../../assets/logos/nje_logos/nje_logo2.png";
 import { ROLE_NAVIGATION_PATHS, type UserRole } from "../../config/navigation";
@@ -262,6 +263,9 @@ function HomePage() {
         <section className="py-24 border-t border-slate-100 dark:border-slate-800/50 transition-colors">
           <HowToUseVideo />
         </section>
+
+        {/* REGISTRATION PROMO */}
+        <RegistrationPromo />
 
         {/* INFO SECTION */}
         <section className="py-12 border-t border-slate-100 dark:border-slate-800/50 transition-colors">
