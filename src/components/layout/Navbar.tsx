@@ -4,7 +4,7 @@ import { useNotifications } from "../../features/notifications/hooks/useNotifica
 import { useAuth } from "../../features/auth";
 import { useNavigation } from "../../hooks/useNavigation";
 import { useTheme } from "../../hooks/useTheme";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, LogOut } from "lucide-react";
 import type { NotificationItem } from "../../lib/api";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import { GlobalSearch } from "../../features/search";
@@ -197,14 +197,9 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Desktop nav - Centered Global Search */}
-        <div className="flex-1 max-w-sm hidden sm:block">
-          <GlobalSearch />
-        </div>
-
-        <div className="flex items-center gap-6 ml-auto">
+        <div className="flex items-center gap-1 sm:gap-4 ml-auto">
           {/* Desktop nav links */}
-          <nav className="hidden sm:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6 mr-2">
             <Link to="/" className={getLinkClass("/")}>
               Kezdőlap
             </Link>
@@ -227,28 +222,32 @@ export default function Navbar() {
                 Hírek
               </Link>
             )}
-
-            {isLoggedIn && (
-              <button
-                onClick={logout}
-                className="text-[13px] tracking-wide font-medium text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-300"
-              >
-                Kijelentkezés
-              </button>
-            )}
-
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
-              aria-label="Téma váltása"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </button>
           </nav>
+
+          <GlobalSearch variant="icon" />
+
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
+            aria-label="Téma váltása"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </button>
+
+          {isLoggedIn && (
+            <button
+              onClick={logout}
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 focus:outline-none"
+              aria-label="Kijelentkezés"
+              title="Kijelentkezés"
+            >
+              <LogOut className="h-[18px] w-[18px] ml-0.5" />
+            </button>
+          )}
 
           {isLoggedIn && !isSystemAdmin && (
             <div className="relative" ref={notificationsRef}>
@@ -493,18 +492,6 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Mobile theme toggle */}
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="sm:hidden relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none mr-1"
-            aria-label="Téma váltása"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </button>
 
           {/* Mobile hamburger */}
           <button
