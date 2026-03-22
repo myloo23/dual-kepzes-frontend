@@ -171,19 +171,19 @@ export default function PublicCompanyProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-slate-600">Betöltés...</div>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 transition-colors">
+        <div className="text-slate-600 dark:text-slate-400">Betöltés...</div>
       </div>
     );
   }
 
   if (error || !company) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
-        <div className="text-red-600">{error || "Cég nem található"}</div>
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 bg-slate-50 dark:bg-slate-950 transition-colors">
+        <div className="text-red-600 dark:text-red-400">{error || "Cég nem található"}</div>
         <button
           onClick={() => navigate("/positions")}
-          className="text-blue-600 hover:underline"
+          className="text-blue-600 dark:text-blue-400 hover:underline"
         >
           Vissza az állásokhoz
         </button>
@@ -218,29 +218,29 @@ export default function PublicCompanyProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 pt-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-8 transition-colors">
       <div className="mx-auto max-w-6xl px-4 lg:px-8">
         {/* Back button */}
         <button
           onClick={() => navigate("/positions")}
-          className="mb-6 flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900"
+          className="mb-6 flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-200"
         >
           <ArrowLeft size={16} />
           Vissza az állásokhoz
         </button>
 
         {/* Header Card */}
-        <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
-          <div className="relative h-32 bg-slate-900 md:h-48">
+        <div className="overflow-hidden rounded-3xl bg-white dark:bg-slate-900 shadow-sm ring-1 ring-slate-200 dark:ring-slate-800 transition-colors">
+          <div className="relative h-32 bg-slate-900 dark:bg-slate-950 md:h-48 transition-colors">
             {/* Cover placeholder - could be a real cover image if available */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-slate-900 opacity-90" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-slate-900 opacity-90 dark:opacity-80" />
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay" />
           </div>
 
           <div className="relative px-6 pb-8 md:px-10">
             <div className="flex flex-col items-center md:flex-row md:items-end md:gap-8">
               {/* Logo - overlaps the blue header */}
-              <div className="relative -mt-12 h-24 w-24 overflow-hidden rounded-2xl border-4 border-white bg-white shadow-md md:-mt-16 md:h-32 md:w-32 flex-shrink-0">
+              <div className="relative -mt-12 h-24 w-24 overflow-hidden rounded-2xl border-4 border-white dark:border-slate-800 bg-white dark:bg-slate-800 shadow-md md:-mt-16 md:h-32 md:w-32 flex-shrink-0 transition-colors">
                 <img
                   src={company.logoUrl || logo}
                   alt={company.name}
@@ -250,13 +250,13 @@ export default function PublicCompanyProfilePage() {
 
               {/* Company info - on white background */}
               <div className="mt-4 text-center md:mb-2 md:mt-0 md:text-left flex-1">
-                <h1 className="text-3xl font-bold text-slate-900">
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white transition-colors">
                   {company.name}
                 </h1>
-                <div className="mt-2 flex flex-wrap justify-center gap-4 text-sm text-slate-600 md:justify-start">
+                <div className="mt-2 flex flex-wrap justify-center gap-4 text-sm text-slate-600 dark:text-slate-400 md:justify-start transition-colors">
                   {city && (
                     <div className="flex items-center gap-1.5">
-                      <MapPin size={16} className="text-slate-400" />
+                      <MapPin size={16} className="text-slate-400 dark:text-slate-500" />
                       <span>{city}</span>
                     </div>
                   )}
@@ -265,9 +265,9 @@ export default function PublicCompanyProfilePage() {
                       href={company.website}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1.5 transition-colors hover:text-blue-600"
+                      className="flex items-center gap-1.5 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
                     >
-                      <Globe size={16} className="text-slate-400" />
+                      <Globe size={16} className="text-slate-400 dark:text-slate-500" />
                       <span>Weboldal</span>
                     </a>
                   )}
@@ -278,20 +278,20 @@ export default function PublicCompanyProfilePage() {
             <div className="mt-10 grid gap-10 lg:grid-cols-3">
               {/* Main Content */}
               <div className="lg:col-span-2">
-                <section className="prose prose-slate max-w-none">
-                  <h2 className="mb-4 text-xl font-semibold text-slate-900">
+                <section className="prose prose-slate dark:prose-invert max-w-none">
+                  <h2 className="mb-4 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
                     A cégről
                   </h2>
-                  <div className="whitespace-pre-line text-slate-600 leading-relaxed">
+                  <div className="whitespace-pre-line text-slate-600 dark:text-slate-300 leading-relaxed transition-colors">
                     {company.description || "Nincs elérhető leírás."}
                   </div>
                 </section>
 
-                <div className="mt-12 border-t border-slate-100 pt-10">
+                <div className="mt-12 border-t border-slate-100 dark:border-slate-800 pt-10 transition-colors">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-semibold text-slate-900">
+                    <h2 className="text-xl font-semibold text-slate-900 dark:text-white transition-colors">
                       Nyitott pozíciók
-                      <span className="ml-2 inline-flex items-center justify-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                      <span className="ml-2 inline-flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:text-blue-300 transition-colors">
                         {positions.length}
                       </span>
                     </h2>
@@ -311,7 +311,7 @@ export default function PublicCompanyProfilePage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-500">
+                    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-6 text-center text-slate-500 dark:text-slate-400 transition-colors">
                       Jelenleg nincsenek meghirdetett pozíciók ennél a cégnél.
                     </div>
                   )}
@@ -320,28 +320,28 @@ export default function PublicCompanyProfilePage() {
 
               {/* Sidebar Info */}
               <div className="space-y-6">
-                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <h3 className="mb-4 font-semibold text-slate-900">
+                <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 shadow-sm transition-colors">
+                  <h3 className="mb-4 font-semibold text-slate-900 dark:text-white transition-colors">
                     Kapcsolat
                   </h3>
 
                   <div className="space-y-4">
                     {(company.contactName || company.contactEmail) && (
                       <div className="flex gap-3">
-                        <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                        <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 transition-colors">
                           <User size={16} />
                         </div>
                         <div>
-                          <div className="text-xs font-medium text-slate-500">
+                          <div className="text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
                             Kapcsolattartó
                           </div>
-                          <div className="text-sm font-medium text-slate-900">
+                          <div className="text-sm font-medium text-slate-900 dark:text-slate-100 transition-colors">
                             {company.contactName}
                           </div>
                           {company.contactEmail && (
                             <a
                               href={`mailto:${company.contactEmail}`}
-                              className="text-sm text-blue-600 hover:underline"
+                              className="text-sm text-blue-600 dark:text-blue-400 hover:underline transition-colors"
                             >
                               {company.contactEmail}
                             </a>
@@ -352,17 +352,17 @@ export default function PublicCompanyProfilePage() {
 
                     {city && (
                       <div className="flex gap-3">
-                        <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                        <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 transition-colors">
                           <Building2 size={16} />
                         </div>
                         <div>
-                          <div className="text-xs font-medium text-slate-500">
+                          <div className="text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
                             Székhely
                           </div>
-                          <div className="text-sm text-slate-900">
+                          <div className="text-sm text-slate-900 dark:text-slate-100 transition-colors">
                             {city}
                             {address && (
-                              <div className="text-slate-600">{address}</div>
+                              <div className="text-slate-600 dark:text-slate-400 transition-colors">{address}</div>
                             )}
                           </div>
                         </div>
@@ -371,18 +371,18 @@ export default function PublicCompanyProfilePage() {
 
                     {company.website && (
                       <div className="flex gap-3">
-                        <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+                        <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 transition-colors">
                           <Globe size={16} />
                         </div>
                         <div>
-                          <div className="text-xs font-medium text-slate-500">
+                          <div className="text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
                             Weboldal
                           </div>
                           <a
                             href={company.website}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-sm text-blue-600 hover:underline break-all"
+                            className="text-sm text-blue-600 dark:text-blue-400 hover:underline break-all transition-colors"
                           >
                             {company.website}
                           </a>
@@ -394,7 +394,7 @@ export default function PublicCompanyProfilePage() {
 
                 {/* Map Widget */}
                 {city && (
-                  <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                  <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 shadow-sm transition-colors">
                     <div className="h-64 w-full">
                       <LocationMap
                         companyName={company.name}

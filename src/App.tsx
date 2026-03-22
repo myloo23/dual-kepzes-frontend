@@ -81,6 +81,7 @@ const AdminNews = lazyRetry(() => import("./pages/admin/AdminNews"));
 const AdminNotificationsPage = lazyRetry(
   () => import("./pages/admin/NotificationsPage"),
 );
+const AdminGallery = lazyRetry(() => import("./pages/admin/AdminGallery"));
 
 // Lazy load other pages
 const MentorPartnerships = lazyRetry(
@@ -153,6 +154,7 @@ function App() {
                   element={<AdminNotificationsPage />}
                 />
                 <Route path="guide" element={<AdminGuidePage />} />
+                <Route path="gallery" element={<AdminGallery />} />
               </Route>
 
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
