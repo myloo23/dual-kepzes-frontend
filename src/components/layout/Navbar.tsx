@@ -184,7 +184,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-[1100] border-b border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60 transition-colors duration-300">
-      <div className="max-w-6xl mx-auto flex items-center gap-6 px-6 lg:px-8 h-16">
+      <div className="max-w-6xl mx-auto flex items-center gap-6 pl-6 pr-14 sm:pr-16 lg:px-8 h-16">
         <Link
           to="/"
           className="flex items-center gap-3 shrink-0 group"
@@ -226,17 +226,6 @@ export default function Navbar() {
 
           <GlobalSearch variant="icon" />
 
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
-            aria-label="Téma váltása"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </button>
 
           {isLoggedIn && (
             <button
@@ -571,6 +560,21 @@ export default function Navbar() {
           </div>
         </nav>
       )}
+
+      {/* Theme Toggle at the very edge of the screen */}
+      <div className="absolute top-0 right-0 h-16 flex items-center pr-2 sm:pr-4 z-[1150]">
+        <button
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
+          aria-label="Téma váltása"
+        >
+          {theme === "dark" ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <Moon className="h-5 w-5" />
+          )}
+        </button>
+      </div>
     </header>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { api, type CompanyAdminProfile } from "../../../lib/api";
 import { useAuth } from "../../../features/auth";
 
@@ -17,6 +17,16 @@ export default function CompanyProfileEditor({
     fullName: companyAdmin?.fullName ?? "",
     email: companyAdmin?.email ?? "",
   });
+
+  useEffect(() => {
+    if (companyAdmin) {
+      setAdminForm({
+        fullName: companyAdmin.fullName ?? "",
+        email: companyAdmin.email ?? "",
+      });
+    }
+  }, [companyAdmin]);
+
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -1,3 +1,5 @@
+import { MaterialStats } from "../../features/guide";
+
 export default function AdminGuidePage() {
   return (
     <div className="space-y-6">
@@ -34,7 +36,26 @@ export default function AdminGuidePage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="pt-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+              Tananyagok Statisztikája
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              A hallgatók által elvégzett és értékelt modulok eredményei.
+            </p>
+          </div>
+        </div>
+        <MaterialStats />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3 pt-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
         <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-colors">
           <div className="text-2xl mb-2">👥</div>
           <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1 transition-colors">

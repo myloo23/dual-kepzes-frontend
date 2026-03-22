@@ -29,6 +29,9 @@ export const companyApi = {
   listOwnApplication: (params?: PaginationQuery) =>
     apiGet<Company[]>(`${COMPANIES_PATH}/own-application`, params),
 
+  listPending: (params?: PaginationQuery) =>
+    apiGet<Company[]>(`${COMPANIES_PATH}/pending`, params),
+
   get: (id: Id) =>
     apiGet<Company>(`${COMPANIES_PATH}/${ensureId(id, "companyId")}`),
 
@@ -55,6 +58,18 @@ export const companyApi = {
   deactivate: (id: Id) =>
     apiPatch<Company>(
       `${COMPANIES_PATH}/${ensureId(id, "companyId")}/deactivate`,
+      {},
+    ),
+
+  approve: (id: Id) =>
+    apiPatch<Company>(
+      `${COMPANIES_PATH}/${ensureId(id, "companyId")}/approve`,
+      {},
+    ),
+
+  reject: (id: Id) =>
+    apiPatch<Company>(
+      `${COMPANIES_PATH}/${ensureId(id, "companyId")}/reject`,
       {},
     ),
 };
