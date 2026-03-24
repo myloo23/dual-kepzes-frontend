@@ -9,6 +9,7 @@ import ReferencesSlider from "../../features/landing/components/ReferencesSlider
 import DualInfoSection from "../../features/landing/components/DualInfoSection";
 import HowToUseVideo from "../../features/landing/components/HowToUseVideo";
 import RegistrationPromo from "../../features/landing/components/RegistrationPromo";
+import HomeMapSection from "../../features/landing/components/HomeMapSection";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import njeLogoImage from "../../assets/logos/nje_logos/nje_logo2.png";
 import { ROLE_NAVIGATION_PATHS, type UserRole } from "../../config/navigation";
@@ -256,6 +257,10 @@ function HomePage() {
               </svg>
               Térképes nézet
             </button>
+          </div>
+
+          <div className="mt-16">
+            <HomeMapSection />
           </div>
         </section>
 
