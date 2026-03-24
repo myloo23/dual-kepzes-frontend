@@ -9,6 +9,7 @@ export default function AdminLayout() {
     { to: "/admin/positions", label: "Pozíciók" },
     { to: "/admin/notifications", label: "Értesítések" },
     { to: "/admin/news", label: "Hírek" },
+    { to: "/admin/gallery", label: "Galéria" },
     { to: "/admin/settings", label: "Beállítások" },
     {
       to: "/admin/guide",

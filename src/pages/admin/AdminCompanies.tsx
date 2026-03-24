@@ -28,6 +28,12 @@ export default function AdminCompaniesPage() {
     deleteFn: companyApi.remove,
   });
 
+  const pendingCompanies = useCRUD<Company>({
+    listFn: companyApi.listPending,
+  });
+
+  const [activeTab, setActiveTab] = useState<"active" | "pending">("active");
+
   const modal = useModal<Company>();
   const [lookupId, setLookupId] = useState("");
   const { handleExport } = useCompanyExport();
@@ -41,6 +47,7 @@ export default function AdminCompaniesPage() {
   // Load companies on mount
   useEffect(() => {
     companies.load();
+    pendingCompanies.load();
   }, []);
 
   const handleCreateNew = () => {
@@ -94,6 +101,32 @@ export default function AdminCompaniesPage() {
     }
   };
 
+  const handleApprove = async (id: string | number) => {
+    if (!confirm("Biztosan jóváhagyod a cég regisztrációját?")) return;
+    try {
+      await companyApi.approve(id.toString());
+      pendingCompanies.setMessage("Cég regisztrációja sikeresen jóváhagyva.");
+      await Promise.all([companies.load(), pendingCompanies.load()]);
+    } catch (err: any) {
+      pendingCompanies.setError(
+        err.message || "Hiba történt a jóváhagyás során."
+      );
+    }
+  };
+
+  const handleReject = async (id: string | number) => {
+    if (!confirm("Biztosan elutasítod a cég regisztrációját?")) return;
+    try {
+      await companyApi.reject(id.toString());
+      pendingCompanies.setMessage("Cég regisztrációja sikeresen elutasítva.");
+      await pendingCompanies.load();
+    } catch (err: any) {
+      pendingCompanies.setError(
+        err.message || "Hiba történt az elutasítás során."
+      );
+    }
+  };
+
   // Sorting Logic
   const handleSort = (key: string) => {
     let direction: "asc" | "desc" = "asc";
@@ -107,8 +140,10 @@ export default function AdminCompaniesPage() {
     setSortConfig({ key, direction });
   };
 
+  const currentItems = activeTab === "active" ? companies.items : pendingCompanies.items;
+
   const sortedItems = useMemo(() => {
-    let sortableItems = [...companies.items];
+    let sortableItems = [...currentItems];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
         // @ts-ignore - dynamic sorting
@@ -126,7 +161,7 @@ export default function AdminCompaniesPage() {
       });
     }
     return sortableItems;
-  }, [companies.items, sortConfig]);
+  }, [currentItems, sortConfig]);
 
   const renderSortIcon = (key: string) => {
     if (!sortConfig || sortConfig.key !== key) {
@@ -166,31 +201,68 @@ export default function AdminCompaniesPage() {
       </div>
 
       {/* Feedback Messages */}
-      {companies.error && (
+      {(companies.error || pendingCompanies.error) && (
         <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
-          {companies.error}
+          {companies.error || pendingCompanies.error}
         </div>
       )}
-      {companies.message && (
+      {(companies.message || pendingCompanies.message) && (
         <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400 transition-colors">
-          {companies.message}
+          {companies.message || pendingCompanies.message}
         </div>
       )}
 
       {/* Main Content */}
       <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm dark:shadow-none transition-colors">
+        {/* Tabs */}
+        <div className="flex gap-4 border-b border-slate-200 dark:border-slate-800 mb-6">
+          <button
+            onClick={() => setActiveTab("active")}
+            className={`pb-3 text-sm font-medium transition-colors relative ${
+              activeTab === "active"
+                ? "text-blue-600 dark:text-blue-400"
+                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+            }`}
+          >
+            Aktív cégek
+            {activeTab === "active" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab("pending")}
+            className={`pb-3 text-sm font-medium transition-colors relative flex items-center gap-2 ${
+              activeTab === "pending"
+                ? "text-blue-600 dark:text-blue-400"
+                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+            }`}
+          >
+            Jóváhagyásra váró
+            {pendingCompanies.items.length > 0 && (
+              <span className="flex items-center justify-center min-w-5 h-5 px-1.5 text-[10px] font-bold text-white bg-amber-500 rounded-full">
+                {pendingCompanies.items.length}
+              </span>
+            )}
+            {activeTab === "pending" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
+            )}
+          </button>
+        </div>
+
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <h2 className="text-base font-bold text-slate-800 dark:text-slate-200 transition-colors">
-              Összes cég
+              {activeTab === "active" ? "Összes cég" : "Jóváhagyásra váró cégek"}
             </h2>
-            <Button onClick={handleCreateNew} variant="primary" size="xs">
-              + Új cég
-            </Button>
+            {activeTab === "active" && (
+              <Button onClick={handleCreateNew} variant="primary" size="xs">
+                + Új cég
+              </Button>
+            )}
           </div>
           <div className="flex gap-2">
-            <Button onClick={companies.load} variant="outline" size="xs">
+            <Button onClick={() => { activeTab === "active" ? companies.load() : pendingCompanies.load(); }} variant="outline" size="xs">
               {LABELS.REFRESH}
             </Button>
             <ExportButton
@@ -248,25 +320,46 @@ export default function AdminCompaniesPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
-                      <Button
-                        onClick={() => handleEdit(company.id)}
-                        variant="outlineAccent"
-                        size="xs"
-                      >
-                        {LABELS.EDIT}
-                      </Button>
-                      <Button
-                        onClick={() => handleDelete(company.id)}
-                        variant="danger"
-                        size="xs"
-                      >
-                        {LABELS.DELETE}
-                      </Button>
+                      {activeTab === "active" ? (
+                        <>
+                          <Button
+                            onClick={() => handleEdit(company.id)}
+                            variant="outlineAccent"
+                            size="xs"
+                          >
+                            {LABELS.EDIT}
+                          </Button>
+                          <Button
+                            onClick={() => handleDelete(company.id)}
+                            variant="danger"
+                            size="xs"
+                          >
+                            {LABELS.DELETE}
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            onClick={() => handleApprove(company.id)}
+                            variant="primary"
+                            size="xs"
+                          >
+                            Jóváhagyás
+                          </Button>
+                          <Button
+                            onClick={() => handleReject(company.id)}
+                            variant="danger"
+                            size="xs"
+                          >
+                            Elutasítás
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
               ))}
-              {!companies.loading && companies.items.length === 0 && (
+              {!(activeTab === "active" ? companies.loading : pendingCompanies.loading) && currentItems.length === 0 && (
                 <tr>
                   <td
                     className="px-4 py-12 text-center text-slate-500 dark:text-slate-400 transition-colors"

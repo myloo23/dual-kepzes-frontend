@@ -62,7 +62,7 @@ export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <img
-          key={image.id}
+          key={String(image.id)}
           src={image.src}
           alt={image.alt}
           className="max-h-[82vh] max-w-[88vw] rounded-xl object-contain shadow-2xl animate-in zoom-in-95 duration-200"
