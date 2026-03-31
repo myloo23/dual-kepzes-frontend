@@ -2,6 +2,7 @@ export const ROLE_NAVIGATION_PATHS = {
   STUDENT: {
     news: "/student/news",
     dashboard: "/student",
+    loginRedirect: "/positions",
   },
   ADMIN: {
     news: "/admin/news",
