@@ -271,21 +271,21 @@ export default function UniversityDashboardPage() {
   return (
     <div className="space-y-6">
       {activeTab === "overview" && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-semibold text-slate-900">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-none transition-colors">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
             Egyetemi felulet
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Hallgatoi adatok, kapcsolatok es sajat profil kezelese egy helyen.
           </p>
         </div>
       )}
 
       {activeTab === "students" && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-none transition-colors space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">Hallgatok</h2>
-            <p className="text-sm text-slate-600">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Hallgatok</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Aktiv hallgatoi profilok listaja (partnerkapcsolatok alapjan).
             </p>
           </div>
@@ -298,14 +298,14 @@ export default function UniversityDashboardPage() {
                 placeholder="Kereses nev vagy email alapjan..."
                 value={studentSearch}
                 onChange={(e) => setStudentSearch(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
             <div className="w-full md:w-64">
               <select
                 value={studentMajorFilter}
                 onChange={(e) => setStudentMajorFilter(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">-- Minden szak --</option>
                 {uniqueMajors.map((major) => (
@@ -318,17 +318,17 @@ export default function UniversityDashboardPage() {
           </div>
 
           {studentsLoading && (
-            <div className="text-sm text-slate-600">Betoltes...</div>
+            <div className="text-sm text-slate-600 dark:text-slate-400">Betoltes...</div>
           )}
           {studentsError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            <div className="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-3 py-2 text-sm text-red-700 dark:text-red-400 transition-colors">
               {studentsError}
             </div>
           )}
           {!studentsLoading &&
             !studentsError &&
             filteredStudents.length === 0 && (
-              <div className="text-sm text-slate-600">
+              <div className="text-sm text-slate-600 dark:text-slate-400">
                 Nincs a keresesnek megfelelo hallgato.
               </div>
             )}
@@ -336,16 +336,16 @@ export default function UniversityDashboardPage() {
             {paginatedStudents.map((student) => (
               <div
                 key={String(student.id)}
-                className="rounded-lg border border-slate-200 p-4"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4 transition-colors"
               >
-                <div className="font-semibold text-slate-900">
+                <div className="font-semibold text-slate-900 dark:text-slate-100">
                   {student.fullName}
                 </div>
-                <div className="text-sm text-slate-600">
+                <div className="text-sm text-slate-600 dark:text-slate-400">
                   {student.email}{" "}
                   {student.currentMajor ? `• ${student.currentMajor}` : ""}
                 </div>
-                <div className="text-xs text-slate-500 mt-1">
+                <div className="text-xs text-slate-500 dark:text-slate-500 mt-1">
                   {student.location?.city ? `${student.location.city} ` : ""}
                   {student.studyMode ? `• ${student.studyMode}` : ""}
                 </div>
@@ -355,15 +355,15 @@ export default function UniversityDashboardPage() {
 
           {/* Pagination */}
           {totalStudentPages > 1 && (
-            <div className="flex items-center justify-between border-t border-slate-200 pt-4">
+            <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-4 transition-colors">
               <button
                 onClick={() => setStudentPage((p) => Math.max(1, p - 1))}
                 disabled={studentPage === 1}
-                className="rounded-lg border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1 text-sm disabled:opacity-50 transition-colors"
               >
                 Elozo
               </button>
-              <span className="text-sm text-slate-600">
+              <span className="text-sm text-slate-600 dark:text-slate-400">
                 {studentPage} / {totalStudentPages} oldal
               </span>
               <button
@@ -371,7 +371,7 @@ export default function UniversityDashboardPage() {
                   setStudentPage((p) => Math.min(totalStudentPages, p + 1))
                 }
                 disabled={studentPage === totalStudentPages}
-                className="rounded-lg border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1 text-sm disabled:opacity-50 transition-colors"
               >
                 Kovetkezo
               </button>
@@ -381,18 +381,18 @@ export default function UniversityDashboardPage() {
       )}
 
       {activeTab === "partnerships" && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-none transition-colors space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Partnerkapcsolatok
             </h2>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Egyetemi partnerkapcsolatok listaja.
             </p>
           </div>
 
           {partnershipsError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            <div className="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-3 py-2 text-sm text-red-700 dark:text-red-400 transition-colors">
               {partnershipsError}
             </div>
           )}
@@ -407,49 +407,49 @@ export default function UniversityDashboardPage() {
       )}
 
       {activeTab === "profile" && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-none transition-colors space-y-6">
           <header className="space-y-1">
-            <h1 className="text-xl font-semibold text-slate-900">
+            <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
               Sajat profil
             </h1>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Itt frissitheted az egyetemi profilodat.
             </p>
           </header>
 
           {profileLoading && (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 p-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               Betoltes...
             </div>
           )}
 
           {!profileLoading && profileError && (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400 transition-colors">
               {profileError}
             </div>
           )}
 
           {!profileLoading && profileSuccess && (
-            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+            <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 p-4 text-sm text-emerald-700 dark:text-emerald-400 transition-colors">
               {profileSuccess}
             </div>
           )}
 
           {!profileLoading && !profileError && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label className="space-y-1 text-sm text-slate-700">
-                <span className="text-xs font-semibold text-slate-600">
+              <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300">
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                   Nev
                 </span>
                 <input
                   name="fullName"
                   value={profileForm.fullName ?? ""}
                   onChange={handleProfileChange}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </label>
-              <label className="space-y-1 text-sm text-slate-700">
-                <span className="text-xs font-semibold text-slate-600">
+              <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300">
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                   E-mail
                 </span>
                 <input
@@ -457,25 +457,25 @@ export default function UniversityDashboardPage() {
                   name="email"
                   value={profileForm.email ?? ""}
                   onChange={handleProfileChange}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </label>
-              <label className="space-y-1 text-sm text-slate-700 md:col-span-2">
-                <span className="text-xs font-semibold text-slate-600">
+              <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 md:col-span-2">
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                   Tanszek / Egyseg
                 </span>
                 <input
                   name="department"
                   value={profileForm.department ?? ""}
                   onChange={handleProfileChange}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </label>
             </div>
           )}
 
           {!profileLoading && (
-            <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 pt-4">
+            <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 dark:border-slate-800 pt-4 transition-colors">
               <button
                 onClick={handleProfileSave}
                 disabled={profileSaving}
@@ -486,7 +486,7 @@ export default function UniversityDashboardPage() {
               <button
                 onClick={handleProfileDelete}
                 disabled={profileDeleting}
-                className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
+                className="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-2 text-sm font-semibold text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 disabled:opacity-60 transition-colors"
               >
                 {profileDeleting ? "Torles..." : "Profil torlese"}
               </button>
@@ -497,3 +497,4 @@ export default function UniversityDashboardPage() {
     </div>
   );
 }
+

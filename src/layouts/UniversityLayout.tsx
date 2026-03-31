@@ -17,7 +17,7 @@ export default function UniversityLayout() {
   return (
     <DashboardLayout
       roleLabel="EGYETEMI"
-      title="Duális rendszer"
+      title="Duális képzés"
       homeLink="/university"
       navItems={navItems}
     />
