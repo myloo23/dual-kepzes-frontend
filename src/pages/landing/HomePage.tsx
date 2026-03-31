@@ -36,7 +36,12 @@ function HomePage() {
       login(res.token, res.user as any); // TODO: Ensure API response matches User type fully
 
       const normalizedRole = res.user.role as UserRole;
-      const target = ROLE_NAVIGATION_PATHS[normalizedRole]?.dashboard;
+      const roleConfig = ROLE_NAVIGATION_PATHS[normalizedRole] as {
+        dashboard: string;
+        loginRedirect?: string;
+        news?: string;
+      };
+      const target = roleConfig?.loginRedirect ?? roleConfig?.dashboard;
       console.log("Számított útvonal:", target);
 
       if (target) {
