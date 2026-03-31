@@ -29,14 +29,14 @@ const inactiveIcon = L.icon({
   className: "grayscale opacity-75",
 });
 
-// Grouped marker with count custom icon
-const createGroupedIcon = (count: number, hasActive: boolean) => L.divIcon({
+// Grouped marker with count custom icon – count = number of unique companies
+const createGroupedIcon = (companyCount: number, hasActive: boolean) => L.divIcon({
   className: "custom-grouped-marker",
   html: `
     <div class="relative flex justify-center items-end" style="width: 25px; height: 41px;">
        <img src="/leaflet/marker-icon.png" style="width: 25px; height: 41px;" class="${!hasActive ? 'grayscale opacity-75' : ''}" />
        <div class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border border-white shadow-sm z-10">
-         ${count}
+         ${companyCount}
        </div>
     </div>
   `,
@@ -92,23 +92,39 @@ export default function PositionsMap({
   // Use custom geocoding hook
   const { positionsWithCoords, loading, progress } = useGeocoding(positions);
 
-  // Group positions by coordinates
+  // Group positions by coordinates.
+  // Badge shows the number of UNIQUE COMPANIES at that coordinate (not positions).
+  // Each location (address+city) of a company generates a separate marker entry.
   const groupedPositions = useMemo(() => {
     const groups = new Map<string, PositionWithCoords[]>();
-    
+
     positionsWithCoords.forEach((p) => {
-      // Create a unique key for the coordinate
       const lat = p.latitude?.toFixed(4);
       const lng = p.longitude?.toFixed(4);
       const key = `${lat},${lng}`;
-      
+
       if (!groups.has(key)) {
         groups.set(key, []);
       }
-      groups.get(key)!.push(p);
+      // Avoid adding the same position twice to the same coordinate group
+      const existing = groups.get(key)!;
+      if (!existing.find((e) => e.id === p.id)) {
+        existing.push(p);
+      }
     });
-    
+
     return Array.from(groups.values());
+  }, [positionsWithCoords]);
+
+  // Count unique companies across all geocoded positions.
+  // Use companyId (always present on Position) as the reliable identifier.
+  const uniqueCompanyCount = useMemo(() => {
+    const ids = new Set<string>();
+    positionsWithCoords.forEach((p) => {
+      const id = p.companyId ?? p.company?.id;
+      if (id) ids.add(String(id));
+    });
+    return ids.size;
   }, [positionsWithCoords]);
 
   // Calculate map center
@@ -177,9 +193,9 @@ export default function PositionsMap({
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
           <span className="text-slate-600 dark:text-slate-400 transition-colors">
-            Pozíciók:{" "}
+            Cégek:{" "}
             <span className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
-              {positionsWithCoords.length}
+              {uniqueCompanyCount}
             </span>
           </span>
         </div>
@@ -215,13 +231,15 @@ export default function PositionsMap({
           {groupedPositions.map((group) => {
             const first = group[0];
             const hasActive = group.some(p => !isExpired(p.deadline));
-            const icon = group.length > 1 
-              ? createGroupedIcon(group.length, hasActive) 
+            // Unique company count at this coordinate – used for the badge
+            const uniqueCompaniesAtCoord = new Set(group.map(p => String(p.company?.id ?? p.companyId))).size;
+            const icon = uniqueCompaniesAtCoord > 1
+              ? createGroupedIcon(uniqueCompaniesAtCoord, hasActive)
               : (!hasActive ? inactiveIcon : defaultIcon);
 
             return (
               <Marker
-                key={first.id}
+                key={`${first.latitude?.toFixed(4)},${first.longitude?.toFixed(4)}`}
                 position={[first.latitude!, first.longitude!]}
                 icon={icon}
               >
@@ -248,7 +266,7 @@ export default function PositionsMap({
                             Megnézem az állást
                           </button>
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </Popup>
