@@ -9,7 +9,7 @@ export default function UniversityGuidePage() {
         </div>
 
         <h1 className="text-2xl font-semibold text-slate-900 mb-2">
-          Tananyag és útmutató
+          Oktatási segédlet
         </h1>
 
         <p className="text-slate-600 mb-6 max-w-md mx-auto">
@@ -44,7 +44,7 @@ export default function UniversityGuidePage() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-              Tananyagok Statisztikája
+              Oktatási segédletek Statisztikája
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">
               A hallgatók által elvégzett és értékelt modulok eredményei.

@@ -696,7 +696,7 @@ export default function StudentDashboardPage() {
                       : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
-                  Tananyag
+                  Oktatási segédlet
                 </Link>
               </nav>
             </div>
@@ -1342,7 +1342,7 @@ export default function StudentDashboardPage() {
                     </div>
 
                     <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
-                      Tananyag és útmutató
+                      Oktatási segédlet
                     </h1>
 
                     <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto transition-colors">

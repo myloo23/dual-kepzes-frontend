@@ -75,9 +75,9 @@ export function GuidePlayer({ course, onBack }: GuidePlayerProps) {
   const steps = [
     {
       id: "presentation",
-      title: "Tananyag és Teszt",
+      title: "Oktatási segédlet és Teszt",
       component: <GuideEmbed course={course} />,
-      actionText: "A tananyagot és a tesztet sikeresen teljesítettem",
+      actionText: "Az oktatási segédletet és a tesztet sikeresen teljesítettem",
     },
   ];
 
@@ -152,7 +152,7 @@ export function GuidePlayer({ course, onBack }: GuidePlayerProps) {
           Gratulálunk a modul elvégzéséhez!
         </h2>
         <p className="text-slate-600 dark:text-slate-400 mb-8 font-medium transition-colors text-center max-w-xl">
-          Kérjük, értékeld a(z) "{course.title}" tananyagot, hogy a jövőben még jobb tartalmakat készíthessünk.
+          Kérjük, értékeld a(z) "{course.title}" oktatási segédletet, hogy a jövőben még jobb tartalmakat készíthessünk.
         </p>
 
         <div className="w-full max-w-md space-y-6">
@@ -174,7 +174,7 @@ export function GuidePlayer({ course, onBack }: GuidePlayerProps) {
           <textarea
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
-            placeholder="Opcionális megjegyzés, észrevétel a tananyaggal kapcsolatban..."
+            placeholder="Opcionális megjegyzés, észrevétel az oktatási segédlettel kapcsolatban..."
             rows={4}
             className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-4 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-y"
           />

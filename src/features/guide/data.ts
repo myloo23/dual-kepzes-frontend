@@ -3,7 +3,7 @@ import type { GuideCourse } from "./types";
 export const AVAILABLE_COURSES: GuideCourse[] = [
   {
     id: "canva-base",
-    title: "Alapozó Tananyag",
+    title: "Alapozó oktatási segédlet",
     description: "Az első modul a duális képzés rendszerének megismeréséhez.",
     embedUrl:
       "https://www.canva.com/design/DAHBAAK86Kc/9vTO1exI26OpupqJ7es-Mg/view?embed",

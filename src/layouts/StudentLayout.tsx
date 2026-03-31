@@ -34,7 +34,7 @@ export default function StudentLayout() {
     },
     {
       to: "/student/guide",
-      label: "Tananyag",
+      label: "Oktatási segédlet",
       hint: "Útmutató az oldal használatához",
     },
   ];

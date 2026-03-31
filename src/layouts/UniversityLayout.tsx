@@ -9,7 +9,7 @@ export default function UniversityLayout() {
     { to: "/university/profile", label: "Saját profil" },
     {
       to: "/university/guide",
-      label: "Tananyag",
+      label: "Oktatási segédlet",
       hint: "Útmutató az oldal használatához",
     },
   ];

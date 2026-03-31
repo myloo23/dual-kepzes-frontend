@@ -13,7 +13,7 @@ export default function HrLayout() {
     { to: "/hr/profile", label: "Saját profil" },
     {
       to: "/hr/guide",
-      label: "Tananyag",
+      label: "Oktatási segédlet",
       hint: "Útmutató az oldal használatához",
     },
   ];

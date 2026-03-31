@@ -9,7 +9,7 @@ const PATHS = {
 
 export const materialsApi = {
   /**
-   * Tananyag elvégzésének és értékelésének rögzítése (Student)
+   * Oktatási segédlet elvégzésének és értékelésének rögzítése (Student)
    */
   complete: (payload: { materialId: string; rating: number; feedback?: string }) =>
     apiPost<{ message: string; progress: MaterialProgress }>(PATHS.complete, payload),
