@@ -495,7 +495,7 @@ export default function StudentRegisterForm() {
                       className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     >
                       <option value="NAPPALI">NAPPALI</option>
-                      <option value="LEVELEZŐ">LEVELEZŐ</option>
+                      <option value="LEVELEZŐ" disabled>LEVELEZŐ (hamarosan)</option>
                     </select>
                   </div>
 
@@ -545,7 +545,7 @@ export default function StudentRegisterForm() {
                       className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     >
                       <option value="NAPPALI">NAPPALI</option>
-                      <option value="LEVELEZŐ">LEVELEZŐ</option>
+                      <option value="LEVELEZŐ" disabled>LEVELEZŐ (hamarosan)</option>
                     </select>
                   </div>
 
