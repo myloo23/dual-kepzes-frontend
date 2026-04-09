@@ -40,6 +40,13 @@ export default function AssignUniversityUserModal({
     e.preventDefault();
     if (!partnership || !selectedUserId) return;
 
+    if (partnership.status !== "PENDING_UNIVERSITY") {
+      setError(
+        "A hozzárendelés csak PENDING_UNIVERSITY státuszban engedélyezett. Előbb mentor hozzárendelés szükséges.",
+      );
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -52,7 +59,11 @@ export default function AssignUniversityUserModal({
       onClose();
     } catch (err) {
       console.error("Failed to assign university user:", err);
-      setError("Hiba történt a hozzárendelés során.");
+      const message =
+        err instanceof Error && err.message
+          ? err.message
+          : "Hiba történt a hozzárendelés során.";
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -69,34 +80,41 @@ export default function AssignUniversityUserModal({
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
             {error}
           </div>
         )}
 
+        {partnership.status !== "PENDING_UNIVERSITY" && (
+          <div className="rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/20 px-4 py-3 text-sm text-amber-800 dark:text-amber-400 transition-colors">
+            Ez a partnerség még nem rendelhető egyetemi felelőshöz. Előbb a
+            céges mentort kell kijelölni.
+          </div>
+        )}
+
         {/* Partnership Details Summary */}
-        <div className="rounded-lg bg-slate-50 p-4 border border-slate-200 space-y-2 text-sm">
+        <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 p-4 border border-slate-200 dark:border-slate-700 space-y-2 text-sm transition-colors">
           <div className="flex justify-between">
-            <span className="text-slate-500">Hallgató:</span>
-            <span className="font-medium text-slate-900">
+            <span className="text-slate-500 dark:text-slate-400">Hallgató:</span>
+            <span className="font-medium text-slate-900 dark:text-slate-100">
               {partnership.student?.fullName || "-"}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-500">Cég:</span>
-            <span className="font-medium text-slate-900">
+            <span className="text-slate-500 dark:text-slate-400">Cég:</span>
+            <span className="font-medium text-slate-900 dark:text-slate-100">
               {partnership.position?.company?.name || "-"}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-500">Pozíció:</span>
-            <span className="font-medium text-slate-900">
+            <span className="text-slate-500 dark:text-slate-400">Pozíció:</span>
+            <span className="font-medium text-slate-900 dark:text-slate-100">
               {partnership.position?.title || "-"}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-500">Mentor:</span>
-            <span className="font-medium text-slate-900">
+            <span className="text-slate-500 dark:text-slate-400">Mentor:</span>
+            <span className="font-medium text-slate-900 dark:text-slate-100">
               {partnership.mentor?.fullName || "-"}
             </span>
           </div>
@@ -105,7 +123,7 @@ export default function AssignUniversityUserModal({
         <div>
           <label
             htmlFor="uniUser"
-            className="block text-sm font-medium text-slate-700 mb-2"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 transition-colors"
           >
             Válasszon Egyetemi Felelőst
           </label>
@@ -113,7 +131,7 @@ export default function AssignUniversityUserModal({
             id="uniUser"
             value={selectedUserId as string}
             onChange={(e) => setSelectedUserId(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
             required
           >
             <option value="">-- Válasszon listából --</option>
@@ -123,23 +141,27 @@ export default function AssignUniversityUserModal({
               </option>
             ))}
           </select>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 transition-colors">
             A kiválasztott felhasználó látni fogja ezt a partnerséget a saját
             felületén.
           </p>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700 transition-colors">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="rounded-xl border border-slate-300 dark:border-slate-700 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             Mégse
           </button>
           <button
             type="submit"
-            disabled={isLoading || !selectedUserId}
+            disabled={
+              isLoading ||
+              !selectedUserId ||
+              partnership.status !== "PENDING_UNIVERSITY"
+            }
             className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isLoading ? "Mentés..." : "Hozzárendelés Mentése"}

@@ -58,6 +58,9 @@ export default function PartnershipFilters({
         >
           <option value="ALL">Összes</option>
           <option value="PENDING_MENTOR">Mentor jóváhagyásra vár</option>
+          <option value="PENDING_UNIVERSITY">
+            Egyetemi felelős hozzárendelésre vár
+          </option>
           <option value="ACTIVE">Aktív</option>
           <option value="TERMINATED">Lezárt</option>
         </select>

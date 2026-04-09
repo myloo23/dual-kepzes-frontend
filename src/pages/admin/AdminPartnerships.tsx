@@ -11,6 +11,8 @@ import type {
 import ExportButton from "../../components/shared/ExportButton";
 import { usePartnershipExport } from "../../features/partnerships/hooks/usePartnershipExport";
 
+const ADMIN_PARTNERSHIPS_FETCH_LIMIT = 1000;
+
 export default function AdminPartnerships() {
   const [partnerships, setPartnerships] = useState<Partnership[]>([]);
   const [universityUsers, setUniversityUsers] = useState<
@@ -33,7 +35,10 @@ export default function AdminPartnerships() {
     setIsLoading(true);
     try {
       const [partnershipsData, uniUsersData] = await Promise.all([
-        api.partnerships.listUniversity(),
+        api.partnerships.listUniversity({
+          page: 1,
+          limit: ADMIN_PARTNERSHIPS_FETCH_LIMIT,
+        }),
         api.universityUsers.list(),
       ]);
       setPartnerships(partnershipsData);

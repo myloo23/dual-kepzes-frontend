@@ -181,14 +181,28 @@ export default function AdminPartnershipsList({
                         </span>
                       )}
 
-                      <button
-                        onClick={() => handleOpenAssign(partnership)}
-                        className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 transition-colors"
-                      >
-                        {partnership.uniEmployee
-                          ? "Szerkesztés"
-                          : "+ Hozzárendelés"}
-                      </button>
+                      {(() => {
+                        const canAssignUniEmployee =
+                          partnership.status === "PENDING_UNIVERSITY";
+                        return (
+                          <button
+                            onClick={() => handleOpenAssign(partnership)}
+                            disabled={!canAssignUniEmployee}
+                            title={
+                              canAssignUniEmployee
+                                ? "Egyetemi felelos hozzarendeles"
+                                : "Elobb mentort kell hozzarendelni (PENDING_UNIVERSITY allapot)."
+                            }
+                            className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 transition-colors disabled:text-slate-400 disabled:dark:text-slate-500 disabled:no-underline disabled:cursor-not-allowed"
+                          >
+                            {canAssignUniEmployee
+                              ? partnership.uniEmployee
+                                ? "Szerkesztes"
+                                : "+ Hozzarendeles"
+                              : "Mentor szukseges"}
+                          </button>
+                        );
+                      })()}
                     </div>
                   </td>
                   <td className="px-6 py-3 align-middle">
@@ -196,12 +210,16 @@ export default function AdminPartnershipsList({
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
                         partnership.status === "ACTIVE"
                           ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400"
+                          : partnership.status === "PENDING_UNIVERSITY"
+                            ? "bg-sky-100 dark:bg-sky-900/30 text-sky-800 dark:text-sky-400"
                           : partnership.status === "TERMINATED"
                             ? "bg-rose-100 dark:bg-rose-900/30 text-rose-800 dark:text-rose-400"
                             : "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400"
                       }`}
                     >
                       {partnership.status === "ACTIVE" && "Aktív"}
+                      {partnership.status === "PENDING_UNIVERSITY" &&
+                        "Egyetemi felelosre var"}
                       {partnership.status === "TERMINATED" && "Lezárt"}
                       {partnership.status === "PENDING_MENTOR" &&
                         "Mentor jóváhagyásra vár"}

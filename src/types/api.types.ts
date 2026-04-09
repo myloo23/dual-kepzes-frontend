@@ -377,6 +377,7 @@ export interface CompanyStatsResponse {
 // ============= Partnership Types =============
 export type PartnershipStatus =
   | "PENDING_MENTOR"
+  | "PENDING_UNIVERSITY"
   | "ACTIVE"
   | "TERMINATED"
   | "FINISHED";

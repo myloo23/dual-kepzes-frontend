@@ -65,27 +65,27 @@ export default function AssignMentorModal({
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 transition-colors">
             {error}
           </div>
         )}
 
-        <div className="rounded-lg bg-slate-50 p-4 border border-slate-200 space-y-2 text-sm">
+        <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 p-4 border border-slate-200 dark:border-slate-700 space-y-2 text-sm transition-colors">
           <div className="flex justify-between">
-            <span className="text-slate-500">Hallgató:</span>
-            <span className="font-medium text-slate-900">
+            <span className="text-slate-500 dark:text-slate-400">Hallgató:</span>
+            <span className="font-medium text-slate-900 dark:text-slate-100">
               {partnership.student?.fullName || "-"}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-500">Pozíció:</span>
-            <span className="font-medium text-slate-900">
+            <span className="text-slate-500 dark:text-slate-400">Pozíció:</span>
+            <span className="font-medium text-slate-900 dark:text-slate-100">
               {partnership.position?.title || "-"}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-500">Szerződés:</span>
-            <span className="font-medium text-slate-900">
+            <span className="text-slate-500 dark:text-slate-400">Szerződés:</span>
+            <span className="font-medium text-slate-900 dark:text-slate-100">
               {partnership.contractNumber || "-"}
             </span>
           </div>
@@ -94,7 +94,7 @@ export default function AssignMentorModal({
         <div>
           <label
             htmlFor="mentor"
-            className="block text-sm font-medium text-slate-700 mb-2"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 transition-colors"
           >
             Válasszon mentort
           </label>
@@ -102,7 +102,7 @@ export default function AssignMentorModal({
             id="mentor"
             value={selectedMentorId as string}
             onChange={(e) => setSelectedMentorId(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
             required
           >
             <option value="">-- Válasszon listából --</option>
@@ -114,11 +114,11 @@ export default function AssignMentorModal({
           </select>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700 transition-colors">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="rounded-xl border border-slate-300 dark:border-slate-700 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             Mégse
           </button>
