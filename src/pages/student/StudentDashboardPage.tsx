@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+﻿import { useEffect, useState, type ChangeEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ApplicationsList from "../../features/applications/components/ApplicationsList";
 import StudentPartnershipsList from "../../features/partnerships/components/StudentPartnershipsList";
@@ -12,6 +12,7 @@ import {
 } from "../../features/guide";
 import { studentsApi } from "../../features/students/services/studentsApi";
 import { api, type StudentProfile } from "../../lib/api";
+import type { Partnership } from "../../types/api.types";
 import {
   normalizeNeptun,
   validateNeptunOptional,
@@ -29,6 +30,19 @@ type StudentProfilePayload = Partial<StudentProfile> & {
     phoneNumber?: string;
   };
   birthDate?: string;
+  country?: string;
+  zipCode?: string | number;
+  city?: string;
+  streetAddress?: string;
+  address?: string;
+  firstChoiceId?: string;
+  secondChoiceId?: string;
+  firstChoice?: {
+    id?: string;
+  };
+  secondChoice?: {
+    id?: string;
+  };
   major?: {
     id: string;
     name: string;
@@ -61,6 +75,15 @@ type StudentFormState = {
   motivationLetter: string; // Renamed from motivation
 };
 
+function normalizeStudyMode(
+  studyMode?: string,
+): StudentProfile["studyMode"] {
+  const normalized = String(studyMode || "").toUpperCase();
+  return normalized.includes("LEVELEZ")
+    ? ("LEVELEZO" as StudentProfile["studyMode"])
+    : ("NAPPALI" as StudentProfile["studyMode"]);
+}
+
 // Returns standard nested StudentProfile
 function normalizeStudentProfile(
   payload: StudentProfilePayload | null,
@@ -80,9 +103,9 @@ function normalizeStudentProfile(
   };
   const user = merged.user || {};
   const rawDate =
-    merged.dateOfBirth || (merged as any).birthDate || payload.birthDate || "";
+    merged.dateOfBirth || merged.birthDate || payload.birthDate || "";
   const dateOfBirth = rawDate ? String(rawDate).split("T")[0] : "";
-  const loc = (merged as any).location || {};
+  const loc: Partial<StudentProfile["location"]> = merged.location || {};
 
   return {
     id: merged.id ?? "",
@@ -93,28 +116,27 @@ function normalizeStudentProfile(
     mothersName: merged.mothersName ?? "",
     dateOfBirth,
     location: {
-      country: loc.country || (merged as any).country || "",
-      zipCode: toNumber(loc.zipCode || (merged as any).zipCode) || 0,
-      city: loc.city || (merged as any).city || "",
+      country: loc.country || merged.country || "",
+      zipCode: toNumber(loc.zipCode || merged.zipCode) || 0,
+      city: loc.city || merged.city || "",
       address:
         loc.address ||
-        (merged as any).streetAddress ||
-        (merged as any).address ||
+        merged.streetAddress ||
+        merged.address ||
         "",
     },
     highSchool: merged.highSchool ?? "",
     graduationYear: toNumber(merged.graduationYear) || 0,
     neptunCode: merged.neptunCode ?? "",
     currentMajor: merged.major?.id ?? merged.currentMajor ?? "",
-    studyMode:
-      (merged.studyMode?.toUpperCase() as "NAPPALI" | "LEVELEZŐ") ?? "NAPPALI",
+    studyMode: normalizeStudyMode(merged.studyMode),
     isAvailableForWork: merged.isAvailableForWork ?? false,
     hasLanguageCert: Boolean(merged.hasLanguageCert),
     languageExams: merged.languageExams || [],
     firstChoiceId:
-      (merged as any).firstChoice?.id || (merged as any).firstChoiceId || "",
+      merged.firstChoice?.id || merged.firstChoiceId || "",
     secondChoiceId:
-      (merged as any).secondChoice?.id || (merged as any).secondChoiceId || "",
+      merged.secondChoice?.id || merged.secondChoiceId || "",
     universityMajor: merged.currentMajor || "",
     motivationLetter: merged.motivationLetter ?? "",
   } as Partial<StudentProfile>;
@@ -188,7 +210,6 @@ function buildProfileForm(
 function buildProfilePayload(form: StudentFormState) {
   const {
     dateOfBirth,
-    email,
     country,
     zipCode,
     city,
@@ -219,13 +240,14 @@ function buildProfilePayload(form: StudentFormState) {
 
   // Filter proper language exams
   const finalLanguageExams = rest.hasLanguageCert ? languageExams : [];
+  const trimmedMotivation = (rest.motivationLetter ?? "").trim();
 
   return {
     ...rest,
     neptunCode: finalNeptun ? normalizeNeptun(finalNeptun) : undefined,
     currentMajor: finalMajor,
     languageExams: finalLanguageExams,
-    studyMode: rest.studyMode as "NAPPALI" | "LEVELEZŐ",
+    studyMode: normalizeStudyMode(rest.studyMode),
     graduationYear: Number(rest.graduationYear),
     ...(dateOfBirth ? { birthDate: dateOfBirth } : {}),
     location: {
@@ -234,7 +256,7 @@ function buildProfilePayload(form: StudentFormState) {
       city,
       address: streetAddress,
     },
-    motivationLetter: rest.motivationLetter,
+    ...(trimmedMotivation ? { motivationLetter: trimmedMotivation } : {}),
   };
 }
 
@@ -256,7 +278,7 @@ export default function StudentDashboardPage() {
   const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
 
   // Partnerships state
-  const [partnerships, setPartnerships] = useState<any[]>([]);
+  const [partnerships, setPartnerships] = useState<Partnership[]>([]);
   const [partnershipsLoading, setPartnershipsLoading] = useState(false);
 
   // Determine active tab from URL hash
@@ -274,7 +296,7 @@ export default function StudentDashboardPage() {
               : "overview";
 
   useEffect(() => {
-    if (activeTab !== "profile") return;
+    if (activeTab !== "profile" && activeTab !== "overview") return;
     let mounted = true;
 
     const loadProfile = async () => {
@@ -674,7 +696,7 @@ export default function StudentDashboardPage() {
                       : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
-                  Partnerek
+                  Duális helyem
                 </Link>
 
                 <Link
@@ -713,6 +735,18 @@ export default function StudentDashboardPage() {
                     Itt fogod látni a jelentkezéseidet, státuszokat, határidőket
                     és a mentett pozíciókat.
                   </p>
+                  <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                    Munkakeresési státusz:{" "}
+                    <span className="font-semibold">
+                      {profileLoading
+                        ? "Betöltés..."
+                        : profileError
+                          ? "Nem elérhető"
+                          : profile?.isAvailableForWork
+                            ? "Aktív"
+                            : "Inaktív"}
+                    </span>
+                  </p>
 
                   <div className="mt-4 flex flex-col sm:flex-row gap-3">
                     <Link
@@ -723,7 +757,7 @@ export default function StudentDashboardPage() {
                     </Link>
 
                     <button
-                      onClick={() => alert("Később: profil kitöltése oldal")}
+                      onClick={() => (window.location.href = "/student#profile")}
                       className="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-2.5 text-sm font-semibold text-slate-900 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Profil kitöltése
@@ -812,7 +846,7 @@ export default function StudentDashboardPage() {
                       </Link>
 
                       <button
-                        onClick={() => alert("Később: saját profil oldal")}
+                        onClick={() => (window.location.href = "/student#profile")}
                         className="text-left rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-sm font-semibold text-slate-900 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
                         Saját profil →
@@ -1319,7 +1353,7 @@ export default function StudentDashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 transition-colors">
-                      Partnerkapcsolatok
+                      Duális helyem
                     </h2>
                     <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors">
                       Az Önhöz kapcsolódó partnerkapcsolatok és együttműködések.

@@ -30,14 +30,14 @@ const inactiveIcon = L.icon({
   className: "grayscale opacity-75",
 });
 
-// Grouped marker – badge shows unique company count
-const createGroupedIcon = (companyCount: number, hasActive: boolean) => L.divIcon({
+// Grouped marker - badge shows unique site count
+const createGroupedIcon = (siteCount: number, hasActive: boolean) => L.divIcon({
   className: "custom-grouped-marker",
   html: `
     <div class="relative flex justify-center items-end" style="width: 25px; height: 41px;">
        <img src="/leaflet/marker-icon.png" style="width: 25px; height: 41px;" class="${!hasActive ? 'grayscale opacity-75' : ''}" />
        <div class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border border-white shadow-sm z-10">
-         ${companyCount}
+         ${siteCount}
        </div>
     </div>
   `,
@@ -77,7 +77,7 @@ function MapPage() {
   // Use custom geocoding hook
   const { positionsWithCoords, loading, progress } = useGeocoding(positions);
 
-  // Group positions by coordinates – badge shows unique company count
+  // Group positions by coordinates - badge shows unique site count
   const groupedPositions = useMemo(() => {
     const groups = new Map<string, PositionWithCoords[]>();
 
@@ -98,15 +98,9 @@ function MapPage() {
     return Array.from(groups.values());
   }, [positionsWithCoords]);
 
-  // Total unique company count for the legend.
-  // Use companyId (always present on Position) as the reliable identifier.
-  const uniqueCompanyCount = useMemo(() => {
-    const ids = new Set<string>();
-    positionsWithCoords.forEach((p) => {
-      const id = p.companyId ?? p.company?.id;
-      if (id) ids.add(String(id));
-    });
-    return ids.size;
+  // Total unique receiving site count for the legend.
+  const uniqueSiteCount = useMemo(() => {
+    return new Set(positionsWithCoords.map((p) => p.mapUnitId)).size;
   }, [positionsWithCoords]);
 
 
@@ -238,9 +232,9 @@ function MapPage() {
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               <span className="text-slate-600">
-                Cégek:{" "}
+                Fogadóhelyek (összes telephely):{" "}
                 <span className="font-semibold text-slate-900">
-                  {uniqueCompanyCount}
+                  {uniqueSiteCount}
                 </span>
               </span>
             </div>
@@ -267,9 +261,9 @@ function MapPage() {
               {groupedPositions.map((group) => {
                 const first = group[0];
                 const hasActive = group.some(p => !isExpired(p.deadline));
-                const uniqueCompaniesAtCoord = new Set(group.map(p => String(p.company?.id ?? p.companyId))).size;
-                const icon = uniqueCompaniesAtCoord > 1
-                  ? createGroupedIcon(uniqueCompaniesAtCoord, hasActive)
+                const uniqueSitesAtCoord = new Set(group.map(p => p.mapUnitId)).size;
+                const icon = uniqueSitesAtCoord > 1
+                  ? createGroupedIcon(uniqueSitesAtCoord, hasActive)
                   : (!hasActive ? inactiveIcon : defaultIcon);
 
                 return (

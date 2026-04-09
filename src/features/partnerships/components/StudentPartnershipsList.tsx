@@ -21,10 +21,10 @@ export default function StudentPartnershipsList({
     return (
       <div className="rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-800 p-12 text-center transition-colors">
         <h3 className="mt-2 text-sm font-semibold text-gray-900 dark:text-slate-100 transition-colors">
-          Nincsenek partnerkapcsolatok
+          Nincs még duális helyed
         </h3>
         <p className="mt-1 text-sm text-gray-500 dark:text-slate-400 transition-colors">
-          Még nincs aktív partnerkapcsolatod.
+          Még nincs aktív duális helyed.
         </p>
       </div>
     );

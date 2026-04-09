@@ -176,7 +176,7 @@ export default function PositionsMap({
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
           <span className="text-slate-600 dark:text-slate-400 transition-colors">
-            Telephelyek:{" "}
+            Fogadóhelyek (összes telephely):{" "}
             <span className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
               {uniqueSiteCount}
             </span>
