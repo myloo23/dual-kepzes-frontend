@@ -30,11 +30,25 @@ export const CompanyApplicationCard = ({
 }: CompanyApplicationCardProps) => {
   return (
     <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
-      <div className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
-        {displayApp.position?.title ?? "Pozíció"}
-      </div>
-      <div className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
-        Státusz: {statusLabels[displayApp.status] ?? displayApp.status}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="space-y-1">
+          <div className="font-semibold text-lg text-slate-900 dark:text-slate-100 transition-colors">
+            {displayApp.position?.title ?? "Pozíció"}
+          </div>
+          {displayApp.student && (
+            <div className="flex flex-col text-sm">
+              <span className="font-medium text-slate-700 dark:text-slate-300 transition-colors">
+                {displayApp.student.fullName}
+              </span>
+              <span className="text-slate-500 dark:text-slate-400 transition-colors">
+                {displayApp.student.email}
+              </span>
+            </div>
+          )}
+        </div>
+        <div className="text-sm font-medium border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 transition-colors whitespace-nowrap">
+          Státusz: {statusLabels[displayApp.status] ?? displayApp.status}
+        </div>
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
