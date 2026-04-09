@@ -34,7 +34,7 @@ export interface CompanyImage {
 // Helper to ensure ID is valid
 function ensureId(id: Id, label = "id"): string {
   const s = String(id ?? "").trim();
-  if (!s) throw new Error(`Hiányzó ${label}.`);
+  if (!s) throw new Error(`Missing ${label}.`);
   return s;
 }
 
@@ -116,7 +116,6 @@ export const companyApi = {
       const data = await apiGet<CompanyImage[]>(
         `${COMPANIES_PATH}/${ensureId(companyId, "companyId")}/images`,
         undefined,
-        "",
       );
       return (data ?? []).map((image) => ({
         ...image,
