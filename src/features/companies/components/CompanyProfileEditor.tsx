@@ -1,6 +1,7 @@
-import { useState, useEffect, type ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import { api, type CompanyAdminProfile } from "../../../lib/api";
 import { useAuth } from "../../../features/auth";
+import PasswordInput from "../../../components/shared/PasswordInput";
 
 interface CompanyProfileEditorProps {
   companyAdmin: CompanyAdminProfile | null;
@@ -13,53 +14,174 @@ export default function CompanyProfileEditor({
 }: CompanyProfileEditorProps) {
   const { logout: authLogout } = useAuth();
 
-  const [adminForm, setAdminForm] = useState<Partial<CompanyAdminProfile>>({
+  const [personalForm, setPersonalForm] = useState<
+    Pick<CompanyAdminProfile, "fullName" | "email" | "phoneNumber">
+  >({
     fullName: companyAdmin?.fullName ?? "",
     email: companyAdmin?.email ?? "",
+    phoneNumber: companyAdmin?.phoneNumber ?? "",
   });
+
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(
+    null,
+  );
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [removeAvatar, setRemoveAvatar] = useState(false);
 
   useEffect(() => {
     if (companyAdmin) {
-      setAdminForm({
+      setPersonalForm({
         fullName: companyAdmin.fullName ?? "",
         email: companyAdmin.email ?? "",
+        phoneNumber: companyAdmin.phoneNumber ?? "",
       });
     }
   }, [companyAdmin]);
 
-  const [saving, setSaving] = useState(false);
+  const [savingPersonal, setSavingPersonal] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [savingAvatar, setSavingAvatar] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [avatarSuccess, setAvatarSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setAdminForm((prev) => ({ ...prev, [name]: value }));
+    setPersonalForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async () => {
-    setSaving(true);
+  const handleSavePersonal = async () => {
+    setSavingPersonal(true);
     setError(null);
     setSuccess(null);
     try {
       const updated = await api.companyAdmins.me.update({
-        fullName: adminForm.fullName ?? "",
-        email: adminForm.email ?? "",
+        fullName: personalForm.fullName ?? "",
+        email: personalForm.email ?? "",
+        phoneNumber: personalForm.phoneNumber ?? "",
       });
       onUpdate(updated);
-      setSuccess("Profil frissítve.");
+      setSuccess("Szemelyes adatok frissitve.");
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Hiba a mentés során.";
+        err instanceof Error ? err.message : "Hiba a mentes soran.";
       setError(message);
     } finally {
-      setSaving(false);
+      setSavingPersonal(false);
+    }
+  };
+
+  const handlePasswordChange = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(null);
+
+    if (!passwordForm.currentPassword.trim()) {
+      setPasswordError("A jelenlegi jelszo megadasa kotelezo.");
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 12) {
+      setPasswordError("Az uj jelszo minimum 12 karakter legyen.");
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError("A ket uj jelszo nem egyezik.");
+      return;
+    }
+
+    setSavingPassword(true);
+    try {
+      // Backend endpoint currently not exposed in the API client.
+      setPasswordSuccess(
+        "A jelszomodositas felulete elkeszult. Bekoteshez backend endpoint szukseges.",
+      );
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
+  const handleAvatarSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setAvatarError(null);
+    setAvatarSuccess(null);
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setAvatarError("Csak kepfajl toltheto fel.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setAvatarError("A kep merete legfeljebb 5 MB lehet.");
+      return;
+    }
+
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview);
+    }
+
+    const nextPreview = URL.createObjectURL(file);
+    setSelectedAvatarFile(file);
+    setAvatarPreview(nextPreview);
+    setRemoveAvatar(false);
+  };
+
+  const handleSaveAvatar = async () => {
+    setAvatarError(null);
+    setAvatarSuccess(null);
+
+    if (!selectedAvatarFile && !removeAvatar) {
+      setAvatarError("Valassz kepet vagy torold a jelenlegi profilkepet.");
+      return;
+    }
+
+    setSavingAvatar(true);
+    try {
+      // Backend endpoint currently not exposed in the API client.
+      if (removeAvatar) {
+        setAvatarSuccess(
+          "Profilkep torles UI kesz. Backend vegpont bekotese szukseges.",
+        );
+      } else {
+        setAvatarSuccess(
+          "Profilkep feltoltes UI kesz. Backend vegpont bekotese szukseges.",
+        );
+      }
+    } finally {
+      setSavingAvatar(false);
     }
   };
 
   const handleDelete = async () => {
     const ok = window.confirm(
-      "Biztosan törlöd a profilodat? Ez nem visszavonható.",
+      "Biztosan torlod a profilodat? Ez nem visszavonhato.",
     );
     if (!ok) return;
     setDeleting(true);
@@ -70,21 +192,31 @@ export default function CompanyProfileEditor({
       authLogout();
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Hiba a profil törlése során.";
+        err instanceof Error ? err.message : "Hiba a profil torlese soran.";
       setError(message);
     } finally {
       setDeleting(false);
     }
   };
 
+  const initials =
+    personalForm.fullName
+      ?.split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "CA";
+
+  const visibleAvatar = removeAvatar ? null : avatarPreview;
+
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm space-y-6 transition-colors">
       <header className="space-y-1">
         <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100 transition-colors">
-          Saját profil
+          Profil beallitasok
         </h1>
         <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
-          Itt frissítheted a cégadmin profilodat, vagy törölheted a fiókot.
+          Fiok es szemelyes adatok kezelese egy helyen.
         </p>
       </header>
 
@@ -100,46 +232,194 @@ export default function CompanyProfileEditor({
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
-          <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
-            Név
-          </span>
-          <input
-            name="fullName"
-            value={adminForm.fullName ?? ""}
-            onChange={handleChange}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+      <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 transition-colors">
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+          Szemelyes adatok
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
+              Nev
+            </span>
+            <input
+              name="fullName"
+              value={personalForm.fullName ?? ""}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            />
+          </label>
+          <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
+              E-mail
+            </span>
+            <input
+              type="email"
+              name="email"
+              value={personalForm.email ?? ""}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            />
+          </label>
+          <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors md:col-span-2">
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
+              Telefonszam
+            </span>
+            <input
+              type="tel"
+              name="phoneNumber"
+              value={personalForm.phoneNumber ?? ""}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              placeholder="+36..."
+            />
+          </label>
+        </div>
+        <div className="flex items-center gap-3 pt-1">
+          <button
+            onClick={handleSavePersonal}
+            disabled={savingPersonal}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
+          >
+            {savingPersonal ? "Mentes..." : "Szemelyes adatok mentese"}
+          </button>
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 transition-colors">
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+          Jelszo modositasa
+        </h2>
+        {passwordError && (
+          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400 transition-colors">
+            {passwordError}
+          </div>
+        )}
+        {passwordSuccess && (
+          <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 p-3 text-sm text-emerald-700 dark:text-emerald-400 transition-colors">
+            {passwordSuccess}
+          </div>
+        )}
+        <form onSubmit={handlePasswordChange} className="space-y-4">
+          <PasswordInput
+            label="Jelenlegi jelszo"
+            value={passwordForm.currentPassword}
+            onChange={(event) =>
+              setPasswordForm((prev) => ({
+                ...prev,
+                currentPassword: event.target.value,
+              }))
+            }
+            placeholder="Add meg a jelenlegi jelszavad"
           />
-        </label>
-        <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
-          <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
-            E-mail
-          </span>
-          <input
-            type="email"
-            name="email"
-            value={adminForm.email ?? ""}
-            onChange={handleChange}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-          />
-        </label>
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <PasswordInput
+              label="Uj jelszo"
+              value={passwordForm.newPassword}
+              onChange={(event) =>
+                setPasswordForm((prev) => ({
+                  ...prev,
+                  newPassword: event.target.value,
+                }))
+              }
+              placeholder="Minimum 12 karakter"
+            />
+            <PasswordInput
+              label="Uj jelszo megerositese"
+              value={passwordForm.confirmPassword}
+              onChange={(event) =>
+                setPasswordForm((prev) => ({
+                  ...prev,
+                  confirmPassword: event.target.value,
+                }))
+              }
+              placeholder="Uj jelszo megerositese"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={savingPassword}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
+          >
+            {savingPassword ? "Mentes..." : "Jelszo frissitese"}
+          </button>
+        </form>
+      </section>
+
+      <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 transition-colors">
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+          Profilkep kezelese
+        </h2>
+        {avatarError && (
+          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400 transition-colors">
+            {avatarError}
+          </div>
+        )}
+        {avatarSuccess && (
+          <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 p-3 text-sm text-emerald-700 dark:text-emerald-400 transition-colors">
+            {avatarSuccess}
+          </div>
+        )}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="h-20 w-20 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+            {visibleAvatar ? (
+              <img
+                src={visibleAvatar}
+                alt="Profilkep elonezet"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                {initials}
+              </span>
+            )}
+          </div>
+          <div className="space-y-2">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarSelect}
+              className="block w-full text-sm text-slate-700 dark:text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-slate-200 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-800 hover:file:bg-slate-300 dark:file:bg-slate-700 dark:file:text-slate-100 dark:hover:file:bg-slate-600 transition-colors"
+            />
+            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+              JPG/PNG/WEBP, maximum 5 MB.
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={handleSaveAvatar}
+            disabled={savingAvatar}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
+          >
+            {savingAvatar ? "Mentes..." : "Profilkep mentese"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedAvatarFile(null);
+              if (avatarPreview) {
+                URL.revokeObjectURL(avatarPreview);
+              }
+              setAvatarPreview(null);
+              setRemoveAvatar(true);
+              setAvatarSuccess(null);
+              setAvatarError(null);
+            }}
+            className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+          >
+            Profilkep torlese
+          </button>
+        </div>
+      </section>
 
       <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 dark:border-slate-800 pt-4 transition-colors">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
-        >
-          {saving ? "Mentés..." : "Mentés"}
-        </button>
         <button
           onClick={handleDelete}
           disabled={deleting}
           className="rounded-lg border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 px-4 py-2 text-sm font-semibold text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 disabled:opacity-60 transition-colors"
         >
-          {deleting ? "Törlés..." : "Profil törlése"}
+          {deleting ? "Torles..." : "Profil torlese"}
         </button>
       </div>
     </div>
