@@ -19,7 +19,7 @@ export default function StudentLayout() {
     },
     {
       to: "/student/profile",
-      label: "Saját adataim",
+      label: "Saját profil",
       hint: "Profil és adatok",
     },
     {

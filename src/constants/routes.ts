@@ -21,6 +21,7 @@ export const ADMIN_ROUTES = {
   NEWS: "/admin/news",
   TAGS: "/admin/tags",
   SETTINGS: "/admin/settings",
+  EMAIL_TEMPLATES: "/admin/email-templates",
 } as const;
 
 // ============= Student Routes =============

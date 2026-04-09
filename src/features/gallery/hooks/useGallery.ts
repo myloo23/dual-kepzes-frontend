@@ -3,18 +3,24 @@ import { galleryApi } from "../services/galleryApi";
 import type { GalleryGroup, GalleryImage } from "../types";
 
 /**
- * Flattens the API response into a list of GalleryImage objects
- * that the existing GalleryGrid component can render.
+ * Flattens API groups into a single image list for the public gallery grid.
  */
 function toGalleryImages(groups: GalleryGroup[]): GalleryImage[] {
   return groups.flatMap((group) =>
     group.images.map((img) => ({
       id: img.id,
       src: img.url,
-      alt: img.caption ?? img.url.split("/").pop()?.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ") ?? "Galéria kép",
+      alt:
+        img.caption ??
+        img.url
+          .split("/")
+          .pop()
+          ?.replace(/\.[^.]+$/, "")
+          .replace(/[-_]/g, " ") ??
+        "Galeria kep",
       caption: undefined,
       category: group.title,
-    }))
+    })),
   );
 }
 
@@ -40,9 +46,7 @@ export function useGallery(): UseGalleryReturn {
       setGroups(data ?? []);
     } catch (err) {
       const message =
-        err instanceof Error
-          ? err.message
-          : "A galéria betöltése sikertelen.";
+        err instanceof Error ? err.message : "A galeria betoltese sikertelen.";
       setError(message);
     } finally {
       setLoading(false);
