@@ -43,7 +43,7 @@ export function GuideSelector({ courses, onSelect }: GuideSelectorProps) {
             {isCompleted && (
               <div 
                 className="absolute -top-3 -right-3 bg-emerald-500 text-white rounded-full p-2 shadow-sm animate-in zoom-in" 
-                title="Ezt a tananyagot már sikeresen elvégezted és értékelted."
+                title="Ezt a tananyagot már elvégezted és értékelted."
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -67,7 +67,7 @@ export function GuideSelector({ courses, onSelect }: GuideSelectorProps) {
                   : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 group-hover:bg-blue-600 group-hover:text-white"
               }`}
             >
-              {isCompleted ? "Újra megtekintés" : "Kiválasztás"}
+              {"Megtekintés"}
             </button>
           </div>
         );

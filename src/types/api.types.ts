@@ -97,6 +97,7 @@ export interface StudentProfile {
   userId: Id;
   fullName: string;
   email: string;
+  isEmailEnabled?: boolean;
   phoneNumber: string;
   mothersName: string;
   dateOfBirth: string; // YYYY-MM-DD
@@ -205,6 +206,7 @@ export type StudentRegisterPayload =
   | {
       email: string;
       password: string;
+      isEmailEnabled: boolean;
       fullName: string;
       phoneNumber: string;
       role: "STUDENT";
@@ -230,6 +232,7 @@ export type StudentRegisterPayload =
   | {
       email: string;
       password: string;
+      isEmailEnabled: boolean;
       fullName: string;
       phoneNumber: string;
       role: "STUDENT";
@@ -336,6 +339,16 @@ export interface ApplicationCreatePayload {
   studentNote?: string;
 }
 
+export interface StudentApplicationStats {
+  submitted: number;
+  accepted: number;
+}
+
+export interface StudentApplicationsResponse {
+  applications: Application[];
+  stats: StudentApplicationStats;
+}
+
 // ============= Stats Types =============
 export interface UsersByRole {
   role: UserRole;
@@ -351,6 +364,14 @@ export interface StatsResponse {
     activePartnerships: number;
   };
   usersByRole: UsersByRole[];
+}
+
+export interface CompanyStatsResponse {
+  positionsCount?: number;
+  applicationsCount?: number;
+  employeesCount?: number;
+  partnershipsCount?: number;
+  [key: string]: unknown;
 }
 
 // ============= Partnership Types =============

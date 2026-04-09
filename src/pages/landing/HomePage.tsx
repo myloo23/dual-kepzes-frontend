@@ -104,8 +104,8 @@ function HomePage() {
 
             <div className="space-y-6">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tighter text-slate-900 dark:text-slate-50 leading-[1.05] text-balance transition-colors">
-                Duális képzési <br />
-                <span className="text-dkk-blue">online rendszer</span>
+                Duplázd az esélyeid! <br />
+                <span className="text-dkk-blue">– NJE Duális Platform</span>
               </h1>
               <p className="text-xl leading-relaxed text-slate-500 dark:text-slate-400 max-w-lg font-normal transition-colors">
                 Egy egységes platform a hallgatók, céges partnerek és az

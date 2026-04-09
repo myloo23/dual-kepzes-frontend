@@ -6,6 +6,13 @@ interface CompanyStats {
   applicationsCount: number;
 }
 
+function firstNumber(...values: unknown[]): number | null {
+  for (const value of values) {
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+  }
+  return null;
+}
+
 export function useCompanyStats(companyId: Id | undefined) {
   const [stats, setStats] = useState<CompanyStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,10 +34,33 @@ export function useCompanyStats(companyId: Id | undefined) {
         if (isMounted) setLoading(true);
         if (isMounted) setError(null);
 
-        // Fetch positions and applications in parallel
+        const companyStats = await api.stats.getCompanyMe().catch(() => null);
+        const apiPositionsCount = firstNumber(
+          companyStats?.positionsCount,
+          (companyStats as any)?.positions,
+          (companyStats as any)?.positionCount,
+        );
+        const apiApplicationsCount = firstNumber(
+          companyStats?.applicationsCount,
+          (companyStats as any)?.applications,
+          (companyStats as any)?.applicationCount,
+        );
+
+        if (apiPositionsCount !== null && apiApplicationsCount !== null) {
+          if (isMounted) {
+            setStats({
+              positionsCount: apiPositionsCount,
+              applicationsCount: apiApplicationsCount,
+            });
+            setLoading(false);
+          }
+          return;
+        }
+
+        // Fallback for backward compatibility
         const [positions, applications] = await Promise.all([
-          api.positions.listByCompany(companyId).catch(() => []), // Fallback to empty
-          api.applications.listCompany().catch(() => []), // Fallback to empty
+          api.positions.listByCompany(companyId).catch(() => []),
+          api.applications.listCompany().catch(() => []),
         ]);
 
         if (isMounted) {

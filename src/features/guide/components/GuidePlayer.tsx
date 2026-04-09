@@ -77,7 +77,7 @@ export function GuidePlayer({ course, onBack }: GuidePlayerProps) {
       id: "presentation",
       title: "Oktatási segédlet és Teszt",
       component: <GuideEmbed course={course} />,
-      actionText: "Az oktatási segédletet és a tesztet sikeresen teljesítettem",
+      actionText: "Az oktatási segédletet és a tesztet teljesítettem",
     },
   ];
 
@@ -115,7 +115,7 @@ export function GuidePlayer({ course, onBack }: GuidePlayerProps) {
             {submitted ? "Köszönjük az értékelést!" : "Gratulálunk!"}
           </h2>
           <p className="text-slate-600 dark:text-slate-400 mb-6 font-medium transition-colors">
-            Sikeresen teljesítetted a modult: {course.title}.
+            Teljesítetted a modult: {course.title}.
           </p>
           <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 max-w-md transition-colors">
             <p className="text-sm text-slate-500 dark:text-slate-400">

@@ -16,15 +16,32 @@ function formatDate(iso?: string) {
 
 interface NewsCardProps {
   news: NewsItem;
+  onOpen?: (news: NewsItem) => void;
 }
 
-export default function NewsCard({ news }: NewsCardProps) {
+export default function NewsCard({ news, onOpen }: NewsCardProps) {
   const isImportant = news.isImportant;
+  const isInteractive = typeof onOpen === "function";
 
   return (
     <article
+      role={isInteractive ? "button" : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      onClick={isInteractive ? () => onOpen(news) : undefined}
+      onKeyDown={
+        isInteractive
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onOpen(news);
+              }
+            }
+          : undefined
+      }
       className={cn(
         "group relative flex flex-col h-full overflow-hidden rounded-2xl bg-white dark:bg-slate-900 transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
+        isInteractive &&
+          "cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900/60",
         isImportant
           ? "border-2 border-red-100 dark:border-red-900/50 shadow-red-50/50 dark:shadow-red-900/20"
           : "border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none",

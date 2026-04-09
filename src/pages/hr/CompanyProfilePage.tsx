@@ -5,6 +5,7 @@ import { companyApi } from "../../features/companies/services/companyApi";
 import ErrorAlert from "../../features/companies/components/ErrorAlert";
 import CompanyProfileForm from "../../features/companies/components/CompanyProfileForm";
 import CompanyProfileDisplay from "../../features/companies/components/CompanyProfileDisplay";
+import CompanyImagesManager from "../../features/companies/components/CompanyImagesManager";
 
 export default function CompanyProfilePage() {
   const [company, setCompany] = useState<Company | null>(null);
@@ -194,6 +195,8 @@ export default function CompanyProfilePage() {
       ) : (
         <CompanyProfileDisplay company={company} />
       )}
+
+      <CompanyImagesManager companyId={company.id} />
     </div>
   );
 }

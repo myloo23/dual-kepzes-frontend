@@ -26,6 +26,7 @@ type StudentProfilePayload = Partial<StudentProfile> & {
   user?: {
     id?: string | number;
     email?: string;
+    isEmailEnabled?: boolean;
     fullName?: string;
     phoneNumber?: string;
   };
@@ -54,6 +55,7 @@ type StudentFormState = {
   firstName?: string; // Not used?
   fullName: string;
   email: string;
+  isEmailEnabled: boolean;
   phoneNumber: string;
   mothersName: string;
   dateOfBirth: string;
@@ -112,6 +114,7 @@ function normalizeStudentProfile(
     userId: merged.userId ?? user.id ?? "",
     fullName: merged.fullName ?? user.fullName ?? "",
     email: merged.email ?? user.email ?? "",
+    isEmailEnabled: merged.isEmailEnabled ?? user.isEmailEnabled ?? true,
     phoneNumber: merged.phoneNumber ?? user.phoneNumber ?? "",
     mothersName: merged.mothersName ?? "",
     dateOfBirth,
@@ -182,6 +185,7 @@ function buildProfileForm(
   return {
     fullName: data.fullName ?? "",
     email: data.email ?? "",
+    isEmailEnabled: data.isEmailEnabled ?? true,
     phoneNumber: data.phoneNumber ?? "",
     mothersName: data.mothersName ?? "",
     dateOfBirth: data.dateOfBirth ?? "",
@@ -954,6 +958,16 @@ export default function StudentDashboardPage() {
                         onChange={handleProfileChange}
                         className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
+                    </label>
+                    <label className="md:col-span-2 flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                      <input
+                        type="checkbox"
+                        name="isEmailEnabled"
+                        checked={Boolean(profileForm.isEmailEnabled)}
+                        onChange={handleProfileChange}
+                        className="h-4 w-4 rounded border-gray-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"
+                      />
+                      E-mail értesítések engedélyezése
                     </label>
                     <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
                       <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">

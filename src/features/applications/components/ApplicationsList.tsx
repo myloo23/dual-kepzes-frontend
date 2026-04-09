@@ -3,6 +3,7 @@ import {
   api,
   type Application,
   type ApplicationStatus,
+  type StudentApplicationStats,
 } from "../../../lib/api";
 
 const STATUS_CONFIG = {
@@ -34,6 +35,10 @@ const STATUS_CONFIG = {
 
 export default function ApplicationsList() {
   const [applications, setApplications] = useState<Application[]>([]);
+  const [applicationStats, setApplicationStats] = useState<StudentApplicationStats>({
+    submitted: 0,
+    accepted: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retractingId, setRetractingId] = useState<string | null>(null);
@@ -66,8 +71,9 @@ export default function ApplicationsList() {
       try {
         setLoading(true);
         setError(null);
-        const data = await api.applications.list();
-        setApplications(data);
+        const data = await api.applications.listWithStats();
+        setApplications(data.applications);
+        setApplicationStats(data.stats);
       } catch (err: any) {
         setError(err.message || "Hiba a jelentkezések betöltése során.");
       } finally {
@@ -91,9 +97,22 @@ export default function ApplicationsList() {
       await api.applications.retract(confirmDialogId);
 
       // Remove the application from the list
+      const removed = applications.find((app) => app.id === confirmDialogId);
       setApplications((prev) =>
         prev.filter((app) => app.id !== confirmDialogId),
       );
+      if (removed) {
+        setApplicationStats((prev) => ({
+          submitted:
+            removed.status === "SUBMITTED"
+              ? Math.max(0, prev.submitted - 1)
+              : prev.submitted,
+          accepted:
+            removed.status === "ACCEPTED"
+              ? Math.max(0, prev.accepted - 1)
+              : prev.accepted,
+        }));
+      }
       setConfirmDialogId(null);
     } catch (err: any) {
       const errorMsg =
@@ -252,7 +271,7 @@ export default function ApplicationsList() {
             }`}
           >
             📤 Beküldve (
-            {applications.filter((a) => a.status === "SUBMITTED").length})
+            {applicationStats.submitted})
           </button>
           <button
             onClick={() => setStatusFilter("ACCEPTED")}
@@ -263,7 +282,7 @@ export default function ApplicationsList() {
             }`}
           >
             ✅ Elfogadva (
-            {applications.filter((a) => a.status === "ACCEPTED").length})
+            {applicationStats.accepted})
           </button>
           <button
             onClick={() => setStatusFilter("REJECTED")}

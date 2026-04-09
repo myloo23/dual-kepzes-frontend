@@ -15,11 +15,14 @@ import type {
   SystemAdminProfile,
   User,
   StatsResponse,
+  CompanyStatsResponse,
   NewsItem,
   NewsCreatePayload,
   Application,
   ApplicationStatus,
   ApplicationCreatePayload,
+  StudentApplicationsResponse,
+  StudentApplicationStats,
   Major,
   Partnership,
   PaginationQuery,
@@ -85,6 +88,7 @@ export const api = {
   // ============= Stats =============
   stats: {
     get: () => apiGet<StatsResponse>(PATHS.stats),
+    getCompanyMe: () => apiGet<CompanyStatsResponse>(`${PATHS.stats}/company/me`),
   },
 
   // ============= Majors =============
@@ -201,8 +205,50 @@ export const api = {
         payload,
       ),
 
-    list: (params?: PaginationQuery) =>
-      apiGet<Application[]>(PATHS.applications, params),
+    list: async (params?: PaginationQuery) => {
+      const response = await apiGet<Application[] | StudentApplicationsResponse>(
+        PATHS.applications,
+        params,
+      );
+
+      if (Array.isArray(response)) return response;
+      if (response && Array.isArray(response.applications)) return response.applications;
+
+      return [];
+    },
+    listWithStats: async (
+      params?: PaginationQuery,
+    ): Promise<{ applications: Application[]; stats: StudentApplicationStats }> => {
+      const response = await apiGet<Application[] | StudentApplicationsResponse>(
+        PATHS.applications,
+        params,
+      );
+
+      if (Array.isArray(response)) {
+        return {
+          applications: response,
+          stats: {
+            submitted: response.filter((a) => a.status === "SUBMITTED").length,
+            accepted: response.filter((a) => a.status === "ACCEPTED").length,
+          },
+        };
+      }
+
+      const apps = Array.isArray(response?.applications) ? response.applications : [];
+      return {
+        applications: apps,
+        stats: {
+          submitted:
+            typeof response?.stats?.submitted === "number"
+              ? response.stats.submitted
+              : apps.filter((a) => a.status === "SUBMITTED").length,
+          accepted:
+            typeof response?.stats?.accepted === "number"
+              ? response.stats.accepted
+              : apps.filter((a) => a.status === "ACCEPTED").length,
+        },
+      };
+    },
     listMy: (params?: PaginationQuery) =>
       apiGet<Application[]>(`${PATHS.applications}/my`, params),
     listCompany: (params?: PaginationQuery) =>
@@ -401,6 +447,9 @@ export type {
   NewsTargetGroup,
   Application,
   ApplicationStatus,
+  StudentApplicationStats,
+  StudentApplicationsResponse,
+  CompanyStatsResponse,
   Location,
   Tag,
   Partnership,
