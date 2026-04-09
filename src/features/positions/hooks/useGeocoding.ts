@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { getCityCoordinates } from "../../../utils/city-coordinates";
 import type { Position } from "../../../lib/api";
+import type { Location } from "../../../types/api.types";
 
 export interface PositionWithCoords extends Position {
   latitude?: number;
   longitude?: number;
+  mapLocation: Location;
+  mapUnitId: string;
+  mapUnitLabel: string;
 }
 
 interface GeocodingCache {
@@ -15,6 +19,46 @@ interface UseGeocodingResult {
   positionsWithCoords: PositionWithCoords[];
   loading: boolean;
   progress: { current: number; total: number };
+}
+
+function hasUsableAddress(location?: Location | null): location is Location {
+  return Boolean(location?.city && location?.address);
+}
+
+function resolvePositionLocation(position: Position): Location | null {
+  if (hasUsableAddress(position.location)) {
+    return position.location;
+  }
+
+  const companyLocations = position.company?.locations ?? [];
+  if (companyLocations.length === 0) {
+    return null;
+  }
+
+  if (position.locationId) {
+    const matched = companyLocations.find(
+      (loc) => String(loc.id ?? "") === String(position.locationId),
+    );
+    if (hasUsableAddress(matched)) {
+      return matched;
+    }
+  }
+
+  return companyLocations.find((loc) => hasUsableAddress(loc)) ?? null;
+}
+
+function createMapUnitMeta(position: Position, location: Location) {
+  const companyKey = String(
+    position.companyId ?? position.company?.id ?? "unknown-company",
+  );
+  const locationKey = String(
+    location.id ?? `${location.zipCode ?? ""}|${location.city}|${location.address}`,
+  );
+
+  return {
+    mapUnitId: `${companyKey}::${locationKey}`,
+    mapUnitLabel: `${position.company?.name ?? "Ismeretlen c�g"} - ${location.city}, ${location.address}`,
+  };
 }
 
 /**
@@ -30,6 +74,7 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
 
   useEffect(() => {
     if (positions.length === 0) {
+      setPositionsWithCoords([]);
       setLoading(false);
       return;
     }
@@ -37,19 +82,14 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
     const geocodePositions = async () => {
       const geocoded: PositionWithCoords[] = [];
       setProgress({ current: 0, total: positions.length });
+      setLoading(true);
 
-      console.log(`🗺️ Starting geocoding for ${positions.length} positions`);
-
-      // Load cache from localStorage
-      const cacheKey = "geocoding_cache";
+      const cacheStorageKey = "geocoding_cache";
       let cache: GeocodingCache = {};
       try {
-        const cached = localStorage.getItem(cacheKey);
+        const cached = localStorage.getItem(cacheStorageKey);
         if (cached) {
           cache = JSON.parse(cached);
-          console.log(
-            `📦 Loaded geocoding cache with ${Object.keys(cache).length} entries`,
-          );
         }
       } catch (e) {
         console.warn("Failed to load geocoding cache:", e);
@@ -59,71 +99,56 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
         const position = positions[i];
         setProgress({ current: i + 1, total: positions.length });
 
-        // Extract location data, handling both flat and nested structures
-        // Extract location data
-        const city = position.location?.city;
-        const address = position.location?.address;
+        const resolvedLocation = resolvePositionLocation(position);
+        const city = resolvedLocation?.city;
+        const address = resolvedLocation?.address;
 
-        console.log(`📍 Geocoding position ${i + 1}/${positions.length}:`, {
-          id: position.id,
-          title: position.title,
-          city,
-          address,
-        });
-
-        // Skip if no city or address
-        if (!city || !address) {
-          console.warn(
-            `⚠️ Skipping position ${position.id} - missing city or address`,
-          );
+        if (!city || !address || !resolvedLocation) {
           continue;
         }
 
-        // Check cache first
+        const { mapUnitId, mapUnitLabel } = createMapUnitMeta(
+          position,
+          resolvedLocation,
+        );
+
         const cacheKeyForPosition = `${city}|${address}`;
+
         if (cache[cacheKeyForPosition]) {
-          console.log(
-            `💾 Using cached coordinates for: ${cacheKeyForPosition}`,
-          );
           geocoded.push({
             ...position,
             latitude: cache[cacheKeyForPosition].lat,
             longitude: cache[cacheKeyForPosition].lng,
+            mapLocation: resolvedLocation,
+            mapUnitId,
+            mapUnitLabel,
           });
           continue;
         }
 
-        // Try pre-geocoded city coordinates
         const cityCoords = getCityCoordinates(city);
         if (cityCoords) {
-          console.log(`🏙️ Using pre-geocoded coordinates for city: ${city}`);
           geocoded.push({
             ...position,
             latitude: cityCoords.lat,
             longitude: cityCoords.lng,
+            mapLocation: resolvedLocation,
+            mapUnitId,
+            mapUnitLabel,
           });
           cache[cacheKeyForPosition] = cityCoords;
           continue;
         }
 
-        console.log(
-          `🌐 No cache or pre-geocoded data found, geocoding from Photon API...`,
-        );
-
         try {
           const fullAddress = `${address}, ${city}, Hungary`;
           const encodedAddress = encodeURIComponent(fullAddress);
 
-          console.log(`🔍 Trying full address with Photon: ${fullAddress}`);
-
-          // Using Photon API
           const response = await fetch(
             `https://photon.komoot.io/api/?q=${encodedAddress}&limit=1`,
           );
 
           if (!response.ok) {
-            console.error(`❌ Photon API error: ${response.status}`);
-            // Try city-only fallback
             const cityResponse = await fetch(
               `https://photon.komoot.io/api/?q=${encodeURIComponent(`${city}, Hungary`)}&limit=1`,
             );
@@ -135,11 +160,13 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
                   lat: cityData.features[0].geometry.coordinates[1],
                   lng: cityData.features[0].geometry.coordinates[0],
                 };
-                console.log(`✅ City geocoded with Photon:`, coords);
                 geocoded.push({
                   ...position,
                   latitude: coords.lat,
                   longitude: coords.lng,
+                  mapLocation: resolvedLocation,
+                  mapUnitId,
+                  mapUnitLabel,
                 });
                 cache[cacheKeyForPosition] = coords;
               }
@@ -154,16 +181,16 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
               lat: data.features[0].geometry.coordinates[1],
               lng: data.features[0].geometry.coordinates[0],
             };
-            console.log(`✅ Geocoded successfully with Photon:`, coords);
             geocoded.push({
               ...position,
               latitude: coords.lat,
               longitude: coords.lng,
+              mapLocation: resolvedLocation,
+              mapUnitId,
+              mapUnitLabel,
             });
             cache[cacheKeyForPosition] = coords;
           } else {
-            // Fallback: try city only
-            console.log(`🔄 Full address failed, trying city only: ${city}`);
             const cityResponse = await fetch(
               `https://photon.komoot.io/api/?q=${encodeURIComponent(`${city}, Hungary`)}&limit=1`,
             );
@@ -175,41 +202,33 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
                   lat: cityData.features[0].geometry.coordinates[1],
                   lng: cityData.features[0].geometry.coordinates[0],
                 };
-                console.log(`✅ City geocoded with Photon:`, coords);
                 geocoded.push({
                   ...position,
                   latitude: coords.lat,
                   longitude: coords.lng,
+                  mapLocation: resolvedLocation,
+                  mapUnitId,
+                  mapUnitLabel,
                 });
                 cache[cacheKeyForPosition] = coords;
-              } else {
-                console.warn(`❌ City geocoding also failed for: ${city}`);
               }
             }
           }
 
-          // Rate limiting
           if (i < positions.length - 1) {
             await new Promise((resolve) => setTimeout(resolve, 200));
           }
         } catch (error) {
-          console.error(`❌ Failed to geocode position ${position.id}:`, error);
+          console.error(`Failed to geocode position ${position.id}:`, error);
         }
       }
 
-      // Save cache to localStorage
       try {
-        localStorage.setItem(cacheKey, JSON.stringify(cache));
-        console.log(
-          `💾 Saved geocoding cache with ${Object.keys(cache).length} entries`,
-        );
+        localStorage.setItem(cacheStorageKey, JSON.stringify(cache));
       } catch (e) {
         console.warn("Failed to save geocoding cache:", e);
       }
 
-      console.log(
-        `🎉 Geocoding complete! ${geocoded.length} positions geocoded successfully`,
-      );
       setPositionsWithCoords(geocoded);
       setLoading(false);
     };

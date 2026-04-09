@@ -35,6 +35,7 @@ function generateBreadcrumbs(pathname: string): BreadcrumbItem[] {
     dashboard: "Irányítópult",
     worklog: "Munkanapló",
     evaluations: "Értékelések",
+    help: "Súgó és Segítség",
   };
 
   let currentPath = "";

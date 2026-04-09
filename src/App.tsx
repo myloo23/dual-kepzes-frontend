@@ -105,6 +105,7 @@ const ResetPasswordPage = lazyRetry(
 const GalleryPage = lazyRetry(
   () => import("./pages/landing/GalleryPage"),
 );
+const HelpPage = lazyRetry(() => import("./pages/landing/HelpPage"));
 
 function App() {
   const { toasts, removeToast } = useToast();
@@ -123,6 +124,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/positions" element={<PositionsPage />} />
               <Route path="/gallery" element={<GalleryPage />} />
+              <Route path="/help" element={<HelpPage />} />
               <Route
                 path="/companies/:id"
                 element={<PublicCompanyProfilePage />}

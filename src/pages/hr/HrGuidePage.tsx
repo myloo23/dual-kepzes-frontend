@@ -9,11 +9,11 @@ export default function HrGuidePage() {
         </div>
 
         <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
-          Oktatási segédlet
+          Súgó és Segítség
         </h1>
 
         <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md mx-auto transition-colors">
-          Itt fogod megtalálni a részletes útmutatót az oldal használatához,
+          Útmutató a felület használatához. Itt fogod megtalálni a részletes útmutatót az oldal használatához,
           tippeket az álláshirdetések kezeléséhez és a jelentkezők
           értékeléséhez.
         </p>

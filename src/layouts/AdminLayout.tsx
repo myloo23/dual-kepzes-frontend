@@ -13,8 +13,8 @@ export default function AdminLayout() {
     { to: "/admin/settings", label: "Beállítások" },
     {
       to: "/admin/guide",
-      label: "Oktatási segédlet",
-      hint: "Útmutató az oldal használatához",
+      label: "Súgó és Segítség",
+      hint: "Útmutató a felület használatához",
     },
   ];
 

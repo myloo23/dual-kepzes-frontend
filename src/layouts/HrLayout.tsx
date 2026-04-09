@@ -13,8 +13,8 @@ export default function HrLayout() {
     { to: "/hr/profile", label: "Profil beállítások", hint: "Fiók és személyes adatok kezelése" },
     {
       to: "/hr/guide",
-      label: "Oktatási segédlet",
-      hint: "Útmutató az oldal használatához",
+      label: "Súgó és Segítség",
+      hint: "Útmutató a felület használatához",
     },
   ];
 

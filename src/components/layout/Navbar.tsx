@@ -216,6 +216,9 @@ export default function Navbar() {
             <Link to="/gallery" className={getLinkClass("/gallery")}>
               Galéria
             </Link>
+            <Link to="/help" className={getLinkClass("/help")}>
+              Súgó és Segítség
+            </Link>
 
             {newsLink && (
               <Link to={newsLink} className={getLinkClass(newsLink)}>
@@ -546,6 +549,13 @@ export default function Navbar() {
               onClick={closeMobileMenu}
             >
               Galéria
+            </Link>
+            <Link
+              to="/help"
+              className={getMobileLinkClass("/help")}
+              onClick={closeMobileMenu}
+            >
+              Súgó és Segítség
             </Link>
 
             {newsLink && (
