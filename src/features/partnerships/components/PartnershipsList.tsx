@@ -14,6 +14,29 @@ interface PartnershipsListProps {
   isLoading: boolean;
 }
 
+const statusConfig = {
+  ACTIVE: {
+    label: "Aktív",
+    className:
+      "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400",
+  },
+  TERMINATED: {
+    label: "Lezárt",
+    className:
+      "bg-rose-100 dark:bg-rose-900/30 text-rose-800 dark:text-rose-400",
+  },
+  FINISHED: {
+    label: "Befejezve",
+    className:
+      "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400",
+  },
+  PENDING_MENTOR: {
+    label: "Mentor jóváhagyásra vár",
+    className:
+      "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400",
+  },
+} as const;
+
 export default function PartnershipsList({
   partnerships,
   mentors,
@@ -76,8 +99,13 @@ export default function PartnershipsList({
 
   if (isLoading) {
     return (
-      <div className="p-8 text-center text-slate-500 dark:text-slate-400 transition-colors">
-        Betöltés...
+      <div className="space-y-2">
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="h-16 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 animate-pulse transition-colors"
+          />
+        ))}
       </div>
     );
   }
@@ -97,177 +125,92 @@ export default function PartnershipsList({
 
   return (
     <>
-      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition-colors">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
-            <thead className="bg-slate-50 dark:bg-slate-800/50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 transition-colors"
-                >
-                  Hallgató
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 transition-colors"
-                >
-                  Pozíció
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 transition-colors"
-                >
-                  Időszak
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 transition-colors"
-                >
-                  Mentor
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 transition-colors"
-                >
-                  Egyetemi Felelős
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 transition-colors"
-                >
-                  Státusz
-                </th>
-                <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">Műveletek</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900">
-              {partnerships.map((partnership) => (
-                <tr
-                  key={String(partnership.id)}
-                  className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                >
-                  <td className="px-6 py-3 align-middle">
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm transition-colors">
-                        {partnership.student?.fullName || "Ismeretlen hallgató"}
-                      </span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
-                        {partnership.student?.email}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-3 align-middle">
-                    <div>
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-100 transition-colors">
-                        {partnership.position?.title || "-"}
-                      </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
-                        {partnership.contractNumber}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-3 align-middle">
-                    <div className="flex flex-col gap-1">
-                      <div className="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 w-fit font-medium transition-colors">
-                        {partnership.semester || "N/A"}
-                      </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap transition-colors">
-                        {partnership.startDate
-                          ? new Date(partnership.startDate).toLocaleDateString()
-                          : "?"}{" "}
-                        -
-                        {partnership.endDate
-                          ? new Date(partnership.endDate).toLocaleDateString()
-                          : "?"}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-3 align-middle">
-                    <div className="flex items-center gap-3">
-                      {partnership.mentor ? (
-                        <div className="text-sm font-medium text-slate-900 dark:text-slate-100 transition-colors">
-                          {partnership.mentor.fullName}
-                        </div>
-                      ) : (
-                        <span className="text-sm italic text-amber-600 dark:text-amber-400 transition-colors">
-                          Nincs kijelölve
-                        </span>
-                      )}
+      <div className="space-y-2">
+        {partnerships.map((partnership) => {
+          const status =
+            statusConfig[partnership.status as keyof typeof statusConfig];
+          const isTerminating = terminatingId === partnership.id;
+          const isCompleting = completingId === partnership.id;
+          const canAct =
+            partnership.status !== "TERMINATED" &&
+            partnership.status !== "FINISHED";
 
-                      <button
-                        onClick={() => handleOpenAssign(partnership)}
-                        className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 transition-colors"
-                      >
-                        {partnership.mentor ? "Módosítás" : "+ Hozzárendelés"}
-                      </button>
-                    </div>
-                  </td>
-                  <td className="px-6 py-3 align-middle">
-                    {partnership.uniEmployee ? (
-                      <div className="text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                        {partnership.uniEmployee.fullName}
-                      </div>
-                    ) : (
-                      <span className="text-xs italic text-slate-400 dark:text-slate-500 transition-colors">
+          return (
+            <div
+              key={String(partnership.id)}
+              className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+            >
+              {/* Student info */}
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span className="font-semibold text-sm text-slate-900 dark:text-slate-100 transition-colors truncate">
+                    {partnership.student?.fullName || "Ismeretlen hallgató"}
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 transition-colors truncate">
+                    {partnership.student?.email}
+                  </span>
+                </div>
+                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                  {partnership.position?.title && (
+                    <span className="font-medium text-slate-700 dark:text-slate-300">
+                      {partnership.position.title}
+                    </span>
+                  )}
+                  {partnership.semester && (
+                    <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                      {partnership.semester}
+                    </span>
+                  )}
+                  <span>
+                    Mentor:{" "}
+                    {partnership.mentor?.fullName ?? (
+                      <span className="italic text-amber-600 dark:text-amber-400">
                         Nincs kijelölve
                       </span>
                     )}
-                  </td>
-                  <td className="px-6 py-3 align-middle">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        partnership.status === "ACTIVE"
-                          ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400"
-                          : partnership.status === "TERMINATED"
-                            ? "bg-rose-100 dark:bg-rose-900/30 text-rose-800 dark:text-rose-400"
-                            : partnership.status === "FINISHED"
-                              ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400"
-                              : "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400"
-                      } transition-colors`}
-                    >
-                      {partnership.status === "ACTIVE" && "Aktív"}
-                      {partnership.status === "TERMINATED" && "Lezárt"}
-                      {partnership.status === "FINISHED" && "Befejezve"}
-                      {partnership.status === "PENDING_MENTOR" &&
-                        "Mentor jóváhagyásra vár"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3 text-right align-middle">
-                    <div className="flex justify-end gap-2">
-                      {partnership.status === "ACTIVE" && (
-                        <>
-                          <button
-                            onClick={() => handleComplete(partnership.id)}
-                            disabled={completingId === partnership.id}
-                            className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-                            title="Partnerség sikeres befejezése"
-                          >
-                            Befejezés
-                          </button>
-                          <span className="text-slate-300">|</span>
-                        </>
-                      )}
-                      {partnership.status !== "TERMINATED" &&
-                        partnership.status !== "FINISHED" && (
-                          <button
-                            onClick={() => handleTerminate(partnership.id)}
-                            disabled={terminatingId === partnership.id}
-                            className="text-sm font-medium text-slate-400 hover:text-red-600 transition-colors"
-                            title="Partnerség megszakítása"
-                          >
-                            Lezárás
-                          </button>
-                        )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </span>
+                </div>
+              </div>
+
+              {/* Status badge */}
+              <div className="shrink-0">
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${status?.className ?? "bg-slate-100 text-slate-600"}`}
+                >
+                  {status?.label ?? partnership.status}
+                </span>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => handleOpenAssign(partnership)}
+                  className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline transition-colors"
+                >
+                  {partnership.mentor ? "Mentor módosítás" : "+ Mentor"}
+                </button>
+                {partnership.status === "ACTIVE" && (
+                  <button
+                    onClick={() => handleComplete(partnership.id)}
+                    disabled={isCompleting}
+                    className="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors disabled:opacity-50"
+                  >
+                    Befejezés
+                  </button>
+                )}
+                {canAct && (
+                  <button
+                    onClick={() => handleTerminate(partnership.id)}
+                    disabled={isTerminating}
+                    className="text-xs font-medium text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                  >
+                    Lezárás
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <AssignMentorModal
