@@ -5,6 +5,7 @@ import {
   PositionsStats,
   TrendsChart,
 } from "../../features/stats";
+import { MaterialStats } from "../../features/guide";
 
 export default function AdminDashboard() {
   return (
@@ -34,6 +35,18 @@ export default function AdminDashboard() {
         <PositionsStats />
         <TrendsChart />
       </div>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+            Oktatási segédletek statisztikája
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Modulonkénti teljesítési és értékelési adatok.
+          </p>
+        </div>
+        <MaterialStats />
+      </section>
     </div>
   );
 }

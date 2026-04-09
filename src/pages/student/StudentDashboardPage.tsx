@@ -77,6 +77,97 @@ type StudentFormState = {
   motivationLetter: string; // Renamed from motivation
 };
 
+type StudentFaqItem = {
+  question: string;
+  answer: string[];
+};
+
+type StudentFaqSection = {
+  title: string;
+  items: StudentFaqItem[];
+};
+
+const STUDENT_FAQ_SECTIONS: StudentFaqSection[] = [
+  {
+    title: "Regisztráció",
+    items: [
+      {
+        question: "Hogyan tudok bekerülni a rendszerbe?",
+        answer: [
+          "Diák fiók létrehozásához szükség van e-mail címre, legalább 12 karakteres jelszóra, teljes névre és telefonszámra.",
+          "Meg kell adni a személyes adatokat, lakcímet és tanulmányi adatokat, majd az adatkezelési tájékoztató elfogadása után véglegesíthető a regisztráció.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Áttekintés és profil",
+    items: [
+      {
+        question: "Mit látok belépés után a nyitóoldalon?",
+        answer: [
+          "A műszerfalon az aktuális státusz, a jelentkezéseid, a fontos határidők és gyors műveletek jelennek meg.",
+        ],
+      },
+      {
+        question: "Mit tudok szerkeszteni a Saját profil oldalon?",
+        answer: [
+          "Kezelhető a láthatóság, a személyes és tanulmányi adatok, valamint rövid motivációs bemutatkozás adható meg.",
+          "A módosítások menthetők, a profil pedig szükség esetén törölhető.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Álláskeresés és jelentkezések",
+    items: [
+      {
+        question: "Hogyan találok megfelelő pozíciókat?",
+        answer: [
+          "Az állásoldalon térképes nézet és több szűrő segíti a keresést (cégnév, pozíció, helyszín, határidő).",
+        ],
+      },
+      {
+        question: "Hol tudom követni a jelentkezéseim státuszát?",
+        answer: [
+          "A Jelentkezéseim nézetben látható minden pályázat állapota (beküldve, elfogadva, betöltött).",
+          "A már nem aktuális jelentkezés a kuka ikonnal visszavonható.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Hírek és duális hely",
+    items: [
+      {
+        question: "Hol találom az egyetemi értesítéseket?",
+        answer: [
+          "A Hírek menüpontban jelennek meg az adminisztrátori közlemények.",
+          "A Csak fontos szűrővel a kiemelt hírek külön megjeleníthetők.",
+        ],
+      },
+      {
+        question: "Mit látok, ha felvettek egy duális helyre?",
+        answer: [
+          "A Duális helyem nézetben megjelenik a pozíció, a cég, a mentor, az egyetemi felelős és az aktuális státusz.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Oktatási segédlet",
+    items: [
+      {
+        question: "Hogyan működik az oktatási segédlet?",
+        answer: [
+          "Interaktív modulok érhetők el, és az egyes anyagok elvégzése jelölhető.",
+          "Az elvégzett anyagokat a rendszer jelzi, így jól követhető a haladás.",
+        ],
+      },
+    ],
+  },
+];
+
 function normalizeStudyMode(
   studyMode?: string,
 ): StudentProfile["studyMode"] {
@@ -858,6 +949,50 @@ export default function StudentDashboardPage() {
                     </div>
                   </div>
                 </div>
+
+                <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 shadow-sm dark:shadow-none transition-colors">
+                  <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
+                    GYIK - Hallgatói felület
+                  </h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-5 transition-colors">
+                    Gyakran ismételt kérdések a platform használatához.
+                  </p>
+
+                  <div className="space-y-4">
+                    {STUDENT_FAQ_SECTIONS.map((section) => (
+                      <section
+                        key={section.title}
+                        className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 p-4 transition-colors"
+                      >
+                        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                          {section.title}
+                        </h3>
+                        <div className="space-y-2">
+                          {section.items.map((item) => (
+                            <details
+                              key={item.question}
+                              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/40 px-4 py-3"
+                            >
+                              <summary className="cursor-pointer list-none font-medium text-slate-900 dark:text-slate-100">
+                                {item.question}
+                              </summary>
+                              <div className="mt-3 space-y-2">
+                                {item.answer.map((paragraph) => (
+                                  <p
+                                    key={paragraph}
+                                    className="text-sm leading-relaxed text-slate-600 dark:text-slate-300"
+                                  >
+                                    {paragraph}
+                                  </p>
+                                ))}
+                              </div>
+                            </details>
+                          ))}
+                        </div>
+                      </section>
+                    ))}
+                  </div>
+                </div>
               </>
             )}
 
@@ -1412,6 +1547,7 @@ export default function StudentDashboardPage() {
                     />
                   )}
                 </div>
+
               </div>
             )}
           </main>

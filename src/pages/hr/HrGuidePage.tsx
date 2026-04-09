@@ -1,91 +1,181 @@
-import { MaterialStats } from "../../features/guide";
+﻿type FaqItem = {
+  question: string;
+  answer: string[];
+};
+
+type FaqSection = {
+  title: string;
+  items: FaqItem[];
+};
+
+const HR_FAQ_SECTIONS: FaqSection[] = [
+  {
+    title: "Áttekintés és kezdőlap",
+    items: [
+      {
+        question: "Milyen információkat látok azonnal a belépés után?",
+        answer: [
+          "A bejelentkezés után az Áttekintés és statisztika menüpontba érkezik.",
+          "Itt rögtön látható az aktív álláshirdetések és az összes beérkezett jelentkező száma.",
+          "A kártyákról egy kattintással elérhetők a részletes listák.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Toborzás és álláshirdetések",
+    items: [
+      {
+        question: "Hogyan tudok új nyitott pozíciót meghirdetni a hallgatóknak?",
+        answer: [
+          "Az Álláshirdetések menüpont alatt az + Új pozíció gombra kattintva hozható létre hirdetés.",
+          "Meg kell adni a szakot, a címet, a leírást, a jelentkezési határidőt, a munkavégzés helyét és a címkéket.",
+        ],
+      },
+      {
+        question:
+          "Csak duális pozíciókat hirdethetek, vagy normál állásokat is?",
+        answer: [
+          "A rendszer mindkettőt támogatja.",
+          "A Duális képzés pozíció jelölőnégyzettel dönthető el, hogy duális vagy normál (teljes munkaidős) pozícióként jelenjen meg a hirdetés.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Jelentkezők kezelése és aktív keresés",
+    items: [
+      {
+        question: "Hol látom a jelentkezőket, és hogyan tudom őket elbírálni?",
+        answer: [
+          "A Jelentkezések menüpontban szűrhető listában láthatók a pályázatok.",
+          "A hallgatói kártyákon az Elfogadás, Elutasítás és Törlés műveletek azonnal elérhetők.",
+          "A Megtekintés gomb a részletes adatlapot nyitja meg.",
+        ],
+      },
+      {
+        question: "Van lehetőségem proaktívan is keresni a hallgatók között?",
+        answer: [
+          "Igen. A Duális helyet keresők menüpontban böngészhet a munkát kereső hallgatók között.",
+          "Szűrni lehet szakma, nyelvvizsga és elérhetőség alapján, majd a Megkeresés küldése gombbal közvetlenül felvehető a kapcsolat.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Szerződött hallgatók és mentorok",
+    items: [
+      {
+        question:
+          "Hogyan menedzselem a már felvett, nálunk dolgozó duális hallgatókat?",
+        answer: [
+          "A Duális hallgatóink menüpontban kezelhetők a szerződött diákok.",
+          "Itt látható a státusz (Aktív, Mentor jóváhagyásra vár, Lezárt) és a képzési időszak.",
+        ],
+      },
+      {
+        question: "Hogyan tudok a hallgatóhoz vállalati mentort rendelni?",
+        answer: [
+          "A hallgató neve melletti + Mentor gombbal választható ki a mentor a regisztrált munkatársak közül.",
+          "A kiválasztás után a hozzárendelés véglegesíthető.",
+        ],
+      },
+      {
+        question: "Hol látom a cégünk regisztrált munkatársait?",
+        answer: [
+          "A Munkavállalók almenü listázza a céghez tartozó mentorokat és HR adminisztrátorokat az elérhetőségeikkel együtt.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Cégprofil és beállítások",
+    items: [
+      {
+        question:
+          "Hogyan tudom szerkeszteni a vállalatunk adatait és telephelyeit?",
+        answer: [
+          "A Cégprofil menüpontban frissíthető az adószám, weboldal és bemutatkozó szöveg, valamint itt kezelhetők a telephelyek.",
+          "Ugyanitt aktiválható a Saját jelentkezési felület használata opció, és megfelelő jogosultsággal céges képek is feltölthetők.",
+        ],
+      },
+      {
+        question: "Hol tudom a saját adataimat módosítani?",
+        answer: [
+          "A Profil beállítások oldalon módosítható a név, telefonszám és jelszó, valamint profilkép is feltölthető.",
+          "Itt érhető el a profil végleges törlésének lehetősége is.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Kommunikáció és támogatás",
+    items: [
+      {
+        question: "Hogyan értesülök az egyetem fontos közleményeiről?",
+        answer: [
+          "A Hírek menüpontban olvashatók az egyetemi adminisztrátorok üzenetei.",
+          "A Csak fontos szűrővel kiemelhetők a sürgős közlemények.",
+        ],
+      },
+      {
+        question: "Hol találok segítséget a felület használatához?",
+        answer: [
+          "A Súgó és Segítség menüpontban interaktív tananyagok érhetők el.",
+          "A rendszer nyomon követi az elvégzett modulok állapotát is.",
+        ],
+      },
+    ],
+  },
+];
 
 export default function HrGuidePage() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm text-center transition-colors">
-        <div className="mx-auto w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-4 transition-colors">
-          <span className="text-3xl">📚</span>
-        </div>
-
         <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
-          Súgó és Segítség
+          GYIK - Céges toborzási és HR felület
         </h1>
-
-        <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md mx-auto transition-colors">
-          Útmutató a felület használatához. Itt fogod megtalálni a részletes útmutatót az oldal használatához,
-          tippeket az álláshirdetések kezeléséhez és a jelentkezők
-          értékeléséhez.
+        <p className="text-slate-600 dark:text-slate-400 max-w-3xl mx-auto transition-colors">
+          Ez az oldal a céges adminisztrációs felület használatához kapcsolódó leggyakoribb kérdéseket és válaszokat tartalmazza.
         </p>
+      </div>
 
-        <div className="inline-flex items-center gap-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 px-4 py-2 text-sm text-blue-700 dark:text-blue-400 transition-colors">
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      <div className="space-y-4">
+        {HR_FAQ_SECTIONS.map((section) => (
+          <section
+            key={section.title}
+            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-colors"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          Hamarosan elérhető
-        </div>
-      </div>
-
-      <div className="pt-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-              Oktatási segédletek Statisztikája
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              {section.title}
             </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              A hallgatók által elvégzett és értékelt modulok eredményei.
-            </p>
-          </div>
-        </div>
-        <MaterialStats />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-3 pt-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-colors">
-          <div className="text-2xl mb-2">📝</div>
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1 transition-colors">
-            Álláshirdetések
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
-            Hogyan hozz létre hatékony álláshirdetéseket
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-colors">
-          <div className="text-2xl mb-2">👥</div>
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1 transition-colors">
-            Jelentkezők kezelése
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
-            Hogyan értékeld és válaszd ki a legjobb jelölteket
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-colors">
-          <div className="text-2xl mb-2">🤝</div>
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1 transition-colors">
-            Partnerség
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
-            Hogyan működj együtt az egyetemmel
-          </p>
-        </div>
-      </div>
-    </div>
+            <div className="space-y-3">
+              {section.items.map((item) => (
+                <details
+                  key={item.question}
+                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 px-4 py-3"
+                >
+                  <summary className="cursor-pointer list-none font-medium text-slate-900 dark:text-slate-100">
+                    {item.question}
+                  </summary>
+                  <div className="mt-3 space-y-2">
+                    {item.answer.map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        className="text-sm leading-relaxed text-slate-600 dark:text-slate-300"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>    </div>
   );
 }
+
+

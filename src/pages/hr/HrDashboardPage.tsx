@@ -9,6 +9,7 @@ import CompanyEmployeeList from "../../features/companies/components/CompanyEmpl
 import CompanyProfileEditor from "../../features/companies/components/CompanyProfileEditor";
 import CompanyPartnershipList from "../../features/partnerships/components/CompanyPartnershipList";
 import { StudentList } from "../../features/students";
+import { MaterialStats } from "../../features/guide";
 
 export default function HrDashboardPage() {
   const location = useLocation();
@@ -108,7 +109,22 @@ export default function HrDashboardPage() {
 
   return (
     <div className="space-y-6">
-      {activeTab === "overview" && <CompanyOverview companyAdmin={companyAdmin} />}
+      {activeTab === "overview" && (
+        <>
+          <CompanyOverview companyAdmin={companyAdmin} />
+          <section className="space-y-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm transition-colors">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                Oktatási segédletek statisztikája
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Modulonkénti teljesítési és értékelési adatok.
+              </p>
+            </div>
+            <MaterialStats />
+          </section>
+        </>
+      )}
       {activeTab === "positions" && (
         <>
           {loading && !companyAdmin ? (
