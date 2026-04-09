@@ -68,11 +68,8 @@ export default function CompanyPartnershipList() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 transition-colors">
-            Partnerek
+            Duális hallgatóink
           </h2>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors">
-            Kezelje a céggel szerződésben álló hallgatókat és mentorokat.
-          </p>
         </div>
         <button
           onClick={loadData}

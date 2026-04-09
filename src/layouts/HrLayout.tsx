@@ -6,7 +6,7 @@ export default function HrLayout() {
     { to: "/hr/job-postings", label: "Álláshirdetések" },
     { to: "/hr/applications", label: "Jelentkezések" },
     { to: "/hr/students", label: "Hallgatók" },
-    { to: "/hr/partnerships", label: "Partnerek" },
+    { to: "/hr/partnerships", label: "Duális hallgatóink", hint: "Szerződött hallgatók nyilvántartása" },
     { to: "/hr/employees", label: "Munkavállalók" },
     { to: "/hr/company-profile", label: "Cégprofil" },
     { to: "/hr/news", label: "Hírek" },
