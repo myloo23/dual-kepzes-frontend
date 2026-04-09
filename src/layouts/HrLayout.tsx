@@ -2,7 +2,7 @@ import DashboardLayout, { type NavItem } from "./DashboardLayout";
 
 export default function HrLayout() {
   const navItems: NavItem[] = [
-    { to: "/hr", label: "Dashboard", end: true },
+    { to: "/hr", label: "Áttekintés és statisztika", end: true },
     { to: "/hr/job-postings", label: "Álláshirdetések" },
     { to: "/hr/applications", label: "Jelentkezések" },
     { to: "/hr/students", label: "Hallgatók" },

@@ -3,6 +3,7 @@
  */
 
 // Components
+export { default as CompanyOverview } from "./components/CompanyOverview";
 export { default as CompanyProfileDisplay } from "./components/CompanyProfileDisplay";
 export { default as CompanyProfileForm } from "./components/CompanyProfileForm";
 
@@ -12,5 +13,4 @@ export { default as CompanyInfoModal } from "./components/modals/CompanyInfoModa
 export { default as CompanyProfileModal } from "./components/modals/CompanyProfileModal";
 
 // Hooks
-// export { useCompanies } from './hooks/useCompanies';
-// Note: useCompanies hook to be created
+export { useCompanyStats } from "./hooks/useCompanyStats";

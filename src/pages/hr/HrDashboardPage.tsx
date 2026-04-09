@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { api, type CompanyAdminProfile } from "../../lib/api";
 import CompanyProfilePage from "./CompanyProfilePage";
-import HrOverview from "./components/HrOverview";
+import { CompanyOverview } from "../../features/companies";
 import CompanyPositionList from "../../features/positions/components/CompanyPositionList";
 import CompanyApplicationList from "../../features/applications/components/CompanyApplicationList";
 import CompanyEmployeeList from "../../features/companies/components/CompanyEmployeeList";
@@ -108,7 +108,7 @@ export default function HrDashboardPage() {
 
   return (
     <div className="space-y-6">
-      {activeTab === "overview" && <HrOverview />}
+      {activeTab === "overview" && <CompanyOverview companyAdmin={companyAdmin} />}
       {activeTab === "positions" && (
         <>
           {loading && !companyAdmin ? (
