@@ -1,4 +1,4 @@
-import type { GuideCourse } from "./types";
+﻿import type { GuideCourse } from "./types";
 
 export const AVAILABLE_COURSES: GuideCourse[] = [
   {
@@ -38,4 +38,17 @@ export const AVAILABLE_COURSES: GuideCourse[] = [
       "A mentorálás előnyei a vállalat számára a duális képzésben",
     author: "Bettina B",
   },
+  {
+    id: "oneletrajz-es-motivacios-level-iras",
+    title: "Önéletrajz és motivációs levél írás",
+    description:
+      "Gyakorlati útmutató önéletrajz és motivációs levél összeállításához.",
+    embedUrl:
+      "https://www.canva.com/design/DAHE1x9utS0/EEuPOeGRbPZiMMvHS93hoQ/view?embed",
+    sourceUrl:
+      "https://www.canva.com/design/DAHE1x9utS0/EEuPOeGRbPZiMMvHS93hoQ/view?utm_content=DAHE1x9utS0&utm_campaign=designshare&utm_medium=embeds&utm_source=link",
+    presentationName: "Önéletrajz és motivációs levél írás",
+    author: "Sári Bence",
+  },
 ];
+
