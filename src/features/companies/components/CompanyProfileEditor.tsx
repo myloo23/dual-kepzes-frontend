@@ -164,16 +164,9 @@ export default function CompanyProfileEditor({
 
     setSavingAvatar(true);
     try {
-      // Backend endpoint currently not exposed in the API client.
-      if (removeAvatar) {
-        setAvatarSuccess(
-          "Profilkep torles UI kesz. Backend vegpont bekotese szukseges.",
-        );
-      } else {
-        setAvatarSuccess(
-          "Profilkep feltoltes UI kesz. Backend vegpont bekotese szukseges.",
-        );
-      }
+      setAvatarError(
+        "Profilkep feltoltes/torles jelenleg nem erheto el, mert nincs backend vegpont bekotve.",
+      );
     } finally {
       setSavingAvatar(false);
     }

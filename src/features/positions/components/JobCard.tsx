@@ -3,8 +3,12 @@ import {
   toTagName,
   isExpired,
   norm,
+  pickLogo,
 } from "../utils/positions.utils";
 import type { Position, Tag } from "../../../types/api.types";
+import { resolveApiAssetUrl } from "../../../lib/media-url";
+import abcTechLogo from "../../../assets/logos/abc-tech.jpg";
+import businessItLogo from "../../../assets/logos/business-it.jpg";
 
 interface JobCardProps {
   position: Position;
@@ -33,9 +37,11 @@ export default function JobCard({ position: p, onViewDetails }: JobCardProps) {
       : description
     : "";
 
-  // Company logo with fallback
-  const logoUrl =
-    p.company?.logoUrl || "https://via.placeholder.com/80?text=Logo";
+  const fallbackLogo = pickLogo(companyName, {
+    logo1: abcTechLogo,
+    logo2: businessItLogo,
+  });
+  const logoUrl = resolveApiAssetUrl(p.company?.logoUrl) ?? fallbackLogo;
 
   return (
     <article className="h-full rounded-xl border border-dkk-gray/30 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm hover:shadow-lg dark:shadow-none dark:hover:border-blue-500/50 transition-all duration-300 overflow-hidden flex flex-col group">

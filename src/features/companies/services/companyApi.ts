@@ -10,7 +10,7 @@ import {
   apiDelete,
   apiPostFormData,
 } from "@/lib/api-client";
-import { API_CONFIG } from "@/config/app.config";
+import { resolveApiAssetUrl } from "@/lib/media-url";
 import type {
   Id,
   Company,
@@ -38,78 +38,96 @@ function ensureId(id: Id, label = "id"): string {
   return s;
 }
 
-function resolveImageUrl(url: string): string {
-  if (!url) return url;
-
-  const trimmed = url.trim();
-  if (!trimmed) return trimmed;
-
-  if (
-    trimmed.startsWith("http://") ||
-    trimmed.startsWith("https://") ||
-    trimmed.startsWith("data:") ||
-    trimmed.startsWith("blob:")
-  ) {
-    return trimmed;
-  }
-
-  const base = API_CONFIG.BASE_URL.replace(/\/$/, "");
-  const path = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-  return `${base}${path}`;
+function normalizeCompany(company: Company): Company {
+  return {
+    ...company,
+    logoUrl: resolveApiAssetUrl(company.logoUrl) ?? null,
+  };
 }
 
 export const companyApi = {
-  list: (params?: PaginationQuery) => apiGet<Company[]>(COMPANIES_PATH, params),
+  list: async (params?: PaginationQuery) => {
+    const data = await apiGet<Company[]>(COMPANIES_PATH, params);
+    return (data ?? []).map(normalizeCompany);
+  },
 
-  listInactive: (params?: PaginationQuery) =>
-    apiGet<Company[]>(`${COMPANIES_PATH}/inactive`, params),
+  listInactive: async (params?: PaginationQuery) => {
+    const data = await apiGet<Company[]>(`${COMPANIES_PATH}/inactive`, params);
+    return (data ?? []).map(normalizeCompany);
+  },
 
-  listOwnApplication: (params?: PaginationQuery) =>
-    apiGet<Company[]>(`${COMPANIES_PATH}/own-application`, params),
+  listOwnApplication: async (params?: PaginationQuery) => {
+    const data = await apiGet<Company[]>(
+      `${COMPANIES_PATH}/own-application`,
+      params,
+    );
+    return (data ?? []).map(normalizeCompany);
+  },
 
-  listPending: (params?: PaginationQuery) =>
-    apiGet<Company[]>(`${COMPANIES_PATH}/pending`, params),
+  listPending: async (params?: PaginationQuery) => {
+    const data = await apiGet<Company[]>(`${COMPANIES_PATH}/pending`, params);
+    return (data ?? []).map(normalizeCompany);
+  },
 
-  get: (id: Id) =>
-    apiGet<Company>(`${COMPANIES_PATH}/${ensureId(id, "companyId")}`),
+  get: async (id: Id) => {
+    const data = await apiGet<Company>(
+      `${COMPANIES_PATH}/${ensureId(id, "companyId")}`,
+    );
+    return normalizeCompany(data);
+  },
 
-  create: (payload: Omit<Company, "id">) =>
-    apiPost<Company>(COMPANIES_PATH, payload),
+  create: async (payload: Omit<Company, "id">) => {
+    const data = await apiPost<Company>(COMPANIES_PATH, payload);
+    return normalizeCompany(data);
+  },
 
   registerWithAdmin: (payload: CompanyRegisterPayload) =>
     apiPost<any>(`${COMPANIES_PATH}/with-admin`, payload),
 
-  update: (id: Id, body: Partial<Omit<Company, "id">>) =>
-    apiPatch<Company>(`${COMPANIES_PATH}/${ensureId(id, "companyId")}`, body),
+  update: async (id: Id, body: Partial<Omit<Company, "id">>) => {
+    const data = await apiPatch<Company>(
+      `${COMPANIES_PATH}/${ensureId(id, "companyId")}`,
+      body,
+    );
+    return normalizeCompany(data);
+  },
 
   remove: (id: Id) =>
     apiDelete<{ message?: string }>(
       `${COMPANIES_PATH}/${ensureId(id, "companyId")}`,
     ),
 
-  reactivate: (id: Id) =>
-    apiPatch<Company>(
+  reactivate: async (id: Id) => {
+    const data = await apiPatch<Company>(
       `${COMPANIES_PATH}/${ensureId(id, "companyId")}/reactivate`,
       {},
-    ),
+    );
+    return normalizeCompany(data);
+  },
 
-  deactivate: (id: Id) =>
-    apiPatch<Company>(
+  deactivate: async (id: Id) => {
+    const data = await apiPatch<Company>(
       `${COMPANIES_PATH}/${ensureId(id, "companyId")}/deactivate`,
       {},
-    ),
+    );
+    return normalizeCompany(data);
+  },
 
-  approve: (id: Id) =>
-    apiPatch<Company>(
+  approve: async (id: Id) => {
+    const data = await apiPatch<Company>(
       `${COMPANIES_PATH}/${ensureId(id, "companyId")}/approve`,
       {},
-    ),
+    );
+    return normalizeCompany(data);
+  },
 
-  reject: (id: Id) =>
-    apiPatch<Company>(
+  reject: async (id: Id) => {
+    const data = await apiPatch<Company>(
       `${COMPANIES_PATH}/${ensureId(id, "companyId")}/reject`,
       {},
-    ),
+    );
+    return normalizeCompany(data);
+  },
 
   companyImages: {
     list: async (companyId: Id) => {
@@ -119,7 +137,7 @@ export const companyApi = {
       );
       return (data ?? []).map((image) => ({
         ...image,
-        url: resolveImageUrl(image.url),
+        url: resolveApiAssetUrl(image.url) ?? image.url,
       }));
     },
     upload: (companyId: Id, formData: FormData) =>

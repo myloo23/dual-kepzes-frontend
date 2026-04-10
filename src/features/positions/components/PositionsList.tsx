@@ -7,6 +7,7 @@ import type { Position } from "../../../lib/api";
 import PositionCard from "./PositionCard";
 import { pickLogo, norm } from "../utils/positions.utils";
 import { LABELS } from "../../../constants";
+import { resolveApiAssetUrl } from "../../../lib/media-url";
 
 // Temporary logos (will be moved to assets management)
 import abcTechLogo from "../../../assets/logos/abc-tech.jpg";
@@ -39,10 +40,11 @@ export default function PositionsList({
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-2">
       {positions.map((p) => {
         const companyKey = norm(p.companyId ?? p.company?.name);
-        const logo = pickLogo(companyKey, {
+        const fallbackLogo = pickLogo(companyKey, {
           logo1: abcTechLogo,
           logo2: businessItLogo,
         });
+        const logo = resolveApiAssetUrl(p.company?.logoUrl) ?? fallbackLogo;
 
         return (
           <PositionCard

@@ -7,6 +7,9 @@ import { useState, useEffect, useCallback } from "react";
 import { api } from "../../../lib/api";
 import type { Position } from "../../../lib/api";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../../constants";
+import { companyApi } from "../../companies/services/companyApi";
+import { resolveApiAssetUrl } from "../../../lib/media-url";
+import { fetchPrimaryCompanyImageMap } from "../../companies/utils/companyImageLogo";
 
 export interface UsePositionsReturn {
   positions: Position[];
@@ -35,8 +38,87 @@ export function usePositions(): UsePositionsReturn {
       try {
         setLoading(true);
         setError(null);
-        const res = await api.positions.listPublic({ limit: 1000 });
-        setPositions(Array.isArray(res) ? res : []);
+        const [positionsRes, companies] = await Promise.all([
+          api.positions.listPublic({ limit: 1000 }),
+          companyApi.list({ limit: 1000 }).catch(() => []),
+        ]);
+
+        const companyById = new Map(companies.map((c) => [String(c.id), c]));
+        const companyByName = new Map(
+          companies.map((c) => [c.name.trim().toLowerCase(), c]),
+        );
+        const rows = Array.isArray(positionsRes) ? positionsRes : [];
+        const requiredCompanyIds = new Set<string>();
+
+        rows.forEach((position) => {
+          const companyId = String(position.company?.id ?? position.companyId ?? "").trim();
+          const companyName = String(position.company?.name ?? "").trim().toLowerCase();
+          const matchedCompany =
+            companyById.get(companyId) ||
+            (companyName ? companyByName.get(companyName) : undefined);
+
+          if (companyId) requiredCompanyIds.add(companyId);
+          if (matchedCompany?.id) requiredCompanyIds.add(String(matchedCompany.id));
+        });
+
+        const primaryCompanyImageById = await fetchPrimaryCompanyImageMap(
+          Array.from(requiredCompanyIds),
+        );
+
+        const enriched = rows.map((position) => {
+          const companyId = String(position.company?.id ?? position.companyId ?? "");
+          const positionCompanyName = String(position.company?.name ?? "")
+            .trim()
+            .toLowerCase();
+          const matchedCompany =
+            companyById.get(companyId) ||
+            (positionCompanyName ? companyByName.get(positionCompanyName) : undefined);
+          const resolvedCompanyId = String(
+            position.company?.id ?? position.companyId ?? matchedCompany?.id ?? "",
+          ).trim();
+          const logoUrl =
+            (resolvedCompanyId
+              ? primaryCompanyImageById.get(resolvedCompanyId)
+              : undefined) ??
+            resolveApiAssetUrl(position.company?.logoUrl) ??
+            matchedCompany?.logoUrl ??
+            null;
+
+          if (!position.company && matchedCompany) {
+            return {
+              ...position,
+              company: {
+                id: matchedCompany.id,
+                name: matchedCompany.name,
+                logoUrl,
+                locations: matchedCompany.locations ?? [],
+                website: matchedCompany.website ?? null,
+                hasOwnApplication: matchedCompany.hasOwnApplication ?? false,
+              },
+            };
+          }
+
+          return {
+            ...position,
+            company: position.company
+              ? {
+                  ...position.company,
+                  id:
+                    position.company.id ??
+                    position.companyId ??
+                    matchedCompany?.id,
+                  logoUrl,
+                  website: position.company.website ?? matchedCompany?.website ?? null,
+                  hasOwnApplication:
+                    position.company.hasOwnApplication ??
+                    matchedCompany?.hasOwnApplication ??
+                    false,
+                }
+              : position.company,
+          };
+        });
+
+        setPositions(enriched);
       } catch (e) {
         console.error("Failed to load positions:", e);
         setError(ERROR_MESSAGES.FETCH_POSITIONS);

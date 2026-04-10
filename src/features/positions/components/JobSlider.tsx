@@ -3,6 +3,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import JobCard from "./JobCard";
 import { api } from "../../../lib/api";
 import type { Position } from "../../../types/api.types";
+import { companyApi } from "../../companies/services/companyApi";
+import { resolveApiAssetUrl } from "../../../lib/media-url";
+import { fetchPrimaryCompanyImageMap } from "../../companies/utils/companyImageLogo";
 
 interface JobSliderProps {
   onViewDetails: (positionId: string | number) => void;
@@ -19,7 +22,81 @@ export default function JobSlider({ onViewDetails }: JobSliderProps) {
     const fetchJobs = async () => {
       try {
         setLoading(true);
-        const allPositions = await api.positions.listPublic({ limit: 1000 });
+        const [positionsRes, companies] = await Promise.all([
+          api.positions.listPublic({ limit: 1000 }),
+          companyApi.list({ limit: 1000 }).catch(() => []),
+        ]);
+        const companyById = new Map(companies.map((c) => [String(c.id), c]));
+        const companyByName = new Map(
+          companies.map((c) => [c.name.trim().toLowerCase(), c]),
+        );
+        const rows = Array.isArray(positionsRes) ? positionsRes : [];
+        const requiredCompanyIds = new Set<string>();
+
+        rows.forEach((position) => {
+          const companyId = String(position.company?.id ?? position.companyId ?? "").trim();
+          const companyName = String(position.company?.name ?? "").trim().toLowerCase();
+          const matchedCompany =
+            companyById.get(companyId) ||
+            (companyName ? companyByName.get(companyName) : undefined);
+
+          if (companyId) requiredCompanyIds.add(companyId);
+          if (matchedCompany?.id) requiredCompanyIds.add(String(matchedCompany.id));
+        });
+
+        const primaryCompanyImageById = await fetchPrimaryCompanyImageMap(
+          Array.from(requiredCompanyIds),
+        );
+
+        const allPositions = rows.map((position) => {
+            const companyId = String(position.company?.id ?? position.companyId ?? "");
+            const positionCompanyName = String(position.company?.name ?? "")
+              .trim()
+              .toLowerCase();
+            const matchedCompany =
+              companyById.get(companyId) ||
+              (positionCompanyName
+                ? companyByName.get(positionCompanyName)
+                : undefined);
+            const resolvedCompanyId = String(
+              position.company?.id ?? position.companyId ?? matchedCompany?.id ?? "",
+            ).trim();
+            const logoUrl =
+              (resolvedCompanyId
+                ? primaryCompanyImageById.get(resolvedCompanyId)
+                : undefined) ??
+              resolveApiAssetUrl(position.company?.logoUrl) ??
+              matchedCompany?.logoUrl ??
+              null;
+
+            if (!position.company && matchedCompany) {
+              return {
+                ...position,
+                company: {
+                  id: matchedCompany.id,
+                  name: matchedCompany.name,
+                  logoUrl,
+                  locations: matchedCompany.locations ?? [],
+                  website: matchedCompany.website ?? null,
+                  hasOwnApplication: matchedCompany.hasOwnApplication ?? false,
+                },
+              };
+            }
+
+            return {
+              ...position,
+              company: position.company
+                ? {
+                    ...position.company,
+                    id:
+                      position.company.id ??
+                      position.companyId ??
+                      matchedCompany?.id,
+                    logoUrl,
+                  }
+                : position.company,
+            };
+          });
 
         console.log("📊 All positions:", allPositions);
         console.log(

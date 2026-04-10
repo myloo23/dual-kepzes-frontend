@@ -126,22 +126,30 @@ export default function PositionsPage() {
       }
 
       let targetId = companyData.id;
+      const clickedName = companyData.name.trim().toLowerCase();
 
-      // If no ID, try to find it from the list of companies
+      try {
+        // Validate ID first (position API can occasionally carry stale/mismatched company ids)
+        if (targetId) {
+          const byId = await companyApi.get(targetId);
+          if (byId.name.trim().toLowerCase() !== clickedName) {
+            targetId = undefined;
+          }
+        }
+      } catch {
+        targetId = undefined;
+      }
+
+      // If no valid ID, resolve by exact company name
       if (!targetId) {
         try {
-          const allCompanies = await companyApi.list();
+          const allCompanies = await companyApi.list({ limit: 1000 });
           const matchingCompany = allCompanies.find(
-            (c) =>
-              c.name.trim().toLowerCase() ===
-              companyData.name!.trim().toLowerCase(),
+            (c) => c.name.trim().toLowerCase() === clickedName,
           );
-
-          if (matchingCompany) {
-            targetId = matchingCompany.id;
-          }
+          if (matchingCompany) targetId = matchingCompany.id;
         } catch (error) {
-          console.error("Failed to fetch companies list:", error);
+          console.error("Failed to resolve company by name:", error);
         }
       }
 

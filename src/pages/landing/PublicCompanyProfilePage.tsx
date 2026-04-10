@@ -10,6 +10,8 @@ import businessItLogo from "../../assets/logos/business-it.jpg";
 import LocationMap from "../../features/applications/components/LocationMap";
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/shared/ToastContainer";
+import { resolveApiAssetUrl } from "../../lib/media-url";
+import { pickPrimaryCompanyImageUrl } from "../../features/companies/utils/companyImageLogo";
 
 export default function PublicCompanyProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -28,8 +30,16 @@ export default function PublicCompanyProfilePage() {
         setLoading(true);
         // Fetch company details
         const companyData = await companyApi.get(id);
-        console.log("Fetched company data:", companyData);
-        setCompany(companyData);
+        const companyImages = await companyApi.companyImages.list(id).catch(() => []);
+        const primaryImageUrl = pickPrimaryCompanyImageUrl(companyImages);
+        const effectiveLogoUrl =
+          primaryImageUrl ?? resolveApiAssetUrl(companyData.logoUrl) ?? null;
+        const normalizedCompanyData = {
+          ...companyData,
+          logoUrl: effectiveLogoUrl,
+        };
+        console.log("Fetched company data:", normalizedCompanyData);
+        setCompany(normalizedCompanyData);
 
         // Fetch public positions with higher limit and company filter
         // We ask for 100 items to avoid missing jobs due to pagination
@@ -60,7 +70,7 @@ export default function PublicCompanyProfilePage() {
             ...p.company,
             id: companyData.id,
             name: companyData.name,
-            logoUrl: companyData.logoUrl,
+            logoUrl: effectiveLogoUrl,
             locations: companyData.locations,
             hasOwnApplication: companyData.hasOwnApplication,
             website: companyData.website,
