@@ -37,6 +37,11 @@ export default function PositionCard({
   const expired = isExpired(p.deadline);
   const typeConfig = getPositionTypeConfig(p.type);
 
+  const externalUrl =
+    p.company?.hasOwnApplication
+      ? (p.company.externalApplicationUrl || p.company.website || null)
+      : null;
+
   return (
     <article
       key={String(p.id ?? `${companyName}-${title}-${cityText}`)}
@@ -174,19 +179,36 @@ export default function PositionCard({
       </div>
       {/* CTA */}
       <div className="p-5 pt-0">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (onApply && p.id) {
-              onApply(p.id);
-            }
-          }}
-          disabled={expired || !onApply}
-          className="w-full rounded-lg bg-nje-jaffa px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-nje-jaffa-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {expired ? "Lejárt" : "Jelentkezés"}
-        </button>
+        {!expired && externalUrl ? (
+          <a
+            href={externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-nje-jaffa px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-nje-jaffa-dark transition-colors"
+          >
+            Külső jelentkezés
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+        ) : (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onApply && p.id) {
+                onApply(p.id);
+              }
+            }}
+            disabled={expired || !onApply}
+            className="w-full rounded-lg bg-nje-jaffa px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-nje-jaffa-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {expired ? "Lejárt" : "Jelentkezés"}
+          </button>
+        )}
       </div>
     </article>
   );

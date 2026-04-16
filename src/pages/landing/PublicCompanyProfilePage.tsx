@@ -72,8 +72,12 @@ export default function PublicCompanyProfilePage() {
             name: companyData.name,
             logoUrl: effectiveLogoUrl,
             locations: companyData.locations,
-            hasOwnApplication: companyData.hasOwnApplication,
-            website: companyData.website,
+            hasOwnApplication: companyData.hasOwnApplication ?? false,
+            externalApplicationUrl:
+              companyData.externalApplicationUrl ??
+              p.company?.externalApplicationUrl ??
+              null,
+            website: companyData.website ?? p.company?.website ?? null,
           },
         })) as Position[]; // Cast as Position to satisfy strict type checks (api response might be slightly loose)
 

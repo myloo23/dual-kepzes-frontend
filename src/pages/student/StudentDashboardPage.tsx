@@ -485,7 +485,7 @@ export default function StudentDashboardPage() {
   }, [profile, majors, majorsLoading, activeTab]);
 
   useEffect(() => {
-    if (activeTab !== "partnerships") return;
+    if (activeTab !== "partnerships" && activeTab !== "overview") return;
     let mounted = true;
 
     const loadPartnerships = async () => {
@@ -949,6 +949,91 @@ export default function StudentDashboardPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Duális kapcsolatok – csak ha van aktív partnerség */}
+                {(() => {
+                  const activePartnership = partnerships.find(
+                    (p) => p.status === "ACTIVE",
+                  );
+                  if (partnershipsLoading) return (
+                    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 shadow-sm dark:shadow-none transition-colors">
+                      <div className="text-sm text-slate-500 dark:text-slate-400 transition-colors">Duális adatok betöltése...</div>
+                    </div>
+                  );
+                  if (!activePartnership) return null;
+                  return (
+                    <div className="rounded-2xl border border-blue-200 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-950/30 p-6 shadow-sm dark:shadow-none transition-colors">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+                        <h2 className="text-base font-semibold text-blue-900 dark:text-blue-100 transition-colors">
+                          Duális kapcsolatok
+                        </h2>
+                        {activePartnership.position?.company?.name && (
+                          <span className="ml-auto text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/50 px-2.5 py-1 rounded-full transition-colors">
+                            {activePartnership.position.company.name}
+                          </span>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Céges mentor */}
+                        <div className="rounded-xl border border-blue-200 dark:border-blue-800/50 bg-white dark:bg-slate-900 p-4 space-y-1 transition-colors">
+                          <div className="text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-blue-400 transition-colors">
+                            Céges mentor
+                          </div>
+                          {activePartnership.mentor ? (
+                            <>
+                              <div className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+                                {activePartnership.mentor.fullName ?? activePartnership.mentor.user?.fullName ?? "—"}
+                              </div>
+                              {(activePartnership.mentor.email ?? activePartnership.mentor.user?.email) && (
+                                <a
+                                  href={`mailto:${activePartnership.mentor.email ?? activePartnership.mentor.user?.email}`}
+                                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline transition-colors"
+                                >
+                                  {activePartnership.mentor.email ?? activePartnership.mentor.user?.email}
+                                </a>
+                              )}
+                            </>
+                          ) : (
+                            <div className="text-sm text-slate-400 dark:text-slate-500 italic transition-colors">
+                              Nincs hozzárendelve
+                            </div>
+                          )}
+                        </div>
+                        {/* Egyetemi referens */}
+                        <div className="rounded-xl border border-blue-200 dark:border-blue-800/50 bg-white dark:bg-slate-900 p-4 space-y-1 transition-colors">
+                          <div className="text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-blue-400 transition-colors">
+                            Egyetemi referens
+                          </div>
+                          {activePartnership.uniEmployee ? (
+                            <>
+                              <div className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+                                {activePartnership.uniEmployee.fullName ?? activePartnership.uniEmployee.user?.fullName ?? "—"}
+                              </div>
+                              {(activePartnership.uniEmployee.email ?? activePartnership.uniEmployee.user?.email) && (
+                                <a
+                                  href={`mailto:${activePartnership.uniEmployee.email ?? activePartnership.uniEmployee.user?.email}`}
+                                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline transition-colors"
+                                >
+                                  {activePartnership.uniEmployee.email ?? activePartnership.uniEmployee.user?.email}
+                                </a>
+                              )}
+                            </>
+                          ) : (
+                            <div className="text-sm text-slate-400 dark:text-slate-500 italic transition-colors">
+                              Nincs hozzárendelve
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {activePartnership.position?.title && (
+                        <div className="mt-3 text-xs text-blue-700 dark:text-blue-300 transition-colors">
+                          Pozíció: <span className="font-medium">{activePartnership.position.title}</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 shadow-sm dark:shadow-none transition-colors">
                   <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2 transition-colors">
