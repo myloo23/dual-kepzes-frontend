@@ -316,50 +316,19 @@ export default function PositionFormModal({
           />
         </div>
 
-        <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 transition-colors">
-          <span className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
-            Pozíció típusa
-          </span>
-          <div className="flex flex-col gap-2">
-            {(
-              [
-                {
-                  value: "DUAL",
-                  label: "Duális képzés",
-                  desc: "Duális képzési program keretén belüli pozíció.",
-                },
-                {
-                  value: "PROFESSIONAL_PRACTICE",
-                  label: "Szakmai gyakorlat",
-                  desc: "Kötelező vagy önkéntes szakmai gyakorlati hely.",
-                },
-                {
-                  value: "REGULAR_WORK",
-                  label: "Rendes állás",
-                  desc: "Hagyományos teljes munkaidős álláshirdetés.",
-                },
-              ] as const
-            ).map(({ value, label, desc }) => (
-              <label key={value} className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="radio"
-                  name="type"
-                  value={value}
-                  checked={formData.type === value}
-                  onChange={handleFormChange}
-                  className="mt-0.5 h-4 w-4 border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                />
-                <div>
-                  <span className="text-sm font-medium text-slate-900 dark:text-slate-100 transition-colors">
-                    {label}
-                  </span>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
-                    {desc}
-                  </p>
-                </div>
-              </label>
-            ))}
-          </div>
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+            Állás típusa *
+          </label>
+          <select
+            name="type"
+            value={formData.type}
+            onChange={handleFormChange}
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
+          >
+            <option value="DUAL">Duális állás</option>
+            <option value="PROFESSIONAL_PRACTICE">Szakmai gyakorlat</option>
+          </select>
         </div>
 
         <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 transition-colors">

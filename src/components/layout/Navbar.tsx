@@ -226,7 +226,7 @@ export default function Navbar() {
             )}
 
             <Link to="/positions" className={getLinkClass("/positions")}>
-              Állásajánlatok
+              Duális pozíciók
             </Link>
 
             <Link to="/gallery" className={getLinkClass("/gallery")}>
@@ -556,7 +556,7 @@ export default function Navbar() {
               className={getMobileLinkClass("/positions")}
               onClick={closeMobileMenu}
             >
-              Állásajánlatok
+              Duális pozíciók
             </Link>
 
             <Link
