@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useLocation } from "react-router-dom";
 import {
   api,
+  type Company,
+  type Major,
   type StudentProfile,
   type UniversityUserProfile,
   type Partnership,
@@ -36,6 +38,10 @@ export default function UniversityDashboardPage() {
   const [partnershipsError, setPartnershipsError] = useState<string | null>(
     null,
   );
+  const [assignedMajors, setAssignedMajors] = useState<Array<Major | { id?: string | number; name?: string }>>([]);
+  const [assignedCompanies, setAssignedCompanies] = useState<Array<Pick<Company, "id" | "name"> | { id?: string | number; name?: string }>>([]);
+  const [assignmentsLoading, setAssignmentsLoading] = useState(false);
+  const [assignmentsError, setAssignmentsError] = useState<string | null>(null);
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: "student",
@@ -95,6 +101,27 @@ export default function UniversityDashboardPage() {
     filteredStudents.length / STUDENT_PAGE_SIZE,
   );
 
+  const assignmentName = (item: unknown): string => {
+    if (item && typeof item === "object" && "name" in item) {
+      const name = (item as { name?: unknown }).name;
+      if (typeof name === "string") return name;
+    }
+    return "";
+  };
+
+  const assignedMajorNames = useMemo(
+    () => assignedMajors.map((major) => assignmentName(major)).filter(Boolean),
+    [assignedMajors],
+  );
+
+  const assignedCompanyNames = useMemo(
+    () =>
+      assignedCompanies
+        .map((company) => assignmentName(company))
+        .filter(Boolean),
+    [assignedCompanies],
+  );
+
   const loadProfile = async () => {
     setProfileLoading(true);
     setProfileError(null);
@@ -118,6 +145,61 @@ export default function UniversityDashboardPage() {
   useEffect(() => {
     if (activeTab !== "profile") return;
     void loadProfile();
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab !== "overview") return;
+
+    const loadAssignments = async () => {
+      setAssignmentsLoading(true);
+      setAssignmentsError(null);
+
+      try {
+        const response = await api.universityUsers.me.assignments();
+        const payload =
+          response && typeof response === "object" && "data" in response
+            ? (response as { data?: unknown }).data
+            : response;
+
+        const readArray = (source: unknown, key: string): unknown[] => {
+          if (!source || typeof source !== "object") return [];
+          const value = (source as Record<string, unknown>)[key];
+          return Array.isArray(value) ? value : [];
+        };
+
+        const majors = readArray(payload, "majors");
+        const managedMajors = readArray(payload, "managedMajors");
+        const companies = readArray(payload, "companies");
+        const managedCompanies = readArray(payload, "managedCompanies");
+
+        setAssignedMajors(
+          (majors.length > 0 ? majors : managedMajors).filter(
+            (item): item is Major | { id?: string | number; name?: string } =>
+              item !== null && item !== undefined,
+          ),
+        );
+        setAssignedCompanies(
+          (companies.length > 0 ? companies : managedCompanies).filter(
+            (
+              item,
+            ): item is
+              | Pick<Company, "id" | "name">
+              | { id?: string | number; name?: string } =>
+              item !== null && item !== undefined,
+          ),
+        );
+      } catch (err) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Hiba a hozzarendelesek betoltese kozben.";
+        setAssignmentsError(message);
+      } finally {
+        setAssignmentsLoading(false);
+      }
+    };
+
+    void loadAssignments();
   }, [activeTab]);
 
   // Unified loading for partnerships (which also feeds students list)
@@ -280,6 +362,60 @@ export default function UniversityDashboardPage() {
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
               Áttekintés a hozzád rendelt vállalatokról, hallgatói létszámokról és más referensekről.
             </p>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-none transition-colors space-y-4">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Sajat hozzarendelesek
+            </h2>
+
+            {assignmentsLoading && (
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Hozzarendelesek betoltese...
+              </p>
+            )}
+
+            {assignmentsError && (
+              <div className="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-3 py-2 text-sm text-red-700 dark:text-red-400 transition-colors">
+                {assignmentsError}
+              </div>
+            )}
+
+            {!assignmentsLoading && !assignmentsError && (
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    Sajat szakok
+                  </h3>
+                  <ul className="mt-3 space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                    {assignedMajorNames.map((name, idx) => (
+                      <li key={`${name}-${idx}`}>{name}</li>
+                    ))}
+                  </ul>
+                  {assignedMajorNames.length === 0 && (
+                    <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+                      Nincs hozzad rendelt szak.
+                    </p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    Sajat cegek
+                  </h3>
+                  <ul className="mt-3 space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                    {assignedCompanyNames.map((name, idx) => (
+                      <li key={`${name}-${idx}`}>{name}</li>
+                    ))}
+                  </ul>
+                  {assignedCompanyNames.length === 0 && (
+                    <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+                      Nincs hozzad rendelt ceg.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           
           <ReferentDashboardStats />

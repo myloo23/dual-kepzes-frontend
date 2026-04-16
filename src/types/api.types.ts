@@ -178,6 +178,13 @@ export interface UniversityUserProfile {
   managedCompanies?: Array<Pick<Company, "id" | "name"> | Id>;
 }
 
+export interface UniversityUserAssignmentsResponse {
+  majors?: Array<Major | Id | { id?: Id; name?: string }>;
+  companies?: Array<Pick<Company, "id" | "name"> | Id | { id?: Id; name?: string }>;
+  managedMajors?: Array<Major | Id | { id?: Id; name?: string }>;
+  managedCompanies?: Array<Pick<Company, "id" | "name"> | Id | { id?: Id; name?: string }>;
+}
+
 export interface SystemAdminProfile {
   id: Id;
   userId: Id;

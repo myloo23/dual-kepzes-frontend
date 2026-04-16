@@ -24,6 +24,7 @@ import type {
   StudentApplicationsResponse,
   StudentApplicationStats,
   ReferentOverviewResponse,
+  UniversityUserAssignmentsResponse,
   Major,
   Partnership,
   PaginationQuery,
@@ -417,6 +418,10 @@ export const api = {
       ),
     me: {
       get: () => apiGet<UniversityUserProfile>(`${PATHS.universityUsers}/me`),
+      assignments: () =>
+        apiGet<UniversityUserAssignmentsResponse>(
+          `${PATHS.universityUsers}/me/assignments`,
+        ),
       update: (body: Partial<UniversityUserProfile>) =>
         apiPatch<UniversityUserProfile>(`${PATHS.universityUsers}/me`, body),
       remove: () =>
@@ -473,6 +478,7 @@ export type {
   CompanyStatsResponse,
   ReferentCompanyStat,
   ReferentOverviewResponse,
+  UniversityUserAssignmentsResponse,
   Location,
   Tag,
   Partnership,
