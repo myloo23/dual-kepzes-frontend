@@ -79,6 +79,8 @@ export default function JobSlider({ onViewDetails }: JobSliderProps) {
                   locations: matchedCompany.locations ?? [],
                   website: matchedCompany.website ?? null,
                   hasOwnApplication: matchedCompany.hasOwnApplication ?? false,
+                  externalApplicationUrl:
+                    matchedCompany.externalApplicationUrl ?? null,
                 },
               };
             }

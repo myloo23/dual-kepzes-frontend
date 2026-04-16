@@ -20,18 +20,20 @@ interface CompanyFormData {
   website: string;
   logoUrl: string;
   hasOwnApplication: boolean;
+  externalApplicationUrl: string;
 }
 
 const INITIAL_FORM_STATE: CompanyFormData = {
   name: "",
   taxId: "",
-  locations: [{ country: "Magyarország", zipCode: "", city: "", address: "" }], // Default one empty location
+  locations: [{ country: "Magyarország", zipCode: "", city: "", address: "" }],
   contactName: "",
   contactEmail: "",
   description: "",
   website: "",
   logoUrl: "",
   hasOwnApplication: false,
+  externalApplicationUrl: "",
 };
 
 export default function CompanyFormModal({
@@ -68,6 +70,7 @@ export default function CompanyFormModal({
           website: initialData.website || "",
           logoUrl: initialData.logoUrl || "",
           hasOwnApplication: initialData.hasOwnApplication || false,
+          externalApplicationUrl: initialData.externalApplicationUrl || "",
         });
       } else {
         setFormData(INITIAL_FORM_STATE);
@@ -134,9 +137,9 @@ export default function CompanyFormModal({
       return;
     }
 
-    if (formData.hasOwnApplication && !formData.website.trim()) {
+    if (formData.hasOwnApplication && !formData.externalApplicationUrl.trim()) {
       setError(
-        "Külső jelentkezési felület használata esetén a Weboldal megadása kötelező.",
+        "Külső jelentkezési felület használata esetén a Külső jelentkezési link megadása kötelező.",
       );
       return;
     }
@@ -165,6 +168,10 @@ export default function CompanyFormModal({
         description: formData.description?.trim() || undefined,
         locations: formData.locations as Location[],
         hasOwnApplication: formData.hasOwnApplication,
+        externalApplicationUrl:
+          formData.hasOwnApplication && formData.externalApplicationUrl.trim()
+            ? formData.externalApplicationUrl.trim()
+            : null,
       };
 
       await onSave(payload);
@@ -252,12 +259,23 @@ export default function CompanyFormModal({
             </div>
 
             {formData.hasOwnApplication && (
-              <div className="space-y-1">
-                <p className="text-[11px] text-slate-500 bg-blue-50 p-2 rounded border border-blue-100">
-                  Bekapcsolt állapotban a "Jelentkezés" gomb a fent megadott{" "}
-                  <strong>Weboldal</strong> linkre fog átirányítani. Kérjük
-                  győződjön meg róla, hogy a Weboldal mező helyesen van
-                  kitöltve!
+              <div className="space-y-2">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                    Külső jelentkezési link *
+                  </label>
+                  <input
+                    type="url"
+                    name="externalApplicationUrl"
+                    value={formData.externalApplicationUrl}
+                    onChange={handleFormChange}
+                    placeholder="https://cegnev.hu/karrier"
+                    className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
+                  />
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-100 dark:border-blue-800/50 transition-colors">
+                  Bekapcsolt állapotban a "Jelentkezés" gomb erre a linkre irányít
+                  át. A cég általános weboldala ettől függetlenül beállítható.
                 </p>
               </div>
             )}

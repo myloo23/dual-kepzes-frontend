@@ -24,6 +24,7 @@ export default function CompanyProfilePage() {
     description: "",
     website: "",
     hasOwnApplication: false,
+    externalApplicationUrl: "",
   });
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function CompanyProfilePage() {
             description: companyData.description || "",
             website: companyData.website || "",
             hasOwnApplication: companyData.hasOwnApplication || false,
+            externalApplicationUrl: companyData.externalApplicationUrl || "",
           });
         } else {
           setError("Nem található a felhasználóhoz rendelt cég.");
@@ -85,9 +87,9 @@ export default function CompanyProfilePage() {
     e.preventDefault();
     if (!company) return;
 
-    if (formData.hasOwnApplication && !formData.website?.trim()) {
+    if (formData.hasOwnApplication && !formData.externalApplicationUrl?.trim()) {
       setError(
-        "Külső jelentkezési felület használata esetén a Weboldal megadása kötelező.",
+        "Külső jelentkezési felület használata esetén a Külső jelentkezési link megadása kötelező.",
       );
       return;
     }
@@ -113,6 +115,10 @@ export default function CompanyProfilePage() {
         ],
         hasOwnApplication: formData.hasOwnApplication,
         website: formData.website || undefined,
+        externalApplicationUrl:
+          formData.hasOwnApplication && formData.externalApplicationUrl?.trim()
+            ? formData.externalApplicationUrl.trim()
+            : null,
       };
       await companyApi.update(company.id, payload);
       // We need to re-fetch or construct the full object manually if updating local state
@@ -145,6 +151,7 @@ export default function CompanyProfilePage() {
         description: company.description || "",
         website: company.website || "",
         hasOwnApplication: company.hasOwnApplication || false,
+        externalApplicationUrl: company.externalApplicationUrl || "",
       });
     }
     setIsEditing(false);

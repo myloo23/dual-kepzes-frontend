@@ -213,18 +213,20 @@ export default function PublicCompanyProfilePage() {
   const handleApply = (positionId: string | number) => {
     const p = positions.find((pos) => String(pos.id) === String(positionId));
 
-    if (p?.company?.hasOwnApplication && p?.company?.website) {
-      const targetUrl = p.company.website;
-      toast.showInfo(`Átirányítás a(z) ${company.name} karrier oldalára...`);
-      setTimeout(() => {
-        window.open(targetUrl, "_blank");
-      }, 1500);
-      return;
+    if (p?.company?.hasOwnApplication) {
+      const externalUrl =
+        p.company.externalApplicationUrl || p.company.website || null;
+      if (externalUrl) {
+        toast.showInfo(`Átirányítás a(z) ${company.name} karrier oldalára...`);
+        setTimeout(() => {
+          window.open(externalUrl, "_blank");
+        }, 1500);
+        return;
+      }
     }
 
-    // Fallback for internal application
-    sessionStorage.setItem("openPositionId", String(positionId));
-    navigate("/positions");
+    // Internal application flow
+    navigate(`/positions?id=${positionId}`);
   };
 
   return (

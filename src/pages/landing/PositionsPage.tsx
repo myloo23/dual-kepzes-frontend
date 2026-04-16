@@ -107,11 +107,55 @@ export default function PositionsPage() {
       const position = positions.find(
         (p: Position) => String(p.id) === positionId,
       );
+      
       if (position) {
-        applicationModal.open(position);
+        // Redirect if external logic applies, otherwise open internal modal
+        const runExternalCheck = async () => {
+          let externalUrl = null;
+          let companyName = position.company?.name ?? "cég";
+
+          if (position.company?.hasOwnApplication) {
+            externalUrl =
+              position.company.externalApplicationUrl ||
+              position.company.website ||
+              null;
+          }
+
+          if (!externalUrl && position.companyId) {
+            try {
+              const companyDetails = await companyApi.get(position.companyId);
+              if (companyDetails.hasOwnApplication) {
+                externalUrl =
+                  companyDetails.externalApplicationUrl || companyDetails.website || null;
+                companyName = companyDetails.name;
+              }
+            } catch (error) {
+              console.error("Failed to fetch company application settings:", error);
+            }
+          }
+
+          if (externalUrl) {
+            toast.showInfo(`Átirányítás a(z) ${companyName} karrier oldalára...`);
+             // Clear the param immediately so it doesn't leave the user stuck on the URL
+            setSearchParams((prev) => {
+              const newParams = new URLSearchParams(prev);
+              newParams.delete("id");
+              return newParams;
+            }, { replace: true });
+
+            setTimeout(() => {
+              window.open(externalUrl as string, "_blank");
+            }, 1500);
+            return;
+          }
+          
+          applicationModal.open(position);
+        };
+        
+        runExternalCheck();
       }
     }
-  }, [positions, applicationModal, searchParams]);
+  }, [positions, applicationModal, searchParams, setSearchParams, toast]);
 
   // Navigate to company profile page
   const showCompanyInfo = useCallback(
@@ -164,48 +208,20 @@ export default function PositionsPage() {
 
   // Handle apply button click
   const handleApply = useCallback(
-    async (positionId: string | number) => {
+    (positionId: string | number) => {
       const position = positions.find(
         (p: Position) => String(p.id) === String(positionId),
       );
       if (!position) return;
 
-      // Fix: Check for external application details if missing from list view
-      if (
-        position.companyId &&
-        (!position.company?.hasOwnApplication ||
-          position.company?.website === undefined)
-      ) {
-        try {
-          const companyDetails = await companyApi.get(position.companyId);
-          if (companyDetails.hasOwnApplication && companyDetails.website) {
-            toast.showInfo(
-              `Átirányítás a(z) ${companyDetails.name} karrier oldalára...`,
-            );
-            // Short delay to let the user see the message
-            setTimeout(() => {
-              window.open(companyDetails.website!, "_blank");
-            }, 1500);
-            return;
-          }
-        } catch (error) {
-          console.error(
-            "Failed to verify company application settings:",
-            error,
-          );
-          // Fallback to internal apply if check fails
-        }
-      }
-
-      applicationModal.open(position);
-      // Update URL to reflect the open modal
+      // Update URL to trigger the useEffect logic which handles the external redirect OR modal open
       setSearchParams((prev) => {
         const newParams = new URLSearchParams(prev);
         newParams.set("id", String(positionId));
         return newParams;
       });
     },
-    [positions, applicationModal, setSearchParams],
+    [positions, setSearchParams],
   );
 
   // Handle application submission

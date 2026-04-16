@@ -12,6 +12,7 @@ interface CompanyProfileFormData {
   description: string;
   website?: string;
   hasOwnApplication?: boolean;
+  externalApplicationUrl?: string;
 }
 
 interface CompanyProfileFormProps {
@@ -156,11 +157,20 @@ export default function CompanyProfileForm({
 
           {formData.hasOwnApplication && (
             <div className="space-y-2">
+              <div className="space-y-1">
+                <label className={labelClasses}>Külső jelentkezési link *</label>
+                <input
+                  type="url"
+                  name="externalApplicationUrl"
+                  value={formData.externalApplicationUrl || ""}
+                  onChange={onChange}
+                  placeholder="https://cegnev.hu/karrier"
+                  className={inputClasses}
+                />
+              </div>
               <p className="text-sm text-gray-500 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-100 dark:border-blue-800/50 transition-colors">
-                Bekapcsolt állapotban a "Jelentkezés" gomb a fent megadott{" "}
-                <strong>Weboldal</strong> linkre fog átirányítani. Kérjük,
-                ellenőrizze, hogy a Weboldal mező és a "Kapcsolattartó e-mail"
-                helyesen legyen kitöltve!
+                Bekapcsolt állapotban a "Jelentkezés" gomb erre a linkre irányít
+                át. A cég általános weboldala ettől függetlenül beállítható.
               </p>
             </div>
           )}

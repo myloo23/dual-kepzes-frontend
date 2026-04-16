@@ -94,6 +94,8 @@ export function usePositions(): UsePositionsReturn {
                 locations: matchedCompany.locations ?? [],
                 website: matchedCompany.website ?? null,
                 hasOwnApplication: matchedCompany.hasOwnApplication ?? false,
+                externalApplicationUrl:
+                  matchedCompany.externalApplicationUrl ?? null,
               },
             };
           }
@@ -113,6 +115,10 @@ export function usePositions(): UsePositionsReturn {
                     position.company.hasOwnApplication ??
                     matchedCompany?.hasOwnApplication ??
                     false,
+                  externalApplicationUrl:
+                    position.company.externalApplicationUrl ??
+                    matchedCompany?.externalApplicationUrl ??
+                    null,
                 }
               : position.company,
           };

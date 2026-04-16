@@ -44,17 +44,20 @@ export default function CompanyProfileDisplay({
             </dd>
           </div>
 
-          {company.hasOwnApplication && company.website && (
+          {company.hasOwnApplication && (company.externalApplicationUrl || company.website) && (
             <div className="sm:col-span-2">
               <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-lg text-sm flex items-start gap-2 transition-colors">
                 <Globe size={16} className="mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="font-medium">
-                    Külső jelentékezési felület aktív
+                    Külső jelentkezési felület aktív
                   </div>
                   <div className="mt-1 text-xs opacity-90 break-all">
-                    A jelentékezők a <strong>{company.website}</strong> címre
-                    lesznek irányítva.
+                    A jelentkezők a{" "}
+                    <strong>
+                      {company.externalApplicationUrl || company.website}
+                    </strong>{" "}
+                    címre lesznek irányítva.
                   </div>
                 </div>
               </div>
