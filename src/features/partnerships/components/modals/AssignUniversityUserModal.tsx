@@ -26,6 +26,22 @@ export default function AssignUniversityUserModal({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const assignedUniEmployeeId = partnership?.uniEmployee?.id
+    ? String(partnership.uniEmployee.id)
+    : "";
+
+  const normalizedUniversityUsers = partnership?.uniEmployee
+    ? [
+        partnership.uniEmployee,
+        ...universityUsers.filter(
+          (user) => String(user.id) !== String(partnership.uniEmployee?.id),
+        ),
+      ]
+    : universityUsers;
+
+  const getUserLabel = (user: UniversityUserProfile) =>
+    user.fullName || user.user?.fullName || user.email || user.user?.email || "-";
+
   // Reset state when modal opens or partnership changes
   useEffect(() => {
     if (isOpen && partnership) {
@@ -75,7 +91,7 @@ export default function AssignUniversityUserModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Egyetemi Felelős Hozzárendelése"
+      title="Egyetemi referens ellenőrzése"
       size="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -87,12 +103,18 @@ export default function AssignUniversityUserModal({
 
         {partnership.status !== "PENDING_UNIVERSITY" && (
           <div className="rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/20 px-4 py-3 text-sm text-amber-800 dark:text-amber-400 transition-colors">
-            Ez a partnerség még nem rendelhető egyetemi felelőshöz. Előbb a
+            Ez a partnerség még nem rendelhető egyetemi referenshez. Előbb a
             céges mentort kell kijelölni.
           </div>
         )}
 
-        {/* Partnership Details Summary */}
+        {assignedUniEmployeeId && (
+          <div className="rounded-xl border border-blue-200 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-900/20 px-4 py-3 text-sm text-blue-800 dark:text-blue-300 transition-colors">
+            A referens mező automatikusan ki lett töltve a szak és cég alapján.
+            Ellenőrizze, és csak szükség esetén módosítsa.
+          </div>
+        )}
+
         <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 p-4 border border-slate-200 dark:border-slate-700 space-y-2 text-sm transition-colors">
           <div className="flex justify-between">
             <span className="text-slate-500 dark:text-slate-400">Hallgató:</span>
@@ -125,7 +147,7 @@ export default function AssignUniversityUserModal({
             htmlFor="uniUser"
             className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 transition-colors"
           >
-            Válasszon Egyetemi Felelőst
+            Egyetemi referens
           </label>
           <select
             id="uniUser"
@@ -135,14 +157,14 @@ export default function AssignUniversityUserModal({
             required
           >
             <option value="">-- Válasszon listából --</option>
-            {universityUsers.map((user) => (
+            {normalizedUniversityUsers.map((user) => (
               <option key={String(user.id)} value={String(user.id)}>
-                {user.fullName || user.email}
+                {getUserLabel(user)}
               </option>
             ))}
           </select>
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 transition-colors">
-            A kiválasztott felhasználó látni fogja ezt a partnerséget a saját
+            A kiválasztott referens látni fogja ezt a partnerséget a saját
             felületén.
           </p>
         </div>
@@ -164,7 +186,7 @@ export default function AssignUniversityUserModal({
             }
             className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Mentés..." : "Hozzárendelés Mentése"}
+            {isLoading ? "Mentés..." : "Hozzárendelés mentése"}
           </button>
         </div>
       </form>

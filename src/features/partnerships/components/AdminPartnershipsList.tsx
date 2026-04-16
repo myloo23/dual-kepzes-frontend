@@ -190,14 +190,14 @@ export default function AdminPartnershipsList({
                             disabled={!canAssignUniEmployee}
                             title={
                               canAssignUniEmployee
-                                ? "Egyetemi felelos hozzarendeles"
+                                ? "Egyetemi referens ellenőrzése vagy módosítása"
                                 : "Elobb mentort kell hozzarendelni (PENDING_UNIVERSITY allapot)."
                             }
                             className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 transition-colors disabled:text-slate-400 disabled:dark:text-slate-500 disabled:no-underline disabled:cursor-not-allowed"
                           >
                             {canAssignUniEmployee
                               ? partnership.uniEmployee
-                                ? "Szerkesztes"
+                                ? "Ellenőrzés / módosítás"
                                 : "+ Hozzarendeles"
                               : "Mentor szukseges"}
                           </button>
