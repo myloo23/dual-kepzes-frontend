@@ -24,22 +24,22 @@ export function lower(s: unknown) {
   return norm(s).toLowerCase();
 }
 
-export function parseDate(s?: string): Date | null {
+export function parseDate(s?: string | null): Date | null {
   if (!s) return null;
   const d = new Date(s);
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-export function formatHuDate(s?: string) {
+export function formatHuDate(s?: string | null) {
   const d = parseDate(s);
-  if (!d) return "—";
+  if (!d) return "Folyamatos jelentkezés";
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
   return `${yyyy}.${mm}.${dd}.`;
 }
 
-export function isExpired(deadline?: string) {
+export function isExpired(deadline?: string | null) {
   const d = parseDate(deadline);
   if (!d) return false;
   const now = new Date();

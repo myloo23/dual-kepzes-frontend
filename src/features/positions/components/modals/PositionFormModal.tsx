@@ -30,11 +30,11 @@ const INITIAL_FORM_STATE: PositionFormData = {
 };
 
 // Helper to format ISO string for datetime-local input
-const formatDeadlineForInput = (iso: string) => (iso ? iso.slice(0, 16) : "");
+const formatDeadlineForInput = (iso?: string | null) => (iso ? iso.slice(0, 16) : "");
 
 // Helper to format local datetime string to UTC ISO string
-const formatDeadlineForApi = (local: string) =>
-  local ? new Date(local).toISOString() : "";
+const formatDeadlineForApi = (local?: string | null) =>
+  local ? new Date(local).toISOString() : null;
 
 export default function PositionFormModal({
   isOpen,
@@ -305,12 +305,12 @@ export default function PositionFormModal({
 
         <div className="space-y-1">
           <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
-            Jelentkezési határidő *
+            Jelentkezési határidő (Hagyd üresen folyamatos jelentkezéshez)
           </label>
           <input
             type="datetime-local"
             name="deadline"
-            value={formData.deadline}
+            value={formData.deadline || ""}
             onChange={handleFormChange}
             className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
           />
