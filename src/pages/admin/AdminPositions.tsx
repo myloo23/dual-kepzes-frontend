@@ -321,14 +321,23 @@ export default function AdminPositionsPage() {
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-2 items-center">
                       {getStatusBadge(position)}
-                      {!position.isDual && (
-                        <span
-                          title="Full-time"
-                          className="inline-flex items-center justify-center w-6 h-6 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 transition-colors"
-                        >
-                          <Briefcase size={12} />
-                        </span>
-                      )}
+                      <span
+                        className={[
+                          "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-colors",
+                          position.type === "DUAL"
+                            ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50"
+                            : position.type === "PROFESSIONAL_PRACTICE"
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border border-green-200 dark:border-green-800/50"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700",
+                        ].join(" ")}
+                      >
+                        <Briefcase size={10} />
+                        {position.type === "DUAL"
+                          ? "Duális"
+                          : position.type === "PROFESSIONAL_PRACTICE"
+                            ? "Szakmai gyak."
+                            : "Rendes állás"}
+                      </span>
                     </div>
                   </td>
                   <td className="px-4 py-3">

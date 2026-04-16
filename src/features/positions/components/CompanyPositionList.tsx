@@ -121,9 +121,26 @@ export default function CompanyPositionList({
               <div className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                 {position.title}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
-                {position.location?.city ?? "Ismeretlen város"} •{" "}
-                {position.isDual ? "Duális" : "Nem duális"}
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                  {position.location?.city ?? "Ismeretlen város"}
+                </span>
+                <span
+                  className={[
+                    "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold transition-colors",
+                    position.type === "DUAL"
+                      ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50"
+                      : position.type === "PROFESSIONAL_PRACTICE"
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700",
+                  ].join(" ")}
+                >
+                  {position.type === "DUAL"
+                    ? "Duális"
+                    : position.type === "PROFESSIONAL_PRACTICE"
+                      ? "Szakmai gyakorlat"
+                      : "Rendes állás"}
+                </span>
               </div>
             </div>
             <button

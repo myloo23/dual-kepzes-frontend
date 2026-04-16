@@ -25,7 +25,7 @@ const INITIAL_FORM_STATE: PositionFormData = {
   locationId: "",
   majorId: "",
   deadline: "",
-  isDual: false,
+  type: "DUAL",
   tags: [],
 };
 
@@ -304,7 +304,7 @@ export default function PositionFormModal({
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-medium text-slate-700">
+          <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
             Jelentkezési határidő *
           </label>
           <input
@@ -312,29 +312,54 @@ export default function PositionFormModal({
             name="deadline"
             value={formData.deadline}
             onChange={handleFormChange}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
           />
         </div>
 
-        <div className="space-y-2 rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 transition-colors">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              name="isDual"
-              checked={formData.isDual || false}
-              onChange={handleFormChange}
-              className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-2 focus:ring-blue-500"
-            />
-            <div>
-              <span className="text-sm font-medium text-slate-900 dark:text-slate-100 transition-colors">
-                Duális képzés pozíció
-              </span>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 transition-colors">
-                Ha nincs bejelölve, akkor rendes teljes munkaidős állásként
-                jelenik meg a főoldalon.
-              </p>
-            </div>
-          </label>
+        <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 transition-colors">
+          <span className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+            Pozíció típusa
+          </span>
+          <div className="flex flex-col gap-2">
+            {(
+              [
+                {
+                  value: "DUAL",
+                  label: "Duális képzés",
+                  desc: "Duális képzési program keretén belüli pozíció.",
+                },
+                {
+                  value: "PROFESSIONAL_PRACTICE",
+                  label: "Szakmai gyakorlat",
+                  desc: "Kötelező vagy önkéntes szakmai gyakorlati hely.",
+                },
+                {
+                  value: "REGULAR_WORK",
+                  label: "Rendes állás",
+                  desc: "Hagyományos teljes munkaidős álláshirdetés.",
+                },
+              ] as const
+            ).map(({ value, label, desc }) => (
+              <label key={value} className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name="type"
+                  value={value}
+                  checked={formData.type === value}
+                  onChange={handleFormChange}
+                  className="mt-0.5 h-4 w-4 border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                />
+                <div>
+                  <span className="text-sm font-medium text-slate-900 dark:text-slate-100 transition-colors">
+                    {label}
+                  </span>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                    {desc}
+                  </p>
+                </div>
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 transition-colors">

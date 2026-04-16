@@ -19,7 +19,11 @@ export type DeadlineFilter = "ALL" | "7D" | "30D" | "90D" | "NO_DEADLINE";
 export type DatePostedFilter = "ALL" | "24H" | "7D" | "30D";
 export type WorkTypeFilter = "ALL" | "REMOTE" | "ONSITE";
 
-export type PositionTypeFilter = "ALL" | "DUAL" | "FULL_TIME";
+export type PositionTypeFilter =
+  | "ALL"
+  | "DUAL"
+  | "PROFESSIONAL_PRACTICE"
+  | "REGULAR_WORK";
 
 const ALL_HUNGARIAN_COUNTIES = [
   "Bács-Kiskun",
@@ -166,10 +170,7 @@ export function usePositionsFilters(positions: Position[]) {
       }
 
       // Position Type filter
-      if (positionType !== "ALL") {
-        if (positionType === "DUAL" && !p.isDual) return false;
-        if (positionType === "FULL_TIME" && p.isDual) return false;
-      }
+      if (positionType !== "ALL" && p.type !== positionType) return false;
 
       // Deadline filter
       if (deadlineFilter !== "ALL") {

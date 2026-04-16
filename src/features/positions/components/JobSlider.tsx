@@ -98,43 +98,12 @@ export default function JobSlider({ onViewDetails }: JobSliderProps) {
             };
           });
 
-        console.log("📊 All positions:", allPositions);
-        console.log(
-          "📊 Positions with isDual values:",
-          allPositions.map((p) => ({
-            id: p.id,
-            title: p.title,
-            isDual: p.isDual,
-            isActive: p.isActive,
-          })),
+        // Show only REGULAR_WORK active positions on the landing page slider
+        const regularPositions = allPositions.filter(
+          (p) => p.type === "REGULAR_WORK" && p.isActive !== false,
         );
 
-        // Filter for non-dual, active positions
-        // ONLY show positions with explicit isDual: false
-        // If backend doesn't send isDual field, nothing will show (correct behavior)
-        const nonDualPositions = allPositions.filter(
-          (p) => p.isDual === false && p.isActive !== false,
-        );
-
-        console.log(
-          "💼 Non-dual positions (isDual === false):",
-          nonDualPositions,
-        );
-        console.log("💼 Count:", nonDualPositions.length);
-
-        // Debug: show what isDual values we have
-        const isDualValues = allPositions.map((p) => p.isDual);
-        console.log("🔍 All isDual values:", isDualValues);
-        console.log("🔍 Unique isDual values:", [...new Set(isDualValues)]);
-
-        if (isDualValues.every((v) => v === undefined)) {
-          console.warn("⚠️ WARNING: Backend is not returning isDual field!");
-          console.warn(
-            "⚠️ You need to update the backend to include isDual in the response.",
-          );
-        }
-
-        setPositions(nonDualPositions);
+        setPositions(regularPositions);
       } catch (error) {
         console.error("❌ Error fetching jobs:", error);
       } finally {

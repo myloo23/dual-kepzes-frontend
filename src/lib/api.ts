@@ -119,11 +119,15 @@ export const api = {
     listPublic: (params?: PaginationQuery) =>
       apiGet<Position[]>(PATHS.positions, params, ""),
 
-    // Helper methods for filtering by isDual flag
     listDualPositions: (params?: PaginationQuery) =>
-      apiGet<Position[]>(`${PATHS.positions}/dual`, params),
-    listNonDualPositions: (params?: PaginationQuery) =>
-      apiGet<Position[]>(`${PATHS.positions}/non-dual`, params),
+      apiGet<Position[]>(PATHS.positions, { ...params, type: "DUAL" }),
+    listProfessionalPracticePositions: (params?: PaginationQuery) =>
+      apiGet<Position[]>(PATHS.positions, {
+        ...params,
+        type: "PROFESSIONAL_PRACTICE",
+      }),
+    listRegularWorkPositions: (params?: PaginationQuery) =>
+      apiGet<Position[]>(PATHS.positions, { ...params, type: "REGULAR_WORK" }),
 
     get: (id: Id) => apiGet<Position>(`${PATHS.positions}/${id}`),
     listByCompany: (companyId: Id, params?: PaginationQuery) =>

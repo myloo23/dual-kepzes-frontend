@@ -257,10 +257,16 @@ export default function FilterSidebar({
             Duális képzés
           </ChipButton>
           <ChipButton
-            active={positionType === "FULL_TIME"}
-            onClick={() => setPositionType("FULL_TIME")}
+            active={positionType === "PROFESSIONAL_PRACTICE"}
+            onClick={() => setPositionType("PROFESSIONAL_PRACTICE")}
           >
-            Teljes munkaidős
+            Szakmai gyakorlat
+          </ChipButton>
+          <ChipButton
+            active={positionType === "REGULAR_WORK"}
+            onClick={() => setPositionType("REGULAR_WORK")}
+          >
+            Rendes állás
           </ChipButton>
         </div>
       </div>

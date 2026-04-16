@@ -60,7 +60,7 @@ export interface Position {
   locationId: string;
   location: Location;
   deadline: string; // ISO 8601 format
-  isDual?: boolean;
+  type?: "DUAL" | "PROFESSIONAL_PRACTICE" | "REGULAR_WORK";
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
