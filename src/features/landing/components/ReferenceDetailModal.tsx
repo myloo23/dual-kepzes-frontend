@@ -19,12 +19,12 @@ function getInitials(name: string) {
 
 function getRandomColor(name: string) {
   const colors = [
-    "bg-indigo-100 text-indigo-700",
-    "bg-rose-100 text-rose-700",
-    "bg-emerald-100 text-emerald-700",
-    "bg-amber-100 text-amber-700",
-    "bg-sky-100 text-sky-700",
-    "bg-violet-100 text-violet-700",
+    "bg-nje-amethyst/15 text-nje-amethyst",
+    "bg-nje-jaffa/15 text-nje-jaffa",
+    "bg-nje-cyan/15 text-nje-cyan-dark",
+    "bg-nje-anthracite/10 text-nje-anthracite",
+    "bg-nje-amethyst/10 text-nje-amethyst-light",
+    "bg-nje-jaffa/10 text-nje-jaffa-dark",
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -85,15 +85,15 @@ export default function ReferenceDetailModal({
               </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm hover:border-dkk-blue/30 dark:hover:border-blue-500/50 transition-colors group">
+            <div className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-nje-anthracite/10 dark:border-slate-700 shadow-sm hover:border-nje-jaffa/30 dark:hover:border-nje-jaffa/30 transition-colors group">
               <div className="flex items-center gap-3">
                 <Mail
                   size={18}
-                  className="text-dkk-blue dark:text-blue-400 group-hover:scale-110 transition-transform"
+                  className="text-nje-jaffa group-hover:scale-110 transition-transform"
                 />
                 <a
                   href={`mailto:${person.email}`}
-                  className="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-dkk-blue dark:hover:text-blue-400 truncate transition-colors"
+                  className="text-sm font-medium text-nje-anthracite/60 dark:text-slate-400 hover:text-nje-jaffa dark:hover:text-nje-jaffa-light truncate transition-colors"
                 >
                   {person.email}
                 </a>
@@ -105,7 +105,7 @@ export default function ReferenceDetailModal({
         {/* Right Side: Description */}
         <div className="w-full md:w-3/5 p-8 flex flex-col bg-white dark:bg-slate-900 transition-colors">
           <div className="flex items-center justify-between mb-6">
-            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b-2 border-dkk-blue/20 dark:border-blue-500/30 pb-1 transition-colors">
+            <h4 className="text-lg font-bold text-nje-anthracite dark:text-slate-100 border-b-2 border-nje-jaffa/30 dark:border-nje-jaffa/20 pb-1 transition-colors">
               Bemutatkozás
             </h4>
           </div>
@@ -126,7 +126,7 @@ export default function ReferenceDetailModal({
                         key={idx}
                         className="flex items-start gap-2 mb-2 pl-4"
                       >
-                        <span className="text-dkk-blue dark:text-blue-400 mt-1.5 h-1.5 w-1.5 rounded-full bg-current flex-shrink-0 transition-colors" />
+                        <span className="text-nje-jaffa mt-1.5 h-1.5 w-1.5 rounded-full bg-current flex-shrink-0 transition-colors" />
                         <span>{line.replace(/^[-•]\s+/, "")}</span>
                       </div>
                     );

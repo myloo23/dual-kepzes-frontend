@@ -93,7 +93,7 @@ export default function HomeCompanySitesMap({
   if (loading) {
     return (
       <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-3"></div>
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-nje-jaffa mb-3"></div>
         <p className="text-sm text-slate-600">
           {progress.total > 0
             ? `Telephelyek feldolgozása... ${progress.current} / ${progress.total}`
@@ -111,7 +111,7 @@ export default function HomeCompanySitesMap({
     <div className="space-y-3">
       <div className="flex gap-4 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-nje-jaffa rounded-full"></div>
           <span className="text-slate-600 dark:text-slate-400 transition-colors">
             Fogadóhelyek (összes telephely):{" "}
             <span className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">

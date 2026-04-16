@@ -282,7 +282,7 @@ export default function PositionsPage() {
               onClick={() => setLocationMode("gps")}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 locationMode === "gps"
-                  ? "bg-blue-600 text-white shadow-sm"
+                  ? "bg-nje-jaffa text-white shadow-sm"
                   : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
               }`}
             >
@@ -292,14 +292,14 @@ export default function PositionsPage() {
             <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 my-auto transition-colors" />
             <div
               className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-all ${
-                locationMode === "city" ? "bg-blue-50 dark:bg-blue-900/40" : ""
+                locationMode === "city" ? "bg-nje-jaffa-faint dark:bg-nje-jaffa/20" : ""
               }`}
             >
               <button
                 onClick={() => setLocationMode("city")}
                 className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                   locationMode === "city"
-                    ? "text-blue-700 dark:text-blue-400"
+                    ? "text-nje-jaffa-dark dark:text-nje-jaffa"
                     : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
                 }`}
               >
@@ -332,7 +332,7 @@ export default function PositionsPage() {
       {/* Header */}
       <header className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-50 transition-colors">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50 transition-colors">
             {PAGE_TITLES.POSITIONS}
           </h1>
           <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
@@ -341,7 +341,7 @@ export default function PositionsPage() {
         </div>
         <div className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
           Találatok:{" "}
-          <span className="font-semibold text-slate-800 dark:text-slate-200 transition-colors">
+          <span className="font-semibold text-nje-jaffa">
             {filters.filtered.length}
           </span>{" "}
           / {positions.length}

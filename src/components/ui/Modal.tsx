@@ -97,7 +97,7 @@ export function Modal({
       {/* Modal Content */}
       <div
         className={cn(
-          "relative w-full transform rounded-2xl bg-white dark:bg-slate-900 shadow-2xl dark:shadow-none transition-all duration-300 flex flex-col max-h-[90vh] border border-transparent dark:border-slate-800",
+          "relative w-full transform rounded-2xl bg-white dark:bg-slate-900 shadow-card dark:shadow-none transition-all duration-300 flex flex-col max-h-[90vh] border border-nje-anthracite/10 dark:border-slate-800 overflow-hidden",
           sizeClasses[size],
           isOpen
             ? "scale-100 opacity-100 translate-y-0"
@@ -108,24 +108,27 @@ export function Modal({
         role="dialog"
         aria-modal="true"
       >
+        {/* Brand accent bar */}
+        <div className="h-[3px] w-full bg-gradient-to-r from-nje-jaffa via-nje-amethyst to-nje-cyan shrink-0" />
+
         {/* Header */}
         {!hideHeader && (
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4 shrink-0 transition-colors">
+          <div className="flex items-center justify-between border-b border-nje-anthracite/8 dark:border-slate-800 px-6 py-4 shrink-0 transition-colors">
             <div>
               {title && (
-                <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 leading-none tracking-tight transition-colors">
+                <h2 className="text-xl font-bold text-nje-anthracite dark:text-slate-100 leading-none tracking-tight transition-colors">
                   {title}
                 </h2>
               )}
               {description && (
-                <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                <p className="mt-1.5 text-sm text-nje-anthracite/50 dark:text-slate-400 transition-colors">
                   {description}
                 </p>
               )}
             </div>
             <button
               onClick={onClose}
-              className="rounded-full p-2 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700"
+              className="rounded-full p-2 text-nje-anthracite/40 dark:text-slate-500 hover:bg-nje-pearl dark:hover:bg-slate-800 hover:text-nje-anthracite dark:hover:text-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-nje-cyan/40"
               aria-label="Close modal"
             >
               <X className="h-5 w-5" />

@@ -38,7 +38,7 @@ export default function HomeMapSection() {
         </h3>
         {gpsLocation && (
           <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 transition-colors">
-            <Navigation className="w-4 h-4 text-blue-500" />
+            <Navigation className="w-4 h-4 text-nje-jaffa" />
             <span>Mérve a jelenlegi pozíciójából</span>
           </div>
         )}

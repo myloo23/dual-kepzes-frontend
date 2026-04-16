@@ -2,10 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Globális alapok */
+/* ── NJE Brand Base ───────────────────────────────────────────── */
 
 :root {
   color-scheme: light dark;
+
+  /* NJE Design tokens */
+  --nje-jaffa:      #F7941D;
+  --nje-amethyst:   #662D91;
+  --nje-cyan:       #00AEEF;
+  --nje-anthracite: #3C3C3B;
+  --nje-pearl:      #F0EDE6;
 }
 
 html {
@@ -13,107 +20,173 @@ html {
 }
 
 body {
-  @apply bg-dkk-light text-slate-900 dark:bg-slate-900 dark:text-slate-50;
-  font-family: "Inter", sans-serif;
+  @apply bg-nje-pearl text-nje-anthracite dark:bg-slate-900 dark:text-slate-50;
+  font-family: 'Titillium Web', sans-serif;
 }
 
-/* Custom Animations */
+/* ── Typography ───────────────────────────────────────────────── */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 700;
+  /* letter-spacing intentionally omitted — handled by Tailwind tracking-* utilities */
+}
+
+/* ── Custom Animations ────────────────────────────────────────── */
+
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes slide-in-from-right {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
 }
 
 @keyframes slide-in-from-bottom {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 @keyframes scale-in {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
 }
 
-/* Animation Utilities */
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
+@keyframes orbit {
+  from { transform: rotate(0deg)   translateX(120px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
 }
 
-.animate-slide-in-from-right {
-  animation: slide-in-from-right 0.3s ease-out;
-}
+.animate-fade-in            { animation: fade-in            0.3s ease-out; }
+.animate-slide-in-from-right { animation: slide-in-from-right 0.3s ease-out; }
+.animate-slide-in-from-bottom{ animation: slide-in-from-bottom 0.4s ease-out; }
+.animate-scale-in           { animation: scale-in           0.2s ease-out; }
 
-.animate-slide-in-from-bottom {
-  animation: slide-in-from-bottom 0.4s ease-out;
-}
+/* ── Interactive element defaults ────────────────────────────── */
 
-.animate-scale-in {
-  animation: scale-in 0.2s ease-out;
-}
-
-/* Smooth transitions for interactive elements */
-button,
-a,
-input,
-textarea,
-select {
+button, a, input, textarea, select {
   @apply transition-colors duration-200;
 }
 
-/* Focus styles for accessibility */
+/* ── Focus ring (brand cyan) ─────────────────────────────────── */
+
 *:focus-visible {
-  @apply outline-none ring-2 ring-dkk-blue ring-offset-2;
+  @apply outline-none ring-2 ring-nje-cyan ring-offset-2;
 }
 
-/* Smooth hover effects */
-.hover-lift {
-  @apply transition-transform duration-200 hover:-translate-y-1;
+/* ── Hover helpers ────────────────────────────────────────────── */
+
+.hover-lift  { @apply transition-transform duration-200 hover:-translate-y-1; }
+.hover-scale { @apply transition-transform duration-200 hover:scale-105; }
+
+/* ── NJE Brand Shape Utilities ────────────────────────────────── */
+
+/* Decorative half-circle — clip to the left or right edge of a container */
+.brand-arc-right {
+  position: absolute;
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 320px;
+  height: 320px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(247,148,29,.15), rgba(102,45,145,.12));
+  pointer-events: none;
 }
 
-.hover-scale {
-  @apply transition-transform duration-200 hover:scale-105;
+.brand-arc-left {
+  position: absolute;
+  left: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 280px;
+  height: 280px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(0,174,239,.12), rgba(102,45,145,.10));
+  pointer-events: none;
 }
 
-/* Fix browser autofill styling */
+.brand-dot {
+  border-radius: 9999px;
+  background: var(--nje-jaffa);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* Gradient text shortcuts */
+.text-gradient-jaffa {
+  @apply text-transparent bg-clip-text;
+  background-image: linear-gradient(90deg, #F7941D, #662D91);
+}
+
+.text-gradient-cyan {
+  @apply text-transparent bg-clip-text;
+  background-image: linear-gradient(90deg, #00AEEF, #662D91);
+}
+
+/* NJE sidebar brand bar */
+.sidebar-brand-bar {
+  background: linear-gradient(135deg, #662D91, #3C3C3B);
+}
+
+/* ── Brand section separator (organikus félkör) ──────────────── */
+.section-arc-top {
+  position: relative;
+}
+.section-arc-top::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(247,148,29,.18), rgba(102,45,145,.14));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Floating brand dots for section accents */
+.brand-dots {
+  position: relative;
+}
+.brand-dots::before,
+.brand-dots::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.brand-dots::before {
+  width: 8px; height: 8px;
+  background: var(--nje-jaffa);
+  opacity: .6;
+  top: 0; left: 0;
+}
+.brand-dots::after {
+  width: 5px; height: 5px;
+  background: var(--nje-amethyst);
+  opacity: .5;
+  top: 12px; left: 16px;
+}
+
+/* ── Autofill fix ─────────────────────────────────────────────── */
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
-  -webkit-text-fill-color: #0f172a !important; /* text-slate-900 */
+  -webkit-text-fill-color: #3C3C3B !important;
 }
 
-/* For dark mode */
 .dark input:-webkit-autofill,
 .dark input:-webkit-autofill:hover,
 .dark input:-webkit-autofill:focus,
 .dark input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #1e293b inset !important; /* bg-slate-800 */
-  -webkit-text-fill-color: #f8fafc !important; /* text-slate-50 */
+  -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
+  -webkit-text-fill-color: #f8fafc !important;
 }

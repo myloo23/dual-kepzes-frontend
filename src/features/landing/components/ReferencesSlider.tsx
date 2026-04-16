@@ -13,20 +13,20 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-function getRandomColor(name: string) {
-  const colors = [
-    "bg-indigo-100 text-indigo-700",
-    "bg-rose-100 text-rose-700",
-    "bg-emerald-100 text-emerald-700",
-    "bg-amber-100 text-amber-700",
-    "bg-sky-100 text-sky-700",
-    "bg-violet-100 text-violet-700",
+function getAvatarStyle(name: string) {
+  const palettes = [
+    "bg-nje-amethyst/15 text-nje-amethyst",
+    "bg-nje-jaffa/15 text-nje-jaffa",
+    "bg-nje-cyan/15 text-nje-cyan-dark",
+    "bg-nje-anthracite/10 text-nje-anthracite",
+    "bg-nje-amethyst/10 text-nje-amethyst-light",
+    "bg-nje-jaffa/10 text-nje-jaffa-dark",
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return colors[Math.abs(hash) % colors.length];
+  return palettes[Math.abs(hash) % palettes.length];
 }
 
 export default function ReferencesSlider() {
@@ -35,90 +35,90 @@ export default function ReferencesSlider() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [selectedPerson, setSelectedPerson] = useState<ReferencePerson | null>(
-    null,
-  );
+  const [selectedPerson, setSelectedPerson] = useState<ReferencePerson | null>(null);
 
-  // Duplicate list for infinite scroll effect
   const displayList = [...REFERENCES, ...REFERENCES];
 
   useEffect(() => {
     let animationFrameId: number;
     const scrollContainer = scrollRef.current;
-
     const animate = () => {
       if (!scrollContainer) return;
-
-      // Only auto-scroll if not paused, not dragging, and no modal is open
       if (!isPaused && !isDragging && !selectedPerson) {
         if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
           scrollContainer.scrollLeft = 0;
         } else {
-          scrollContainer.scrollLeft += 0.5; // Adjust speed here
+          scrollContainer.scrollLeft += 0.5;
         }
       }
-
       animationFrameId = requestAnimationFrame(animate);
     };
-
     animationFrameId = requestAnimationFrame(animate);
-
     return () => cancelAnimationFrame(animationFrameId);
   }, [isPaused, isDragging, selectedPerson]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (
-      e.target instanceof HTMLButtonElement ||
-      (e.target as Element).closest("button")
-    )
-      return;
+    if (e.target instanceof HTMLButtonElement || (e.target as Element).closest("button")) return;
     setIsDragging(true);
     setIsPaused(true);
     setStartX(e.pageX - (scrollRef.current?.offsetLeft || 0));
     setScrollLeft(scrollRef.current?.scrollLeft || 0);
   };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-    setIsPaused(false);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    setIsPaused(false);
-  };
-
+  const handleMouseLeave = () => { setIsDragging(false); setIsPaused(false); };
+  const handleMouseUp = () => { setIsDragging(false); setIsPaused(false); };
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
     e.preventDefault();
     const x = e.pageX - (scrollRef.current?.offsetLeft || 0);
-    const walk = (x - startX) * 2; // Scroll-fastness
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollLeft - walk;
-    }
+    const walk = (x - startX) * 2;
+    if (scrollRef.current) scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
   return (
-    <section className="w-full py-24 bg-white dark:bg-slate-950 border-t border-dkk-gray/30 dark:border-slate-800/50 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 mb-10">
-        <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-50 text-center transition-colors">
-          Duális Referensek és Munkatársak
-        </h2>
-        <div className="w-20 h-1.5 bg-dkk-blue dark:bg-blue-500 mx-auto mt-4 rounded-full transition-colors" />
-        <p className="text-center text-slate-600 dark:text-slate-400 mt-4 max-w-2xl mx-auto transition-colors">
-          Ismerje meg a képzések szakmai felelőseit és a központ munkatársait,
-          akik támogatják a duális képzésben résztvevő hallgatókat.
-        </p>
+    // ⚠️ NO overflow-hidden here — it would clip the horizontal scroll
+    <section className="relative w-full py-24 bg-white dark:bg-slate-950 transition-colors duration-300">
+
+      {/* Decorative blur circles — separate wrapper so they don't clip the slider */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute -right-24 top-0 w-64 h-64 rounded-full bg-nje-amethyst/6 blur-3xl" />
+        <div className="absolute -left-16 bottom-0 w-48 h-48 rounded-full bg-nje-jaffa/6 blur-3xl" />
       </div>
 
-      <div className="relative group">
-        {/* Fade overlays */}
-        <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-white to-transparent dark:from-slate-950 dark:to-transparent z-20 pointer-events-none transition-colors" />
-        <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-white to-transparent dark:from-slate-950 dark:to-transparent z-20 pointer-events-none transition-colors" />
+      {/* Section header */}
+      <div className="relative max-w-7xl mx-auto px-4 lg:px-8 mb-12">
+        <div className="flex flex-col items-center text-center gap-3">
+          <div className="inline-flex items-center gap-2 rounded-full bg-nje-amethyst-faint dark:bg-nje-amethyst/20 border border-nje-amethyst/20 px-4 py-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-nje-jaffa" />
+            <span className="text-xs font-bold text-nje-amethyst dark:text-nje-amethyst-light uppercase tracking-widest">
+              Csapat
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-nje-anthracite dark:text-slate-50 tracking-tight">
+            Duális Referensek és Munkatársak
+          </h2>
+          {/* Brand accent — narancs */}
+          <div className="flex items-center gap-2 mt-1">
+            <span className="w-2 h-2 rounded-full bg-nje-jaffa" />
+            <span className="w-16 h-0.5 bg-nje-jaffa rounded-full" />
+            <span className="w-2 h-2 rounded-full bg-nje-jaffa" />
+          </div>
+          <p className="text-nje-anthracite/60 dark:text-slate-400 mt-1 max-w-2xl text-sm leading-relaxed">
+            Ismerje meg a képzések szakmai felelőseit és a központ munkatársait,
+            akik támogatják a duális képzésben résztvevő hallgatókat.
+          </p>
+        </div>
+      </div>
+
+      {/* Slider track */}
+      <div className="relative">
+        {/* Fade edges — must match the section's own bg (bg-white / dark:bg-slate-950) */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white dark:from-slate-950 to-transparent z-20" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white dark:from-slate-950 to-transparent z-20" />
 
         <div
           ref={scrollRef}
-          className="flex gap-6 py-4 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing px-4"
+          className="flex gap-5 py-4 overflow-x-auto cursor-grab active:cursor-grabbing px-8"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}
@@ -130,113 +130,96 @@ export default function ReferencesSlider() {
           {displayList.map((person, index) => (
             <div
               key={`${person.email}-${index}`}
-              className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm dark:shadow-none border border-slate-200 dark:border-slate-800 w-[320px] flex-shrink-0 hover:shadow-lg dark:hover:border-slate-700 transition-all duration-300 select-none group/card relative overflow-hidden flex flex-col"
+              className="bg-white dark:bg-slate-900 rounded-3xl border border-nje-anthracite/8 dark:border-slate-800 w-[280px] flex-shrink-0 hover:shadow-card hover:border-nje-anthracite/15 dark:hover:border-slate-700 transition-all duration-300 select-none group/card relative overflow-hidden flex flex-col"
               title={person.description}
             >
-              {/* Hover effect gradient */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-dkk-blue dark:via-blue-500 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity" />
+              {/* Top accent bar on hover */}
+              <div className="h-[3px] w-full bg-gradient-to-r from-nje-jaffa to-nje-amethyst opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex-shrink-0" />
 
-              <div className="flex flex-col items-center text-center gap-4 mb-4">
-                <div
-                  className={`h-32 w-32 rounded-2xl flex-shrink-0 flex items-center justify-center font-bold text-3xl shadow-md overflow-hidden border-4 border-white dark:border-slate-800 transition-colors ${!person.image ? getRandomColor(person.name) : "bg-slate-100 dark:bg-slate-800"}`}
-                >
-                  {person.image ? (
-                    <img
-                      src={person.image}
-                      alt={person.name}
-                      className="w-full h-full object-cover object-top hover:scale-110 transition-transform duration-500"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    getInitials(person.name)
+              {/* Card body */}
+              <div className="p-6 flex flex-col flex-1">
+                {/* Decorative circle */}
+                <div className="pointer-events-none absolute -right-8 -bottom-8 w-24 h-24 rounded-full bg-nje-amethyst/5 group-hover/card:bg-nje-amethyst/10 transition-colors duration-300" />
+
+                {/* Avatar + name */}
+                <div className="flex flex-col items-center text-center gap-3 mb-4">
+                  <div
+                    className={`h-24 w-24 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-xl overflow-hidden ring-4 ring-nje-pearl dark:ring-slate-800 ${!person.image ? getAvatarStyle(person.name) : "bg-nje-pearl dark:bg-slate-800"}`}
+                  >
+                    {person.image ? (
+                      <img
+                        src={person.image}
+                        alt={person.name}
+                        className="w-full h-full object-cover object-top"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      getInitials(person.name)
+                    )}
+                  </div>
+                  <div className="min-w-0 w-full">
+                    <h3 className="font-bold text-nje-anthracite dark:text-slate-100 text-base tracking-tight leading-tight">
+                      {person.name}
+                    </h3>
+                    <p className="text-[11px] font-semibold text-nje-amethyst dark:text-nje-amethyst-light uppercase tracking-widest mt-1">
+                      {person.group || "Referens"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Info rows — flex-1 so button stays at bottom */}
+                <div className="space-y-2.5 flex-1">
+                  <div className="flex items-start gap-2.5 bg-nje-pearl dark:bg-slate-800/50 p-2.5 rounded-xl">
+                    <Briefcase size={14} className="text-nje-anthracite/40 dark:text-slate-500 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-nje-anthracite dark:text-slate-300 font-medium leading-snug line-clamp-2" title={person.title}>
+                      {person.title}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2.5 px-0.5">
+                    <Mail size={14} className="text-nje-jaffa flex-shrink-0" />
+                    <a
+                      href={`mailto:${person.email}`}
+                      className="text-xs font-medium text-nje-anthracite/60 dark:text-slate-400 hover:text-nje-jaffa dark:hover:text-nje-jaffa-light hover:underline truncate transition-colors"
+                      draggable="false"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {person.email}
+                    </a>
+                  </div>
+
+                  {person.description && (
+                    <div className="pt-2 border-t border-nje-anthracite/8 dark:border-slate-800">
+                      <div className="flex items-start gap-2">
+                        <Info size={12} className="text-nje-anthracite/30 dark:text-slate-500 mt-0.5 flex-shrink-0" />
+                        <p className="text-[11px] text-nje-anthracite/50 dark:text-slate-400 leading-relaxed line-clamp-3">
+                          {person.description}
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </div>
-                <div className="min-w-0 w-full">
-                  <h3 className="font-bold text-slate-900 dark:text-slate-100 truncate text-xl transition-colors">
-                    {person.name}
-                  </h3>
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide truncate mt-1 transition-colors">
-                    {person.group || "Referens"}
-                  </p>
-                </div>
-              </div>
 
-              <div className="space-y-4 flex-grow">
-                <div className="flex items-start gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg transition-colors">
-                  <Briefcase
-                    size={18}
-                    className="text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0 transition-colors"
-                  />
-                  <p
-                    className="text-sm text-slate-700 dark:text-slate-300 font-medium leading-snug line-clamp-2 transition-colors"
-                    title={person.title}
+                {/* CTA button */}
+                <div className="mt-4 pt-3 border-t border-nje-anthracite/8 dark:border-slate-800">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedPerson(person);
+                    }}
+                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-nje-pearl dark:bg-slate-800 hover:bg-nje-jaffa hover:text-white text-nje-anthracite dark:text-slate-300 font-semibold transition-colors text-sm"
                   >
-                    {person.title}
-                  </p>
+                    <User size={14} />
+                    <span>Bemutatkozás</span>
+                    <ChevronRight size={14} className="opacity-40 group-hover/btn:opacity-100 ml-auto" />
+                  </button>
                 </div>
-                <div className="flex items-center gap-3 px-1">
-                  <Mail
-                    size={18}
-                    className="text-dkk-blue dark:text-blue-400 flex-shrink-0 transition-colors"
-                  />
-                  <a
-                    href={`mailto:${person.email}`}
-                    className="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-dkk-blue dark:hover:text-blue-400 hover:underline truncate transition-colors"
-                    draggable="false"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {person.email}
-                  </a>
-                </div>
-
-                {/* Description snippet */}
-                {person.description && (
-                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800 mt-2 transition-colors">
-                    <div className="flex items-start gap-2">
-                      <Info
-                        size={14}
-                        className="text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0 transition-colors"
-                      />
-                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3 transition-colors">
-                        {person.description}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 transition-colors">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setSelectedPerson(person);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-slate-50 dark:bg-slate-800/80 hover:bg-dkk-blue dark:hover:bg-blue-600 hover:text-white text-slate-600 dark:text-slate-300 font-medium transition-all group/btn text-sm"
-                >
-                  <User size={16} />
-                  <span>Bemutatkozás</span>
-                  <ChevronRight
-                    size={16}
-                    className="opacity-50 group-hover/btn:opacity-100 transition-opacity"
-                  />
-                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
-
-      <style>{`
-                .no-scrollbar::-webkit-scrollbar {
-                    display: none;
-                }
-                .no-scrollbar {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-            `}</style>
 
       <ReferenceDetailModal
         person={selectedPerson}

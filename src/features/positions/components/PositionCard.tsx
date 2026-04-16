@@ -55,7 +55,7 @@ export default function PositionCard({
                 console.log("🖱️ Logo clicked! company data:", companyData);
                 onCompanyClick(companyData);
               }}
-              className="h-20 w-20 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition cursor-pointer"
+              className="h-20 w-20 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-nje-jaffa dark:hover:border-nje-jaffa hover:shadow-md transition cursor-pointer"
               title={`${companyName} információi`}
             >
               <img
@@ -86,7 +86,7 @@ export default function PositionCard({
                       );
                       onCompanyClick(companyData);
                     }}
-                    className="hover:text-blue-600 hover:underline transition cursor-pointer"
+                    className="hover:text-nje-jaffa hover:underline transition cursor-pointer"
                     title={`${companyName} információi`}
                   >
                     {companyName}
@@ -127,7 +127,7 @@ export default function PositionCard({
             {previewTags.map((t) => (
               <span
                 key={t}
-                className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/40 px-2.5 py-1 text-[11px] font-medium text-blue-700 dark:text-blue-400 transition-colors"
+                className="inline-flex items-center rounded-full bg-nje-amethyst/10 dark:bg-nje-amethyst/20 px-2.5 py-1 text-[11px] font-medium text-nje-amethyst dark:text-nje-amethyst-light transition-colors"
               >
                 {t}
               </span>
@@ -172,7 +172,7 @@ export default function PositionCard({
             }
           }}
           disabled={expired || !onApply}
-          className="w-full rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full rounded-lg bg-nje-jaffa px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-nje-jaffa-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {expired ? "Lejárt" : "Jelentkezés"}
         </button>

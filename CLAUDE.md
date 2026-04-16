@@ -29,9 +29,12 @@ Defaults to `http://localhost:3000` when not set.
 
 **API layer** (`src/lib/api-client.ts`) — thin wrappers around `fetch`: `apiGet`, `apiPost`, `apiPut`, `apiPatch`, `apiDelete`, `apiPostFormData`. All send a JWT `Authorization: Bearer` header read from `localStorage`. Responses in `{ success: true, data: T }` format are auto-unwrapped to `T`.
 
+**Backend information** You can always read backendreadme.md for help about the backend structure.
+
 **Auth** — JWT + user object stored in `localStorage`. `AuthProvider` (React Context) manages login/logout state. `ProtectedRoute` gates routes by `allowedRoles`. User roles: `STUDENT`, `COMPANY_ADMIN`, `UNIVERSITY_USER`, `SYSTEM_ADMIN`, `TEACHER`, `MENTOR`.
 
 **Routing** (`src/App.tsx`) — React Router v7 with role-based layout nesting. All pages and layouts are lazy-loaded via a `lazyRetry` helper that auto-reloads the page once on chunk-fetch failure (handles stale deploys). Role → layout mapping:
+
 - `/admin` → `AdminLayout` (SYSTEM_ADMIN)
 - `/hr` → `HrLayout` (COMPANY_ADMIN)
 - `/mentor` → `MentorLayout` (MENTOR)

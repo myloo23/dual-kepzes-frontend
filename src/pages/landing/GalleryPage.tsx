@@ -28,20 +28,23 @@ export default function GalleryPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 transition-colors duration-300 dark:bg-slate-950">
-      <div className="relative overflow-hidden bg-gradient-to-br from-cyan-600 via-sky-600 to-blue-800 px-6 py-16 text-center">
-        <div className="pointer-events-none absolute inset-0 opacity-20 [background:radial-gradient(circle_at_20%_25%,white,transparent_45%),radial-gradient(circle_at_80%_75%,white,transparent_40%)]" />
-        <div className="pointer-events-none absolute -top-24 -left-24 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-        <div className="pointer-events-none absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-cyan-300/30 blur-3xl" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-nje-amethyst via-nje-amethyst-dark to-nje-anthracite px-6 py-16 text-center">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 opacity-20 [background:radial-gradient(circle_at_20%_25%,white,transparent_45%),radial-gradient(circle_at_80%_75%,white,transparent_40%)]" />
+          <div className="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-nje-jaffa/20 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-nje-amethyst-light/10 blur-3xl" />
+        </div>
 
         <div className="relative mx-auto max-w-3xl">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white/90 backdrop-blur-sm">
-            <Sparkles className="h-4 w-4" />
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white/90 backdrop-blur-sm border border-white/20">
+            <Sparkles className="h-4 w-4 text-nje-jaffa" />
             Életképek
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
             A Duális Képzés Pillanatai
           </h1>
-          <p className="mt-3 text-base text-sky-100 sm:text-lg">
+          <p className="mt-3 text-base text-white/70 sm:text-lg">
             Több album és sok kép egységes, áttekinthető megjelenítése.
           </p>
         </div>
@@ -68,16 +71,16 @@ export default function GalleryPage() {
           </div>
 
           {isSystemAdmin && (
-            <div className="rounded-xl border border-dashed border-sky-300 bg-sky-50 p-4 dark:border-sky-800/80 dark:bg-sky-950/30">
-              <p className="text-sm font-semibold text-sky-800 dark:text-sky-300">
+            <div className="rounded-xl border border-dashed border-nje-amethyst/40 bg-nje-amethyst/5 p-4 dark:border-nje-amethyst/30 dark:bg-nje-amethyst/10">
+              <p className="text-sm font-semibold text-nje-amethyst dark:text-nje-amethyst-light">
                 Admin feltöltés
               </p>
-              <p className="mt-1 text-xs text-sky-700/90 dark:text-sky-400">
+              <p className="mt-1 text-xs text-nje-amethyst/80 dark:text-nje-amethyst-light/70">
                 Képfeltöltés és albumkezelés az admin galéria felületen érhető el.
               </p>
               <Link
                 to="/admin/gallery"
-                className="mt-3 inline-flex items-center rounded-full bg-sky-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-sky-700"
+                className="mt-3 inline-flex items-center rounded-full bg-nje-amethyst px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-nje-amethyst-dark"
               >
                 Galéria kezelése
               </Link>
@@ -87,7 +90,7 @@ export default function GalleryPage() {
 
         {loading && (
           <div className="flex flex-col items-center justify-center gap-4 py-32 text-slate-400">
-            <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+            <Loader2 className="h-10 w-10 animate-spin text-nje-jaffa" />
             <p className="text-sm">Képek betöltése...</p>
           </div>
         )}
@@ -100,7 +103,7 @@ export default function GalleryPage() {
             </div>
             <button
               onClick={refresh}
-              className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+              className="inline-flex items-center gap-2 rounded-full bg-nje-jaffa px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-nje-jaffa-dark"
             >
               <RefreshCw className="h-4 w-4" />
               Újrapróbál
@@ -118,8 +121,8 @@ export default function GalleryPage() {
                   className={cn(
                     "rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200",
                     activeCategory === cat
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/30"
-                      : "border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300",
+                      ? "bg-nje-jaffa text-white shadow-md shadow-nje-jaffa/30"
+                      : "border border-slate-200 bg-white text-slate-600 hover:border-nje-jaffa/40 hover:text-nje-jaffa dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-nje-jaffa/40 dark:hover:text-nje-jaffa",
                   )}
                 >
                   {cat}

@@ -73,7 +73,7 @@ export default function MaterialsGallery() {
 
               {/* Card footer */}
               <div className="p-2 border-t border-dkk-gray/20 dark:border-slate-800 transition-colors">
-                <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 group-hover:text-dkk-blue dark:group-hover:text-blue-400 transition-colors truncate">
+                <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 group-hover:text-nje-jaffa dark:group-hover:text-nje-jaffa-light transition-colors truncate">
                   {material.title}
                 </h3>
                 <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 truncate transition-colors">

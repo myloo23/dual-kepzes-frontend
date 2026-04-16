@@ -87,10 +87,10 @@ export default function Breadcrumbs({ items, className }: BreadcrumbsProps) {
                 <Link
                   to={item.path}
                   className={cn(
-                    "flex items-center gap-1.5 hover:text-dkk-blue dark:hover:text-blue-400 transition-colors",
+                    "flex items-center gap-1.5 hover:text-nje-cyan dark:hover:text-nje-cyan-light transition-colors",
                     isFirst
-                      ? "text-slate-600 dark:text-slate-400"
-                      : "text-slate-500 dark:text-slate-400",
+                      ? "text-nje-anthracite/70 dark:text-slate-400"
+                      : "text-nje-anthracite/50 dark:text-slate-400",
                   )}
                 >
                   {isFirst && <Home className="h-4 w-4" />}

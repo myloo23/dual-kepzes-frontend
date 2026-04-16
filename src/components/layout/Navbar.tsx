@@ -6,7 +6,7 @@ import { useNavigation } from "../../hooks/useNavigation";
 import { useTheme } from "../../hooks/useTheme";
 import { Moon, Sun, LogOut } from "lucide-react";
 import type { NotificationItem } from "../../lib/api";
-import logoImage from "../../assets/logos/dkk_logos/logó.png";
+import njeLogoImage from "../../assets/logos/nje_logos/nje_logo3.png";
 import { GlobalSearch } from "../../features/search";
 
 export default function Navbar() {
@@ -109,10 +109,10 @@ export default function Navbar() {
 
     // Apple-style: Clean, subtle transition, weight change
     const baseClass =
-      "transition-all duration-300 text-[13px] tracking-wide font-medium";
-    const activeClass = "text-slate-900 dark:text-slate-50";
+      "transition-all duration-300 text-[13px] tracking-wide font-semibold";
+    const activeClass = "text-nje-amethyst dark:text-nje-amethyst-light";
     const inactiveClass =
-      "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50";
+      "text-nje-anthracite/60 dark:text-slate-400 hover:text-nje-amethyst dark:hover:text-nje-amethyst-light";
 
     return `${baseClass} ${isActive ? activeClass : inactiveClass}`;
   };
@@ -124,10 +124,10 @@ export default function Navbar() {
         : location.pathname.startsWith(path);
 
     const baseClass =
-      "py-3 block transition-colors duration-200 text-lg border-b border-gray-100 dark:border-slate-800 last:border-0";
-    const activeClass = "text-dkk-blue font-semibold";
+      "py-3 block transition-colors duration-200 text-lg border-b border-nje-anthracite/10 dark:border-slate-800 last:border-0 font-semibold";
+    const activeClass = "text-nje-amethyst dark:text-nje-amethyst-light";
     const inactiveClass =
-      "text-slate-600 dark:text-slate-400 hover:text-dkk-blue";
+      "text-nje-anthracite/70 dark:text-slate-400 hover:text-nje-amethyst dark:hover:text-nje-amethyst-light";
 
     return `${baseClass} ${isActive ? activeClass : inactiveClass}`;
   };
@@ -183,18 +183,34 @@ export default function Navbar() {
   }, [notificationsTab]);
 
   return (
-    <header className="sticky top-0 z-[1100] border-b border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60 transition-colors duration-300">
-      <div className="max-w-6xl mx-auto flex items-center gap-6 pl-6 pr-14 sm:pr-16 lg:px-8 h-16">
+    <header className="sticky top-0 z-[1100] bg-white dark:bg-slate-950 transition-colors duration-300">
+      {/* Brand gradient top accent strip */}
+      <div className="h-[3px] w-full bg-gradient-to-r from-nje-jaffa via-nje-amethyst to-nje-cyan" />
+
+      <div className="max-w-6xl mx-auto flex items-center gap-6 pl-5 pr-14 sm:pr-16 lg:px-8 h-[60px]">
+        {/* Logo + brand name */}
         <Link
           to="/"
           className="flex items-center gap-3 shrink-0 group"
           onClick={closeMobileMenu}
         >
-          <img
-            src={logoImage}
-            alt="Duális Képzési Központ"
-            className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert"
-          />
+          {/* Decorative circle behind logo */}
+          <div className="relative">
+            <div className="absolute inset-0 rounded-full bg-nje-amethyst/8 scale-125 group-hover:scale-150 transition-transform duration-300 pointer-events-none" />
+            <img
+              src={njeLogoImage}
+              alt="Neumann János Egyetem"
+              className="relative h-11 w-auto object-contain dark:brightness-0 dark:invert transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+          <div className="hidden sm:block border-l border-nje-anthracite/15 dark:border-slate-700 pl-3">
+            <p className="text-[11px] font-bold text-nje-amethyst dark:text-nje-amethyst-light uppercase tracking-widest leading-none">
+              Neumann János Egyetem
+            </p>
+            <p className="text-[10px] text-nje-anthracite/50 dark:text-slate-500 mt-0.5 leading-none">
+              Duális Képzési Központ
+            </p>
+          </div>
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-4 ml-auto">
@@ -264,8 +280,8 @@ export default function Navbar() {
                 </svg>
                 {unreadCount > 0 && (
                   <span className="absolute right-1 top-1 flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-nje-jaffa opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-nje-jaffa"></span>
                   </span>
                 )}
               </button>
@@ -356,7 +372,7 @@ export default function Navbar() {
                         <div
                           key={item.id}
                           className={`group relative border-b border-slate-50 dark:border-slate-800/50 p-4 transition-colors last:border-b-0 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 ${
-                            isUnread ? "bg-blue-50/30 dark:bg-blue-900/10" : ""
+                            isUnread ? "bg-nje-jaffa/5 dark:bg-nje-jaffa/5" : ""
                           }`}
                         >
                           <button
@@ -380,7 +396,7 @@ export default function Navbar() {
                                 )}
                               </div>
                               {isUnread && (
-                                <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
+                                <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-nje-jaffa" />
                               )}
                             </div>
                           </button>

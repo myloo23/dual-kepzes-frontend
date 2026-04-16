@@ -103,7 +103,7 @@ export default function FilterSidebar({
         <button
           type="button"
           onClick={onResetFilters}
-          className="text-xs text-blue-600 hover:underline"
+          className="text-xs text-nje-jaffa hover:underline"
         >
           Alaphelyzet
         </button>
@@ -118,7 +118,7 @@ export default function FilterSidebar({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Pl. szoftverfejlesztő, rendszer…"
-          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-nje-cyan transition-colors"
         />
       </div>
 
@@ -187,7 +187,7 @@ export default function FilterSidebar({
           onClick={() => setActiveOnly((p) => !p)}
           className={[
             "relative inline-flex h-6 w-11 items-center rounded-full transition",
-            activeOnly ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-600",
+            activeOnly ? "bg-nje-jaffa" : "bg-slate-300 dark:bg-slate-600",
           ].join(" ")}
           aria-label="Csak aktív kapcsoló"
         >
@@ -281,7 +281,7 @@ export default function FilterSidebar({
             <button
               type="button"
               onClick={() => setSelectedTags([])}
-              className="text-[11px] text-blue-600 hover:underline"
+              className="text-[11px] text-nje-jaffa hover:underline"
             >
               Törlés
             </button>
@@ -322,7 +322,7 @@ export default function FilterSidebar({
         <select
           value={sortKey}
           onChange={(e) => setSortKey(e.target.value as SortKey)}
-          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-nje-cyan transition-colors"
         >
           <option value="RANDOM">Véletlenszerű</option>
           <option value="NEWEST">Legújabb elöl</option>
