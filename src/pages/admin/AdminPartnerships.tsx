@@ -34,17 +34,26 @@ export default function AdminPartnerships() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [partnershipsData, uniUsersData] = await Promise.all([
-        api.partnerships.listUniversity({
-          page: 1,
-          limit: ADMIN_PARTNERSHIPS_FETCH_LIMIT,
-        }),
-        api.universityUsers.list(),
-      ]);
+      const partnershipsData = await api.partnerships.listUniversity({
+        page: 1,
+        limit: ADMIN_PARTNERSHIPS_FETCH_LIMIT,
+      });
       setPartnerships(partnershipsData);
-      setUniversityUsers(Array.isArray(uniUsersData) ? uniUsersData : []);
+
+      try {
+        const uniUsersData = await api.universityUsers.listReferents();
+        setUniversityUsers(Array.isArray(uniUsersData) ? uniUsersData : []);
+      } catch (referentsError) {
+        console.warn(
+          "Failed to load active referents, fallback to all university users.",
+          referentsError,
+        );
+        const fallbackUsers = await api.universityUsers.list();
+        setUniversityUsers(Array.isArray(fallbackUsers) ? fallbackUsers : []);
+      }
     } catch (error) {
       console.error("Failed to load data:", error);
+      setPartnerships([]);
     } finally {
       setIsLoading(false);
     }

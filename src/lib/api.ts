@@ -394,12 +394,27 @@ export const api = {
   universityUsers: {
     list: (params?: PaginationQuery) =>
       apiGet<UniversityUserProfile[]>(PATHS.universityUsers, params),
+    listReferents: (params?: PaginationQuery) =>
+      apiGet<UniversityUserProfile[]>(
+        `${PATHS.universityUsers}/referents`,
+        params,
+      ),
     get: (id: Id) =>
       apiGet<UniversityUserProfile>(`${PATHS.universityUsers}/${id}`),
     update: (id: Id, body: Partial<UniversityUserProfile>) =>
       apiPatch<UniversityUserProfile>(`${PATHS.universityUsers}/${id}`, body),
     remove: (id: Id) =>
       apiDelete<{ message?: string }>(`${PATHS.universityUsers}/${id}`),
+    assignMajors: (id: Id, majorIds: Id[]) =>
+      apiPost<{ message?: string }>(
+        `${PATHS.universityUsers}/${ensureId(id, "universityUserId")}/majors`,
+        { majorIds },
+      ),
+    assignCompanies: (id: Id, companyIds: Id[]) =>
+      apiPost<{ message?: string }>(
+        `${PATHS.universityUsers}/${ensureId(id, "universityUserId")}/companies`,
+        { companyIds },
+      ),
     me: {
       get: () => apiGet<UniversityUserProfile>(`${PATHS.universityUsers}/me`),
       update: (body: Partial<UniversityUserProfile>) =>

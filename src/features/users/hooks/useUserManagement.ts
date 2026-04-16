@@ -78,7 +78,24 @@ export function useUserManagement(
           res = await api.companyAdmins.list();
           break;
         case "UNIVERSITY_USER":
-          res = await api.universityUsers.list();
+          try {
+            res = await api.universityUsers.listReferents();
+          } catch (referentsError) {
+            console.warn(
+              "Failed to load active referents, fallback to university users list.",
+              referentsError,
+            );
+            const fallbackUsers = await api.universityUsers.list();
+            res = (fallbackUsers ?? []).filter((user) => {
+              const typedUser = user as UniversityUserProfile;
+              const directActive = typedUser.isActive;
+              const nestedActive = typedUser.user?.isActive;
+              // If active flags are not present, keep the row to avoid accidental data loss.
+              if (typeof directActive === "boolean") return directActive;
+              if (typeof nestedActive === "boolean") return nestedActive;
+              return true;
+            });
+          }
           break;
         case "INACTIVE_USER":
           res = await api.users.listInactive();

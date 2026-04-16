@@ -165,6 +165,17 @@ export interface UniversityUserProfile {
   fullName?: string;
   email?: string;
   department?: string;
+  isActive?: boolean;
+  user?: {
+    id: Id;
+    fullName?: string;
+    email?: string;
+    isActive?: boolean;
+  };
+  majors?: Array<Major | Id>;
+  managedMajors?: Array<Major | Id>;
+  companies?: Array<Pick<Company, "id" | "name"> | Id>;
+  managedCompanies?: Array<Pick<Company, "id" | "name"> | Id>;
 }
 
 export interface SystemAdminProfile {
