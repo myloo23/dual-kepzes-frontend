@@ -18,10 +18,13 @@ interface CompanyProfileFormData {
 interface CompanyProfileFormProps {
   formData: CompanyProfileFormData;
   loading: boolean;
+  autoFillLoading: boolean;
+  autoFillError: string | null;
   onSubmit: (e: React.FormEvent) => void;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
+  onAutoFillDescription: () => void;
   onCancel: () => void;
 }
 
@@ -33,8 +36,11 @@ const labelClasses =
 export default function CompanyProfileForm({
   formData,
   loading,
+  autoFillLoading,
+  autoFillError,
   onSubmit,
   onChange,
+  onAutoFillDescription,
   onCancel,
 }: CompanyProfileFormProps) {
   return (
@@ -133,6 +139,22 @@ export default function CompanyProfileForm({
             rows={4}
             className={inputClasses}
           />
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs text-gray-500 dark:text-slate-400">
+              A bemutatkozás automatikusan beolvasható a weboldal meta leírásából.
+            </p>
+            <button
+              type="button"
+              onClick={onAutoFillDescription}
+              disabled={autoFillLoading || loading}
+              className="px-3 py-1.5 text-sm border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 rounded-md bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 disabled:opacity-50 transition-colors"
+            >
+              {autoFillLoading ? "Előtöltés..." : "Előtöltés weboldalról"}
+            </button>
+          </div>
+          {autoFillError && (
+            <p className="text-sm text-red-600 dark:text-red-400">{autoFillError}</p>
+          )}
         </div>
 
         <div className="md:col-span-2 space-y-3 pt-2 border-t border-gray-200 dark:border-slate-800 transition-colors">
@@ -169,8 +191,8 @@ export default function CompanyProfileForm({
                 />
               </div>
               <p className="text-sm text-gray-500 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-100 dark:border-blue-800/50 transition-colors">
-                Bekapcsolt állapotban a "Jelentkezés" gomb erre a linkre irányít
-                át. A cég általános weboldala ettől függetlenül beállítható.
+                Bekapcsolt állapotban a "Jelentkezés" gomb erre a linkre irányít át.
+                A cég általános weboldala ettől függetlenül beállítható.
               </p>
             </div>
           )}

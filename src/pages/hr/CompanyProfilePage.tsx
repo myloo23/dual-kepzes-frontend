@@ -12,6 +12,8 @@ export default function CompanyProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [autoFillLoading, setAutoFillLoading] = useState(false);
+  const [autoFillError, setAutoFillError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     taxId: "",
@@ -63,6 +65,84 @@ export default function CompanyProfilePage() {
 
     loadCompanyProfile();
   }, []);
+
+  const parseDescriptionFromHtml = (html: string): string => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const selectors = [
+      "meta[name='description']",
+      "meta[property='og:description']",
+      "meta[name='twitter:description']",
+    ];
+
+    for (const selector of selectors) {
+      const content = doc.querySelector(selector)?.getAttribute("content");
+      const normalized = content?.trim();
+      if (normalized) return normalized;
+    }
+
+    return "";
+  };
+
+  const normalizeWebsiteUrl = (website: string): string => {
+    const trimmed = website.trim();
+    if (!trimmed) return "";
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    return `https://${trimmed}`;
+  };
+
+  const handleAutoFillDescription = async () => {
+    const normalizedWebsite = normalizeWebsiteUrl(formData.website || "");
+
+    if (!normalizedWebsite) {
+      setAutoFillError("Adj meg egy weboldal URL-t az előtöltéshez.");
+      return;
+    }
+
+    try {
+      setAutoFillLoading(true);
+      setAutoFillError(null);
+
+      const response = await fetch(normalizedWebsite, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        throw new Error(`A weboldal nem elérhető (HTTP ${response.status}).`);
+      }
+
+      const html = await response.text();
+      const extractedDescription = parseDescriptionFromHtml(html);
+
+      if (!extractedDescription) {
+        throw new Error(
+          "A weboldalon nem található meta leírás (description/og:description).",
+        );
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        description: extractedDescription,
+        website: normalizedWebsite,
+      }));
+    } catch (_err) {
+      setAutoFillError(
+        "Nem sikerült automatikusan beolvasni a leírást. Ellenőrizd az URL-t, vagy töltsd ki kézzel.",
+      );
+    } finally {
+      setAutoFillLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isEditing) return;
+    if ((formData.description || "").trim()) return;
+    if (!(formData.website || "").trim()) return;
+    void handleAutoFillDescription();
+  }, [isEditing]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -154,6 +234,7 @@ export default function CompanyProfilePage() {
         externalApplicationUrl: company.externalApplicationUrl || "",
       });
     }
+    setAutoFillError(null);
     setIsEditing(false);
   };
 
@@ -195,8 +276,11 @@ export default function CompanyProfilePage() {
         <CompanyProfileForm
           formData={formData}
           loading={loading}
+          autoFillLoading={autoFillLoading}
+          autoFillError={autoFillError}
           onSubmit={handleSubmit}
           onChange={handleInputChange}
+          onAutoFillDescription={handleAutoFillDescription}
           onCancel={handleCancel}
         />
       ) : (

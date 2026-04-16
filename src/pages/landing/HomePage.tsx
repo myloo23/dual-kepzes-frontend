@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Briefcase, MapPinned, Video } from "lucide-react";
 import { api } from "../../lib/api";
 import { useAuth } from "../../features/auth";
 import LoginCard from "../../features/auth/components/LoginCard";
@@ -62,6 +63,19 @@ function HomePage() {
 
   const handleViewJobDetails = (positionId: string | number) => {
     navigate(`/positions?id=${positionId}`);
+  };
+
+  const handleScrollToSection = (sectionId: string) => {
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+
+    const topOffset = 96;
+    const targetTop = target.getBoundingClientRect().top + window.scrollY - topOffset;
+
+    window.scrollTo({
+      top: Math.max(targetTop, 0),
+      behavior: "smooth",
+    });
   };
 
   const userInfo = user
@@ -212,6 +226,58 @@ function HomePage() {
       </section>
 
       {/* ── JOBS SECTION ─────────────────────────────────────── */}
+      <section aria-label="Gyorsnavigáció" className="pb-10 lg:pb-14">
+        <div className="max-w-[1240px] mx-auto px-6 lg:px-8">
+          <div className="rounded-3xl border border-nje-anthracite/10 dark:border-slate-800 bg-white/85 dark:bg-slate-900/80 backdrop-blur-sm p-4 sm:p-5 shadow-sm">
+            <div className="mb-4 px-2">
+              <p className="text-xs font-bold tracking-widest uppercase text-nje-amethyst dark:text-nje-amethyst-light">
+                Tartalomjegyzék
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                {
+                  id: "jobs",
+                  label: "Álláslehetőség",
+                  icon: Briefcase,
+                  iconStyle: "text-nje-jaffa",
+                },
+                {
+                  id: "home-map",
+                  label: "Térkép",
+                  icon: MapPinned,
+                  iconStyle: "text-nje-cyan-dark dark:text-nje-cyan",
+                },
+                {
+                  id: "promo-video",
+                  label: "Promó videó",
+                  icon: Video,
+                  iconStyle: "text-nje-amethyst dark:text-nje-amethyst-light",
+                },
+              ].map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleScrollToSection(item.id)}
+                    className="group flex items-center gap-3 rounded-2xl border border-nje-anthracite/10 dark:border-slate-700 bg-nje-pearl/65 dark:bg-slate-800/70 px-4 py-4 text-left hover:border-nje-jaffa/35 dark:hover:border-nje-jaffa/45 hover:bg-nje-jaffa-faint dark:hover:bg-slate-800 transition-all"
+                  >
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-nje-anthracite/10 dark:border-slate-700">
+                      <Icon className={`h-5 w-5 ${item.iconStyle}`} />
+                    </span>
+                    <span className="text-sm sm:text-base font-semibold text-nje-anthracite dark:text-slate-100">
+                      {item.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section
         id="jobs"
         className="py-24 bg-nje-pearl dark:bg-slate-900/50 border-y border-nje-anthracite/8 dark:border-slate-800/50 transition-colors"
@@ -256,7 +322,7 @@ function HomePage() {
             </button>
           </div>
 
-          <div className="mt-16">
+          <div id="home-map" className="mt-16">
             <HomeMapSection />
           </div>
         </div>
@@ -264,7 +330,10 @@ function HomePage() {
 
       <div className="max-w-[1240px] mx-auto px-6 lg:px-8">
         {/* TUTORIAL VIDEO */}
-        <section className="py-24 border-b border-nje-anthracite/8 dark:border-slate-800/50 transition-colors">
+        <section
+          id="promo-video"
+          className="py-24 border-b border-nje-anthracite/8 dark:border-slate-800/50 transition-colors"
+        >
           <HowToUseVideo />
         </section>
 
