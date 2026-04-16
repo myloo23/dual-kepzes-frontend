@@ -376,6 +376,17 @@ export interface CompanyStatsResponse {
   [key: string]: unknown;
 }
 
+export interface ReferentCompanyStat {
+  companyId: string;
+  companyName: string;
+  studentsByMajor: Array<{ majorName: string; count: number }>;
+  otherReferents: Array<{ id: string; fullName: string; email: string }>;
+}
+
+export interface ReferentOverviewResponse {
+  companies: ReferentCompanyStat[];
+}
+
 // ============= Partnership Types =============
 export type PartnershipStatus =
   | "PENDING_MENTOR"

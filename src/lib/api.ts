@@ -23,6 +23,7 @@ import type {
   ApplicationCreatePayload,
   StudentApplicationsResponse,
   StudentApplicationStats,
+  ReferentOverviewResponse,
   Major,
   Partnership,
   PaginationQuery,
@@ -89,6 +90,7 @@ export const api = {
   stats: {
     get: () => apiGet<StatsResponse>(PATHS.stats),
     getCompanyMe: () => apiGet<CompanyStatsResponse>(`${PATHS.stats}/company/me`),
+    getReferentOverview: () => apiGet<ReferentOverviewResponse>(`${PATHS.stats}/university/referent-overview`),
   },
 
   // ============= Majors =============
@@ -454,6 +456,8 @@ export type {
   StudentApplicationStats,
   StudentApplicationsResponse,
   CompanyStatsResponse,
+  ReferentCompanyStat,
+  ReferentOverviewResponse,
   Location,
   Tag,
   Partnership,

@@ -54,3 +54,7 @@ export function usePositionStats() {
 export function useTrendStats() {
   return useFetch<TrendStats>(statsApi.getTrends);
 }
+
+export function useReferentOverview() {
+  return useFetch(statsApi.getReferentOverview);
+}

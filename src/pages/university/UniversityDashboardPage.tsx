@@ -10,6 +10,7 @@ import { useAuth } from "../../features/auth";
 import UniversityPartnershipsTable, {
   type SortConfig,
 } from "../../features/partnerships/components/UniversityPartnershipsTable";
+import { ReferentDashboardStats } from "../../features/stats/components/ReferentDashboardStats";
 
 export default function UniversityDashboardPage() {
   const location = useLocation();
@@ -271,13 +272,17 @@ export default function UniversityDashboardPage() {
   return (
     <div className="space-y-6">
       {activeTab === "overview" && (
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-none transition-colors">
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-            Egyetemi felulet
-          </h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            Hallgatoi adatok, kapcsolatok es sajat profil kezelese egy helyen.
-          </p>
+        <div className="space-y-6">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-none transition-colors">
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+              Kari referens dashboard
+            </h1>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+              Áttekintés a hozzád rendelt vállalatokról, hallgatói létszámokról és más referensekről.
+            </p>
+          </div>
+          
+          <ReferentDashboardStats />
         </div>
       )}
 
