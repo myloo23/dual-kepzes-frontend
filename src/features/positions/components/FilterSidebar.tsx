@@ -254,7 +254,7 @@ export default function FilterSidebar({
             active={positionType === "DUAL"}
             onClick={() => setPositionType("DUAL")}
           >
-            Duális képzés
+            Duális
           </ChipButton>
           <ChipButton
             active={positionType === "PROFESSIONAL_PRACTICE"}
@@ -266,7 +266,7 @@ export default function FilterSidebar({
             active={positionType === "REGULAR_WORK"}
             onClick={() => setPositionType("REGULAR_WORK")}
           >
-            Rendes állás
+            Rendes munka
           </ChipButton>
         </div>
       </div>

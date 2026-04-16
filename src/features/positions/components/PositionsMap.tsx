@@ -4,38 +4,44 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { type Position } from "../../../lib/api";
 import { useGeocoding, type PositionWithCoords } from "../hooks/useGeocoding";
-import { isExpired } from "../utils/positions.utils";
+import {
+  isExpired,
+  POSITION_TYPE_CONFIG,
+} from "../utils/positions.utils";
 
-const defaultIcon = L.icon({
-  iconRetinaUrl: "/leaflet/marker-icon-2x.png",
-  iconUrl: "/leaflet/marker-icon.png",
-  shadowUrl: "/leaflet/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
-const inactiveIcon = L.icon({
-  iconRetinaUrl: "/leaflet/marker-icon-2x.png",
-  iconUrl: "/leaflet/marker-icon.png",
-  shadowUrl: "/leaflet/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-  className: "grayscale opacity-75",
-});
-
-const createGroupedIcon = (unitCount: number, hasActive: boolean) =>
+const createTypeIcon = (fill: string, stroke: string, inactive = false) =>
   L.divIcon({
-    className: "custom-grouped-marker",
+    className: "",
     html: `
-    <div class="relative flex justify-center items-end" style="width: 25px; height: 41px;">
-       <img src="/leaflet/marker-icon.png" style="width: 25px; height: 41px;" class="${!hasActive ? "grayscale opacity-75" : ""}" />
-       <div class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border border-white shadow-sm z-10">
-         ${unitCount}
-       </div>
+      <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg" style="opacity:${inactive ? 0.5 : 1};filter:${inactive ? "grayscale(1)" : "none"}">
+        <path d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.375 12.5 28.5 12.5 28.5S25 21.875 25 12.5C25 5.596 19.404 0 12.5 0z"
+              fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+        <circle cx="12.5" cy="12.5" r="4.5" fill="white"/>
+      </svg>
+    `,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
+const createGroupedIcon = (
+  unitCount: number,
+  hasActive: boolean,
+  fill: string,
+  stroke: string,
+) =>
+  L.divIcon({
+    className: "",
+    html: `
+    <div style="position:relative;width:25px;height:41px;display:flex;justify-content:center;align-items:flex-end;">
+      <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg" style="opacity:${hasActive ? 1 : 0.5};filter:${hasActive ? "none" : "grayscale(1)"}">
+        <path d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.375 12.5 28.5 12.5 28.5S25 21.875 25 12.5C25 5.596 19.404 0 12.5 0z"
+              fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+        <circle cx="12.5" cy="12.5" r="4.5" fill="white"/>
+      </svg>
+      <div style="position:absolute;top:-8px;right:-8px;background:#EF4444;color:white;font-size:10px;font-weight:700;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1.5px solid white;box-shadow:0 1px 3px rgba(0,0,0,.3);">
+        ${unitCount}
+      </div>
     </div>
   `,
     iconSize: [25, 41],
@@ -72,7 +78,36 @@ const universityIcon = L.divIcon({
   popupAnchor: [1, -34],
 });
 
-L.Marker.prototype.options.icon = defaultIcon;
+// Pre-build type icons
+const TYPE_ICONS = {
+  DUAL: createTypeIcon(
+    POSITION_TYPE_CONFIG.DUAL.mapColor,
+    POSITION_TYPE_CONFIG.DUAL.mapStroke,
+  ),
+  DUAL_inactive: createTypeIcon(
+    POSITION_TYPE_CONFIG.DUAL.mapColor,
+    POSITION_TYPE_CONFIG.DUAL.mapStroke,
+    true,
+  ),
+  PROFESSIONAL_PRACTICE: createTypeIcon(
+    POSITION_TYPE_CONFIG.PROFESSIONAL_PRACTICE.mapColor,
+    POSITION_TYPE_CONFIG.PROFESSIONAL_PRACTICE.mapStroke,
+  ),
+  PROFESSIONAL_PRACTICE_inactive: createTypeIcon(
+    POSITION_TYPE_CONFIG.PROFESSIONAL_PRACTICE.mapColor,
+    POSITION_TYPE_CONFIG.PROFESSIONAL_PRACTICE.mapStroke,
+    true,
+  ),
+  REGULAR_WORK: createTypeIcon(
+    POSITION_TYPE_CONFIG.REGULAR_WORK.mapColor,
+    POSITION_TYPE_CONFIG.REGULAR_WORK.mapStroke,
+  ),
+  REGULAR_WORK_inactive: createTypeIcon(
+    POSITION_TYPE_CONFIG.REGULAR_WORK.mapColor,
+    POSITION_TYPE_CONFIG.REGULAR_WORK.mapStroke,
+    true,
+  ),
+};
 
 interface PositionsMapProps {
   positions: Position[];
@@ -172,11 +207,22 @@ export default function PositionsMap({
 
   return (
     <div className="space-y-3">
-      <div className="flex gap-4 text-sm">
+      <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+          <div className="w-3 h-3 rounded-full" style={{ background: POSITION_TYPE_CONFIG.DUAL.mapColor }}></div>
+          <span className="text-slate-600 dark:text-slate-400 transition-colors">Duális</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full" style={{ background: POSITION_TYPE_CONFIG.PROFESSIONAL_PRACTICE.mapColor }}></div>
+          <span className="text-slate-600 dark:text-slate-400 transition-colors">Szakmai gyakorlat</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full" style={{ background: POSITION_TYPE_CONFIG.REGULAR_WORK.mapColor }}></div>
+          <span className="text-slate-600 dark:text-slate-400 transition-colors">Rendes munka</span>
+        </div>
+        <div className="flex items-center gap-2">
           <span className="text-slate-600 dark:text-slate-400 transition-colors">
-            Fogadóhelyek (összes telephely):{" "}
+            Fogadóhelyek:{" "}
             <span className="font-semibold text-slate-900 dark:text-slate-100 transition-colors">
               {uniqueSiteCount}
             </span>
@@ -214,12 +260,25 @@ export default function PositionsMap({
             const first = group[0];
             const hasActive = group.some((p) => !isExpired(p.deadline));
             const uniqueSitesAtCoord = new Set(group.map((p) => p.mapUnitId)).size;
+
+            // Determine dominant type for this coordinate group
+            const typeCounts: Record<string, number> = {};
+            group.forEach((p) => {
+              const t = p.type ?? "DUAL";
+              typeCounts[t] = (typeCounts[t] ?? 0) + 1;
+            });
+            const dominantType = Object.entries(typeCounts).sort(
+              (a, b) => b[1] - a[1],
+            )[0][0] as keyof typeof POSITION_TYPE_CONFIG;
+            const { mapColor, mapStroke } =
+              POSITION_TYPE_CONFIG[dominantType] ?? POSITION_TYPE_CONFIG.DUAL;
+
             const icon =
               uniqueSitesAtCoord > 1
-                ? createGroupedIcon(uniqueSitesAtCoord, hasActive)
-                : !hasActive
-                  ? inactiveIcon
-                  : defaultIcon;
+                ? createGroupedIcon(uniqueSitesAtCoord, hasActive, mapColor, mapStroke)
+                : TYPE_ICONS[
+                    `${dominantType}${hasActive ? "" : "_inactive"}` as keyof typeof TYPE_ICONS
+                  ] ?? TYPE_ICONS.DUAL;
 
             const siteGroupsMap = new Map<string, SiteGroup>();
             group.forEach((position) => {

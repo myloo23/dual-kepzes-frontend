@@ -303,17 +303,58 @@ export default function PositionFormModal({
           )}
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-2">
           <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
-            Jelentkezési határidő (Hagyd üresen folyamatos jelentkezéshez)
+            Jelentkezési határidő
           </label>
-          <input
-            type="datetime-local"
-            name="deadline"
-            value={formData.deadline || ""}
-            onChange={handleFormChange}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
-          />
+
+          {/* Folyamatos jelentkezés toggle */}
+          <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-3 py-2 transition-colors">
+            <div>
+              <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+                Folyamatos jelentkezés
+              </div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 transition-colors">
+                Nincs lejárati dátum, bármikor lehet jelentkezni
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                setFormData((prev) => ({
+                  ...prev,
+                  deadline: prev.deadline
+                    ? ""
+                    : formatDeadlineForInput(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()),
+                }))
+              }
+              className={[
+                "relative inline-flex h-6 w-11 items-center rounded-full transition",
+                !formData.deadline
+                  ? "bg-nje-jaffa"
+                  : "bg-slate-300 dark:bg-slate-600",
+              ].join(" ")}
+              aria-label="Folyamatos jelentkezés kapcsoló"
+            >
+              <span
+                className={[
+                  "inline-block h-5 w-5 transform rounded-full bg-white transition",
+                  !formData.deadline ? "translate-x-5" : "translate-x-1",
+                ].join(" ")}
+              />
+            </button>
+          </div>
+
+          {/* Dátumválasztó – csak ha van határidő */}
+          {!!formData.deadline && (
+            <input
+              type="datetime-local"
+              name="deadline"
+              value={formData.deadline}
+              onChange={handleFormChange}
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
+            />
+          )}
         </div>
 
         <div className="space-y-1">

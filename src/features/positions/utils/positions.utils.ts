@@ -55,3 +55,38 @@ export function pickLogo(
   for (let i = 0; i < companyKey.length; i++) sum += companyKey.charCodeAt(i);
   return sum % 2 === 0 ? logos.logo1 : logos.logo2;
 }
+
+export type PositionType = "DUAL" | "PROFESSIONAL_PRACTICE" | "REGULAR_WORK";
+
+export const POSITION_TYPE_CONFIG: Record<
+  PositionType,
+  { label: string; badgeClass: string; mapColor: string; mapStroke: string }
+> = {
+  DUAL: {
+    label: "Duális",
+    badgeClass:
+      "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300",
+    mapColor: "#3B82F6",
+    mapStroke: "#1D4ED8",
+  },
+  PROFESSIONAL_PRACTICE: {
+    label: "Szakmai gyakorlat",
+    badgeClass:
+      "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300",
+    mapColor: "#10B981",
+    mapStroke: "#047857",
+  },
+  REGULAR_WORK: {
+    label: "Rendes munka",
+    badgeClass:
+      "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300",
+    mapColor: "#6B7280",
+    mapStroke: "#374151",
+  },
+};
+
+export function getPositionTypeConfig(type?: string | null) {
+  return (
+    POSITION_TYPE_CONFIG[type as PositionType] ?? POSITION_TYPE_CONFIG["DUAL"]
+  );
+}

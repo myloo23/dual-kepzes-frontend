@@ -4,6 +4,7 @@ import {
   isExpired,
   norm,
   pickLogo,
+  getPositionTypeConfig,
 } from "../utils/positions.utils";
 import type { Position, Tag } from "../../../types/api.types";
 import { resolveApiAssetUrl } from "../../../lib/media-url";
@@ -36,6 +37,8 @@ export default function JobCard({ position: p, onViewDetails }: JobCardProps) {
       ? description.slice(0, 100) + "…"
       : description
     : "";
+
+  const typeConfig = getPositionTypeConfig(p.type);
 
   const fallbackLogo = pickLogo(companyName, {
     logo1: abcTechLogo,
@@ -100,16 +103,26 @@ export default function JobCard({ position: p, onViewDetails }: JobCardProps) {
           </div>
         )}
 
-        {/* Deadline */}
-        <div
-          className={[
-            "inline-flex items-center rounded-full px-2 py-1 text-[10px] font-medium transition-colors",
-            expired
-              ? "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400"
-              : "bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400",
-          ].join(" ")}
-        >
-          ⏳ {deadlineText}
+        {/* Type badge + Deadline */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span
+            className={[
+              "inline-flex items-center rounded-full px-2 py-1 text-[10px] font-semibold transition-colors",
+              typeConfig.badgeClass,
+            ].join(" ")}
+          >
+            {typeConfig.label}
+          </span>
+          <div
+            className={[
+              "inline-flex items-center rounded-full px-2 py-1 text-[10px] font-medium transition-colors",
+              expired
+                ? "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                : "bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400",
+            ].join(" ")}
+          >
+            ⏳ {deadlineText}
+          </div>
         </div>
       </div>
 

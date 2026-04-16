@@ -3,6 +3,7 @@ import {
   isExpired,
   toTagName,
   norm,
+  getPositionTypeConfig,
 } from "../utils/positions.utils";
 import type { Position, Tag } from "../../../types/api.types";
 
@@ -34,6 +35,7 @@ export default function PositionCard({
   const hiddenCount = tags.length - previewTags.length;
 
   const expired = isExpired(p.deadline);
+  const typeConfig = getPositionTypeConfig(p.type);
 
   return (
     <article
@@ -105,6 +107,15 @@ export default function PositionCard({
 
         {/* meta chip sor */}
         <div className="mt-3 flex flex-wrap gap-2">
+          <span
+            className={[
+              "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors",
+              typeConfig.badgeClass,
+            ].join(" ")}
+          >
+            {typeConfig.label}
+          </span>
+
           <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-slate-700 dark:text-slate-300 transition-colors">
             📍 {cityText}
           </span>
