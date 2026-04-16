@@ -1,8 +1,63 @@
+import { useEffect, useMemo, useState } from "react";
 import { useReferentOverview } from "../hooks/useStats";
 import { Building2, Users, GraduationCap, Mail } from "lucide-react";
+import { companyApi } from "@/features/companies/services/companyApi";
+import type { Company } from "@/types/api.types";
 
 export function ReferentDashboardStats() {
   const { data, loading, error } = useReferentOverview();
+  const [companyProfiles, setCompanyProfiles] = useState<Record<string, Company>>(
+    {},
+  );
+
+  const companies = useMemo(() => data?.companies || [], [data?.companies]);
+
+  useEffect(() => {
+    if (companies.length === 0) {
+      setCompanyProfiles({});
+      return;
+    }
+
+    const companyIds = Array.from(
+      new Set(
+        companies
+          .map((company) => String(company.companyId ?? "").trim())
+          .filter(Boolean),
+      ),
+    );
+
+    let cancelled = false;
+
+    const loadCompanyProfiles = async () => {
+      try {
+        const results = await Promise.allSettled(
+          companyIds.map(async (companyId) => {
+            const profile = await companyApi.get(companyId);
+            return [companyId, profile] as const;
+          }),
+        );
+
+        if (cancelled) return;
+
+        const profiles: Record<string, Company> = {};
+        results.forEach((result) => {
+          if (result.status === "fulfilled") {
+            const [companyId, profile] = result.value;
+            profiles[companyId] = profile;
+          }
+        });
+        setCompanyProfiles(profiles);
+      } catch {
+        if (!cancelled) setCompanyProfiles({});
+      }
+    };
+
+    void loadCompanyProfiles();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [companies]);
 
   if (loading) {
     return (
@@ -20,8 +75,6 @@ export function ReferentDashboardStats() {
       </div>
     );
   }
-
-  const companies = data?.companies || [];
 
   if (companies.length === 0) {
     return (
@@ -41,6 +94,8 @@ export function ReferentDashboardStats() {
     <div className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {companies.map((company) => {
+          const companyProfile = companyProfiles[String(company.companyId)];
+          const primaryLocation = companyProfile?.locations?.[0];
           const totalStudents = company.studentsByMajor.reduce(
             (acc, curr) => acc + curr.count,
             0
@@ -64,6 +119,42 @@ export function ReferentDashboardStats() {
                     <Users className="h-4 w-4" />
                     Összesen {totalStudents} hallgató
                   </p>
+                </div>
+              </div>
+
+              <div className="mb-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/40 p-3.5">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Cegprofil
+                </h4>
+                <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 line-clamp-3">
+                  {companyProfile?.description?.trim() ||
+                    "Ehhez a ceghez jelenleg nincs rovid profil leiras."}
+                </p>
+                <div className="mt-3 space-y-1 text-xs text-slate-600 dark:text-slate-400">
+                  {primaryLocation && (
+                    <div>
+                      {primaryLocation.zipCode} {primaryLocation.city},{" "}
+                      {primaryLocation.address}
+                    </div>
+                  )}
+                  {companyProfile?.contactEmail && (
+                    <a
+                      href={`mailto:${companyProfile.contactEmail}`}
+                      className="inline-block text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      {companyProfile.contactEmail}
+                    </a>
+                  )}
+                  {companyProfile?.website && (
+                    <a
+                      href={companyProfile.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block truncate text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      {companyProfile.website}
+                    </a>
+                  )}
                 </div>
               </div>
 
