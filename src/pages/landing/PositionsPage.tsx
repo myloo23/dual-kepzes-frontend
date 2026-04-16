@@ -229,23 +229,19 @@ export default function PositionsPage() {
     async (note: string, cvFile?: File, motivationLetterFile?: File) => {
       if (!applicationModal.data?.id) return;
 
-      try {
-        await submitApplication(
-          String(applicationModal.data.id),
-          note,
-          cvFile,
-          motivationLetterFile,
-        );
-        applicationModal.close();
-        // Clear URL param on successful submission too
-        setSearchParams((prev) => {
-          const newParams = new URLSearchParams(prev);
-          newParams.delete("id");
-          return newParams;
-        });
-      } catch (err) {
-        throw err; // Let ApplicationModal handle the error
-      }
+      await submitApplication(
+        String(applicationModal.data.id),
+        note,
+        cvFile,
+        motivationLetterFile,
+      );
+      applicationModal.close();
+      // Clear URL param on successful submission too
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.delete("id");
+        return newParams;
+      });
     },
     [applicationModal, submitApplication, setSearchParams],
   );
