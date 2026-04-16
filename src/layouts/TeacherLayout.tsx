@@ -17,6 +17,11 @@ export default function TeacherLayout() {
       label: "Statisztika",
       hint: "Diagramok, haladás, összesítések",
     },
+    {
+      to: "/teacher/guide",
+      label: "Oktatási segédlet",
+      hint: "Prezentációk és tananyagok",
+    },
   ];
 
   return (

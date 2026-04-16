@@ -90,6 +90,12 @@ const AdminEmailTemplates = lazyRetry(
 const MentorPartnerships = lazyRetry(
   () => import("./pages/mentor/MentorPartnerships"),
 );
+const MentorGuidePage = lazyRetry(
+  () => import("./pages/mentor/MentorGuidePage"),
+);
+const TeacherGuidePage = lazyRetry(
+  () => import("./pages/teacher/TeacherGuidePage"),
+);
 const HrDashboardPage = lazyRetry(() => import("./pages/hr/HrDashboardPage"));
 const HrGuidePage = lazyRetry(() => import("./pages/hr/HrGuidePage"));
 const UniversityDashboardPage = lazyRetry(
@@ -222,6 +228,7 @@ function App() {
                   path="stats"
                   element={<PlaceholderPage title="Statisztika" />}
                 />
+                <Route path="guide" element={<TeacherGuidePage />} />
               </Route>
 
               <Route
@@ -253,6 +260,7 @@ function App() {
                   path="profile"
                   element={<PlaceholderPage title="Profil" />}
                 />
+                <Route path="guide" element={<MentorGuidePage />} />
               </Route>
 
               {/* HR routes section */}

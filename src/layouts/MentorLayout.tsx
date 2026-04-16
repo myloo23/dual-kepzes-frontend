@@ -23,6 +23,11 @@ export default function MentorLayout() {
       hint: "Saját hallgatók értékelése",
     },
     { to: "/mentor/profile", label: "Profil", hint: "Mentor adatok" },
+    {
+      to: "/mentor/guide",
+      label: "Oktatási segédlet",
+      hint: "Prezentációk és tananyagok",
+    },
   ];
 
   return (

@@ -6,7 +6,7 @@ import {
   type GuideCourse,
 } from "../../features/guide";
 
-export default function UniversityGuidePage() {
+export default function TeacherGuidePage() {
   const [selectedCourse, setSelectedCourse] = useState<GuideCourse | null>(
     null,
   );

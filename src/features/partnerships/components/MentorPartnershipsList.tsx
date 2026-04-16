@@ -19,11 +19,11 @@ export default function MentorPartnershipsList({
 
   if (partnerships.length === 0) {
     return (
-      <div className="rounded-lg border-2 border-dashed border-slate-200 p-12 text-center">
-        <h3 className="mt-2 text-sm font-semibold text-gray-900">
+      <div className="rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-700 p-12 text-center">
+        <h3 className="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
           Nincsenek partnerek
         </h3>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Önhöz még nincs hozzárendelve hallgató.
         </p>
       </div>
