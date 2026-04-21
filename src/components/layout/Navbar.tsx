@@ -6,7 +6,8 @@ import { useNavigation } from "../../hooks/useNavigation";
 import { useTheme } from "../../hooks/useTheme";
 import { Moon, Sun, LogOut } from "lucide-react";
 import type { NotificationItem } from "../../lib/api";
-import njeLogoImage from "../../assets/logos/nje_logos/nje_logo3.png";
+import njeLogoImageLight from "../../assets/logos/nje_logos/nje_logo2.png";
+import njeLogoImageDark from "../../assets/logos/nje_logos/nje_logo3.png";
 import { GlobalSearch } from "../../features/search";
 
 export default function Navbar() {
@@ -23,7 +24,7 @@ export default function Navbar() {
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
   const { isAuthenticated, logout, user } = useAuth();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, isDark } = useTheme();
 
   // Use auth state directly
   const isLoggedIn = isAuthenticated;
@@ -194,13 +195,17 @@ export default function Navbar() {
           className="flex items-center gap-3 shrink-0 group"
           onClick={closeMobileMenu}
         >
-          {/* Decorative circle behind logo */}
-          <div className="relative">
+          <div className="relative flex">
             <div className="absolute inset-0 rounded-full bg-nje-amethyst/8 scale-125 group-hover:scale-150 transition-transform duration-300 pointer-events-none" />
             <img
-              src={njeLogoImage}
+              src={njeLogoImageLight}
               alt="Neumann János Egyetem"
-              className="relative h-11 w-auto object-contain dark:brightness-0 dark:invert transition-transform duration-300 group-hover:scale-105"
+              className="relative h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105 dark:hidden"
+            />
+            <img
+              src={njeLogoImageDark}
+              alt="Neumann János Egyetem"
+              className="relative hidden h-11 w-auto object-contain dark:brightness-0 dark:invert transition-transform duration-300 group-hover:scale-105 dark:block"
             />
           </div>
           <div className="hidden sm:block border-l border-nje-anthracite/15 dark:border-slate-700 pl-3">
@@ -590,11 +595,11 @@ export default function Navbar() {
       {/* Theme Toggle at the very edge of the screen */}
       <div className="absolute top-0 right-0 h-16 flex items-center pr-2 sm:pr-4 z-[1150]">
         <button
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onClick={() => setTheme(isDark ? "light" : "dark")}
           className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
           aria-label="Téma váltása"
         >
-          {theme === "dark" ? (
+          {isDark ? (
             <Sun className="h-5 w-5" />
           ) : (
             <Moon className="h-5 w-5" />

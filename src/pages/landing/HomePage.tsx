@@ -12,8 +12,10 @@ import HowToUseVideo from "../../features/landing/components/HowToUseVideo";
 import RegistrationPromo from "../../features/landing/components/RegistrationPromo";
 import HomeMapSection from "../../features/landing/components/HomeMapSection";
 import logoImage from "../../assets/logos/dkk_logos/logó.png";
-import njeLogoImage from "../../assets/logos/nje_logos/nje_logo3.png";
+import njeLogoImageLight from "../../assets/logos/nje_logos/nje_logo2.png";
+import njeLogoImageDark from "../../assets/logos/nje_logos/nje_logo3.png";
 import { ROLE_NAVIGATION_PATHS, type UserRole } from "../../config/navigation";
+import { useTheme } from "../../hooks/useTheme";
 
 function HomePage() {
   const [email, setEmail] = useState("");
@@ -21,6 +23,7 @@ function HomePage() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { user, login, isAuthenticated, logout } = useAuth();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -112,9 +115,14 @@ function HomePage() {
               className="flex items-center gap-6 group/logos cursor-pointer w-fit"
             >
               <img
-                src={njeLogoImage}
+                src={njeLogoImageLight}
                 alt="Neumann János Egyetem"
-                className="h-20 sm:h-28 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105 dark:brightness-0 dark:invert"
+                className="h-20 sm:h-28 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105 dark:hidden"
+              />
+              <img
+                src={njeLogoImageDark}
+                alt="Neumann János Egyetem"
+                className="hidden h-20 sm:h-28 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105 dark:block dark:brightness-0 dark:invert"
               />
               <div className="w-px h-16 bg-nje-anthracite/20 dark:bg-slate-700" />
               <img

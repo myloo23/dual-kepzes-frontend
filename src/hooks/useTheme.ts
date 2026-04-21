@@ -13,16 +13,27 @@ export function useTheme() {
     return "system";
   });
 
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const storedTheme = localStorage.getItem("theme") as Theme | null;
+      if (storedTheme === "dark") return true;
+      if (storedTheme === "light") return false;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
+
   useEffect(() => {
     const applyTheme = (selectedTheme: Theme) => {
       const root = window.document.documentElement;
-      const isDark =
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const currentlyDark =
         selectedTheme === "dark" ||
-        (selectedTheme === "system" &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches);
+        (selectedTheme === "system" && mediaQuery.matches);
 
+      setIsDark(currentlyDark);
       root.classList.remove("light", "dark");
-      if (isDark) {
+      if (currentlyDark) {
         root.classList.add("dark");
       } else {
         root.classList.add("light");
@@ -57,5 +68,5 @@ export function useTheme() {
     }
   };
 
-  return { theme, setTheme: changeTheme };
+  return { theme, setTheme: changeTheme, isDark };
 }
