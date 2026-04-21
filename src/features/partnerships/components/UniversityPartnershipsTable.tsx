@@ -20,6 +20,9 @@ interface UniversityPartnershipsTableProps {
   isLoading: boolean;
   sortConfig: SortConfig;
   onSort: (key: SortKey) => void;
+  currentUniversityUserId?: string | null;
+  assigningPartnershipId?: string | null;
+  onAssignSelf?: (partnershipId: Partnership["id"]) => void;
 }
 
 export default function UniversityPartnershipsTable({
@@ -27,6 +30,9 @@ export default function UniversityPartnershipsTable({
   isLoading,
   sortConfig,
   onSort,
+  currentUniversityUserId,
+  assigningPartnershipId,
+  onAssignSelf,
 }: UniversityPartnershipsTableProps) {
   const renderSortIcon = (columnKey: SortKey) => {
     if (sortConfig.key !== columnKey)
@@ -58,7 +64,7 @@ export default function UniversityPartnershipsTable({
   );
 
   if (isLoading) {
-    return <div className="p-8 text-center text-slate-500">Betöltés...</div>;
+    return <div className="p-8 text-center text-slate-500">Betoltes...</div>;
   }
 
   if (partnerships.length === 0) {
@@ -68,7 +74,7 @@ export default function UniversityPartnershipsTable({
           Nincsenek partnerek
         </h3>
         <p className="mt-1 text-sm text-gray-500">
-          Jelenleg nincs aktív vagy függőben lévő partnerség.
+          Jelenleg nincs aktiv vagy fuggoben levo partnerseg.
         </p>
       </div>
     );
@@ -80,12 +86,12 @@ export default function UniversityPartnershipsTable({
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
             <tr>
-              <SortableHeader label="Hallgató" sortKey="student" />
-              <SortableHeader label="Cég / Pozíció" sortKey="company" />
-              <SortableHeader label="Időszak" sortKey="semester" />
+              <SortableHeader label="Hallgato" sortKey="student" />
+              <SortableHeader label="Ceg / Pozicio" sortKey="company" />
+              <SortableHeader label="Idoszak" sortKey="semester" />
               <SortableHeader label="Mentor" sortKey="mentor" />
-              <SortableHeader label="Egyetemi Felelős" sortKey="uniEmployee" />
-              <SortableHeader label="Státusz" sortKey="status" />
+              <SortableHeader label="Egyetemi Felelos" sortKey="uniEmployee" />
+              <SortableHeader label="Statusz" sortKey="status" />
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">
@@ -97,7 +103,7 @@ export default function UniversityPartnershipsTable({
                 <td className="px-6 py-3 align-middle">
                   <div className="flex flex-col">
                     <span className="font-semibold text-slate-900 text-sm">
-                      {partnership.student?.fullName || "Ismeretlen hallgató"}
+                      {partnership.student?.fullName || "Ismeretlen hallgato"}
                     </span>
                     <span className="text-xs text-slate-500">
                       {partnership.student?.email}
@@ -137,20 +143,40 @@ export default function UniversityPartnershipsTable({
                     </div>
                   ) : (
                     <span className="text-xs italic text-amber-600">
-                      Nincs kijelölve
+                      Nincs kijelolve
                     </span>
                   )}
                 </td>
                 <td className="px-6 py-3 align-middle">
-                  {partnership.uniEmployee ? (
-                    <span className="text-sm font-medium text-slate-900">
-                      {partnership.uniEmployee.fullName}
-                    </span>
-                  ) : (
-                    <span className="text-sm italic text-slate-400">
-                      Nincs kijelölve
-                    </span>
-                  )}
+                  <div className="flex items-center gap-3">
+                    {partnership.uniEmployee ? (
+                      <span className="text-sm font-medium text-slate-900">
+                        {partnership.uniEmployee.fullName}
+                      </span>
+                    ) : (
+                      <span className="text-sm italic text-slate-400">
+                        Nincs kijelolve
+                      </span>
+                    )}
+
+                    {onAssignSelf &&
+                      partnership.status === "PENDING_UNIVERSITY" &&
+                      !partnership.uniEmployee &&
+                      currentUniversityUserId && (
+                        <button
+                          onClick={() => onAssignSelf(partnership.id)}
+                          disabled={
+                            assigningPartnershipId === String(partnership.id)
+                          }
+                          className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline shrink-0 transition-colors disabled:opacity-60 disabled:no-underline"
+                          title="A partnerkapcsolat hozzarendelese sajat magadhoz"
+                        >
+                          {assigningPartnershipId === String(partnership.id)
+                            ? "Mentes..."
+                            : "Magamhoz rendelem"}
+                        </button>
+                      )}
+                  </div>
                 </td>
                 <td className="px-6 py-3 align-middle">
                   <span
@@ -159,13 +185,17 @@ export default function UniversityPartnershipsTable({
                         ? "bg-emerald-100 text-emerald-800"
                         : partnership.status === "TERMINATED"
                           ? "bg-rose-100 text-rose-800"
-                          : "bg-amber-100 text-amber-800"
+                          : partnership.status === "PENDING_UNIVERSITY"
+                            ? "bg-sky-100 text-sky-800"
+                            : "bg-amber-100 text-amber-800"
                     }`}
                   >
-                    {partnership.status === "ACTIVE" && "Aktív"}
-                    {partnership.status === "TERMINATED" && "Lezárt"}
+                    {partnership.status === "ACTIVE" && "Aktiv"}
+                    {partnership.status === "TERMINATED" && "Lezart"}
+                    {partnership.status === "PENDING_UNIVERSITY" &&
+                      "Egyetemi felelosre var"}
                     {partnership.status === "PENDING_MENTOR" &&
-                      "Mentor jóváhagyásra vár"}
+                      "Mentor jovahagyasra var"}
                   </span>
                 </td>
               </tr>

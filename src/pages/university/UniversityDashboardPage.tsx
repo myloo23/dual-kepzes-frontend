@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useLocation } from "react-router-dom";
 import {
   api,
@@ -16,7 +16,7 @@ import { ReferentDashboardStats } from "../../features/stats/components/Referent
 
 export default function UniversityDashboardPage() {
   const location = useLocation();
-  const { logout: authLogout } = useAuth();
+  const { user, logout: authLogout } = useAuth();
 
   const [profileForm, setProfileForm] = useState<
     Partial<UniversityUserProfile>
@@ -38,6 +38,9 @@ export default function UniversityDashboardPage() {
   const [partnershipsError, setPartnershipsError] = useState<string | null>(
     null,
   );
+  const [assigningPartnershipId, setAssigningPartnershipId] = useState<
+    string | null
+  >(null);
   const [assignedMajors, setAssignedMajors] = useState<Array<Major | { id?: string | number; name?: string }>>([]);
   const [assignedCompanies, setAssignedCompanies] = useState<Array<Pick<Company, "id" | "name"> | { id?: string | number; name?: string }>>([]);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
@@ -202,17 +205,12 @@ export default function UniversityDashboardPage() {
     void loadAssignments();
   }, [activeTab]);
 
-  // Unified loading for partnerships (which also feeds students list)
-  useEffect(() => {
-    if (activeTab !== "partnerships" && activeTab !== "students") return;
-
-    // If we already have partnerships, don't reload unless force refresh needed
-    // But simplistic approach: reload on tab switch to be safe
-    const load = async () => {
+  const loadPartnerships = useCallback(
+    async (options?: { includeStudents?: boolean }) => {
+      const includeStudents = options?.includeStudents ?? false;
       setPartnershipsLoading(true);
       setPartnershipsError(null);
-      // If looking at students, we also need to load partnerships to derive them
-      if (activeTab === "students") {
+      if (includeStudents) {
         setStudentsLoading(true);
         setStudentsError(null);
       }
@@ -237,21 +235,51 @@ export default function UniversityDashboardPage() {
             uniqueStudentsMap.set(String(profile.id), profile);
           }
         });
-        setStudents(Array.from(uniqueStudentsMap.values()));
+        if (includeStudents) {
+          setStudents(Array.from(uniqueStudentsMap.values()));
+        }
       } catch (err) {
         const message =
           err instanceof Error
             ? err.message
             : "Hiba az adatok betoltese kozben.";
         setPartnershipsError(message);
-        if (activeTab === "students") setStudentsError(message);
+        if (includeStudents) setStudentsError(message);
       } finally {
         setPartnershipsLoading(false);
-        if (activeTab === "students") setStudentsLoading(false);
+        if (includeStudents) setStudentsLoading(false);
       }
-    };
-    void load();
-  }, [activeTab]);
+    },
+    [],
+  );
+
+  // Unified loading for partnerships (which also feeds students list)
+  useEffect(() => {
+    if (activeTab !== "partnerships" && activeTab !== "students") return;
+    void loadPartnerships({ includeStudents: activeTab === "students" });
+  }, [activeTab, loadPartnerships]);
+
+  const handleAssignSelfToPartnership = useCallback(
+    async (partnershipId: Partnership["id"]) => {
+      if (!user?.id) return;
+
+      setAssigningPartnershipId(String(partnershipId));
+      setPartnershipsError(null);
+      try {
+        await api.partnerships.assignUniversityUser(partnershipId, user.id);
+        await loadPartnerships({ includeStudents: false });
+      } catch (err) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Hiba a partnerkapcsolat hozzarendelese kozben.";
+        setPartnershipsError(message);
+      } finally {
+        setAssigningPartnershipId(null);
+      }
+    },
+    [loadPartnerships, user?.id],
+  );
 
   const sortedPartnerships = useMemo(() => {
     const sorted = [...partnerships];
@@ -543,6 +571,9 @@ export default function UniversityDashboardPage() {
             isLoading={partnershipsLoading}
             sortConfig={sortConfig}
             onSort={handleSort}
+            currentUniversityUserId={user?.id ? String(user.id) : null}
+            assigningPartnershipId={assigningPartnershipId}
+            onAssignSelf={handleAssignSelfToPartnership}
           />
         </div>
       )}
