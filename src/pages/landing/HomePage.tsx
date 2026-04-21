@@ -15,7 +15,6 @@ import logoImage from "../../assets/logos/dkk_logos/logó.png";
 import njeLogoImageLight from "../../assets/logos/nje_logos/nje_logo2.png";
 import njeLogoImageDark from "../../assets/logos/nje_logos/nje_logo3.png";
 import { ROLE_NAVIGATION_PATHS, type UserRole } from "../../config/navigation";
-import { useTheme } from "../../hooks/useTheme";
 
 function HomePage() {
   const [email, setEmail] = useState("");
@@ -23,7 +22,6 @@ function HomePage() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { user, login, isAuthenticated, logout } = useAuth();
-  const { isDark } = useTheme();
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (e: React.FormEvent) => {

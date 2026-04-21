@@ -24,7 +24,7 @@ export default function Navbar() {
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
   const { isAuthenticated, logout, user } = useAuth();
-  const { theme, setTheme, isDark } = useTheme();
+  const { setTheme, isDark } = useTheme();
 
   // Use auth state directly
   const isLoggedIn = isAuthenticated;
