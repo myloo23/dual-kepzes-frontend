@@ -41,6 +41,7 @@ export interface UseUserManagementReturn {
     id: Id,
     data: Partial<CompanyAdminProfile | UniversityUserProfile>,
   ) => Promise<boolean>;
+  createUser: (data: Record<string, any>) => Promise<boolean>;
 
   // Utilities
   setError: (error: string | null) => void;
@@ -233,6 +234,33 @@ export function useUserManagement(
     [load],
   );
 
+  const createUser = useCallback(
+    async (data: Record<string, any>): Promise<boolean> => {
+      try {
+        setLoading(true);
+        if (activeTab === "COMPANY_ADMIN") {
+          await api.registerCompanyAdmin(data);
+        } else if (activeTab === "UNIVERSITY_USER") {
+          await api.registerGeneric({ ...data, role: "UNIVERSITY_USER" });
+        } else {
+          setError("Ezen a fülön nem lehet új felhasználót létrehozni.");
+          return false;
+        }
+
+        setMessage(SUCCESS_MESSAGES.DATA_SAVED || "Sikeresen létrehozva");
+        await load();
+        return true;
+      } catch (e: any) {
+        const errorMsg = e instanceof Error ? e.message : ERROR_MESSAGES.UPDATE_FAILED;
+        setError(errorMsg);
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [activeTab, load],
+  );
+
   const updateGeneric = useCallback(
     async (
       id: Id,
@@ -283,6 +311,7 @@ export function useUserManagement(
     reactivateUser,
     updateStudent,
     updateGeneric,
+    createUser,
 
     // Utilities
     setError,

@@ -87,6 +87,15 @@ export const api = {
   registerCompany: (payload: CompanyRegisterPayload) =>
     apiPost<RegisterResponse>("/api/companies/with-admin", payload),
 
+  registerSystemAdmin: (payload: any) =>
+    apiPost<RegisterResponse>("/api/auth/register/system-admin", payload),
+
+  registerCompanyAdmin: (payload: any) =>
+    apiPost<RegisterResponse>("/api/auth/register/company-admin", payload),
+
+  registerGeneric: (payload: any) =>
+    apiPost<RegisterResponse>("/api/auth/register", payload),
+
   // ============= Stats =============
   stats: {
     get: () => apiGet<StatsResponse>(PATHS.stats),

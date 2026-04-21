@@ -84,12 +84,18 @@ export default function AdminUsersPage() {
   };
 
   const handleSaveGeneric = async (data: Record<string, any>) => {
-    if (!genericModal.data) return;
-
-    const success = await userManagement.updateGeneric(
-      genericModal.data.id,
-      data,
-    );
+    let success = false;
+    if (!genericModal.data?.id) {
+      // Create user
+      success = await userManagement.createUser(data);
+    } else {
+      // Update user
+      success = await userManagement.updateGeneric(
+        genericModal.data.id,
+        data,
+      );
+    }
+    
     if (success) {
       genericModal.close();
     }
@@ -319,6 +325,16 @@ export default function AdminUsersPage() {
             >
               {LABELS.REFRESH}
             </Button>
+            {userManagement.activeTab !== "INACTIVE_USER" && userManagement.activeTab !== "STUDENT" && (
+              <Button
+                onClick={() => genericModal.open({} as any)}
+                variant="primary"
+                size="xs"
+                className="ml-2"
+              >
+                Hozzáadás
+              </Button>
+            )}
             <ExportButton
               onExport={() =>
                 handleExport(userManagement.items, userManagement.activeTab)

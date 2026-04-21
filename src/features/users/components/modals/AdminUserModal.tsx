@@ -98,14 +98,15 @@ export default function AdminUserModal({
 
   useEffect(() => {
     const loadAssignmentData = async () => {
-      if (!isOpen || type !== "UNIVERSITY_USER") return;
+      if (!isOpen) return;
+      if (type !== "UNIVERSITY_USER" && !(type === "COMPANY_ADMIN" && !initialData?.id)) return;
 
       setAssignmentsLoading(true);
       setAssignmentError(null);
 
       try {
         const [majorsResponse, companiesResponse] = await Promise.all([
-          api.majors.list({ page: 1, limit: 1000 }) as Promise<any>,
+          type === "UNIVERSITY_USER" ? (api.majors.list({ page: 1, limit: 1000 }) as Promise<any>) : Promise.resolve([]),
           companyApi.list({ page: 1, limit: 1000 }),
         ]);
 
@@ -222,11 +223,19 @@ export default function AdminUserModal({
     setError(null);
 
     try {
-      const payload = {
+      const payload: any = {
         fullName:
           formData.fullName || formData.name || formData.user?.fullName || "",
         email: formData.email || formData.user?.email || "",
       };
+
+      if (!initialData?.id) {
+        payload.password = formData.password;
+        if (type === "COMPANY_ADMIN") {
+          payload.companyId = formData.companyId;
+          payload.jobTitle = formData.jobTitle;
+        }
+      }
 
       await onSave(payload);
     } catch (err: any) {
@@ -237,16 +246,18 @@ export default function AdminUserModal({
   };
 
   const titleMap: Record<string, string> = {
-    COMPANY_ADMIN: "Cegadmin szerkesztese",
-    UNIVERSITY_USER: "Egyetemi felhasznalo szerkesztese",
-    USER: "Felhasznalo szerkesztese",
+    COMPANY_ADMIN: "Cégadmin",
+    UNIVERSITY_USER: "Egyetemi felhasznalo",
+    USER: "Felhasznalo",
   };
+
+  const isEditing = !!initialData?.id;
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={type ? titleMap[type] : "Szerkesztes"}
+      title={type ? `${isEditing ? 'Szerkesztés' : 'Új'} - ${titleMap[type]}` : "Szerkesztes"}
       size="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -291,7 +302,7 @@ export default function AdminUserModal({
             />
           </div>
 
-          {type === "USER" && (
+          {isEditing && type === "USER" && (
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">Statusz:</span>
               <span
@@ -302,7 +313,58 @@ export default function AdminUserModal({
             </div>
           )}
 
-          {type === "UNIVERSITY_USER" && (
+          {!isEditing && (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
+                Jelszó
+              </label>
+              <input
+                type="password"
+                required
+                value={formData.password || ""}
+                onChange={(e) => handleChange("password", e.target.value)}
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                minLength={8}
+              />
+            </div>
+          )}
+
+          {!isEditing && type === "COMPANY_ADMIN" && (
+            <>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
+                  Cég
+                </label>
+                <select
+                  required
+                  value={formData.companyId || ""}
+                  onChange={(e) => handleChange("companyId", e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                >
+                  <option value="">Válasszon céget...</option>
+                  {companies.map((company) => (
+                    <option key={String(company.id)} value={String(company.id)}>
+                      {company.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
+                  Munkakör
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.jobTitle || ""}
+                  onChange={(e) => handleChange("jobTitle", e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                />
+              </div>
+            </>
+          )}
+
+          {isEditing && type === "UNIVERSITY_USER" && (
             <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30 p-4 space-y-4 transition-colors">
               <div className="flex items-start justify-between gap-3">
                 <div>
