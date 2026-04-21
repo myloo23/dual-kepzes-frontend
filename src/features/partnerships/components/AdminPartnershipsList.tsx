@@ -181,28 +181,24 @@ export default function AdminPartnershipsList({
                         </span>
                       )}
 
-                      {(() => {
-                        const canAssignUniEmployee =
-                          partnership.status === "PENDING_UNIVERSITY";
-                        return (
-                          <button
-                            onClick={() => handleOpenAssign(partnership)}
-                            disabled={!canAssignUniEmployee}
-                            title={
-                              canAssignUniEmployee
-                                ? "Egyetemi referens ellenőrzése vagy módosítása"
-                                : "Elobb mentort kell hozzarendelni (PENDING_UNIVERSITY allapot)."
-                            }
-                            className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 transition-colors disabled:text-slate-400 disabled:dark:text-slate-500 disabled:no-underline disabled:cursor-not-allowed"
-                          >
-                            {canAssignUniEmployee
-                              ? partnership.uniEmployee
-                                ? "Ellenőrzés / módosítás"
-                                : "+ Hozzarendeles"
-                              : "Mentor szukseges"}
-                          </button>
-                        );
-                      })()}
+                      {partnership.status === "PENDING_UNIVERSITY" ? (
+                        <button
+                          onClick={() => handleOpenAssign(partnership)}
+                          title="Egyetemi referens ellenőrzése vagy módosítása"
+                          className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 transition-colors"
+                        >
+                          {partnership.uniEmployee
+                            ? "Ellenőrzés / módosítás"
+                            : "+ Hozzárendelés"}
+                        </button>
+                      ) : partnership.status === "PENDING_MENTOR" ? (
+                        <span
+                          title="A cégnek először mentort kell hozzárendelnie ehhez a partnerséghez."
+                          className="text-xs italic text-amber-600 dark:text-amber-500 cursor-help"
+                        >
+                          Mentor szükséges
+                        </span>
+                      ) : null}
                     </div>
                   </td>
                   <td className="px-6 py-3 align-middle">
