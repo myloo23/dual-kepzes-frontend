@@ -978,16 +978,18 @@ Egyetemi kapcsolattartók és adminisztrátorok.
 
 A platform üzemeltetői. Minden végpont `SYSTEM_ADMIN` jogosultságot igényel.
 
-| Metódus  | Végpont        | Leírás                                           | Jogosultság |
-| :------- | :------------- | :----------------------------------------------- | :---------- |
-| `GET`    | `/`            | Összes rendszeradmin listázása.                  | SystemAdmin |
-| `GET`    | `/admin-users` | Minden admin (Rendszer, Cég, Egyetem) listázása. | SystemAdmin |
-| `GET`    | `/me`          | Saját admin profil lekérése.                     | SystemAdmin |
-| `PATCH`  | `/me`          | Saját admin profil frissítése.                   | SystemAdmin |
-| `DELETE` | `/me`          | Saját admin profil törlése.                      | SystemAdmin |
-| `GET`    | `/:id`         | Rendszeradmin lekérése ID alapján.               | SystemAdmin |
-| `PATCH`  | `/:id`         | Adatok frissítése.                               | SystemAdmin |
-| `DELETE` | `/:id`         | Admin törlése.                                   | SystemAdmin |
+| Metódus  | Végpont           | Leírás                                            | Jogosultság |
+| :------- | :---------------- | :------------------------------------------------ | :---------- |
+| `GET`    | `/`               | Összes rendszeradmin listázása.                   | SystemAdmin |
+| `GET`    | `/admin-users`    | Minden admin (Rendszer, Cég, Egyetem) listázása.  | SystemAdmin |
+| `GET`    | `/me`             | Saját admin profil lekérése.                      | SystemAdmin |
+| `PATCH`  | `/me`             | Saját admin profil frissítése.                    | SystemAdmin |
+| `DELETE` | `/me`             | Saját admin profil törlése.                       | SystemAdmin |
+| `GET`    | `/:id`            | Rendszeradmin lekérése ID alapján.                | SystemAdmin |
+| `PATCH`  | `/:id`            | Adatok frissítése.                                | SystemAdmin |
+| `DELETE` | `/:id`            | Admin törlése.                                    | SystemAdmin |
+| `POST`   | `/invite-company` | Céges regisztrációs meghívó küldése emailben.     | SystemAdmin |
+| `POST`   | `/invite-student` | Hallgatói regisztrációs meghívó küldése emailben. | SystemAdmin |
 
 ### Felhasználók (`/api/users`)
 
