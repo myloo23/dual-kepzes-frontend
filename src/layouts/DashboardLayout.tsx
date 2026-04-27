@@ -3,7 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { cn } from "../utils/cn";
 import { useAuth } from "../features/auth";
 import Breadcrumbs from "../components/shared/Breadcrumbs";
-import njeLogoImage from "../assets/logos/nje_logos/nje_logo2.png";
+import njeLogoImage from "../assets/logos/nje_logos/nje_logo2.webp";
 
 export type NavItem = {
   to: string;
@@ -34,6 +34,8 @@ export default function DashboardLayout(props: {
             <img
               src={njeLogoImage}
               alt="NJE"
+              width={167}
+              height={120}
               className="h-10 w-auto object-contain dark:brightness-0 dark:invert"
             />
             <div>
@@ -76,6 +78,8 @@ export default function DashboardLayout(props: {
                 <img
                   src={njeLogoImage}
                   alt="Neumann János Egyetem"
+                  width={167}
+                  height={120}
                   className="h-14 w-auto object-contain brightness-0 invert mb-4"
                 />
                 <div className="text-[10px] font-semibold text-white/60 uppercase tracking-widest mb-0.5">

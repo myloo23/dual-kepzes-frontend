@@ -6,8 +6,8 @@ import { useNavigation } from "../../hooks/useNavigation";
 import { useTheme } from "../../hooks/useTheme";
 import { Moon, Sun, LogOut } from "lucide-react";
 import type { NotificationItem } from "../../lib/api";
-import njeLogoImageLight from "../../assets/logos/nje_logos/nje_logo2.png";
-import njeLogoImageDark from "../../assets/logos/nje_logos/nje_logo3.png";
+import njeLogoImageLight from "../../assets/logos/nje_logos/nje_logo2.webp";
+import njeLogoImageDark from "../../assets/logos/nje_logos/nje_logo3.webp";
 import { GlobalSearch } from "../../features/search";
 
 export default function Navbar() {
@@ -200,11 +200,15 @@ export default function Navbar() {
             <img
               src={njeLogoImageLight}
               alt="Neumann János Egyetem"
+              width={167}
+              height={120}
               className="relative h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105 dark:hidden"
             />
             <img
               src={njeLogoImageDark}
               alt="Neumann János Egyetem"
+              width={270}
+              height={120}
               className="relative hidden h-11 w-auto object-contain dark:brightness-0 dark:invert transition-transform duration-300 group-hover:scale-105 dark:block"
             />
           </div>

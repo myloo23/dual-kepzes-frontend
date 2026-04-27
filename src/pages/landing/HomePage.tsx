@@ -11,9 +11,9 @@ import DualInfoSection from "../../features/landing/components/DualInfoSection";
 import HowToUseVideo from "../../features/landing/components/HowToUseVideo";
 import RegistrationPromo from "../../features/landing/components/RegistrationPromo";
 import HomeMapSection from "../../features/landing/components/HomeMapSection";
-import logoImage from "../../assets/logos/dkk_logos/logó.png";
-import njeLogoImageLight from "../../assets/logos/nje_logos/nje_logo2.png";
-import njeLogoImageDark from "../../assets/logos/nje_logos/nje_logo3.png";
+import logoImage from "../../assets/logos/dkk_logos/logo.webp";
+import njeLogoImageLight from "../../assets/logos/nje_logos/nje_logo2.webp";
+import njeLogoImageDark from "../../assets/logos/nje_logos/nje_logo3.webp";
 import { ROLE_NAVIGATION_PATHS, type UserRole } from "../../config/navigation";
 
 function HomePage() {
@@ -115,17 +115,23 @@ function HomePage() {
               <img
                 src={njeLogoImageLight}
                 alt="Neumann János Egyetem"
+                width={167}
+                height={120}
                 className="h-20 sm:h-28 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105 dark:hidden"
               />
               <img
                 src={njeLogoImageDark}
                 alt="Neumann János Egyetem"
+                width={270}
+                height={120}
                 className="hidden h-20 sm:h-28 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105 dark:block dark:brightness-0 dark:invert"
               />
               <div className="w-px h-16 bg-nje-anthracite/20 dark:bg-slate-700" />
               <img
                 src={logoImage}
                 alt="Duális Képzési Központ"
+                width={216}
+                height={100}
                 className="h-14 sm:h-18 w-auto object-contain transition-transform duration-300 group-hover/logos:scale-105 dark:brightness-0 dark:invert"
               />
             </Link>

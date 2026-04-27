@@ -1,5 +1,5 @@
-import dkkLogoImage from "../../assets/logos/dkk_logos/logó.png";
-import njeLogoImage from "../../assets/logos/nje_logos/nje_logo3.png";
+import dkkLogoImage from "../../assets/logos/dkk_logos/logo.webp";
+import njeLogoImage from "../../assets/logos/nje_logos/nje_logo3.webp";
 
 export default function Footer() {
   return (
@@ -14,6 +14,8 @@ export default function Footer() {
           <img
             src={njeLogoImage}
             alt="Neumann János Egyetem"
+            width={270}
+            height={120}
             className="h-16 w-auto object-contain brightness-0 invert hover:scale-105 transition-transform duration-300"
           />
 
@@ -26,6 +28,8 @@ export default function Footer() {
           <img
             src={dkkLogoImage}
             alt="Duális Képzési Központ"
+            width={216}
+            height={100}
             className="h-10 w-auto object-contain brightness-0 invert hover:scale-105 transition-transform duration-300"
           />
         </div>
