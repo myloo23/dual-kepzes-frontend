@@ -4,6 +4,36 @@ import type { ApiErrorBody } from "../types/common.types";
 
 const API_URL = API_CONFIG.BASE_URL;
 
+interface SuccessWrapper {
+  success: true;
+  data: unknown;
+}
+
+interface PaginationWrapper {
+  data: unknown[];
+  pagination: unknown;
+}
+
+function isSuccessWrapper(v: unknown): v is SuccessWrapper {
+  return (
+    typeof v === "object" &&
+    v !== null &&
+    "success" in v &&
+    "data" in v &&
+    (v as Record<string, unknown>).success === true
+  );
+}
+
+function isPaginationWrapper(v: unknown): v is PaginationWrapper {
+  return (
+    typeof v === "object" &&
+    v !== null &&
+    "data" in v &&
+    "pagination" in v &&
+    Array.isArray((v as Record<string, unknown>).data)
+  );
+}
+
 async function apiRequest<T>(
   path: string,
   init: RequestInit,
@@ -62,25 +92,13 @@ async function apiRequest<T>(
 
   // Auto-unwrap generic API responses
   // If the response follows { success: true, data: T }, return T
-  if (
-    data &&
-    typeof data === "object" &&
-    "data" in data &&
-    "success" in data &&
-    (data as any).success === true
-  ) {
-    return (data as any).data as T;
+  if (isSuccessWrapper(data)) {
+    return data.data as T;
   }
 
   // Fallback for pagination specific check if success is missing but pagination exists (robustness)
-  if (
-    data &&
-    typeof data === "object" &&
-    "data" in data &&
-    "pagination" in data &&
-    Array.isArray((data as any).data)
-  ) {
-    return (data as any).data as T;
+  if (isPaginationWrapper(data)) {
+    return data.data as T;
   }
 
   return (data ?? {}) as T;
