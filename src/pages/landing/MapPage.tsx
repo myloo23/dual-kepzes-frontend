@@ -157,12 +157,12 @@ function MapPage() {
     if (userLocation && positionsWithCoords.length > 0) {
       const avgLat =
         positionsWithCoords.reduce(
-          (sum: number, p: any) => sum + (p.latitude || 0),
+          (sum: number, p: PositionWithCoords) => sum + (p.latitude || 0),
           0,
         ) / positionsWithCoords.length;
       const avgLng =
         positionsWithCoords.reduce(
-          (sum: number, p: any) => sum + (p.longitude || 0),
+          (sum: number, p: PositionWithCoords) => sum + (p.longitude || 0),
           0,
         ) / positionsWithCoords.length;
       return [(userLocation.lat + avgLat) / 2, (userLocation.lng + avgLng) / 2];
@@ -171,12 +171,12 @@ function MapPage() {
     if (positionsWithCoords.length > 0) {
       const avgLat =
         positionsWithCoords.reduce(
-          (sum: number, p: any) => sum + (p.latitude || 0),
+          (sum: number, p: PositionWithCoords) => sum + (p.latitude || 0),
           0,
         ) / positionsWithCoords.length;
       const avgLng =
         positionsWithCoords.reduce(
-          (sum: number, p: any) => sum + (p.longitude || 0),
+          (sum: number, p: PositionWithCoords) => sum + (p.longitude || 0),
           0,
         ) / positionsWithCoords.length;
       return [avgLat, avgLng];

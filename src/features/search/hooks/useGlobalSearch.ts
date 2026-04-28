@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { api } from "../../../lib/api";
+import type { Position, Company, NewsItem } from "../../../lib/api";
 import { companyApi } from "../../../features/companies/services/companyApi";
 import { useAuth } from "../../../features/auth";
 import type { SearchResult } from "../types";
@@ -123,12 +124,12 @@ export function useGlobalSearch() {
         const positionResults: SearchResult[] = positions
           // Client side filtering
           .filter(
-            (p: any) =>
+            (p: Position) =>
               p.title.toLowerCase().includes(searchQuery) ||
               p.company?.name.toLowerCase().includes(searchQuery) ||
               p.description?.toLowerCase().includes(searchQuery),
           )
-          .map((p: any) => ({
+          .map((p: Position) => ({
             id: `pos-${p.id}`,
             type: "position",
             title: p.title,
@@ -138,11 +139,11 @@ export function useGlobalSearch() {
 
         const companyResults: SearchResult[] = companies
           .filter(
-            (c: any) =>
+            (c: Company) =>
               c.name.toLowerCase().includes(searchQuery) ||
               c.description?.toLowerCase().includes(searchQuery),
           )
-          .map((c: any) => ({
+          .map((c: Company) => ({
             id: `comp-${c.id}`,
             type: "company",
             title: c.name,
@@ -152,11 +153,11 @@ export function useGlobalSearch() {
 
         const newsResults: SearchResult[] = news
           .filter(
-            (n: any) =>
+            (n: NewsItem) =>
               n.title.toLowerCase().includes(searchQuery) ||
               n.content?.toLowerCase().includes(searchQuery),
           )
-          .map((n: any) => ({
+          .map((n: NewsItem) => ({
             id: `news-${n.id}`,
             type: "news",
             title: n.title,

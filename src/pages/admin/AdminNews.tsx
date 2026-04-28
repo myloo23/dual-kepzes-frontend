@@ -30,11 +30,14 @@ export default function AdminNews() {
   } | null>(null);
 
   // Helper to extract list from response
-  const extractList = (response: any): NewsItem[] => {
-    if (Array.isArray(response)) return response;
-    if (response && Array.isArray(response.data)) return response.data;
-    if (response && Array.isArray(response.items)) return response.items;
-    if (response && Array.isArray(response.news)) return response.news; // Potential specific key
+  const extractList = (response: unknown): NewsItem[] => {
+    if (Array.isArray(response)) return response as NewsItem[];
+    if (response !== null && typeof response === "object") {
+      const r = response as Record<string, unknown>;
+      if (Array.isArray(r.data)) return r.data as NewsItem[];
+      if (Array.isArray(r.items)) return r.items as NewsItem[];
+      if (Array.isArray(r.news)) return r.news as NewsItem[];
+    }
     return [];
   };
 

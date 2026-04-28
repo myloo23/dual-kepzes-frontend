@@ -29,7 +29,7 @@ export const useAvailableStudents = (): UseAvailableStudentsResult => {
       // The api-client auto-unwraps the response, so response is already the data array
       const studentsData = Array.isArray(response)
         ? response
-        : (response as any)?.data || [];
+        : response.data || [];
       console.log("[useAvailableStudents] Students data:", studentsData);
       setStudents(studentsData);
     } catch (err) {
