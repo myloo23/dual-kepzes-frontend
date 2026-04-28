@@ -1,12 +1,36 @@
 import { useEffect, useState } from "react";
-import { type StudentProfile } from "../../../../lib/api";
+import { type StudentProfile, type Location } from "../../../../lib/api";
 import { Modal } from "../../../../components/ui/Modal";
+
+// Handles both flat StudentProfile and nested shapes the API may return
+type InitialDataShape = StudentProfile & {
+  studentProfile?: StudentProfile;
+  profile?: StudentProfile;
+};
+
+interface StudentSavePayload {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  mothersName: string;
+  dateOfBirth: string;
+  country: string;
+  zipCode: number | undefined;
+  city: string;
+  streetAddress: string;
+  highSchool: string;
+  graduationYear: number | undefined;
+  neptunCode: string;
+  currentMajor: string;
+  studyMode: string;
+  hasLanguageCert: boolean;
+}
 
 interface StudentFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: Record<string, any>) => Promise<void>;
-  initialData?: StudentProfile | null;
+  onSave: (data: StudentSavePayload) => Promise<void>;
+  initialData?: InitialDataShape | null;
 }
 
 const INITIAL_FORM_STATE = {
@@ -54,13 +78,13 @@ export default function StudentFormModal({
         // However, StudentRegisterPayload suggests a flat structure for registration.
         // Let's assume broad compatibility.
 
-        const d = initialData as any;
+        const d = initialData;
         // Check if we have a nested profile object (User object with studentProfile)
-        const p = d.studentProfile || d.profile || d;
+        const p: StudentProfile = d.studentProfile ?? d.profile ?? d;
         // Merge user fields from root (d) if available, with profile fields from p, using d as priority for user fields if needed
 
         // Location is strictly in the profile part (p)
-        const loc = p.location || d.location || {};
+        const loc: Partial<Location> = p.location || d.location || {};
 
         setFormData({
           fullName: d.fullName || p.fullName || "",
@@ -69,7 +93,7 @@ export default function StudentFormModal({
           mothersName: p.mothersName || "",
           dateOfBirth: (
             p.dateOfBirth ||
-            (p as any).birthDate ||
+            p.birthDate ||
             d.birthDate ||
             ""
           ).split("T")[0],
