@@ -115,12 +115,13 @@ export const CompanyRegistrationForm = () => {
       );
 
       navigate("/");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Registration error:", error);
-      const msg =
-        error.data?.message ||
-        error.message ||
-        "Hiba történt a regisztráció során.";
+      const isApiError = (e: unknown): e is { data?: { message?: string }; message?: string } =>
+        typeof e === "object" && e !== null;
+      const msg = isApiError(error)
+        ? (error.data?.message ?? error.message ?? "Hiba történt a regisztráció során.")
+        : "Hiba történt a regisztráció során.";
       showError(`Regisztráció sikertelen: ${msg}`);
     } finally {
       setIsLoading(false);

@@ -276,6 +276,21 @@ export type StudentRegisterPayload =
       languageLevel: string;
     };
 
+export interface SystemAdminRegisterPayload {
+  email: string;
+  password: string;
+  fullName: string;
+  phoneNumber?: string;
+}
+
+export interface CompanyAdminRegisterPayload {
+  email: string;
+  password: string;
+  fullName: string;
+  companyId: string;
+  jobTitle: string;
+}
+
 export interface CompanyRegisterPayload {
   company: {
     name: string;

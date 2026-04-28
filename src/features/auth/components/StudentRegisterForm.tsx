@@ -147,10 +147,7 @@ export default function StudentRegisterForm() {
         firstChoiceId,
         secondChoiceId,
         hasLanguageCert: !!hasLanguageCert,
-        ...({
-          language: hasLanguageCert ? language : undefined,
-          languageLevel: hasLanguageCert ? languageLevel : undefined,
-        } as any),
+        ...(hasLanguageCert ? { language, languageLevel } : {}),
       };
     } else {
       // UNIVERSITY

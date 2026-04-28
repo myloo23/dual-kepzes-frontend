@@ -29,6 +29,7 @@ import type {
   Partnership,
   PaginationQuery,
   CompanyRegisterPayload,
+  SystemAdminRegisterPayload,
 } from "../types/api.types";
 import type {
   NotificationCreatePayload,
@@ -87,13 +88,13 @@ export const api = {
   registerCompany: (payload: CompanyRegisterPayload) =>
     apiPost<RegisterResponse>("/api/companies/with-admin", payload),
 
-  registerSystemAdmin: (payload: any) =>
+  registerSystemAdmin: (payload: SystemAdminRegisterPayload) =>
     apiPost<RegisterResponse>("/api/auth/register/system-admin", payload),
 
-  registerCompanyAdmin: (payload: any) =>
+  registerCompanyAdmin: (payload: Record<string, unknown>) =>
     apiPost<RegisterResponse>("/api/auth/register/company-admin", payload),
 
-  registerGeneric: (payload: any) =>
+  registerGeneric: (payload: Record<string, unknown>) =>
     apiPost<RegisterResponse>("/api/auth/register", payload),
 
   // ============= Stats =============
@@ -493,6 +494,8 @@ export type {
   Partnership,
   PartnershipStatus,
   CompanyRegisterPayload,
+  SystemAdminRegisterPayload,
+  CompanyAdminRegisterPayload,
 } from "../types/api.types";
 export type {
   NotificationCreatePayload,
