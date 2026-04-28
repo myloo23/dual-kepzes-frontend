@@ -1,6 +1,6 @@
 // src/components/company-profile/CompanyProfileDisplay.tsx
 import { Globe } from "lucide-react";
-import { type Company } from "../../../lib/api";
+import { type Company, type Location } from "../../../lib/api";
 
 interface CompanyProfileDisplayProps {
   company: Company;
@@ -34,7 +34,7 @@ export default function CompanyProfileDisplay({
               Telephelyek
             </dt>
             <dd className="mt-1 text-sm text-gray-900 dark:text-slate-100 space-y-1 transition-colors">
-              {company.locations?.map((loc: any, i: number) => (
+              {company.locations?.map((loc: Location, i: number) => (
                 <div key={i}>
                   {[loc.zipCode, loc.city, loc.address]
                     .filter(Boolean)

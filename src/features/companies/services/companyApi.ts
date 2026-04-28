@@ -16,6 +16,7 @@ import type {
   Company,
   PaginationQuery,
   CompanyRegisterPayload,
+  RegisterResponse,
 } from "@/types/api.types";
 
 const COMPANIES_PATH = "/api/companies";
@@ -82,7 +83,7 @@ export const companyApi = {
   },
 
   registerWithAdmin: (payload: CompanyRegisterPayload) =>
-    apiPost<any>(`${COMPANIES_PATH}/with-admin`, payload),
+    apiPost<RegisterResponse>(`${COMPANIES_PATH}/with-admin`, payload),
 
   update: async (id: Id, body: Partial<Omit<Company, "id">>) => {
     const data = await apiPatch<Company>(

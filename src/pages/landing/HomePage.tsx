@@ -35,7 +35,7 @@ function HomePage() {
       console.log("API Válasz:", res);
       console.log("Kapott role:", res.user.role);
 
-      login(res.token, res.user as any);
+      login(res.token, { ...res.user, isActive: true });
 
       const normalizedRole = res.user.role as UserRole;
       const roleConfig = ROLE_NAVIGATION_PATHS[normalizedRole] as {

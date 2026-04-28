@@ -1,9 +1,21 @@
 import { useEffect, useState, useMemo } from "react";
 import { api } from "../../lib/api";
 import { studentsApi } from "../../features/students/services/studentsApi";
+import type {
+  SystemAdminProfile,
+  CompanyAdminProfile,
+  UniversityUserProfile,
+  StudentProfile,
+} from "../../types/api.types";
+
+type AdminProfileState =
+  | SystemAdminProfile
+  | CompanyAdminProfile
+  | UniversityUserProfile
+  | StudentProfile;
 
 export default function AdminSettings() {
-  const [me, setMe] = useState<any>(null);
+  const [me, setMe] = useState<AdminProfileState | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",

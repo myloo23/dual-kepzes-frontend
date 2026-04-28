@@ -50,7 +50,7 @@ export const CompanyRegistrationForm = () => {
     }));
   };
 
-  const updateCompany = (field: keyof typeof formData.company, value: any) => {
+  const updateCompany = (field: keyof typeof formData.company, value: string | boolean | Location[] | undefined) => {
     setFormData((prev: CompanyRegisterPayload) => ({
       ...prev,
       company: { ...prev.company, [field]: value },
