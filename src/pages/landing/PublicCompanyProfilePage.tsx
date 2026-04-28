@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Globe, MapPin, User, Building2 } from "lucide-react";
 import { api, type Company, type Position } from "../../lib/api";
+
+type PositionCompanyWithDesc = NonNullable<Position["company"]> & { description?: string };
 import { companyApi } from "../../features/companies/services/companyApi";
 import PositionCard from "../../features/positions/components/PositionCard";
 import { pickLogo } from "../../features/positions/utils/positions.utils";
@@ -130,11 +132,11 @@ export default function PublicCompanyProfilePage() {
               company.id,
             );
             const foundInPos = companyPositions.find(
-              (p) => (p.company as any)?.description,
+              (p) => (p.company as PositionCompanyWithDesc | undefined)?.description,
             );
 
             if (foundInPos) {
-              const desc = (foundInPos.company as any).description;
+              const desc = (foundInPos.company as PositionCompanyWithDesc).description!;
               console.log(
                 "✅ Found in Position (ByCompany):",
                 desc.substring(0, 20) + "...",
@@ -157,11 +159,11 @@ export default function PublicCompanyProfilePage() {
           const foundInPublic = publicPositions.find(
             (p) =>
               String(p.companyId) === String(company.id) &&
-              (p.company as any)?.description,
+              (p.company as PositionCompanyWithDesc | undefined)?.description,
           );
 
           if (foundInPublic) {
-            const desc = (foundInPublic.company as any).description;
+            const desc = (foundInPublic.company as PositionCompanyWithDesc).description!;
             console.log(
               "✅ Found in Public Position:",
               desc.substring(0, 20) + "...",

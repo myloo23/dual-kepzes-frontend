@@ -159,10 +159,10 @@ export default function PositionFormModal({
 
     setLoading(true);
     try {
-      // We cast correctly as we are sending locationId to backend,
-      // even if TypeScript expects 'location' object in strict types,
-      // we assume api.types might differ or we use 'as any' for now if strictly typed to object
-      const payload: any = {
+      type PositionPayload = Omit<PositionFormData, "deadline"> & {
+        deadline: string | null;
+      };
+      const payload: PositionPayload = {
         ...formData,
         deadline: formatDeadlineForApi(formData.deadline),
         tags: formData.tags
@@ -173,7 +173,7 @@ export default function PositionFormModal({
           .filter((tag) => tag.name),
       };
 
-      await onSave(payload);
+      await onSave(payload as unknown as Omit<Position, "id">);
       onClose();
     } catch (e) {
       const errorMessage =

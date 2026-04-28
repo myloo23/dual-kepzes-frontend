@@ -37,13 +37,13 @@ export function useCompanyStats(companyId: Id | undefined) {
         const companyStats = await api.stats.getCompanyMe().catch(() => null);
         const apiPositionsCount = firstNumber(
           companyStats?.positionsCount,
-          (companyStats as any)?.positions,
-          (companyStats as any)?.positionCount,
+          companyStats?.["positions"],
+          companyStats?.["positionCount"],
         );
         const apiApplicationsCount = firstNumber(
           companyStats?.applicationsCount,
-          (companyStats as any)?.applications,
-          (companyStats as any)?.applicationCount,
+          companyStats?.["applications"],
+          companyStats?.["applicationCount"],
         );
 
         if (apiPositionsCount !== null && apiApplicationsCount !== null) {

@@ -1,5 +1,13 @@
 import { type Application, type ApplicationStatus } from "../../../lib/api";
 
+type ProfileWithAliases = NonNullable<
+  NonNullable<Application["student"]>["studentProfile"]
+> & { birth_date?: string };
+type StudentWithAliases = NonNullable<Application["student"]> & {
+  birthDate?: string;
+  dateOfBirth?: string;
+};
+
 interface CompanyApplicationCardProps {
   application: Application;
   isExpanded: boolean;
@@ -173,7 +181,8 @@ export const CompanyApplicationCard = ({
                     </div>
                     <div className="col-span-2 font-medium text-slate-900 dark:text-slate-100 transition-colors">
                       {(() => {
-                        const profile = displayApp.student.studentProfile;
+                        const profile = displayApp.student.studentProfile as ProfileWithAliases | undefined;
+                        const student = displayApp.student as StudentWithAliases;
                         console.log("Student Profile Data:", profile);
                         console.log("Full Student Data:", displayApp.student);
 
@@ -181,9 +190,9 @@ export const CompanyApplicationCard = ({
                         const birthDate =
                           profile?.birthDate ||
                           profile?.dateOfBirth ||
-                          (profile as any)?.birth_date ||
-                          (displayApp.student as any)?.birthDate ||
-                          (displayApp.student as any)?.dateOfBirth;
+                          profile?.birth_date ||
+                          student?.birthDate ||
+                          student?.dateOfBirth;
 
                         console.log("Found birthDate:", birthDate);
                         return birthDate
