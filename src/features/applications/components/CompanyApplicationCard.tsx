@@ -174,8 +174,6 @@ export const CompanyApplicationCard = ({
                     <div className="col-span-2 font-medium text-slate-900 dark:text-slate-100 transition-colors">
                       {(() => {
                         const profile = displayApp.student.studentProfile;
-                        console.log("Student Profile Data:", profile);
-                        console.log("Full Student Data:", displayApp.student);
 
                         // Check all possible locations for birth date
                         const birthDate =
@@ -185,7 +183,6 @@ export const CompanyApplicationCard = ({
                           (displayApp.student as any)?.birthDate ||
                           (displayApp.student as any)?.dateOfBirth;
 
-                        console.log("Found birthDate:", birthDate);
                         return birthDate
                           ? new Date(birthDate).toLocaleDateString("hu-HU")
                           : "Nincs megadva";

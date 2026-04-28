@@ -49,9 +49,7 @@ export default function AdminNews() {
     // Load active news
     try {
       const activesResponse = await api.news.admin.list();
-      console.log("Raw active news response:", activesResponse);
       const actives = extractList(activesResponse);
-      console.log("Extracted actives:", actives);
       setActiveItems(actives);
     } catch (e: any) {
       console.error("Failed to load active news:", e);
@@ -64,9 +62,7 @@ export default function AdminNews() {
     // Load archived news
     try {
       const archivesResponse = await api.news.admin.listArchived();
-      console.log("Raw archived news response:", archivesResponse);
       const archives = extractList(archivesResponse);
-      console.log("Extracted archives:", archives);
       setArchivedItems(archives);
     } catch (e: any) {
       console.error("Failed to load archived news:", e);

@@ -109,16 +109,11 @@ function MapPage() {
     const fetchPositions = async () => {
       try {
         setError(null);
-        console.log("🔄 Fetching positions from API...");
         const res = await api.positions.listPublic();
-
-        console.log("📦 API Response:", res);
 
         const activePositions = Array.isArray(res)
           ? res.filter((p) => !isExpired(p.deadline))
           : [];
-
-        console.log(`✅ Loaded ${activePositions.length} active positions`);
 
         setPositions(activePositions);
       } catch (e) {

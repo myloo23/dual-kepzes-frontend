@@ -13,6 +13,7 @@ import {
 } from "../../../utils/validation-utils";
 import { LANGUAGES, LANGUAGE_LEVELS } from "../constants";
 import { useMajors } from "../../majors";
+import { PRIVACY_POLICY_URL } from "../../../constants";
 
 export default function StudentRegisterForm() {
   const navigate = useNavigate();
@@ -695,7 +696,7 @@ export default function StudentRegisterForm() {
           >
             Elfogadom az{" "}
             <a
-              href="https://nje.hu/adatkezelesi-nyilatkozat"
+              href={PRIVACY_POLICY_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold underline hover:text-blue-700 dark:hover:text-blue-300 transition-colors"

@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/useToast";
 import Button from "@/components/ui/Button";
 import { ArrowRight, Building2, User, MapPin } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { PRIVACY_POLICY_URL } from "@/constants";
 
 const INITIAL_LOCATION: Location = {
   country: "Magyarország",
@@ -435,7 +436,7 @@ export const CompanyRegistrationForm = () => {
                 <span className="text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors">
                   Kijelentem, hogy elolvastam és elfogadom az{" "}
                   <a
-                    href="https://nje.hu/adatkezelesi-nyilatkozat"
+                    href={PRIVACY_POLICY_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 dark:text-blue-400 hover:underline transition-colors"

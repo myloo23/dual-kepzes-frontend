@@ -10,7 +10,7 @@ import type { Position, Tag } from "../../../types/api.types";
 interface PositionCardProps {
   position: Position;
   logo: string;
-  onCompanyClick: (company: any) => void;
+  onCompanyClick?: (company: any) => void;
   onApply?: (positionId: string | number) => void;
   hideCompanyInfo?: boolean;
 }
@@ -36,6 +36,8 @@ export default function PositionCard({
 
   const expired = isExpired(p.deadline);
   const typeConfig = getPositionTypeConfig(p.type);
+  const showCompanyInfo = !hideCompanyInfo;
+  const showCompanyLink = showCompanyInfo && Boolean(onCompanyClick);
 
   const externalUrl =
     p.company?.hasOwnApplication
@@ -50,7 +52,7 @@ export default function PositionCard({
       <div className="p-5 flex-grow">
         {/* felső sor */}
         <div className="flex items-start gap-4">
-          {!hideCompanyInfo && (
+          {showCompanyLink ? (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -59,8 +61,7 @@ export default function PositionCard({
                   id: p.company?.id ?? p.companyId,
                   name: companyName,
                 };
-                console.log("🖱️ Logo clicked! company data:", companyData);
-                onCompanyClick(companyData);
+                onCompanyClick?.(companyData);
               }}
               className="h-20 w-20 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-nje-jaffa dark:hover:border-nje-jaffa hover:shadow-md transition cursor-pointer"
               title={`${companyName} információi`}
@@ -73,11 +74,21 @@ export default function PositionCard({
                 decoding="async"
               />
             </button>
-          )}
+          ) : showCompanyInfo ? (
+            <div className="h-20 w-20 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-center overflow-hidden flex-shrink-0 transition">
+              <img
+                src={logo}
+                alt={`${companyName} logo`}
+                className="h-full w-full object-contain dark:opacity-90 dark:mix-blend-lighten"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          ) : null}
 
           <div className="min-w-0">
             <div className="text-xs text-slate-500 dark:text-slate-400 mb-1 transition-colors">
-              {!hideCompanyInfo && (
+              {showCompanyLink ? (
                 <>
                   <button
                     onClick={(e) => {
@@ -87,11 +98,7 @@ export default function PositionCard({
                         id: p.company?.id ?? p.companyId,
                         name: companyName,
                       };
-                      console.log(
-                        "🖱️ Company name clicked! company data:",
-                        companyData,
-                      );
-                      onCompanyClick(companyData);
+                      onCompanyClick?.(companyData);
                     }}
                     className="hover:text-nje-jaffa hover:underline transition cursor-pointer"
                     title={`${companyName} információi`}
@@ -100,7 +107,9 @@ export default function PositionCard({
                   </button>
                   {" • "}
                 </>
-              )}
+              ) : showCompanyInfo ? (
+                <>{companyName}{" - "}</>
+              ) : null}
               {cityText}
             </div>
 

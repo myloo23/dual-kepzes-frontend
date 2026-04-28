@@ -38,7 +38,6 @@ export default function PublicCompanyProfilePage() {
           ...companyData,
           logoUrl: effectiveLogoUrl,
         };
-        console.log("Fetched company data:", normalizedCompanyData);
         setCompany(normalizedCompanyData);
 
         // Fetch public positions with higher limit and company filter
@@ -97,33 +96,21 @@ export default function PublicCompanyProfilePage() {
   useEffect(() => {
     const fetchDescriptionFallback = async () => {
       if (company && !company.description && !loading) {
-        console.group("🛑 Company Description Debugger");
-        console.log(
-          "Initial fetch missing description. Attempting fallbacks...",
-        );
-
         try {
           // Strategy 1: Global Company List
-          console.log("1. Checking Global Company List...");
           const companies = await companyApi.list();
           const foundInList = companies.find(
             (c) => String(c.id) === String(company.id),
           );
 
           if (foundInList?.description) {
-            console.log(
-              "✅ Found in Global List:",
-              foundInList.description.substring(0, 20) + "...",
-            );
             setCompany((prev) =>
               prev ? { ...prev, description: foundInList.description } : null,
             );
-            console.groupEnd();
             return;
           }
 
           // Strategy 2: Positions by Company
-          console.log("2. Checking Positions by Company...");
           // Try catch this specifically as it might fail for unauth
           try {
             const companyPositions = await api.positions.listByCompany(
@@ -135,22 +122,16 @@ export default function PublicCompanyProfilePage() {
 
             if (foundInPos) {
               const desc = (foundInPos.company as any).description;
-              console.log(
-                "✅ Found in Position (ByCompany):",
-                desc.substring(0, 20) + "...",
-              );
               setCompany((prev) =>
                 prev ? { ...prev, description: desc } : null,
               );
-              console.groupEnd();
               return;
             }
-          } catch (err) {
-            console.log("⚠️ Strategy 2 failed (likely auth needed):", err);
+          } catch {
+            // Auth-restricted fallback is allowed to fail for public visitors.
           }
 
           // Strategy 3: Public Positions (Unauthenticated)
-          console.log("3. Checking Public Positions (No Token)...");
           const publicPositions = await api.positions.listPublic({
             limit: 100,
           });
@@ -162,14 +143,9 @@ export default function PublicCompanyProfilePage() {
 
           if (foundInPublic) {
             const desc = (foundInPublic.company as any).description;
-            console.log(
-              "✅ Found in Public Position:",
-              desc.substring(0, 20) + "...",
-            );
             setCompany((prev) =>
               prev ? { ...prev, description: desc } : null,
             );
-            console.groupEnd();
             return;
           }
 
@@ -177,7 +153,6 @@ export default function PublicCompanyProfilePage() {
         } catch (e) {
           console.error("Fallback fetch failed", e);
         }
-        console.groupEnd();
       }
     };
     fetchDescriptionFallback();
@@ -322,7 +297,6 @@ export default function PublicCompanyProfilePage() {
                           logo={company.logoUrl || logo}
                           hideCompanyInfo={true} // Clean look for profile page
                           onApply={(id) => handleApply(id)}
-                          onCompanyClick={() => {}}
                         />
                       ))}
                     </div>

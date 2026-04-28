@@ -71,33 +71,8 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
 
     setIsSearching(true);
     const timer = setTimeout(() => {
-      // TODO: Replace with actual API call
-      // For now, mock search results
-      const mockResults: SearchResult[] = [
-        {
-          id: 1,
-          type: "position",
-          title: `Software Developer - ${query}`,
-          subtitle: "Mercedes-Benz Manufacturing Hungary",
-          url: "/positions",
-        },
-        {
-          id: 2,
-          type: "company",
-          title: `${query} Company`,
-          subtitle: "Kecskemét",
-          url: "/companies/2",
-        },
-        {
-          id: 3,
-          type: "news",
-          title: `News about ${query}`,
-          subtitle: "2 days ago",
-          url: "/student/news",
-        },
-      ];
-
-      setResults(mockResults);
+      // Search is currently unavailable
+      setResults([]);
       setIsSearching(false);
     }, 300);
 
@@ -230,7 +205,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
 
             {!isSearching && query && results.length === 0 && (
               <div className="p-8 text-center text-slate-500">
-                <p>Nincs találat a(z) "{query}" keresésre</p>
+                <p>A keresés jelenleg fejlesztés alatt áll.</p>
               </div>
             )}
 

@@ -198,7 +198,7 @@ erDiagram
         string taxId UK
         string contactEmail
         string website
-        string? externalApplicationUrl
+        string externalApplicationUrl "optional"
         boolean hasOwnApplication
         RegistrationStatus status
         boolean isActive
@@ -222,8 +222,8 @@ erDiagram
         string title
         string majorId FK
         PositionType type
-        string? externalApplicationUrl
-        datetime? deadline
+        string externalApplicationUrl "optional"
+        datetime deadline "optional"
         boolean isActive
         string locationId FK
     }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 function validatePassword(pw: string) {
   if (pw.length < 12) return "A jelszó legalább 12 karakter legyen.";
@@ -12,15 +12,12 @@ function validatePassword(pw: string) {
 }
 
 export default function ResetPasswordPage() {
-  const navigate = useNavigate();
   const [params] = useSearchParams();
   const token = useMemo(() => params.get("token") ?? "", [params]);
 
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [ok, setOk] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,20 +28,7 @@ export default function ResetPasswordPage() {
     if (pwErr) return setError(pwErr);
     if (pw !== pw2) return setError("A két jelszó nem egyezik.");
 
-    setLoading(true);
-    try {
-      // Később: valós API
-      // await fetch("/auth/reset-password", { method:"POST", headers:{...}, body: JSON.stringify({ token, newPassword: pw }) })
-
-      console.log("RESET PASSWORD (mock):", { token, newPassword: pw });
-
-      setOk(true);
-      setTimeout(() => navigate("/"), 900);
-    } catch {
-      setError("Nem sikerült a jelszó módosítása. Lehet, hogy a token lejárt.");
-    } finally {
-      setLoading(false);
-    }
+    setError("Az új jelszó beállítása jelenleg nem érhető el.");
   };
 
   return (
@@ -58,15 +42,10 @@ export default function ResetPasswordPage() {
         </p>
       </div>
 
-      {ok ? (
-        <div className="rounded-2xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400 transition-colors">
-          Jelszó sikeresen módosítva! Átirányítás...
-        </div>
-      ) : (
-        <form
-          onSubmit={onSubmit}
-          className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm dark:shadow-none space-y-3 transition-colors"
-        >
+      <form
+        onSubmit={onSubmit}
+        className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm dark:shadow-none space-y-3 transition-colors"
+      >
           {error && (
             <div className="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-3 py-2 text-sm text-red-700 dark:text-red-400 transition-colors">
               {error}
@@ -101,10 +80,9 @@ export default function ResetPasswordPage() {
 
           <button
             type="submit"
-            disabled={loading}
             className="w-full rounded-lg bg-blue-600 dark:bg-blue-600/90 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-60 transition-colors"
           >
-            {loading ? "Mentés..." : "Jelszó mentése"}
+            Jelszó mentése
           </button>
 
           <div className="text-center">
@@ -121,7 +99,6 @@ export default function ResetPasswordPage() {
             karakter.
           </div>
         </form>
-      )}
     </div>
   );
 }
