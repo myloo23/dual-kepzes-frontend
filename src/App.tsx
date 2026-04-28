@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ComponentType } from "react";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
@@ -13,8 +13,9 @@ import { AuthProvider, ProtectedRoute } from "./features/auth";
 
 // Helper function to retry lazy imports with page reload on failure
 // This fixes "Failed to fetch dynamically imported module" errors after deployments
-const lazyRetry = (componentImport: () => Promise<any>) =>
-  lazy(async () => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const lazyRetry = <T extends ComponentType<any>>(componentImport: () => Promise<{ default: T }>) =>
+  lazy<T>(async () => {
     const pageHasAlreadyBeenForceRefreshed = JSON.parse(
       window.sessionStorage.getItem("page-has-been-force-refreshed") || "false",
     );
@@ -28,7 +29,7 @@ const lazyRetry = (componentImport: () => Promise<any>) =>
         // Assuming that the user is not on the latest version of the application.
         // Let's refresh the page immediately.
         window.sessionStorage.setItem("page-has-been-force-refreshed", "true");
-        return window.location.reload();
+        return window.location.reload() as unknown as { default: T };
       }
 
       // The page has already been reloaded

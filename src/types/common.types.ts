@@ -12,7 +12,7 @@ export type ApiErrorBody = {
     | {
         code?: string;
         message?: string;
-        details?: any;
+        details?: unknown;
       };
   errors?: Array<{ field?: string; message?: string }>;
 };

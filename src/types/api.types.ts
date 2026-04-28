@@ -18,7 +18,7 @@ export interface Location {
 export interface PaginationQuery {
   page?: number;
   limit?: number;
-  [key: string]: any;
+  [key: string]: string | number | boolean | null | undefined;
 }
 
 // ============= Company Types =============
