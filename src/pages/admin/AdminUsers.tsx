@@ -4,9 +4,14 @@
  */
 
 import { useState, useMemo } from "react";
-import type { StudentProfile } from "../../lib/api";
+import type {
+  StudentProfile,
+  CompanyAdminProfile,
+  UniversityUserProfile,
+  User,
+  CreateUserPayload,
+} from "../../types";
 import { useUserManagement } from "../../features/users/hooks/useUserManagement";
-import type { CreateUserPayload } from "../../types";
 import { useModal } from "../../hooks";
 import StudentFormModal from "../../features/users/components/modals/StudentFormModal";
 import AdminUserModal from "../../features/users/components/modals/AdminUserModal";
@@ -25,10 +30,31 @@ import {
 } from "../../constants";
 import type { TabType } from "../../types/ui.types";
 
+type AdminUserItem = StudentProfile | CompanyAdminProfile | UniversityUserProfile | User;
+
+// Mirrors StudentFormModal's local StudentSavePayload (not exported from the modal)
+interface StudentSaveData {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  mothersName: string;
+  dateOfBirth: string;
+  country: string;
+  zipCode: number | undefined;
+  city: string;
+  streetAddress: string;
+  highSchool: string;
+  graduationYear: number | undefined;
+  neptunCode: string;
+  currentMajor: string;
+  studyMode: string;
+  hasLanguageCert: boolean;
+}
+
 export default function AdminUsersPage() {
   const userManagement = useUserManagement();
   const studentModal = useModal<StudentProfile>();
-  const genericModal = useModal<any>();
+  const genericModal = useModal<Partial<CompanyAdminProfile | UniversityUserProfile | User>>();
   const [lookupId, setLookupId] = useState("");
   const { handleExport } = useUserExport();
 
@@ -44,10 +70,10 @@ export default function AdminUsersPage() {
     setSortConfig(null); // Reset sorting when changing tabs
   };
 
-  const handleOpenItem = (item: any) => {
+  const handleOpenItem = (item: AdminUserItem) => {
     userManagement.clearMessages();
     if (userManagement.activeTab === "STUDENT") {
-      studentModal.open(item);
+      studentModal.open(item as StudentProfile);
     } else {
       genericModal.open(item);
     }
@@ -72,31 +98,32 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleSaveStudent = async (data: Record<string, any>) => {
+  const handleSaveStudent = async (data: StudentSaveData) => {
     if (!studentModal.data) return;
 
     const success = await userManagement.updateStudent(
       studentModal.data.id,
-      data,
+      data as Partial<StudentProfile>,
     );
     if (success) {
       studentModal.close();
     }
   };
 
-  const handleSaveGeneric = async (data: Record<string, any>) => {
+  const handleSaveGeneric = async (data: CreateUserPayload) => {
     let success = false;
-    if (!genericModal.data?.id) {
+    const id = genericModal.data?.id;
+    if (!id) {
       // Create user
-      success = await userManagement.createUser(data as CreateUserPayload);
+      success = await userManagement.createUser(data);
     } else {
       // Update user
       success = await userManagement.updateGeneric(
-        genericModal.data.id,
-        data,
+        id,
+        data as unknown as Partial<CompanyAdminProfile | UniversityUserProfile>,
       );
     }
-    
+
     if (success) {
       genericModal.close();
     }
@@ -115,26 +142,32 @@ export default function AdminUsersPage() {
     setSortConfig({ key, direction });
   };
 
-  const getSortValue = (item: any, key: string) => {
+  const getSortValue = (item: AdminUserItem, key: string): string | number => {
     if (userManagement.activeTab === "STUDENT") {
-      const neptun = item.neptunCode ?? item.studentProfile?.neptunCode;
+      const student = item as StudentProfile & { studentProfile?: StudentProfile };
+      const neptun = student.neptunCode ?? student.studentProfile?.neptunCode;
       if (key === "neptunCode") return neptun ?? "";
       if (key === "type") return neptun ? "Egyetemista" : "Középiskolás";
     }
     if (userManagement.activeTab === "COMPANY_ADMIN") {
-      if (key === "company") return item.companyEmployee?.company?.id ?? "";
+      const ca = item as CompanyAdminProfile & { user?: { fullName?: string; email?: string }; name?: string };
+      if (key === "company") return ca.companyEmployee?.company?.id ?? "";
       if (key === "name")
-        return item.user?.fullName ?? item.fullName ?? item.name ?? "";
-      if (key === "email") return item.user?.email ?? item.email ?? "";
+        return ca.user?.fullName ?? ca.fullName ?? ca.name ?? "";
+      if (key === "email") return ca.user?.email ?? ca.email ?? "";
     }
     if (userManagement.activeTab === "UNIVERSITY_USER") {
+      const uu = item as UniversityUserProfile & { name?: string };
       if (key === "name")
-        return item.user?.fullName ?? item.fullName ?? item.name ?? "";
-      if (key === "email") return item.user?.email ?? item.email ?? "";
+        return uu.user?.fullName ?? uu.fullName ?? uu.name ?? "";
+      if (key === "email") return uu.user?.email ?? uu.email ?? "";
     }
     // Default / Inactive
-    if (key === "name") return item.fullName ?? item.name ?? "";
-    return item[key] ?? "";
+    const u = item as User & { fullName?: string; name?: string };
+    if (key === "name") return u.fullName ?? u.name ?? "";
+    const val = (item as unknown as Record<string, unknown>)[key];
+    if (typeof val === "string" || typeof val === "number") return val;
+    return "";
   };
 
   const sortedItems = useMemo(() => {
@@ -181,16 +214,17 @@ export default function AdminUsersPage() {
     </th>
   );
 
-  const renderColumns = (item: any) => {
+  const renderColumns = (item: AdminUserItem) => {
     if (userManagement.activeTab === "STUDENT") {
-      const neptun = item.neptunCode ?? item.studentProfile?.neptunCode;
+      const student = item as StudentProfile & { studentProfile?: StudentProfile; name?: string };
+      const neptun = student.neptunCode ?? student.studentProfile?.neptunCode;
       return (
         <>
           <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
-            {item.fullName ?? item.name ?? "User"}
+            {student.fullName ?? student.name ?? "User"}
           </td>
           <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
-            {item.email ?? "-"}
+            {student.email ?? "-"}
           </td>
           <td className="px-4 py-3 text-slate-500 dark:text-slate-500 transition-colors">
             {neptun ?? "-"}
@@ -209,27 +243,29 @@ export default function AdminUsersPage() {
         </>
       );
     } else if (userManagement.activeTab === "COMPANY_ADMIN") {
+      const ca = item as CompanyAdminProfile & { user?: { fullName?: string; email?: string }; name?: string };
       return (
         <>
           <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
-            {item.user?.fullName ?? item.fullName ?? item.name ?? "User"}
+            {ca.user?.fullName ?? ca.fullName ?? ca.name ?? "User"}
           </td>
           <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
-            {item.user?.email ?? item.email ?? "-"}
+            {ca.user?.email ?? ca.email ?? "-"}
           </td>
           <td className="px-4 py-3 text-slate-500 dark:text-slate-400 transition-colors">
-            Cég ID: {item.companyEmployee?.company?.id ?? "-"}
+            Cég ID: {ca.companyEmployee?.company?.id ?? "-"}
           </td>
         </>
       );
     } else if (userManagement.activeTab === "UNIVERSITY_USER") {
+      const uu = item as UniversityUserProfile & { name?: string };
       return (
         <>
           <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
-            {item.user?.fullName ?? item.fullName ?? item.name ?? "User"}
+            {uu.user?.fullName ?? uu.fullName ?? uu.name ?? "User"}
           </td>
           <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
-            {item.user?.email ?? item.email ?? "-"}
+            {uu.user?.email ?? uu.email ?? "-"}
           </td>
           <td className="px-4 py-3 text-slate-500 dark:text-slate-500 transition-colors">
             -
@@ -238,16 +274,17 @@ export default function AdminUsersPage() {
       );
     } else {
       // Inactive Users
+      const u = item as User & { fullName?: string; name?: string };
       return (
         <>
           <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
-            {item.fullName ?? item.name ?? "User"}
+            {u.fullName ?? u.name ?? "User"}
           </td>
           <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
-            {item.email ?? "-"}
+            {u.email ?? "-"}
           </td>
           <td className="px-4 py-3 text-slate-500 dark:text-slate-500 transition-colors">
-            {item.role ?? "-"}
+            {u.role ?? "-"}
           </td>
         </>
       );
@@ -328,7 +365,7 @@ export default function AdminUsersPage() {
             </Button>
             {userManagement.activeTab !== "INACTIVE_USER" && userManagement.activeTab !== "STUDENT" && (
               <Button
-                onClick={() => genericModal.open({} as any)}
+                onClick={() => genericModal.open({})}
                 variant="primary"
                 size="xs"
                 className="ml-2"
