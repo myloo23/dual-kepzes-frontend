@@ -67,7 +67,7 @@ export function exportToExcel<T extends Record<string, any>>(
 
   // Transform data to match columns
   const excelData = data.map((item) => {
-    const row: Record<string, any> = {};
+    const row: Record<string, unknown> = {};
     if (columns) {
       columns.forEach((col) => {
         row[col.label] = item[col.key];

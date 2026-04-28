@@ -2,11 +2,20 @@ import { useCallback } from "react";
 import type { Partnership } from "../../../types/api.types";
 import { exportToExcel, getExportFilename } from "../../../utils/export";
 
+type FlatPartnership = {
+  studentName: string;
+  companyName: string;
+  status: string;
+  semester: string;
+  startDate: string;
+  endDate: string;
+};
+
 export const usePartnershipExport = () => {
   const handleExport = useCallback((partnerships: Partnership[]) => {
     if (!partnerships || partnerships.length === 0) return;
 
-    const columns = [
+    const columns: { key: keyof FlatPartnership; label: string }[] = [
       { key: "studentName", label: "Hallgató" },
       { key: "companyName", label: "Cég" },
       { key: "status", label: "Státusz" },
@@ -15,7 +24,7 @@ export const usePartnershipExport = () => {
       { key: "endDate", label: "Vége" },
     ];
 
-    const flatData = partnerships.map((p) => ({
+    const flatData: FlatPartnership[] = partnerships.map((p) => ({
       studentName: p.student?.fullName || "-",
       companyName: p.position?.company?.name || "-",
       status: p.status,
@@ -31,7 +40,7 @@ export const usePartnershipExport = () => {
     exportToExcel(
       flatData,
       getExportFilename("partnerships", "xlsx"),
-      columns as any,
+      columns,
     );
   }, []);
 

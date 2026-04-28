@@ -6,7 +6,7 @@ export const useCompanyExport = () => {
   const handleExport = useCallback((companies: Company[]) => {
     if (!companies || companies.length === 0) return;
 
-    const columns = [
+    const columns: { key: keyof Company; label: string }[] = [
       { key: "name", label: "Cégnév" },
       { key: "taxId", label: "Adószám" },
       { key: "contactName", label: "Kapcsolattartó neve" },
@@ -16,7 +16,7 @@ export const useCompanyExport = () => {
     exportToExcel(
       companies,
       getExportFilename("companies", "xlsx"),
-      columns as any,
+      columns,
     );
   }, []);
 

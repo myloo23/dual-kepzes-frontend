@@ -2,11 +2,20 @@ import { useCallback } from "react";
 import type { Position } from "../../../lib/api";
 import { exportToExcel, getExportFilename } from "../../../utils/export";
 
+type FlatPosition = {
+  title: string;
+  companyName: string;
+  city: string;
+  status: string;
+  deadline: string;
+  createdAt: string;
+};
+
 export const usePositionExport = () => {
   const handleExport = useCallback((positions: Position[]) => {
     if (!positions || positions.length === 0) return;
 
-    const columns = [
+    const columns: { key: keyof FlatPosition; label: string }[] = [
       { key: "title", label: "Megnevezés" },
       { key: "companyName", label: "Cég" },
       { key: "city", label: "Város" },
@@ -15,7 +24,7 @@ export const usePositionExport = () => {
       { key: "createdAt", label: "Létrehozva" },
     ];
 
-    const flatData = positions.map((item) => ({
+    const flatData: FlatPosition[] = positions.map((item) => ({
       title: item.title,
       companyName: item.company?.name || "-",
       city: item.location?.city || "-",
@@ -31,7 +40,7 @@ export const usePositionExport = () => {
     exportToExcel(
       flatData,
       getExportFilename("positions", "xlsx"),
-      columns as any,
+      columns,
     );
   }, []);
 
