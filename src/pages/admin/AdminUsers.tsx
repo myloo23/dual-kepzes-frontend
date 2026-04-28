@@ -6,6 +6,7 @@
 import { useState, useMemo } from "react";
 import type { StudentProfile } from "../../lib/api";
 import { useUserManagement } from "../../features/users/hooks/useUserManagement";
+import type { CreateUserPayload } from "../../types";
 import { useModal } from "../../hooks";
 import StudentFormModal from "../../features/users/components/modals/StudentFormModal";
 import AdminUserModal from "../../features/users/components/modals/AdminUserModal";
@@ -87,7 +88,7 @@ export default function AdminUsersPage() {
     let success = false;
     if (!genericModal.data?.id) {
       // Create user
-      success = await userManagement.createUser(data);
+      success = await userManagement.createUser(data as CreateUserPayload);
     } else {
       // Update user
       success = await userManagement.updateGeneric(

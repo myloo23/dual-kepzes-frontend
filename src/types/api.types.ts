@@ -291,6 +291,15 @@ export interface CompanyAdminRegisterPayload {
   jobTitle: string;
 }
 
+export interface CreateUserPayload {
+  fullName: string;
+  email: string;
+  password?: string;
+  companyId?: string;
+  jobTitle?: string;
+  [key: string]: string | undefined;
+}
+
 export interface CompanyRegisterPayload {
   company: {
     name: string;

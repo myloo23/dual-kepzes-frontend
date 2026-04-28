@@ -12,6 +12,7 @@ import type {
   UniversityUserProfile,
   User,
   Id,
+  CreateUserPayload,
 } from "../../../types";
 import type { TabType } from "../../../types/ui.types";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../../constants";
@@ -41,7 +42,7 @@ export interface UseUserManagementReturn {
     id: Id,
     data: Partial<CompanyAdminProfile | UniversityUserProfile>,
   ) => Promise<boolean>;
-  createUser: (data: Record<string, any>) => Promise<boolean>;
+  createUser: (data: CreateUserPayload) => Promise<boolean>;
 
   // Utilities
   setError: (error: string | null) => void;
@@ -235,7 +236,7 @@ export function useUserManagement(
   );
 
   const createUser = useCallback(
-    async (data: Record<string, any>): Promise<boolean> => {
+    async (data: CreateUserPayload): Promise<boolean> => {
       try {
         setLoading(true);
         if (activeTab === "COMPANY_ADMIN") {
