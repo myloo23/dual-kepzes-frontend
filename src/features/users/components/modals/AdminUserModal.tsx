@@ -2,13 +2,31 @@ import { useEffect, useMemo, useState } from "react";
 import { Modal } from "../../../../components/ui/Modal";
 import { api } from "../../../../lib/api";
 import { companyApi } from "../../../companies/services/companyApi";
-import type { Company, Id, Major } from "../../../../types/api.types";
+import type { Company, CreateUserPayload, Id, Major } from "../../../../types/api.types";
+
+interface AdminUserFormData {
+  id?: Id;
+  fullName?: string;
+  name?: string;
+  email?: string;
+  isActive?: boolean;
+  password?: string;
+  companyId?: string;
+  jobTitle?: string;
+  user?: { fullName?: string; email?: string };
+  majors?: unknown[];
+  managedMajors?: unknown[];
+  referentMajors?: unknown[];
+  companies?: unknown[];
+  managedCompanies?: unknown[];
+  referentCompanies?: unknown[];
+}
 
 interface AdminUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: Record<string, any>) => Promise<void>;
-  initialData: any;
+  onSave: (data: CreateUserPayload) => Promise<void>;
+  initialData: Partial<AdminUserFormData> | null | undefined;
   type: "COMPANY_ADMIN" | "UNIVERSITY_USER" | "USER" | null;
 }
 
@@ -19,7 +37,7 @@ export default function AdminUserModal({
   initialData,
   type,
 }: AdminUserModalProps) {
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<AdminUserFormData>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +71,10 @@ export default function AdminUserModal({
     return "";
   };
 
-  const extractAssignedIds = (data: any, keys: string[]): string[] => {
+  const extractAssignedIds = (
+    data: Partial<AdminUserFormData> | null | undefined,
+    keys: (keyof AdminUserFormData)[],
+  ): string[] => {
     for (const key of keys) {
       const value = data?.[key];
       if (!Array.isArray(value)) continue;
@@ -105,15 +126,21 @@ export default function AdminUserModal({
       setAssignmentError(null);
 
       try {
+        const majorsPromise: Promise<{ data?: Major[] } | Major[]> =
+          type === "UNIVERSITY_USER"
+            ? (api.majors.list({ page: 1, limit: 1000 }) as Promise<{ data?: Major[] } | Major[]>)
+            : Promise.resolve([]);
+
         const [majorsResponse, companiesResponse] = await Promise.all([
-          type === "UNIVERSITY_USER" ? (api.majors.list({ page: 1, limit: 1000 }) as Promise<any>) : Promise.resolve([]),
+          majorsPromise,
           companyApi.list({ page: 1, limit: 1000 }),
         ]);
 
-        const majorsData: Major[] = Array.isArray(majorsResponse?.data)
-          ? majorsResponse.data
+        const responsePaged = majorsResponse as { data?: Major[] };
+        const majorsData: Major[] = Array.isArray(responsePaged.data)
+          ? responsePaged.data
           : Array.isArray(majorsResponse)
-            ? majorsResponse
+            ? (majorsResponse as Major[])
             : [];
 
         setMajors(
@@ -126,7 +153,7 @@ export default function AdminUserModal({
             (a.name ?? "").localeCompare(b.name ?? ""),
           ),
         );
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Failed to load assignment data:", err);
         setAssignmentError("Nem sikerult betolteni a hozzarendelesi listakat.");
       } finally {
@@ -137,8 +164,8 @@ export default function AdminUserModal({
     void loadAssignmentData();
   }, [isOpen, type]);
 
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value } as AdminUserFormData));
   };
 
   const toggleSelection = (
@@ -171,8 +198,9 @@ export default function AdminUserModal({
       );
       setAssignmentMessage("Szak hozzarendelesek mentve.");
       setIsMajorsModalOpen(false);
-    } catch (err: any) {
-      setAssignmentError(err?.message || "Hiba a szakok mentese soran.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : undefined;
+      setAssignmentError(message || "Hiba a szakok mentese soran.");
     } finally {
       setAssignmentSaveLoading(false);
     }
@@ -192,8 +220,9 @@ export default function AdminUserModal({
       );
       setAssignmentMessage("Ceg hozzarendelesek mentve.");
       setIsCompaniesModalOpen(false);
-    } catch (err: any) {
-      setAssignmentError(err?.message || "Hiba a cegek mentese soran.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : undefined;
+      setAssignmentError(message || "Hiba a cegek mentese soran.");
     } finally {
       setAssignmentSaveLoading(false);
     }
@@ -223,7 +252,7 @@ export default function AdminUserModal({
     setError(null);
 
     try {
-      const payload: any = {
+      const payload: CreateUserPayload = {
         fullName:
           formData.fullName || formData.name || formData.user?.fullName || "",
         email: formData.email || formData.user?.email || "",
@@ -238,8 +267,8 @@ export default function AdminUserModal({
       }
 
       await onSave(payload);
-    } catch (err: any) {
-      setError(err.message || "Hiba a mentes soran.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Hiba a mentes soran.");
     } finally {
       setLoading(false);
     }
