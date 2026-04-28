@@ -212,8 +212,8 @@ export default function StudentRegisterForm() {
       const res = await api.registerStudent(payload);
       setOkMsg(res?.message || "Sikeres regisztráció!");
       setTimeout(() => navigate("/"), 800);
-    } catch (err: any) {
-      setError(err?.message || "Sikertelen regisztráció.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Sikertelen regisztráció.");
     } finally {
       setLoading(false);
     }

@@ -54,9 +54,9 @@ function HomePage() {
         );
         navigate("/", { replace: true });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Login hiba:", err);
-      setLoginError(err?.message || "Sikertelen bejelentkezés.");
+      setLoginError(err instanceof Error ? err.message : "Sikertelen bejelentkezés.");
     } finally {
       setLoading(false);
     }

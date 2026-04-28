@@ -52,8 +52,8 @@ export default function StudentNewsPage() {
       const list = await api.news.list();
       const extracted = extractList(list);
       setItems(extracted);
-    } catch (e: any) {
-      setErr(e?.message || "Nem sikerült betölteni a híreket.");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Nem sikerült betölteni a híreket.");
       setItems([]);
     } finally {
       setLoading(false);

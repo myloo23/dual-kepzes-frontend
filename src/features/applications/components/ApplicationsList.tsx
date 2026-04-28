@@ -74,8 +74,8 @@ export default function ApplicationsList() {
         const data = await api.applications.listWithStats();
         setApplications(data.applications);
         setApplicationStats(data.stats);
-      } catch (err: any) {
-        setError(err.message || "Hiba a jelentkezések betöltése során.");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Hiba a jelentkezések betöltése során.");
       } finally {
         setLoading(false);
       }
@@ -114,9 +114,9 @@ export default function ApplicationsList() {
         }));
       }
       setConfirmDialogId(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMsg =
-        err.message || "Hiba történt a jelentkezés visszavonása során.";
+        err instanceof Error ? err.message : "Hiba történt a jelentkezés visszavonása során.";
       setRetractError(errorMsg);
     } finally {
       setRetractingId(null);

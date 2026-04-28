@@ -5,12 +5,12 @@ import {
   norm,
   getPositionTypeConfig,
 } from "../utils/positions.utils";
-import type { Position, Tag } from "../../../types/api.types";
+import type { Position, Tag, Id } from "../../../types/api.types";
 
 interface PositionCardProps {
   position: Position;
   logo: string;
-  onCompanyClick: (company: any) => void;
+  onCompanyClick: (company: { id?: Id; name?: string; logoUrl?: string | null } | undefined) => void;
   onApply?: (positionId: string | number) => void;
   hideCompanyInfo?: boolean;
 }

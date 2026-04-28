@@ -87,9 +87,9 @@ export const useCompanyApplications = () => {
         prev.filter((app) => app.id !== deleteConfirmId),
       );
       setDeleteConfirmId(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMsg =
-        err.message || "Hiba történt a jelentkezés törlése során.";
+        err instanceof Error ? err.message : "Hiba történt a jelentkezés törlése során.";
       setDeleteError(errorMsg);
     } finally {
       setDeletingId(null);

@@ -41,8 +41,8 @@ export default function AdminSettings() {
         phoneNumber,
       });
       setMsg(null);
-    } catch (e: any) {
-      setErr(e.message || "Nem sikerült lekérni a saját profilt.");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Nem sikerült lekérni a saját profilt.");
     } finally {
       setLoading(false);
     }
@@ -77,8 +77,8 @@ export default function AdminSettings() {
       setMsg("Saját profil frissítve.");
       // Reload to reflect changes
       await fetchProfile();
-    } catch (e: any) {
-      setErr(e.message || "Módosítás sikertelen.");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Módosítás sikertelen.");
     } finally {
       setLoading(false);
     }

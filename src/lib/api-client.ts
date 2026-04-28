@@ -88,7 +88,7 @@ async function apiRequest<T>(
 
 export function apiGet<T>(
   path: string,
-  query?: Record<string, any>,
+  query?: Record<string, string | number | boolean | null | undefined>,
   token?: string,
 ): Promise<T> {
   let url = path;

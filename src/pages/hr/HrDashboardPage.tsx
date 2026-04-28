@@ -47,20 +47,20 @@ export default function HrDashboardPage() {
     try {
       const data = await api.companyAdmins.me.get();
       setCompanyAdmin(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to load company admin profile", err);
+      const errMsg = err instanceof Error ? err.message : "";
       // More user-friendly error message for connection issues
       if (
-        err.message?.includes("Failed to fetch") ||
-        err.message?.includes("Network request failed")
+        errMsg.includes("Failed to fetch") ||
+        errMsg.includes("Network request failed")
       ) {
         setError(
           "Nem sikerült kapcsolódni a szerverhez. Ellenőrizd az internetkapcsolatot vagy próbáld újra később.",
         );
       } else {
         setError(
-          "Hiba történt az adatok betöltésekor: " +
-            (err.message || "Ismeretlen hiba"),
+          "Hiba történt az adatok betöltésekor: " + (errMsg || "Ismeretlen hiba"),
         );
       }
     } finally {

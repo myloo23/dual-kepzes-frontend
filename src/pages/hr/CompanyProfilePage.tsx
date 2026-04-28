@@ -56,8 +56,8 @@ export default function CompanyProfilePage() {
         } else {
           setError("Nem található a felhasználóhoz rendelt cég.");
         }
-      } catch (err: any) {
-        setError(err.message || "Hiba a cégadatok betöltésekor");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Hiba a cégadatok betöltésekor");
       } finally {
         setLoading(false);
       }
@@ -210,8 +210,8 @@ export default function CompanyProfilePage() {
       };
       setCompany(updatedCompany as any); // Cast as quick fix if types mismatch slightly on complex nested objects
       setIsEditing(false);
-    } catch (err: any) {
-      setError(err.message || "Hiba a mentés során");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Hiba a mentés során");
     } finally {
       setLoading(false);
     }

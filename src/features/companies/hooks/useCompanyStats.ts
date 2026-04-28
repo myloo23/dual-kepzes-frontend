@@ -70,10 +70,10 @@ export function useCompanyStats(companyId: Id | undefined) {
           });
           setLoading(false);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Failed to load company stats", err);
         if (isMounted) {
-          setError(err.message || "Failed to load company stats.");
+          setError(err instanceof Error ? err.message : "Failed to load company stats.");
           setLoading(false);
         }
       }

@@ -65,8 +65,8 @@ export function GuidePlayer({ course, onBack }: GuidePlayerProps) {
         feedback,
       });
       setSubmitted(true);
-    } catch (err: any) {
-      setError(err.message || "Hiba történt az értékelés mentése során.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Hiba történt az értékelés mentése során.");
     } finally {
       setSubmitting(false);
     }

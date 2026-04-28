@@ -250,7 +250,7 @@ export function useUserManagement(
         setMessage(SUCCESS_MESSAGES.DATA_SAVED || "Sikeresen létrehozva");
         await load();
         return true;
-      } catch (e: any) {
+      } catch (e: unknown) {
         const errorMsg = e instanceof Error ? e.message : ERROR_MESSAGES.UPDATE_FAILED;
         setError(errorMsg);
         return false;

@@ -19,7 +19,7 @@ export const StudentFilters = ({
 }: StudentFiltersProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const updateFilter = (key: keyof StudentFiltersState, value: any) => {
+  const updateFilter = (key: keyof StudentFiltersState, value: StudentFiltersState[keyof StudentFiltersState]) => {
     onFilterChange({ ...filters, [key]: value });
   };
 

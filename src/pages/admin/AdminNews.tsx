@@ -53,7 +53,7 @@ export default function AdminNews() {
       const actives = extractList(activesResponse);
       console.log("Extracted actives:", actives);
       setActiveItems(actives);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Failed to load active news:", e);
       // We don't block everything if this fails, but we might want to show error
       setErr((prev) =>
@@ -68,7 +68,7 @@ export default function AdminNews() {
       const archives = extractList(archivesResponse);
       console.log("Extracted archives:", archives);
       setArchivedItems(archives);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Failed to load archived news:", e);
     }
 
@@ -113,8 +113,8 @@ export default function AdminNews() {
       await api.news.admin.remove(id);
       setMsg("Hír véglegesen törölve.");
       await load();
-    } catch (e: any) {
-      setErr(e?.message || "Törlés sikertelen.");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Törlés sikertelen.");
     } finally {
       setLoading(false);
     }
@@ -132,8 +132,8 @@ export default function AdminNews() {
       await api.news.admin.archive(id);
       setMsg("Hír archiválva.");
       await load();
-    } catch (e: any) {
-      setErr(e.message || "Archiválás sikertelen.");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Archiválás sikertelen.");
     } finally {
       setLoading(false);
     }
@@ -145,8 +145,8 @@ export default function AdminNews() {
       await api.news.admin.unarchive(id);
       setMsg("Hír visszaállítva (aktív).");
       await load();
-    } catch (e: any) {
-      setErr(e.message || "Visszaállítás sikertelen.");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Visszaállítás sikertelen.");
     } finally {
       setLoading(false);
     }

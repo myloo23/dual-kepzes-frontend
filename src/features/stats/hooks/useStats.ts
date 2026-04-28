@@ -20,9 +20,9 @@ function useFetch<T>(fetcher: () => Promise<T>, defaultValue: T | null = null) {
       setError(null);
       const result = await fetcher();
       setData(result);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err?.message || "Hiba történt az adatok betöltésekor.");
+      setError(err instanceof Error ? err.message : "Hiba történt az adatok betöltésekor.");
     } finally {
       setLoading(false);
     }

@@ -107,9 +107,9 @@ export default function AdminCompaniesPage() {
       await companyApi.approve(id.toString());
       pendingCompanies.setMessage("Cég regisztrációja sikeresen jóváhagyva.");
       await Promise.all([companies.load(), pendingCompanies.load()]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       pendingCompanies.setError(
-        err.message || "Hiba történt a jóváhagyás során."
+        err instanceof Error ? err.message : "Hiba történt a jóváhagyás során."
       );
     }
   };
@@ -120,9 +120,9 @@ export default function AdminCompaniesPage() {
       await companyApi.reject(id.toString());
       pendingCompanies.setMessage("Cég regisztrációja sikeresen elutasítva.");
       await pendingCompanies.load();
-    } catch (err: any) {
+    } catch (err: unknown) {
       pendingCompanies.setError(
-        err.message || "Hiba történt az elutasítás során."
+        err instanceof Error ? err.message : "Hiba történt az elutasítás során."
       );
     }
   };

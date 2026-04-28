@@ -53,8 +53,8 @@ export default function ApplicationModal({
       setCvFile(null);
       setMotivationFile(null);
       onClose();
-    } catch (err: any) {
-      setError(err.message || "Hiba történt a jelentkezés során.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Hiba történt a jelentkezés során.");
     } finally {
       setLoading(false);
     }
