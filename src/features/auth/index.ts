@@ -6,10 +6,9 @@
 export { default as LoginCard } from "./components/LoginCard";
 
 // Hooks
-// export { useAuth } from './hooks/useAuth';
-// Note: useAuth hook to be extracted from AuthContext
+export { useAuth } from "./context/authContextDef";
 
 // Context
-export { AuthProvider, useAuth } from "./context/AuthContext";
+export { AuthProvider } from "./context/AuthContext";
 
 export { default as ProtectedRoute } from "./components/ProtectedRoute";

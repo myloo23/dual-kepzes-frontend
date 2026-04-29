@@ -208,7 +208,7 @@ export default function CompanyProfilePage() {
         ...payload,
         locations: payload.locations,
       };
-      setCompany(updatedCompany as any); // Cast as quick fix if types mismatch slightly on complex nested objects
+      setCompany(updatedCompany as Company);
       setIsEditing(false);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Hiba a mentés során");
