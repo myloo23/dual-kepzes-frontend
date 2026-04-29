@@ -47,6 +47,17 @@ const ALL_HUNGARIAN_COUNTIES = [
   "Zala"
 ];
 
+function hashToUnitInterval(value: string): number {
+  let hash = 2166136261;
+
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  return (hash >>> 0) / 4294967295;
+}
+
 /**
  * Custom hook for filtering and sorting positions
  * Extracts complex filtering logic from PositionsPage
@@ -69,7 +80,8 @@ export function usePositionsFilters(positions: Position[]) {
   const randomMap = useMemo(() => {
     const map = new Map<string, number>();
     positions.forEach((p) => {
-      map.set(String(p.id), Math.random());
+      const id = String(p.id);
+      map.set(id, hashToUnitInterval(id));
     });
     return map;
   }, [positions]);

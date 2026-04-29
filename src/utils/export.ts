@@ -7,10 +7,16 @@ import * as XLSX from "xlsx";
 /**
  * Convert data to CSV format
  */
-export function exportToCSV<T extends Record<string, any>>(
+type ExportColumn<T extends object> = { key: keyof T; label: string };
+
+function getValue<T extends object>(item: T, key: keyof T): unknown {
+  return item[key];
+}
+
+export function exportToCSV<T extends object>(
   data: T[],
   filename: string,
-  columns?: { key: keyof T; label: string }[],
+  columns?: ExportColumn<T>[],
 ) {
   if (data.length === 0) {
     console.warn("No data to export");
@@ -19,7 +25,11 @@ export function exportToCSV<T extends Record<string, any>>(
 
   // Determine columns
   const cols =
-    columns || Object.keys(data[0]).map((key) => ({ key, label: key }));
+    columns ||
+    (Object.keys(data[0]) as Array<keyof T>).map((key) => ({
+      key,
+      label: String(key),
+    }));
 
   // Create CSV header
   const header = cols.map((col) => col.label).join(",");
@@ -28,7 +38,7 @@ export function exportToCSV<T extends Record<string, any>>(
   const rows = data.map((row) =>
     cols
       .map((col) => {
-        const value = row[col.key];
+        const value = getValue(row, col.key);
         // Handle values that might contain commas or quotes
         if (value === null || value === undefined) return "";
         const stringValue = String(value);
@@ -55,10 +65,10 @@ export function exportToCSV<T extends Record<string, any>>(
 /**
  * Export data to Excel (.xlsx)
  */
-export function exportToExcel<T extends Record<string, any>>(
+export function exportToExcel<T extends object>(
   data: T[],
   filename: string,
-  columns?: { key: keyof T; label: string }[],
+  columns?: ExportColumn<T>[],
 ) {
   if (data.length === 0) {
     console.warn("No data to export");
@@ -70,7 +80,7 @@ export function exportToExcel<T extends Record<string, any>>(
     const row: Record<string, unknown> = {};
     if (columns) {
       columns.forEach((col) => {
-        row[col.label] = item[col.key];
+        row[col.label] = getValue(item, col.key);
       });
     } else {
       return item;
@@ -86,7 +96,10 @@ export function exportToExcel<T extends Record<string, any>>(
     wch:
       Math.max(
         key.length,
-        ...excelData.map((row) => String(row[key] || "").length),
+        ...excelData.map((row) => {
+          const rowValues = row as Record<string, unknown>;
+          return String(rowValues[key] || "").length;
+        }),
       ) + 2,
   }));
   worksheet["!cols"] = colWidths;

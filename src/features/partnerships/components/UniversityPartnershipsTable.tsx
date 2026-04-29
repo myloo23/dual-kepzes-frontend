@@ -25,6 +25,42 @@ interface UniversityPartnershipsTableProps {
   onAssignSelf?: (partnershipId: Partnership["id"]) => void;
 }
 
+interface SortableHeaderProps {
+  label: string;
+  sortKey: SortKey;
+  sortConfig: SortConfig;
+  onSort: (key: SortKey) => void;
+}
+
+function SortableHeader({
+  label,
+  sortKey,
+  sortConfig,
+  onSort,
+}: SortableHeaderProps) {
+  const isActive = sortConfig.key === sortKey;
+  const icon = !isActive ? (
+    <ChevronUp className="w-3 h-3 text-slate-300 dark:text-slate-600 opacity-50" />
+  ) : sortConfig.direction === "asc" ? (
+    <ChevronUp className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+  ) : (
+    <ChevronDown className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+  );
+
+  return (
+    <th
+      scope="col"
+      className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group select-none"
+      onClick={() => onSort(sortKey)}
+    >
+      <div className="flex items-center gap-1">
+        {label}
+        {icon}
+      </div>
+    </th>
+  );
+}
+
 export default function UniversityPartnershipsTable({
   partnerships,
   isLoading,
@@ -34,37 +70,6 @@ export default function UniversityPartnershipsTable({
   assigningPartnershipId,
   onAssignSelf,
 }: UniversityPartnershipsTableProps) {
-  const renderSortIcon = (columnKey: SortKey) => {
-    if (sortConfig.key !== columnKey)
-      return (
-        <ChevronUp className="w-3 h-3 text-slate-300 dark:text-slate-600 opacity-50" />
-      );
-    return sortConfig.direction === "asc" ? (
-      <ChevronUp className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-    ) : (
-      <ChevronDown className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-    );
-  };
-
-  const SortableHeader = ({
-    label,
-    sortKey,
-  }: {
-    label: string;
-    sortKey: SortKey;
-  }) => (
-    <th
-      scope="col"
-      className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group select-none"
-      onClick={() => onSort(sortKey)}
-    >
-      <div className="flex items-center gap-1">
-        {label}
-        {renderSortIcon(sortKey)}
-      </div>
-    </th>
-  );
-
   if (isLoading) {
     return (
       <div className="p-8 text-center text-slate-500 dark:text-slate-400">
@@ -92,12 +97,42 @@ export default function UniversityPartnershipsTable({
         <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
           <thead className="bg-slate-50 dark:bg-slate-800/80 transition-colors">
             <tr>
-              <SortableHeader label="Hallgato" sortKey="student" />
-              <SortableHeader label="Ceg / Pozicio" sortKey="company" />
-              <SortableHeader label="Idoszak" sortKey="semester" />
-              <SortableHeader label="Mentor" sortKey="mentor" />
-              <SortableHeader label="Egyetemi Felelos" sortKey="uniEmployee" />
-              <SortableHeader label="Statusz" sortKey="status" />
+              <SortableHeader
+                label="Hallgato"
+                sortKey="student"
+                sortConfig={sortConfig}
+                onSort={onSort}
+              />
+              <SortableHeader
+                label="Ceg / Pozicio"
+                sortKey="company"
+                sortConfig={sortConfig}
+                onSort={onSort}
+              />
+              <SortableHeader
+                label="Idoszak"
+                sortKey="semester"
+                sortConfig={sortConfig}
+                onSort={onSort}
+              />
+              <SortableHeader
+                label="Mentor"
+                sortKey="mentor"
+                sortConfig={sortConfig}
+                onSort={onSort}
+              />
+              <SortableHeader
+                label="Egyetemi Felelos"
+                sortKey="uniEmployee"
+                sortConfig={sortConfig}
+                onSort={onSort}
+              />
+              <SortableHeader
+                label="Statusz"
+                sortKey="status"
+                sortConfig={sortConfig}
+                onSort={onSort}
+              />
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-transparent transition-colors">
