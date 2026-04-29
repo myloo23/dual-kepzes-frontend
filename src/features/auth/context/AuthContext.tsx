@@ -1,20 +1,18 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { User } from "../../../types/api.types";
 import { AuthContext } from "./authContextDef";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
+  const [user, setUser] = useState<User | null>(() => {
     // Initialize from localStorage
-    const token = localStorage.getItem("token");
+    const token =
+      localStorage.getItem("token") || localStorage.getItem("auth_token");
     const storedUser = localStorage.getItem("user");
 
     if (token && storedUser) {
       try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
+        const parsedUser = JSON.parse(storedUser) as User;
+        return parsedUser;
         // Optionally validate token specifically if needed,
         // but api interceptors usually handle 401s
       } catch (error) {
@@ -24,8 +22,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("role");
       }
     }
-    setIsLoading(false);
-  }, []);
+
+    return null;
+  });
+  const isLoading = false;
 
   const login = (token: string, newUser: User) => {
     localStorage.setItem("token", token);
