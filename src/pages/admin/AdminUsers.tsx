@@ -3,7 +3,7 @@
  * Manages users across different roles (Students, Company Admins, University Users, Inactive Users)
  */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import type {
   StudentProfile,
   CompanyAdminProfile,
@@ -142,7 +142,7 @@ export default function AdminUsersPage() {
     setSortConfig({ key, direction });
   };
 
-  const getSortValue = (item: AdminUserItem, key: string): string | number => {
+  const getSortValue = useCallback((item: AdminUserItem, key: string): string | number => {
     if (userManagement.activeTab === "STUDENT") {
       const student = item as StudentProfile & { studentProfile?: StudentProfile };
       const neptun = student.neptunCode ?? student.studentProfile?.neptunCode;
@@ -168,7 +168,7 @@ export default function AdminUsersPage() {
     const val = (item as unknown as Record<string, unknown>)[key];
     if (typeof val === "string" || typeof val === "number") return val;
     return "";
-  };
+  }, [userManagement.activeTab]);
 
   const sortedItems = useMemo(() => {
     const sortableItems = [...userManagement.items];
@@ -187,7 +187,7 @@ export default function AdminUsersPage() {
       });
     }
     return sortableItems;
-  }, [userManagement.items, sortConfig, userManagement.activeTab]);
+  }, [userManagement.items, sortConfig, getSortValue]);
 
   const renderSortIcon = (key: string) => {
     if (!sortConfig || sortConfig.key !== key) {
