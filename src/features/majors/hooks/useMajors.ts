@@ -11,17 +11,17 @@ export function useMajors() {
     const fetchMajors = async () => {
       try {
         setLoading(true);
-        // Cast API response to any to handle the wrapper structure without changing global types yet
-        const response = (await api.majors.list({
+        const response = await api.majors.list({
           limit: 1000,
           page: 1,
-        })) as any;
+        });
 
         let data: Major[] = [];
-        if (response?.data && Array.isArray(response.data)) {
-          data = response.data;
+        const paged = response as unknown as { data?: Major[] };
+        if (paged.data && Array.isArray(paged.data)) {
+          data = paged.data;
         } else if (Array.isArray(response)) {
-          data = response;
+          data = response as unknown as Major[];
         }
 
         // Sort by name

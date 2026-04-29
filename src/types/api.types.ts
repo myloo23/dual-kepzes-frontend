@@ -271,9 +271,9 @@ export type StudentRegisterPayload =
       majorId: string; // UUID
       studyMode: StudyMode;
       graduationYear: number;
-      hasLanguageCert: true;
-      language: string;
-      languageLevel: string;
+      hasLanguageCert: boolean;
+      language?: string;
+      languageLevel?: string;
     };
 
 export interface SystemAdminRegisterPayload {

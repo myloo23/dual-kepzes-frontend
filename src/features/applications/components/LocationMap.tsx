@@ -56,23 +56,19 @@ export default function LocationMap({
   const isLoading = isLoadingGeocode || isLoadingLocation;
 
   // Determine map center and zoom
-  const getMapCenter = (): [number, number] => {
+  const mapCenter = useMemo((): [number, number] => {
     if (companyCoords && userCoords) {
       return [
         (companyCoords.lat + userCoords.lat) / 2,
         (companyCoords.lng + userCoords.lng) / 2,
       ];
     }
-    if (companyCoords) {
-      return [companyCoords.lat, companyCoords.lng];
-    }
-    if (userCoords) {
-      return [userCoords.lat, userCoords.lng];
-    }
+    if (companyCoords) return [companyCoords.lat, companyCoords.lng];
+    if (userCoords) return [userCoords.lat, userCoords.lng];
     return [47.1, 19.5]; // Default to Hungary center
-  };
+  }, [companyCoords, userCoords]);
 
-  const getMapZoom = (): number => {
+  const mapZoom = useMemo((): number => {
     if (companyCoords && userCoords && distance) {
       if (distance < 5) return 12;
       if (distance < 20) return 10;
@@ -81,10 +77,7 @@ export default function LocationMap({
       return 7;
     }
     return 13; // Default zoom for single location
-  };
-
-  const mapCenter = useMemo(getMapCenter, [companyCoords, userCoords]);
-  const mapZoom = useMemo(getMapZoom, [companyCoords, userCoords, distance]);
+  }, [companyCoords, userCoords, distance]);
 
   if (isLoading) {
     return (

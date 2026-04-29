@@ -262,7 +262,7 @@ export default function AdminCompaniesPage() {
             )}
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => { activeTab === "active" ? companies.load() : pendingCompanies.load(); }} variant="outline" size="xs">
+            <Button onClick={() => { if (activeTab === "active") { companies.load(); } else { pendingCompanies.load(); } }} variant="outline" size="xs">
               {LABELS.REFRESH}
             </Button>
             <ExportButton

@@ -169,33 +169,13 @@ export default function StudentRegisterForm() {
       payload = {
         ...commonData,
         isInHighSchool: false,
-        highSchool: highSchool.trim(), // Backend seems to keep this generic field
+        highSchool: highSchool.trim(),
         neptunCode: neptunNormal,
         majorId,
         studyMode,
         graduationYear: Number(graduationYear),
-        hasLanguageCert: true, // Type definition forces true? No, type def has `hasLanguageCert: true`.
-        // Wait, what if Uni student DOES NOT have one?
-        // My type def said `hasLanguageCert: true` for the University branch specifically based on the prompt user JSON.
-        // However, realistically a Uni student might NOT have one.
-        // But if I want to match the "Schema", I should probably stick to what the user provided or verify.
-        // The User provided "Schema if university student" -> hasLanguageCert: true.
-        // Logic dictates valid boolean. My Discriminated Union says `hasLanguageCert: true` for Uni branch.
-        // I should double check the Type Def I just wrote.
-        // `hasLanguageCert: true`. This might be too strict if a student doesn't have one.
-        // BUT, strictly following instructions: "Regisztrációs séma ha egyetemi hallgató ... hasLanguageCert: true".
-        // I will assume for this "Dual Education" system, maybe it IS required?
-        // "or optional fields for Uni vs High School".
-        // I'll relax the check in the JS code but cast if needed, OR better: update the type to boolean if strictly needed.
-        // Actually, in the UI I should probably allow it to be false.
-        // But if I strictly follow the schema, I will default it to true? No that's bad UX.
-        // I will just implement the form logic and if TS complains, I will fix the Type in next step to be `boolean` for both.
-        // Actually, I'll fix the type right after this if needed. OR I can do `(payload as unknown as StudentRegisterPayload)` to satisfy compiler for now.
-        ...({
-          hasLanguageCert: hasLanguageCert,
-          language: hasLanguageCert ? language : undefined,
-          languageLevel: hasLanguageCert ? languageLevel : undefined,
-        } as any),
+        hasLanguageCert: hasLanguageCert,
+        ...(hasLanguageCert ? { language, languageLevel } : {}),
       };
     }
 
