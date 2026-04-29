@@ -32,9 +32,6 @@ function HomePage() {
     try {
       const res = await api.login(email.trim(), password);
 
-      console.log("API Válasz:", res);
-      console.log("Kapott role:", res.user.role);
-
       login(res.token, { ...res.user, isActive: true });
 
       const normalizedRole = res.user.role as UserRole;
@@ -44,7 +41,6 @@ function HomePage() {
         news?: string;
       };
       const target = roleConfig?.loginRedirect ?? roleConfig?.dashboard;
-      console.log("Számított útvonal:", target);
 
       if (target) {
         navigate(target, { replace: true });

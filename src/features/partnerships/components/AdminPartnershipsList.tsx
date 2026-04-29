@@ -7,6 +7,8 @@ import type {
 import { api } from "../../../lib/api";
 import AssignUniversityUserModal from "./modals/AssignUniversityUserModal";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/shared/ToastContainer";
 
 interface AdminPartnershipsListProps {
   partnerships: Partnership[];
@@ -25,6 +27,7 @@ export default function AdminPartnershipsList({
   sortConfig,
   onSort,
 }: AdminPartnershipsListProps) {
+  const { toasts, showError, removeToast } = useToast();
   const [selectedPartnership, setSelectedPartnership] =
     useState<Partnership | null>(null);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
@@ -49,7 +52,7 @@ export default function AdminPartnershipsList({
       onRefresh();
     } catch (error) {
       console.error("Failed to terminate partnership:", error);
-      alert("Hiba történt a partnerség lezárásakor.");
+      showError("Hiba történt a partnerség lezárásakor.");
     } finally {
       setTerminatingId(null);
     }
@@ -247,6 +250,7 @@ export default function AdminPartnershipsList({
         universityUsers={universityUsers}
         onAssignSuccess={onRefresh}
       />
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </>
   );
 }

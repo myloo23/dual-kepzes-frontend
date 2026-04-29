@@ -6,6 +6,8 @@ import type {
 } from "../../../types/api.types";
 import { api } from "../../../lib/api";
 import AssignMentorModal from "./modals/AssignMentorModal";
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/shared/ToastContainer";
 
 interface PartnershipsListProps {
   partnerships: Partnership[];
@@ -43,6 +45,7 @@ export default function PartnershipsList({
   onRefresh,
   isLoading,
 }: PartnershipsListProps) {
+  const { toasts, showError, removeToast } = useToast();
   const [selectedPartnership, setSelectedPartnership] =
     useState<Partnership | null>(null);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
@@ -72,7 +75,7 @@ export default function PartnershipsList({
       onRefresh();
     } catch (error) {
       console.error("Failed to terminate partnership:", error);
-      alert("Hiba történt a partnerség lezárásakor.");
+      showError("Hiba történt a partnerség lezárásakor.");
     } finally {
       setTerminatingId(null);
     }
@@ -91,7 +94,7 @@ export default function PartnershipsList({
       onRefresh();
     } catch (error) {
       console.error("Failed to complete partnership:", error);
-      alert("Hiba történt a partnerség befejezésekor.");
+      showError("Hiba történt a partnerség befejezésekor.");
     } finally {
       setCompletingId(null);
     }
@@ -220,6 +223,7 @@ export default function PartnershipsList({
         mentors={mentors}
         onAssignSuccess={onRefresh}
       />
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </>
   );
 }

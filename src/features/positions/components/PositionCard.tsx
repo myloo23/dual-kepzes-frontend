@@ -59,7 +59,6 @@ export default function PositionCard({
                   id: p.company?.id ?? p.companyId,
                   name: companyName,
                 };
-                console.log("🖱️ Logo clicked! company data:", companyData);
                 onCompanyClick(companyData);
               }}
               className="h-20 w-20 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-nje-jaffa dark:hover:border-nje-jaffa hover:shadow-md transition cursor-pointer"
@@ -87,10 +86,6 @@ export default function PositionCard({
                         id: p.company?.id ?? p.companyId,
                         name: companyName,
                       };
-                      console.log(
-                        "🖱️ Company name clicked! company data:",
-                        companyData,
-                      );
                       onCompanyClick(companyData);
                     }}
                     className="hover:text-nje-jaffa hover:underline transition cursor-pointer"

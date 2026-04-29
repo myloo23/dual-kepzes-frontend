@@ -183,8 +183,6 @@ export const CompanyApplicationCard = ({
                       {(() => {
                         const profile = displayApp.student.studentProfile as ProfileWithAliases | undefined;
                         const student = displayApp.student as StudentWithAliases;
-                        console.log("Student Profile Data:", profile);
-                        console.log("Full Student Data:", displayApp.student);
 
                         // Check all possible locations for birth date
                         const birthDate =
@@ -193,8 +191,6 @@ export const CompanyApplicationCard = ({
                           profile?.birth_date ||
                           student?.birthDate ||
                           student?.dateOfBirth;
-
-                        console.log("Found birthDate:", birthDate);
                         return birthDate
                           ? new Date(birthDate).toLocaleDateString("hu-HU")
                           : "Nincs megadva";
