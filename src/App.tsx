@@ -13,9 +13,8 @@ import { AuthProvider, ProtectedRoute } from "./features/auth";
 
 // Helper function to retry lazy imports with page reload on failure
 // This fixes "Failed to fetch dynamically imported module" errors after deployments
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const lazyRetry = <T extends ComponentType<any>>(componentImport: () => Promise<{ default: T }>) =>
-  lazy<T>(async () => {
+const lazyRetry = <P extends object>(componentImport: () => Promise<{ default: ComponentType<P> }>) =>
+  lazy<ComponentType<P>>(async () => {
     const pageHasAlreadyBeenForceRefreshed = JSON.parse(
       window.sessionStorage.getItem("page-has-been-force-refreshed") || "false",
     );
@@ -29,7 +28,7 @@ const lazyRetry = <T extends ComponentType<any>>(componentImport: () => Promise<
         // Assuming that the user is not on the latest version of the application.
         // Let's refresh the page immediately.
         window.sessionStorage.setItem("page-has-been-force-refreshed", "true");
-        return window.location.reload() as unknown as { default: T };
+        return window.location.reload() as unknown as { default: ComponentType<P> };
       }
 
       // The page has already been reloaded
