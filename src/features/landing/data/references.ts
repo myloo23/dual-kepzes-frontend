@@ -10,6 +10,7 @@ import kiralyIldikoImg from "../../../assets/reference-images/Kiraly_I.jpg";
 import borzakNikolettImg from "../../../assets/reference-images/Borzsak_N.jpg";
 import subaEdinaImg from "../../../assets/reference-images/Suba_E.jpg";
 import boldizsarAdriennImg from "../../../assets/reference-images/Adri-1-1-200x300.jpg";
+import elizaImg from "../../../assets/reference-images/Eliza.png";
 import palotaiBernadettImg from "../../../assets/reference-images/palotaibernadett.png";
 
 export const REFERENCES: ReferencePerson[] = [
@@ -125,6 +126,7 @@ export const REFERENCES: ReferencePerson[] = [
     description: `A központ szakmai irányítását látom el, meghatározó szerepet töltök be a duális képzések fejlesztésében és minőségbiztosításában.
 
 Munkámmal hozzájárulok ahhoz, hogy az egyetemen megvalósuló duális képzések a munkaerőpiaci igényekhez igazodva, magas szakmai színvonalon működjenek.`,
+    image: elizaImg,
   },
   {
     name: "Palotai Bernadett",

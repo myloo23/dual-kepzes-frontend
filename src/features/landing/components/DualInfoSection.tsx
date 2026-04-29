@@ -1,4 +1,5 @@
 import { ArrowRight, Building2, GraduationCap } from "lucide-react";
+import elizaImg from "../../../assets/reference-images/Eliza.png";
 
 export default function DualInfoSection() {
   return (
@@ -101,10 +102,14 @@ export default function DualInfoSection() {
               {/* Leader highlight */}
               <div className="mt-auto bg-nje-pearl dark:bg-slate-800/60 rounded-2xl p-4 md:p-5 border border-nje-anthracite/8 dark:border-slate-700">
                 <div className="flex items-start gap-3 md:gap-4">
-                  {/* Circular avatar with brand color */}
+                  {/* Circular avatar */}
                   <div className="relative flex-shrink-0">
-                    <div className="h-11 w-11 md:h-13 md:w-13 rounded-full bg-gradient-to-br from-nje-jaffa/20 to-nje-amethyst/20 text-nje-amethyst dark:text-nje-amethyst-light flex items-center justify-center font-bold text-base ring-2 ring-nje-jaffa/30">
-                      EA
+                    <div className="h-11 w-11 md:h-13 md:w-13 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center overflow-hidden ring-2 ring-nje-jaffa/30">
+                      <img
+                        src={elizaImg}
+                        alt="Dr. Angeli Eliza"
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-nje-jaffa border-2 border-white dark:border-slate-800" />
                   </div>
