@@ -1,0 +1,2 @@
+- Teacher és Mentor dashboardok jelenleg placeholder route-ok, mert ezek még nem részei a kész role-scope-nak.
+- A galériában ideiglenes picsum.photos seed képek vannak, ezek intézményi fotókra cserélhetők.
