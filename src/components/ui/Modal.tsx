@@ -26,37 +26,46 @@ export function Modal({
   align = "center",
   hideHeader = false,
 }: ModalProps) {
-  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
+  const canUseDocument = typeof document !== "undefined";
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (!canUseDocument) return;
 
-  useEffect(() => {
     if (isOpen) {
-      setVisible(true);
+      const timer = window.setTimeout(() => setVisible(true), 0);
       document.body.style.overflow = "hidden";
       return () => {
+        window.clearTimeout(timer);
         document.body.style.overflow = "";
       };
-    } else {
-      const timer = setTimeout(() => setVisible(false), 200);
-      document.body.style.overflow = "";
-      return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+
+    const timer = window.setTimeout(() => setVisible(false), 200);
+    document.body.style.overflow = "";
+    return () => window.clearTimeout(timer);
+  }, [isOpen, canUseDocument]);
+
+  useEffect(() => {
+    if (!canUseDocument) return;
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [canUseDocument]);
 
   // Handle ESC key
   useEffect(() => {
+    if (!canUseDocument) return;
+
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     if (isOpen) document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, canUseDocument]);
 
-  if (!mounted) return null;
+  if (!canUseDocument) return null;
   if (!visible && !isOpen) return null;
 
   const sizeClasses = {
