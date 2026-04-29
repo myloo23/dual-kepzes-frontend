@@ -206,6 +206,15 @@ export interface User {
 }
 
 // ============= Auth Types =============
+export interface RequestPasswordResetPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
+  token: string;
+  newPassword: string;
+}
+
 export interface LoginResponse {
   message: string;
   token: string;

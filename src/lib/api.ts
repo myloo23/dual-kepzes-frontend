@@ -30,6 +30,8 @@ import type {
   PaginationQuery,
   CompanyRegisterPayload,
   SystemAdminRegisterPayload,
+  RequestPasswordResetPayload,
+  ResetPasswordPayload,
 } from "../types/api.types";
 import type {
   NotificationCreatePayload,
@@ -96,6 +98,12 @@ export const api = {
 
   registerGeneric: (payload: Record<string, unknown>) =>
     apiPost<RegisterResponse>("/api/auth/register", payload),
+
+  requestPasswordReset: (payload: RequestPasswordResetPayload) =>
+    apiPost<{ message: string }>("/api/auth/request-password-reset", payload),
+
+  resetPassword: (payload: ResetPasswordPayload) =>
+    apiPost<{ message: string }>("/api/auth/reset-password", payload),
 
   // ============= Stats =============
   stats: {
@@ -496,6 +504,8 @@ export type {
   CompanyRegisterPayload,
   SystemAdminRegisterPayload,
   CompanyAdminRegisterPayload,
+  RequestPasswordResetPayload,
+  ResetPasswordPayload,
 } from "../types/api.types";
 export type {
   NotificationCreatePayload,
