@@ -1,6 +1,6 @@
 import type { GalleryImage } from "../types";
 
-// Placeholder images from picsum.photos — replace with real dual-education photos
+// A galéria képei később cserélhetők intézményi fotókra.
 export const GALLERY_IMAGES: GalleryImage[] = [
   {
     id: "1",

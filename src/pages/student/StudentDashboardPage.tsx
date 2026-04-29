@@ -892,8 +892,8 @@ export default function StudentDashboardPage() {
                       Határidők
                     </div>
                     <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 transition-colors">
-                      (Mock) Később ide jönnek a leadási / jelentkezési
-                      határidők.
+                      A leadási és jelentkezési adatok később lesznek
+                      elérhetők ezen a felületen.
                     </p>
 
                     <div className="mt-4 space-y-2">
