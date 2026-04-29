@@ -1,44 +1,85 @@
-# Hitelesítés és Biztonság
+> Updated for handoff. Verify against README.md, backendreadme.md, package.json, and current source code before production changes.
 
-## Áttekintés
+# Authentication And Security
 
-A hitelesítés **JWT (JSON Web Token)** alapú. A backend sikeres bejelentkezéskor kiállít egy tokent, amelyet a frontend eltárol és a későbbi kérések hitelesítésére használ fel.
+Authentication is JWT-based. The backend issues a token on login, and the frontend stores the session state in `localStorage`.
 
-## Hitelesítési Folyamat
+## Login
 
-1.  **Bejelentkezés**: A felhasználó megadja az adatait a `/login` oldalon.
-2.  **Kérés**: Meghívódik az `api.auth.login(email, password)` függvény.
-3.  **Válasz**: A backend ellenőrzi az adatokat és visszaküld egy JWT-t.
-4.  **Tárolás**: Az `AuthContext` (vagy `api.ts` segédprogram) elmenti ezt a tokent a `localStorage`-ba az `auth_token` kulcs alatt.
-5.  **Állapot Frissítés**: Az `AuthContext` frissíti a `user` állapotot, ami kiváltja a UI frissítését és átirányítja a felhasználót a vezérlőpultra (dashboard).
+There is no standalone `/login` route wired in `src/App.tsx`. Login is currently exposed through the public home UI.
 
-## Szerepkör-Alapú Hozzáférés-Vezérlés (RBAC)
+Frontend login calls:
 
-Az alkalmazás különbséget tesz több felhasználói szerepkör között. Ez két szinten valósul meg:
+```ts
+api.login(email, password)
+```
 
-### 1. Routing Szint (Kliens-oldal)
+This maps to:
 
-A React Router layout őrökkel (guards) védi az érzékeny útvonalakat. Például az `AdminLayout` valószínűleg ellenőrzi, hogy `user.role === 'admin'`. Ha nem, átirányítja a felhasználót a bejelentkezési oldalra vagy egy "hozzáférés megtagadva" oldalra.
+```text
+POST /api/auth/login
+```
 
-| Szerepkör                   | Hozzáférési Jogosultság                                                                |
-| --------------------------- | -------------------------------------------------------------------------------------- |
-| **Hallgató (Student)**      | Jelentkezhet állásokra, megtekintheti saját jelentkezéseit, szerkesztheti a profilját. |
-| **HR / Vállalati Admin**    | Kezelheti a vállalati profilt, állásokat hirdethet, értékelheti a jelentkezőket.       |
-| **Mentor**                  | Megtekintheti a hozzá rendelt hallgatókat, naplózhatja a haladást.                     |
-| **Tanár / Egyetem**         | Felügyeletet gyakorol az összes partnerség és statisztika felett.                      |
-| **Rendszer Adminisztrátor** | Teljes hozzáférés a felhasználókhoz, hírekhez és globális beállításokhoz.              |
+Do not document `api.auth.login` unless the source code is changed to provide that API shape.
 
-### 2. API Szint (Szerver-oldal)
+## Stored Session Data
 
-A frontend UI elemek elrejtése önmagában nem teszi biztonságossá az alkalmazást. A backend minden kérésnél validálja a JWT-t annak biztosítására, hogy a felhasználónak valóban van jogosultsága a művelet végrehajtására.
+`AuthContext` currently stores these keys in `localStorage`:
 
-## Token Perzisztencia
+- `token`
+- `user`
+- `role`
 
-- **LocalStorage**: Jelenleg a `localStorage`-ot használjuk a tárolásra.
-  - _Előnyök_: Könnyen implementálható, perzisztens a fülek/böngésző újraindítása között.
-  - _Hátrányok_: Sérülékeny XSS (Cross-Site Scripting) támadásokkal szemben, ha az alkalmazásban biztonsági rések vannak.
-- _Jövőbeli Fejlesztés_: Megfontolandó az áttérés `HttpOnly` sütikre a jobb XSS elleni védelem érdekében.
+Logout removes those keys, clears auth context state, and redirects to `/`.
 
-## Kijelentkezés
+## Role Guards And Redirects
 
-A kijelentkezés törli a tokent a tárhelyről és visszaállítja az `AuthContext` állapotot, azonnal átirányítva a felhasználót a publikus kezdőlapra.
+`src/features/auth/components/ProtectedRoute.tsx` is the client-side role guard.
+
+- Unauthenticated users are redirected to `/`.
+- Authenticated users without an allowed role are redirected to `/`.
+- Protected routes in `src/App.tsx` pass `allowedRoles`, such as `STUDENT`, `COMPANY_ADMIN`, `SYSTEM_ADMIN`, `UNIVERSITY_USER`, `TEACHER`, and `MENTOR`.
+- Role-specific post-login redirects are handled by the login UI/context flow and route configuration; verify current behavior in source before changing it.
+
+Client-side guards are not a security boundary by themselves. Backend routes must still validate JWT and roles.
+
+## Forgot And Reset Password
+
+Forgot password route:
+
+```text
+/forgot-password
+```
+
+It calls:
+
+```text
+POST /api/auth/request-password-reset
+```
+
+Reset password route:
+
+```text
+/reset-password
+```
+
+It reads the reset token from the first available query parameter:
+
+- `token`
+- `code`
+- `resetToken`
+
+It calls:
+
+```text
+POST /api/auth/reset-password
+```
+
+Acceptance testing depends on backend email/token infrastructure being configured in the target environment.
+
+## Handoff Caveats
+
+- Teacher routes are mostly placeholders; only the guide page is implemented.
+- Mentor routes are partial; partnerships and guide exist, while several sections are placeholders.
+- Do not present placeholder routes as complete authenticated product surfaces.
+- Keep role documentation aligned with `src/App.tsx` and `backendreadme.md`.

@@ -1,5 +1,7 @@
 # Duális Képzés Frontend - Részletes Projekt Struktúra és Architektúra
 
+> Note: This document may contain older generated notes. For current handoff information, verify against README.md, backendreadme.md, package.json, AGENTS.md, and src/App.tsx.
+
 Ez a dokumentum a projekt könyvtárszerkezetét, tervezési elveit és a fejlesztés során követendő szabályokat tartalmazza részletesen. A projekt **Feature-Based Architecture** (Funkció Alapú Architektúra) elvet követi.
 
 ---

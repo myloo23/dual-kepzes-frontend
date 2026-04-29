@@ -1,5 +1,7 @@
 # Performance Optimization Guide
 
+> Note: This document may contain older generated notes. For current handoff information, verify against README.md, backendreadme.md, package.json, AGENTS.md, and src/App.tsx.
+
 This guide explains the performance optimizations implemented in the project.
 
 ## 🚀 Code Splitting

@@ -1,5 +1,7 @@
 # Architektúra Áttekintés
 
+> Note: This document may contain older generated notes. For current handoff information, verify against README.md, backendreadme.md, package.json, AGENTS.md, and src/App.tsx.
+
 ## Magas Szintű Tervezés
 
 A **Dual Képzés Frontend** egy modern alkalmazás (SPA), amely **React** és **TypeScript** alapokon nyugszik. Ez a rendszer szolgál elsődleges felületként a duális képzési együttműködések kezelésére az egyetemek, vállalatok és hallgatók között. Az alkalmazás **szerepkör-alapú** (Role-Based), ami azt jelenti, hogy a felhasználói felület és az elérhető funkciók dinamikusan alkalmazkodnak a bejelentkezett felhasználó szerepköréhez (Hallgató, Vállalati Adminisztrátor, HR, Mentor, Oktató, Rendszeradminisztrátor).

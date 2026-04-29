@@ -1,5 +1,7 @@
 # 🛠️ Fejlesztői Segédlet és Statisztikák
 
+> Note: This document may contain older generated notes. For current handoff information, verify against README.md, backendreadme.md, package.json, AGENTS.md, and src/App.tsx.
+
 Ez a dokumentum a projekt technikai mélyfúrását, vizuális diagramjait és a gyakori fejlesztői munkafolyamatokat tartalmazza.
 
 ---

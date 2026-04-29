@@ -1,132 +1,68 @@
-# API és Adatfolyam
+> Updated for handoff. Verify against README.md, backendreadme.md, package.json, and current source code before production changes.
 
-Az alkalmazás egy RESTful backenddel kommunikál, melyhez egy központosított API réteg biztosítja a kapcsolatot a `src/lib/api.ts` és `src/lib/api-client.ts` fájlokban.
+# API And Data Flow
 
-## Az `api` Objektum
+Backend/API source of truth is `backendreadme.md`, plus Swagger/backend implementation when available. Never invent endpoints. If a route is not documented or implemented, keep the related UI disabled/hidden or document the gap.
 
-Egyetlen globális `api` objektumot exportálunk, amely domainek (szakterületek) szerint csoportosítja a végpontokat. Ez biztosítja a kódkiegészítést és a típusbiztonságot az egész alkalmazásban.
+## HTTP Layer
 
-**Használati Példa:**
+`src/lib/api-client.ts` uses the native browser `fetch` API, not Axios.
 
-```typescript
-import { api } from '@/lib/api';
+The client:
 
-// Vállalatok lekérése
-const companies = await api.companies.list();
+- prefixes requests with `VITE_API_URL`
+- attaches `Authorization: Bearer <token>` when `src/lib/auth-token.ts` returns a token
+- sends JSON for POST/PUT/PATCH helpers
+- serializes query params with `URLSearchParams`
+- throws normalized `Error` objects for non-2xx responses
+- unwraps `{ success: true, data }` responses to `data`
+- unwraps paginated `{ data, pagination }` responses to the `data` array
 
-// Vállalatok lekérése pagination paraméterekkel
-const companies = await api.companies.list({ page: 1, limit: 50 });
+## API Organization
 
-// Pozíció létrehozása
-await api.positions.create({ title: "DevOps Gyakornok", ... });
+- `src/lib/api.ts` exports the central `api` object used by much of the app.
+- `src/lib/api-client.ts` provides `apiGet`, `apiPost`, `apiPut`, `apiPatch`, `apiDelete`, and form-data helpers.
+- Feature-specific services exist where a module owns more detailed behavior, for example companies, students, gallery, guide materials, and stats services.
+- `src/types/api.types.ts` contains the main API request/response types.
+
+## Current Confirmed Endpoints
+
+These endpoints are wired and should be treated as real for handoff:
+
+```text
+POST /api/auth/request-password-reset
+POST /api/auth/reset-password
+GET /api/search?q=<query>
 ```
 
-## Pagination Támogatás
+Other API calls exist in frontend services, but verify each one against `backendreadme.md`, Swagger, or backend source before expanding docs or UI behavior.
 
-A backend API támogatja a pagination-t a list endpointokon keresztül. Az API automatikusan kezeli a paginated válaszokat.
+## Safer Typing
 
-### Query Paraméterek
+Do not add examples using `Record<string, any>` or `as any`. Prefer existing types from `src/types/api.types.ts`, feature-specific types, or narrow unknown data before use.
 
-A legtöbb list endpoint támogatja a következő opcionális paramétereket:
+Example query shape:
 
-- `page`: Az oldal száma (1-től kezdődik)
-- `limit`: Elemek száma oldalanként (alapértelmezett: 10)
-
-**Példa:**
-
-```typescript
-// Első 100 pozíció lekérése
-const positions = await api.positions.list({ limit: 100 });
-
-// Második oldal lekérése, 20 elemmel
-const companies = await api.companies.list({ page: 2, limit: 20 });
+```ts
+type QueryValue = string | number | boolean | null | undefined;
+type QueryParams = Record<string, QueryValue>;
 ```
 
-### Automatikus Response Unwrapping
+Example API usage:
 
-Az `api-client.ts` automatikusan unwrap-eli a backend válaszokat:
+```ts
+import { apiGet } from "@/lib/api-client";
+import type { SearchApiResponse } from "@/types/api.types";
 
-**Backend válasz formátum:**
-
-```json
-{
-  "success": true,
-  "data": [...],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 100
-  }
-}
+const results = await apiGet<SearchApiResponse>("/api/search", { q: "mernok" });
 ```
 
-**Frontend által kapott adat:**
+## Adding Or Changing Calls
 
-```typescript
-const positions = await api.positions.list(); // Position[] típus
-// A 'data' array automatikusan kicsomagolásra kerül
-```
+Before adding a call:
 
-Ez biztosítja a backward compatibility-t a meglévő komponensekkel, amelyek közvetlenül array-t várnak.
-
-## Kérés Kezelés (Request Handling)
-
-A háttérben az `api-client.ts` egy testreszabott `fetch` csomagolót használ, amely a következőket kezeli:
-
-1.  **Alap URL**: Automatikusan elé fűzi a `VITE_API_URL` változót a kérésekhez.
-2.  **Autorizáció**: Ellenőrzi a `localStorage`-ot a JWT tokenért (`auth_token`), és minden hitelesített kéréshez hozzáadja az `Authorization: Bearer <token>` fejlécet.
-3.  **Content-Type**: Beállítja az `application/json` típust a POST/PUT/PATCH kéréseknél.
-4.  **Query Paraméterek**: Automatikusan formázza a query paramétereket URL query string-gé.
-5.  **Válasz Unwrapping**: Automatikusan kicsomagolja a `{ success, data }` struktúrát.
-6.  **Hiba Normalizálás**:
-    - Elkapja a HTTP hibákat (4xx, 5xx).
-    - Értelmezi a backend hibaüzenetét.
-    - Egy szabványos JavaScript `Error` objektumot dob felhasználóbarát üzenettel, amelyet a UI komponensek vagy Toast értesítések elkaphatnak.
-
-## Típusbiztonság
-
-Minden API választ TypeScript interfészek definiálnak a `src/types/api.types.ts` fájlban.
-
-- **Generikusok**: Az `apiGet<T>`, `apiPost<T>` stb. segédfüggvények biztosítják, hogy a visszatérési érték megfeleljen a várt interfésznek.
-- **PaginationQuery**: Opcionális interface a pagination paraméterekhez.
-
-```typescript
-// Definíció
-function apiGet<T>(path: string, query?: Record<string, any>): Promise<T> { ... }
-
-// Használat
-api.students.get(id) // Promise<StudentProfile> típusú választ ad
-
-// Pagination paraméterekkel
-api.positions.list({ limit: 100 }) // Promise<Position[]> típusú választ ad
-```
-
-## Új Végpontok Hozzáadása
-
-Új API végpont hozzáadásának lépései:
-
-1.  Definiálja a válasz és a payload típusokat a `src/types/api.types.ts` fájlban.
-2.  Adja hozzá az útvonal konstansát a `PATHS` objektumhoz a `src/lib/api.ts`-ben (opcionális, de ajánlott a "magic strings" elkerülése végett).
-3.  Adjon hozzá egy új metódust az `api` objektumhoz a `src/lib/api.ts` fájlban, a megfelelő segédfüggvény (`apiGet`, `apiPost`, stb.) használatával.
-4.  Ha a végpont támogatja a pagination-t, adja hozzá a `PaginationQuery` paramétert.
-
-**Példa:**
-
-```typescript
-// 1. Típus definíció (api.types.ts)
-export interface NewsItem {
-  id: number;
-  title: string;
-  content: string;
-}
-
-// 2. & 3. Végpont hozzáadása (api.ts)
-export const api = {
-  // ... más végpontok
-  news: {
-    list: (params?: PaginationQuery) => apiGet<NewsItem[]>(PATHS.news, params),
-    get: (id: string) => apiGet<NewsItem>(`${PATHS.news}/${id}`),
-    create: (data: Partial<NewsItem>) => apiPost<NewsItem>(PATHS.news, data),
-  },
-};
-```
+1. Check `backendreadme.md`.
+2. Check Swagger or backend route implementation.
+3. Check existing frontend services for an existing wrapper.
+4. Add or reuse precise request/response types.
+5. Keep unavailable backend features visually safe instead of faking success.

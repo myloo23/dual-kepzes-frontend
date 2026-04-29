@@ -37,9 +37,11 @@ The HTTP layer uses the native browser `fetch` API through [src/lib/api-client.t
 
 Prerequisites:
 
-- Node.js 18 or newer
+- Node.js 20 or newer
 - npm
 - A running backend API. The default local URL is `http://localhost:3000`.
+
+Current Vite 7 and React Router DOM 7 dependency requirements are compatible with Node 20+.
 
 Install dependencies:
 
@@ -395,13 +397,33 @@ Do not fix unrelated lint backlog as part of documentation-only handoff work.
 
 ## Related Documentation
 
-Some docs in this repository may be older than this README. Verify them against the current codebase and handoff notes before relying on them.
+Some docs were generated earlier and may be outdated. Treat README.md, backendreadme.md, package.json, AGENTS.md, and src/App.tsx as the current source of truth.
 
-- [backendreadme.md](./backendreadme.md) - backend/API reference for this handoff.
-- [docs/01-architecture.md](./docs/01-architecture.md) - frontend architecture notes.
-- [docs/02-getting-started.md](./docs/02-getting-started.md) - setup notes, may need review against this README.
-- [docs/04-api-and-data-flow.md](./docs/04-api-and-data-flow.md) - API/data-flow notes.
-- [docs/06-deployment.md](./docs/06-deployment.md) - deployment notes, verify before production use.
+### Current handoff sources of truth
+
+- [README.md](./README.md) - frontend project reference and handoff notes.
+- [backendreadme.md](./backendreadme.md) - backend/API reference.
+- [AGENTS.md](./AGENTS.md) - repository rules and guardrails for AI coding agents.
+- [package.json](./package.json) - dependency and script source of truth.
+- [src/App.tsx](./src/App.tsx) - practical routing source of truth.
+
+### Docs that should be updated before relying on them
+
+- [docs/02-getting-started.md](./docs/02-getting-started.md)
+- [docs/04-api-and-data-flow.md](./docs/04-api-and-data-flow.md)
+- [docs/05-authentication-and-security.md](./docs/05-authentication-and-security.md)
+- [docs/09-advanced-features.md](./docs/09-advanced-features.md)
+
+### Reference / legacy docs
+
+- [docs/01-architecture.md](./docs/01-architecture.md)
+- [docs/03-features-and-modules.md](./docs/03-features-and-modules.md)
+- [docs/06-deployment.md](./docs/06-deployment.md)
+- [docs/07-ux-components.md](./docs/07-ux-components.md)
+- [docs/08-performance.md](./docs/08-performance.md)
+- [docs/FEJLESZTOI_SEGEDLET.md](./docs/FEJLESZTOI_SEGEDLET.md)
+- [docs/FRONTEND_STRUKTURA.md](./docs/FRONTEND_STRUKTURA.md)
+- [docs/WORKFLOW_VIZUALIZACIO.html](./docs/WORKFLOW_VIZUALIZACIO.html)
 
 ## Ownership
 

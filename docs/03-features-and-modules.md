@@ -1,5 +1,7 @@
 # Funkciók és Modulok
 
+> Note: This document may contain older generated notes. For current handoff information, verify against README.md, backendreadme.md, package.json, AGENTS.md, and src/App.tsx.
+
 Az alkalmazás számos üzleti modulra van felosztva, amelyek az `src/features/` könyvtárban találhatók.
 
 ## Alapvető Funkciók (Core Features)

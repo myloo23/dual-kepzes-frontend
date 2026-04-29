@@ -667,6 +667,17 @@ erDiagram
 - A hibakezelés központosított middleware-en fut át.
 - A legtöbb domain művelet service rétegen keresztül történik.
 
+### Frontend handoff API note
+
+Added for frontend handoff based on confirmed Swagger/API docs:
+
+- `POST /api/auth/request-password-reset`
+  Body: `{ "email": "user@example.com" }`
+- `POST /api/auth/reset-password`
+  Body: `{ "token": "string", "newPassword": "string" }`
+- `GET /api/search?q=<query>`
+  Minimum `q` length: 2 characters.
+
 ## Projekt struktúra
 
 ```text

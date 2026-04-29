@@ -1,70 +1,58 @@
-# Kezdeti Lépések
+> Updated for handoff. Verify against README.md, backendreadme.md, package.json, and current source code before production changes.
 
-## Előfeltételek
+# Getting Started
 
-Mielőtt hozzálátna, győződjön meg arról, hogy a következő szoftverek telepítve vannak a rendszerén:
+Use this page as a quick local setup note only. For current frontend handoff details read `README.md`; for backend/API behavior read `backendreadme.md`; for agent guardrails read `AGENTS.md`.
 
-- **Node.js** (v18.0.0 vagy újabb verzió ajánlott)
-- **npm** (a Node.js részeként települ)
-- **Git**
+## Prerequisites
 
-## Telepítés
+- Node.js 20 or newer
+- npm
+- Git
+- Running backend API matching `backendreadme.md`
 
-1.  **Repository Klónozása**
+The current local backend default is:
 
-    ```bash
-    git clone https://github.com/myloo23/dual-kepzes-frontend.git
-    cd dual-kepzes-frontend
-    ```
+```text
+http://localhost:3000
+```
 
-2.  **Függőségek Telepítése**
-    ```bash
-    npm install
-    ```
+Do not use the older `http://localhost:8000` value unless the active environment configuration explicitly requires it.
 
-## Környezeti Konfiguráció
+## Setup
 
-Az alkalmazás környezeti változókat használ az API kapcsolatok kezelésére.
+```bash
+npm install
+```
 
-1.  Hozzon létre egy `.env` fájlt a projekt gyökérkönyvtárában (másolja át a tartalmát a `.env.example` fájlból, ha létezik, egyébként hozzon létre egy újat).
-2.  Adja hozzá a következő változót:
-    ```env
-    VITE_API_URL=http://localhost:8000
-    ```
-    _Megjegyzés: Módosítsa ezt az URL-t, ha a backend szervere eltérő porton vagy hoszton fut._
+Create a project-root `.env` file:
 
-## Fejlesztői Szerver Indítása
+```env
+VITE_API_URL=http://localhost:3000
+```
 
-A helyi fejlesztői szerver indítása Hot Module Replacement (HMR) funkcióval:
+`VITE_API_URL` is read by the frontend API client through the app configuration. Adjust it only when the backend is actually running elsewhere.
+
+## Scripts
+
+Source of truth: `package.json`.
 
 ```bash
 npm run dev
-```
-
-Az alkalmazás a `http://localhost:5173` címen érhető el.
-
-## Production Build
-
-Optimalizált éles (production) build létrehozása:
-
-1.  **Build**
-
-    ```bash
-    npm run build
-    ```
-
-    Ez a parancs lefordítja a TypeScript kódot és összecsomagolja (bundle) az eszközöket a `dist/` mappába.
-
-2.  **Előnézet (Preview)**
-    ```bash
-    npm run preview
-    ```
-    Ez egy helyi statikus szervert indít, amely a `dist/` mappa tartalmát szolgálja ki, így lehetőség nyílik az éles verzió helyi tesztelésére.
-
-## Linting
-
-A kódminőség ellenőrzése és a potenciális hibák felderítése:
-
-```bash
+npm run build
 npm run lint
+npm run preview
 ```
+
+- `npm run dev` starts the Vite development server.
+- `npm run build` runs TypeScript build and Vite production build.
+- `npm run lint` runs ESLint.
+- `npm run preview` serves the built app locally.
+
+## Practical Handoff Caveats
+
+- Routes are defined in `src/App.tsx`; use that file as the practical routing source.
+- Teacher and Mentor route groups exist, but several pages are placeholders. Do not present them as complete.
+- Gallery seed images still use `picsum.photos` until real institutional media assets are provided.
+- `LEVELEZO` / `LEVELEZŐ` study mode is intentionally disabled in student registration and shown as upcoming.
+- Build status is time-sensitive. Run `npm run build` before claiming the handoff is build-clean.

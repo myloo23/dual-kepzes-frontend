@@ -1,5 +1,7 @@
 # Telepítés (Deployment)
 
+> Note: This document may contain older generated notes. For current handoff information, verify against README.md, backendreadme.md, package.json, AGENTS.md, and src/App.tsx.
+
 ## Stratégia
 
 Ez az alkalmazás buildelés után egy **Statikus Oldal** (SPA - Single Page Application). Bármilyen statikus fájlszerveren hosztolható (Nginx, Apache, AWS S3, Vercel, Netlify).
@@ -42,7 +44,7 @@ Automatizált telepítés GitHub Actions használatával:
 1.  **Indító esemény (Trigger)**: Push a `main` ágra.
 2.  **Lépések**:
     - Kód letöltése (Checkout).
-    - Node.js `v18` telepítése.
+    - Node.js 20+ telepítése.
     - `npm install`.
     - `npm run lint` (Megszakítás hiba esetén).
     - `npm run build`.

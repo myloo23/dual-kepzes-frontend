@@ -1,250 +1,64 @@
-# Phase 3 Advanced Features - Usage Guide
+> Updated for handoff. Verify against README.md, backendreadme.md, package.json, and current source code before production changes.
 
-## 🔍 Global Search
+# Advanced Features
 
-### Overview
+This page documents current advanced frontend behavior and known post-handoff debt. Planned items are marked as future work.
 
-A powerful global search feature accessible via keyboard shortcut that searches across positions, companies, and news.
+## Global Search
 
-### Usage
+Global search is already wired to a real API call:
 
-**Opening the Search:**
-
-- Press `Ctrl+K` (Windows/Linux) or `Cmd+K` (Mac)
-- Search modal opens instantly
-
-**Features:**
-
-- **Debounced search** - Waits 300ms after typing before searching
-- **Keyboard navigation** - Use arrow keys to navigate results
-- **Recent searches** - Last 5 searches saved in localStorage
-- **Press Enter** - Navigate to selected result
-- **Press ESC** - Close search modal
-
-### Implementation
-
-The search is globally available in [`App.tsx`](file:///c:/Users/milan/Documents/GitHub/dual-kepzes-frontend/src/App.tsx#L120).
-
-**Components:**
-
-- [`GlobalSearch.tsx`](file:///c:/Users/milan/Documents/GitHub/dual-kepzes-frontend/src/components/shared/GlobalSearch.tsx) - Main search modal
-- [`useGlobalSearch.ts`](file:///c:/Users/milan/Documents/GitHub/dual-kepzes-frontend/src/hooks/useGlobalSearch.ts) - Keyboard shortcut hook
-
-### Customization
-
-To connect to real API, update the search effect in `GlobalSearch.tsx`:
-
-```tsx
-// Replace mock results with API call
-const results = await api.search.global(query);
+```text
+GET /api/search?q=<query>
 ```
 
----
+No mock replacement is needed for the current implementation. Verify the backend route in `backendreadme.md`, Swagger, or backend source before changing the contract.
 
-## 📊 Export Functionality
+Current behavior:
 
-### Overview
+- opens from the global search UI / keyboard shortcut flow
+- waits for at least 2 non-space characters before searching
+- debounces requests
+- groups/maps backend results for positions, companies, and news
+- clears results and shows a friendly error state when search fails
+- stores recent searches in localStorage in the app-level implementation
 
-Export data tables to CSV or PDF format with a single click.
+There are currently two search implementations:
 
-### CSV Export
+- `src/components/shared/GlobalSearch.tsx`, mounted at app level through `src/App.tsx`
+- `src/features/search/components/GlobalSearch.tsx`, used by the navbar search feature flow
 
-**Usage:**
+Consolidating these implementations is technical debt. Do not remove one without confirming the intended product behavior.
 
-```tsx
-import { exportToCSV, getExportFilename } from "@/utils/export";
-import ExportButton from "@/components/shared/ExportButton";
+## Export Utilities
 
-function MyComponent() {
-  const data = [
-    { name: "John", email: "john@example.com", role: "Student" },
-    { name: "Jane", email: "jane@example.com", role: "Teacher" },
-  ];
+Export helpers live in:
 
-  const handleExport = () => {
-    exportToCSV(data, getExportFilename("users", "csv"), [
-      { key: "name", label: "Név" },
-      { key: "email", label: "Email" },
-      { key: "role", label: "Szerepkör" },
-    ]);
-  };
-
-  return <ExportButton onExport={handleExport} icon="csv" />;
-}
+```text
+src/utils/export.ts
 ```
 
-**Features:**
+Current capabilities include:
 
-- Handles commas, quotes, and newlines in data
-- Custom column labels
-- Auto-generates filename with date
-- Excel-compatible formatting
+- CSV export
+- Excel `.xlsx` export through `xlsx`
+- PDF/table print export through the browser print flow
+- date-based export filenames
 
-### PDF Export
+Known debt:
 
-**Usage:**
+- `src/utils/export.ts` still uses generic `any` constraints. Replace with safer generic constraints in a dedicated type-cleanup pass.
+- Large exports should be reviewed for performance and user feedback before production use.
 
-```tsx
-import { exportToPDF } from "@/utils/export";
-import ExportButton from "@/components/shared/ExportButton";
+## Future Work
 
-function MyTable() {
-  const handleExport = () => {
-    exportToPDF("my-table-id", "Users Report");
-  };
+These are planned or optional improvements, not current completed behavior:
 
-  return (
-    <>
-      <table id="my-table-id">{/* table content */}</table>
-      <ExportButton onExport={handleExport} icon="pdf" />
-    </>
-  );
-}
-```
+- consolidate the two GlobalSearch implementations
+- add search filters such as type/date range
+- add fuzzy search or analytics if product needs them
+- replace gallery seed media with approved real assets
+- improve export typing and large-data handling
+- add custom PDF/Excel formatting templates if required
 
-**Features:**
-
-- Uses browser print API (no external dependencies)
-- Print-friendly styling
-- Automatic page breaks
-- Custom title
-
-### ExportButton Component
-
-**Props:**
-
-- `onExport` - Function to call when clicked
-- `label` - Custom button text (optional)
-- `icon` - 'csv' or 'pdf' (default: 'csv')
-- `variant` - 'primary' or 'secondary' (default: 'secondary')
-- `disabled` - Disable button (default: false)
-- `className` - Additional CSS classes
-
-**Examples:**
-
-```tsx
-// CSV export button
-<ExportButton onExport={handleCSV} icon="csv" label="Letöltés CSV" />
-
-// PDF export button
-<ExportButton onExport={handlePDF} icon="pdf" variant="primary" />
-
-// Disabled state
-<ExportButton onExport={handleExport} disabled={data.length === 0} />
-```
-
----
-
-## 🎯 Integration Examples
-
-### Admin Users Page
-
-```tsx
-import { exportToCSV, getExportFilename } from "@/utils/export";
-import ExportButton from "@/components/shared/ExportButton";
-
-function AdminUsers() {
-  const [users, setUsers] = useState([]);
-
-  const handleExportCSV = () => {
-    exportToCSV(users, getExportFilename("users", "csv"), [
-      { key: "name", label: "Név" },
-      { key: "email", label: "Email" },
-      { key: "role", label: "Szerepkör" },
-      { key: "createdAt", label: "Létrehozva" },
-    ]);
-  };
-
-  return (
-    <div>
-      <div className="flex justify-end mb-4">
-        <ExportButton onExport={handleExportCSV} />
-      </div>
-      <table id="users-table">{/* table content */}</table>
-    </div>
-  );
-}
-```
-
-### Positions List with Filters
-
-```tsx
-function PositionsList() {
-  const [positions, setPositions] = useState([]);
-  const [filters, setFilters] = useState({});
-
-  const handleExport = () => {
-    // Export only filtered data
-    const filteredData = applyFilters(positions, filters);
-    exportToCSV(filteredData, getExportFilename("positions", "csv"), [
-      { key: "title", label: "Pozíció" },
-      { key: "company", label: "Cég" },
-      { key: "location", label: "Helyszín" },
-      { key: "type", label: "Típus" },
-    ]);
-  };
-
-  return (
-    <>
-      <FilterSidebar filters={filters} onChange={setFilters} />
-      <ExportButton onExport={handleExport} label="Szűrt lista exportálása" />
-      <PositionsList data={filteredData} />
-    </>
-  );
-}
-```
-
----
-
-## 📝 Best Practices
-
-### Global Search
-
-- Keep search results relevant and limited (max 10-20 per type)
-- Show most recent/relevant results first
-- Include context (subtitle) to help users identify results
-- Clear search on navigation
-
-### Export
-
-- Always include date in filename
-- Use descriptive column labels in Hungarian
-- Handle empty data gracefully
-- Show loading state for large exports
-- Provide feedback after export (toast notification)
-
-### Performance
-
-- Debounce search input (already implemented)
-- Limit export to reasonable data sizes
-- Consider pagination for very large datasets
-- Cache search results when appropriate
-
----
-
-## 🚀 Future Enhancements
-
-### Global Search
-
-- [ ] Search history with delete option
-- [ ] Search filters (type, date range)
-- [ ] Fuzzy search for typos
-- [ ] Search analytics
-- [ ] Voice search
-
-### Export
-
-- [ ] Excel export with formatting
-- [ ] Custom PDF templates
-- [ ] Batch export
-- [ ] Scheduled exports
-- [ ] Email export option
-
----
-
-## Components Created
-
-- ✅ [`GlobalSearch.tsx`](file:///c:/Users/milan/Documents/GitHub/dual-kepzes-frontend/src/components/shared/GlobalSearch.tsx)
-- ✅ [`useGlobalSearch.ts`](file:///c:/Users/milan/Documents/GitHub/dual-kepzes-frontend/src/hooks/useGlobalSearch.ts)
-- ✅ [`export.ts`](file:///c:/Users/milan/Documents/GitHub/dual-kepzes-frontend/src/utils/export.ts)
-- ✅ [`ExportButton.tsx`](file:///c:/Users/milan/Documents/GitHub/dual-kepzes-frontend/src/components/shared/ExportButton.tsx)
+Do not describe future items as shipped features in handoff or production documentation.

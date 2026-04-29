@@ -87,6 +87,20 @@
             padding-bottom: 4rem;
         }
 
+        .legacy-warning {
+            background: #fef3c7;
+            color: #78350f;
+            border-bottom: 2px solid #f59e0b;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .legacy-warning strong {
+            font-weight: 800;
+        }
+
         /* Header Styles */
         .header {
             background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
@@ -364,6 +378,10 @@
 </head>
 <body>
 
+    <div class="legacy-warning" role="alert">
+        <strong>Figyelem:</strong> ez a workflow vizualizáció korábbi generált dokumentáció. Egyes állításai elavultak lehetnek. A jelenlegi átadási információkhoz a README.md, backendreadme.md, package.json, AGENTS.md és src/App.tsx tekintendő elsődleges forrásnak. Az API kliens jelenleg natív fetch alapú, nem Axios.
+    </div>
+
     <!-- Header -->
     <header class="header">
         <div class="header-content">
@@ -412,7 +430,7 @@ flowchart TB
         end
         
         subgraph Infrastructure["INFRA - Infrastruktúra"]
-            ApiClient["🌐 API Client<br/>(Axios Instance)"]:::apiStyle
+            ApiClient["🌐 API Client<br/>(Native fetch API client)"]:::apiStyle
             Utils["🛠️ Utils<br/>(cn, formatters)"]:::utilsStyle
         end
     end
