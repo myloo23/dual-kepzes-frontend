@@ -48,7 +48,7 @@ export default function PublicCompanyProfilePage() {
         // We also attempt to pass companyId filter in case the API supports it
         const allPositions = await api.positions.listPublic({
           limit: 100,
-          companyId: id as any, // Cast to any if type definition is strict, though PaginationQuery usually allows extras
+          companyId: id,
         });
 
         // Client-side filter is still kept as a safety net in case the API ignores the companyId param

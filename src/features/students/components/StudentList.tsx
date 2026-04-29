@@ -9,6 +9,7 @@ import StudentDetailModal from "./StudentDetailModal";
 import { StudentFilters, type StudentFiltersState } from "./StudentFilters";
 import { useAvailableStudents } from "../hooks/useAvailableStudents";
 import type { AvailableStudent } from "../types";
+import type { StudyMode } from "../../../types/api.types";
 
 export const StudentList = () => {
   const { students, isLoading, error, refetch } = useAvailableStudents();
@@ -168,7 +169,7 @@ export const StudentList = () => {
             location: { country: "", zipCode: 0, city: "", address: "" },
             currentMajor: selectedStudent.studentProfile.major?.name || "",
             major: selectedStudent.studentProfile.major || undefined,
-            studyMode: selectedStudent.studentProfile.studyMode as any,
+            studyMode: selectedStudent.studentProfile.studyMode as StudyMode,
             motivationLetter: selectedStudent.studentProfile.motivationLetter,
           }}
         />
