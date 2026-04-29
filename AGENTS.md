@@ -4,14 +4,13 @@ Guidance for AI agents working in this repository.
 
 ## Before Making Changes
 
-- Read **README.md** for frontend stack, project structure, and available commands.
-- Read **backendreadme.md** for all backend/API reference (endpoints, request/response shapes, auth).
-- Read **CLAUDE.md** for codebase architecture and conventions.
+- Read **README.md** as the frontend project reference: stack, setup, structure, routing, architecture, caveats, and available commands.
+- Read **backendreadme.md** as the backend/API source of truth: endpoints, request/response shapes, auth, and backend behavior.
 
 ## API and Backend Rules
 
 - **Never invent endpoints.** Only use routes that exist in backendreadme.md. If an endpoint is missing, state that explicitly instead of guessing.
-- **Never fake success states.** Do not mock API responses, hardcode data, or skip actual API calls to simulate working UI.
+- **Never fake API success.** Do not mock API responses, hardcode data, or skip actual API calls to simulate working UI.
 - **Unavailable features must stay visually safe.** If a backend feature does not exist yet, disable or hide the UI element — do not wire it to a non-existent endpoint or return placeholder truthy values.
 
 ## TypeScript Rules

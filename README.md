@@ -1,600 +1,409 @@
-# Duális Képzés Frontend
+# NJE Dual Training Frontend
 
-Ez a repository a Duális Képzés rendszer frontend alkalmazását tartalmazza. Az alkalmazás célja a hallgatók, cégek, egyetemi szereplők és a duális képzés adminisztrációjának támogatása egy modern, reszponzív és felhasználóbarát webes felületen keresztül.
+Frontend application for the Neumann János University dual training system. The app supports public visitors, students, company/HR users, university users, mentors, teachers, and system administrators through a role-based React single-page application.
 
-## 🛠 Technológia Stack
+This README is written for a new developer taking over the frontend. For backend routes, request/response shapes, auth behavior, and API caveats, use [backendreadme.md](./backendreadme.md) as the backend/API reference. Do not invent frontend API calls for endpoints that are not documented or already implemented.
 
-A projekt modern, iparági sztenderd technológiákra épül:
+## Current Status
 
-- **Framework**: [React 19](https://react.dev/) - Modern UI könyvtár komponens-alapú fejlesztéshez
-- **Nyelv**: [TypeScript](https://www.typescriptlang.org/) - Típusbiztos JavaScript, amely növeli a kód megbízhatóságát
-- **Build Tool**: [Vite](https://vite.dev/) - Villámgyors fejlesztői környezet és build eszköz
-- **Routing**: [React Router v7](https://reactrouter.com/) - Deklaratív routing és navigáció
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- **Térkép**: [Leaflet](https://leafletjs.com/) + [React Leaflet](https://react-leaflet.js.org/) - Interaktív térképes megjelenítés
-- **Ikonok**: [Lucide React](https://lucide.dev/) - Modern, testreszabható ikonkészlet
-- **State Management**: React Context API - Globális állapotkezelés (Auth)
-- **HTTP Client**: Axios wrapper - Típusbiztos API kommunikáció
-- **Export**: [SheetJS (xlsx)](https://sheetjs.com/) - Excel export funkcionalitás
+The project is in client-preview / handoff state, not a fully finished production handover.
 
-## 🚀 Előfeltételek
+- Core public, student, HR/company, university, and admin surfaces exist.
+- Teacher and Mentor route groups exist, but they are not fully implemented. Several pages intentionally render placeholders.
+- Gallery seed images still use `picsum.photos` until real institutional media assets are provided.
+- `LEVELEZO` / `LEVELEZŐ` study mode is intentionally disabled in student registration and shown as "hamarosan".
+- Build status must be verified during handoff with `npm run build`; do not assume a clean build unless it has just been run.
+- Lint debt may remain, including React hooks/compiler categories, explicit generic `any` in export utilities, and `console.error` / `console.warn` used for real error handling.
 
-A fejlesztői környezet futtatásához szükséges szoftverek:
+## Tech Stack
 
-- **Node.js**: Legalább v18.x verzió
-- **npm**: Csomagkezelő (általában a Node.js része)
-- **Backend API**: Futó backend szerver (lásd: [Backend Repository](https://github.com/DrozsdikAdam/dual-kepzes-backend))
+Source of truth: [package.json](./package.json).
 
-## 📥 Telepítés és Indítás
+- React 19
+- React DOM 19
+- TypeScript 5.9
+- Vite 7
+- React Router DOM 7
+- Tailwind CSS 3
+- Leaflet and React Leaflet
+- Lucide React
+- SheetJS / `xlsx`
+- ESLint 9 with TypeScript ESLint and React hooks rules
+- Utility helpers: `clsx`, `tailwind-merge`
 
-1. **Repository klónozása**
+The HTTP layer uses the native browser `fetch` API through [src/lib/api-client.ts](./src/lib/api-client.ts), not Axios.
 
-   ```bash
-   git clone https://github.com/myloo23/dual-kepzes-frontend.git
-   cd dual-kepzes-frontend
-   ```
+## Setup
 
-2. **Függőségek telepítése**
+Prerequisites:
 
-   ```bash
-   npm install
-   ```
+- Node.js 18 or newer
+- npm
+- A running backend API. The default local URL is `http://localhost:3000`.
 
-3. **Környezeti változók beállítása**
-   Hozd létre a `.env` fájlt a gyökérkönyvtárban:
+Install dependencies:
 
-   ```env
-   # Backend API URL
-   VITE_API_URL=http://localhost:3000
-   ```
-
-4. **Szerver indítása (Fejlesztői mód)**
-   ```bash
-   npm run dev
-   ```
-   Az alkalmazás elindul a `http://localhost:5173` címen.
-
-## 📜 Elérhető Szkriptek
-
-A `package.json`-ben definiált főbb parancsok:
-
-| Parancs           | Leírás                                               |
-| :---------------- | :--------------------------------------------------- |
-| `npm run dev`     | Fejlesztői szerver indítása hot-reload módban.       |
-| `npm run build`   | TypeScript fordítás és production build létrehozása. |
-| `npm run preview` | Production build előnézete lokálisan.                |
-| `npm run lint`    | Kódminőség ellenőrzése (ESLint).                     |
-
-## 🏗 Projekt Struktúra
-
-```
-src/
-├── features/          # Funkció-alapú modulok (Feature-Based Architecture)
-│   ├── auth/          # Autentikáció (Login, Register, AuthContext)
-│   ├── users/         # Felhasználókezelés (Profilok)
-│   ├── companies/     # Cégek kezelése
-│   ├── positions/     # Álláshelyek/Pozíciók
-│   ├── applications/  # Jelentkezések
-│   ├── partnerships/  # Duális partnerségek
-│   ├── news/          # Hírek
-│   ├── notifications/ # Értesítések
-│   └── landing/       # Publikus landing oldalak
-├── pages/             # Route komponensek (Thin Pages)
-│   ├── landing/       # Publikus oldalak
-│   ├── auth/          # Login/Register
-│   ├── admin/         # Admin dashboard
-│   ├── student/       # Hallgatói dashboard
-│   ├── hr/            # HR dashboard
-│   ├── mentor/        # Mentor dashboard
-│   ├── teacher/       # Oktatói dashboard
-│   └── university/    # Egyetemi dashboard
-├── components/        # Megosztott UI komponensek
-│   ├── ui/            # Atom komponensek (Button, Input, Card)
-│   └── shared/        # Molekula komponensek (Modal, Pagination)
-├── layouts/           # Layout komponensek (Sidebar, Header)
-├── hooks/             # Globális custom hooks
-├── lib/               # Infrastruktúra (API client, Auth token)
-├── utils/             # Segédfüggvények (cn, export, validation)
-├── types/             # TypeScript típusdefiníciók
-├── constants/         # Konstansok (üzenetek, route-ok)
-├── config/            # Konfiguráció (navigation, app config)
-└── App.tsx            # Fő alkalmazás komponens
+```bash
+npm install
 ```
 
-Minden végpont a backend `/api` prefix alatt érhető el. A legtöbb végponthoz érvényes `Authorization: Bearer <token>` fejléc szükséges.
+Create a local `.env` file:
 
-## 🏛️ Rendszer Architektúra
-
-A frontend alkalmazás **Feature-Based Architecture** (Funkció-alapú architektúra) elvet követ:
-
-```mermaid
-graph TB
-    User([👤 Felhasználó])
-
-    subgraph Frontend["🎨 FRONTEND APPLICATION"]
-        direction TB
-
-        subgraph Pages["PAGES - Routing Layer"]
-            Page["📄 Page Component<br/>(Thin Wrapper)"]
-        end
-
-        subgraph Features["FEATURES - Business Logic"]
-            FeatureHook["🪝 Custom Hook<br/>(useApplications)"]
-            FeatureComp["🧩 Feature Component<br/>(ApplicationCard)"]
-        end
-
-        subgraph Shared["SHARED - Reusable UI"]
-            SharedUI["🎨 Shared Components<br/>(Button, Modal)"]
-            Utils["🛠️ Utils<br/>(cn, formatters)"]
-        end
-
-        subgraph Infrastructure["INFRASTRUCTURE"]
-            ApiClient["🌐 API Client<br/>(Axios Instance)"]
-            AuthContext["🔐 Auth Context<br/>(Global State)"]
-        end
-    end
-
-    subgraph Backend["⚙️ BACKEND API"]
-        API["🔌 REST API<br/>(Express)"]
-        DB[("💾 Database<br/>(PostgreSQL)")]
-    end
-
-    User -->|"Interakció"| Page
-    Page -->|"Használ"| FeatureHook
-    Page -->|"Renderel"| FeatureComp
-    Page -->|"Renderel"| SharedUI
-
-    FeatureHook -->|"API hívás"| ApiClient
-    FeatureComp -->|"Stílus"| Utils
-    SharedUI -->|"Stílus"| Utils
-
-    ApiClient ==>|"HTTP Request + JWT"| API
-    API <-->|"Query/Insert"| DB
-
-    AuthContext -.->|"Auth State"| FeatureHook
-
-    classDef userStyle fill:#22c55e,stroke:#16a34a,stroke-width:3px,color:#fff
-    classDef pageStyle fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a
-    classDef featureStyle fill:#fed7aa,stroke:#f97316,stroke-width:2px,color:#9a3412
-    classDef sharedStyle fill:#e0e7ff,stroke:#6366f1,stroke-width:2px,color:#3730a3
-    classDef infraStyle fill:#d1fae5,stroke:#10b981,stroke-width:2px,color:#065f46
-    classDef backendStyle fill:#1e293b,stroke:#0f172a,stroke-width:3px,color:#fff
-    classDef dbStyle fill:#475569,stroke:#1e293b,stroke-width:3px,color:#fff
-
-    class User userStyle
-    class Page pageStyle
-    class FeatureHook,FeatureComp featureStyle
-    class SharedUI,Utils sharedStyle
-    class ApiClient,AuthContext infraStyle
-    class API backendStyle
-    class DB dbStyle
+```env
+VITE_API_URL=http://localhost:3000
 ```
 
-## 🔄 Request Processing Flow
+Start the dev server:
 
-Egy tipikus felhasználói interakció feldolgozásának menete:
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User as 👤 Felhasználó
-    participant Page as 📄 Page Component
-    participant Hook as 🪝 useApplications Hook
-    participant API as 🌐 API Client
-    participant Backend as ⚙️ Backend API
-    participant DB as 💾 Database
-
-    User->>+Page: Oldal megnyitása
-    Note over Page: useEffect() fut
-
-    Page->>+Hook: loadApplications()
-    Note over Hook: State: loading = true
-
-    Hook->>+API: api.applications.list()
-    Note over API: GET /api/applications<br/>+ Bearer Token
-
-    API->>+Backend: HTTP GET Request
-    Backend->>+DB: SELECT * FROM applications
-    DB-->>-Backend: Adatok
-    Backend-->>-API: JSON Response
-
-    API-->>-Hook: Applications Data
-    Note over Hook: State: data, loading = false
-
-    Hook-->>-Page: Return { data, loading, error }
-    Note over Page: Re-render UI
-
-    Page->>User: Megjelenített adatok
-    deactivate Page
+```bash
+npm run dev
 ```
 
-## 📁 Feature-Based Architecture
-
-Egy feature teljes belső struktúrája:
-
-```mermaid
-graph TB
-    Root["📁 src/features/applications/"]:::rootStyle
-
-    Root --> Components["📁 components/"]:::folderStyle
-    Root --> Hooks["📁 hooks/"]:::folderStyle
-    Root --> Services["📁 services/"]:::folderStyle
-    Root --> Types["📄 types.ts"]:::fileStyle
-    Root --> Index["📄 index.ts<br/>(Public API)"]:::fileStyle
-
-    Components --> Comp1["ApplicationCard.tsx"]:::compStyle
-    Components --> Comp2["ApplicationList.tsx"]:::compStyle
-    Components --> Comp3["ApplicationForm.tsx"]:::compStyle
-
-    Hooks --> Hook1["useApplications.ts"]:::hookStyle
-    Hooks --> Hook2["useApplicationForm.ts"]:::hookStyle
-
-    Services --> Service1["applicationApi.ts"]:::serviceStyle
-
-    classDef rootStyle fill:#a78bfa,stroke:#7c3aed,stroke-width:3px,color:#fff
-    classDef folderStyle fill:#fed7aa,stroke:#f97316,stroke-width:2px,color:#9a3412
-    classDef fileStyle fill:#fecaca,stroke:#ef4444,stroke-width:2px,color:#991b1b
-    classDef compStyle fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a
-    classDef hookStyle fill:#d1fae5,stroke:#10b981,stroke-width:2px,color:#065f46
-    classDef serviceStyle fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#92400e
-```
-
-### Colocation Elve
-
-A kapcsolódó fájlok közel vannak egymáshoz. Ha egy hook csak egy feature-ben használt, akkor ott is marad. Ez megkönnyíti a kód megértését és karbantartását.
-
-## 🔐 Autentikációs Flow
-
-JWT token alapú autentikáció működése:
-
-```mermaid
-sequenceDiagram
-    participant User as 👤 Felhasználó
-    participant Login as 🔐 LoginPage
-    participant Auth as 🔑 AuthContext
-    participant API as 🌐 API Client
-    participant Backend as ⚙️ Backend
-    participant Storage as 💾 LocalStorage
-
-    User->>+Login: Email + Jelszó
-    Login->>+Auth: login(credentials)
-    Auth->>+API: POST /api/auth/login
-    API->>+Backend: HTTP Request
-
-    alt Sikeres bejelentkezés
-        Backend-->>-API: 200 OK + JWT Token + User Data
-        API-->>-Auth: { token, user }
-        Auth->>Storage: Mentés: token, user
-        Auth-->>Login: Success
-        Login->>User: Átirányítás Dashboard-ra
-    else Hibás jelszó
-        Backend-->>API: 401 Unauthorized
-        API-->>Auth: Error
-        Auth-->>Login: "Hibás email vagy jelszó"
-        Login->>User: Hibaüzenet megjelenítése
-    end
-
-    deactivate Auth
-    deactivate Login
-
-    Note over User,Storage: Védett oldal megtekintése
-
-    User->>+Login: Navigálás /student/dashboard
-    Login->>+Auth: Ellenőrzés: isAuthenticated?
-    Auth->>Storage: Token lekérése
-    Storage-->>Auth: JWT Token
-
-    alt Token érvényes
-        Auth-->>Login: Authorized
-        Login->>User: Dashboard megjelenítése
-    else Token hiányzik/lejárt
-        Auth-->>Login: Unauthorized
-        Login->>User: Átirányítás /login-ra
-    end
-
-    deactivate Auth
-    deactivate Login
-```
-
-## 🔐 Szerepkörök és Jogosultságok
-
-| Szerepkör          | Leírás                  | Főbb jogosultságok                                                              |
-| :----------------- | :---------------------- | :------------------------------------------------------------------------------ |
-| `STUDENT`          | Hallgató                | Saját profil, jelentkezések, partnerségek megtekintése, haladási napló          |
-| `COMPANY_EMPLOYEE` | Céges munkavállaló      | Cég pozíciói, jelentkezések megtekintése, mentor funkciók                       |
-| `COMPANY_ADMIN`    | Cégadmin                | Teljes cégkezelés, jelentkezések értékelése, pozíciók és munkavállalók kezelése |
-| `UNIVERSITY_USER`  | Egyetemi kapcsolattartó | Partnerségek jóváhagyása, hallgatók felügyelete                                 |
-| `SYSTEM_ADMIN`     | Rendszergazda           | Teljes rendszer adminisztráció, minden entitás kezelése                         |
-
-## 🛠️ Fejlesztési Workflow - Új Funkció Hozzáadása
-
-Lépésről lépésre útmutató új feature implementálásához:
-
-1. **Struktúra létrehozása**
-
-   ```bash
-   mkdir -p src/features/new-feature/{components,hooks,services}
-   touch src/features/new-feature/{types.ts,index.ts}
-   ```
-
-2. **Típusok definiálása** (`types.ts`)
-
-   ```typescript
-   export interface NewFeatureData {
-     id: number;
-     name: string;
-     // ...
-   }
-   ```
-
-3. **API szolgáltatás** (`services/api.ts`)
-
-   ```typescript
-   export const newFeatureApi = {
-     list: () => apiClient.get<NewFeatureData[]>("/api/new-feature"),
-     getById: (id: number) =>
-       apiClient.get<NewFeatureData>(`/api/new-feature/${id}`),
-   };
-   ```
-
-4. **Custom Hook** (`hooks/useNewFeature.ts`)
-
-   ```typescript
-   export const useNewFeature = () => {
-     const [data, setData] = useState<NewFeatureData[]>([]);
-     const [loading, setLoading] = useState(false);
-
-     const loadData = async () => {
-       setLoading(true);
-       const result = await api.newFeature.list();
-       setData(result);
-       setLoading(false);
-     };
-
-     return { data, loading, loadData };
-   };
-   ```
-
-5. **UI Komponensek** (`components/`)
-   - Készítsd el a megjelenítő komponenseket
-   - Használd a hook-ból kapott adatokat
-
-6. **Page létrehozása** (`pages/`)
-
-   ```typescript
-   export default function NewFeaturePage() {
-     const { data, loading } = useNewFeature();
-
-     return (
-       <DashboardLayout>
-         <NewFeatureList data={data} loading={loading} />
-       </DashboardLayout>
-     );
-   }
-   ```
-
-7. **Routing beállítása** (`App.tsx`)
-   ```typescript
-   <Route path="/new-feature" element={<NewFeaturePage />} />
-   ```
-
-## 🔌 API Integráció
-
-### API Client Használata
-
-Az `src/lib/api.ts` fájl tartalmazza az összes backend végpontot:
-
-```typescript
-import { api } from "@/lib/api";
-
-// Példa: Cégek listázása
-const companies = await api.companies.list();
-
-// Példa: Jelentkezés leadása
-await api.applications.create({
-  positionId: 123,
-  coverLetter: "...",
-});
-
-// Példa: Saját profil lekérése
-const profile = await api.students.getMe();
-```
-
-### Automatikus Funkciók
-
-- ✅ **JWT Token csatolása**: Minden kéréshez automatikusan
-- ✅ **Hiba kezelés**: 401/403/500 hibák központi kezelése
-- ✅ **Response unwrapping**: `{ success, data }` struktúra automatikus kicsomagolása
-- ✅ **Pagination támogatás**: `page` és `limit` paraméterek
-
-### Hibakezelés
-
-```typescript
-try {
-  const data = await api.companies.list();
-} catch (error) {
-  if (error.status === 401) {
-    // Átirányítás login-ra
-  } else if (error.status === 403) {
-    // Nincs jogosultság
-  } else {
-    // Általános hiba
-    toasts.error(error.message);
-  }
-}
-```
-
-## 🎨 UI/UX Irányelvek
-
-### Tailwind CSS Használata
-
-A projekt Tailwind CSS-t használ a stílusozáshoz. Mindig használd a `cn()` utility függvényt osztályok összefűzéséhez:
-
-```typescript
-import { cn } from '@/utils/cn';
-
-<div className={cn(
-  "p-4 rounded-lg",
-  isActive && "bg-blue-500",
-  isDisabled && "opacity-50 cursor-not-allowed"
-)} />
-```
-
-### Komponens Hierarchia
-
-- **Atom** (`components/ui/`): Alapvető építőkockák (Button, Input, Card)
-- **Molekula** (`components/shared/`): Összetett, újrahasznosítható komponensek (Modal, Pagination)
-- **Feature Komponens** (`features/.../components/`): Üzleti logikához kötött komponensek
-
-### Reszponzív Design
-
-Minden komponens mobil-first megközelítéssel készül:
-
-```typescript
-<div className="
-  px-4 py-2          // Mobil
-  md:px-6 md:py-4   // Tablet
-  lg:px-8 lg:py-6   // Desktop
-">
-```
-
-## 🚀 Deployment (Vercel)
-
-### Production Build
+Run a production build:
 
 ```bash
 npm run build
 ```
 
-A build kimenet a `dist/` mappába kerül.
+Run lint:
 
-### Környezeti Változók (Vercel)
-
-A Vercel dashboard-on állítsd be:
-
-```env
-VITE_API_URL=https://your-backend-api.com
+```bash
+npm run lint
 ```
 
-### Automatikus Deploy
+Preview the production build locally:
 
-A `main` branch-re történő push automatikusan triggerel egy Vercel deployment-et.
-
-## ⚠️ Hibakezelés
-
-### Hibakódok
-
-| HTTP Státusz | Kezelés           | Megjelenítés                |
-| :----------- | :---------------- | :-------------------------- |
-| `400`        | Validációs hiba   | Toast üzenet a hibával      |
-| `401`        | Nem autentikált   | Átirányítás `/login`-ra     |
-| `403`        | Nincs jogosultság | "Nincs hozzáférésed" üzenet |
-| `404`        | Nem található     | "Az oldal nem található"    |
-| `500`        | Szerverhiba       | "Szerverhiba történt" toast |
-
-### Toast Notifications
-
-```typescript
-import { toasts } from "@/hooks/useToast";
-
-// Siker
-toasts.success("Sikeres mentés!");
-
-// Hiba
-toasts.error("Hiba történt!");
-
-// Figyelmeztetés
-toasts.warning("Biztosan törölni szeretnéd?");
-
-// Info
-toasts.info("Új értesítésed érkezett");
+```bash
+npm run preview
 ```
 
-## 🚀 Quick Start - Példák
+## Environment Variables
 
-### 1. Bejelentkezés
+Only one project-specific `VITE_*` variable is currently used by source code:
 
-```typescript
-import { useAuth } from "@/features/auth/context/AuthContext";
+| Variable       | Required    | Default                 | Purpose                                                                              |
+| -------------- | ----------- | ----------------------- | ------------------------------------------------------------------------------------ |
+| `VITE_API_URL` | Recommended | `http://localhost:3000` | Backend API base URL used by `src/config/app.config.ts` and `src/lib/api-client.ts`. |
 
-function LoginExample() {
-  const { login } = useAuth();
+Vite built-ins such as `import.meta.env.DEV`, `import.meta.env.PROD`, and `import.meta.env.MODE` are also used for app configuration flags.
 
-  const handleLogin = async () => {
-    await login({
-      email: "student@example.com",
-      password: "password123",
-    });
-    // Automatikus átirányítás a dashboard-ra
-  };
-}
+## NPM Scripts
+
+| Script            | Purpose                                                 |
+| ----------------- | ------------------------------------------------------- |
+| `npm run dev`     | Start Vite dev server.                                  |
+| `npm run build`   | Run TypeScript project build and Vite production build. |
+| `npm run lint`    | Run ESLint over the project.                            |
+| `npm run preview` | Preview the built app locally.                          |
+
+## Project Structure
+
+```text
+src/
+  pages/        Route-level page components.
+  features/     Feature modules with components, hooks, services, data, and types.
+  components/   Shared UI, layout, and cross-feature components.
+  layouts/      Role-specific dashboard shells.
+  lib/          API client, central API object, token helpers, media URL helpers.
+  types/        Shared TypeScript API, UI, form, notification, and common types.
+  hooks/        App-level reusable hooks.
+  utils/        General utilities such as class merging, validation, export helpers.
+  config/       App config and role navigation config.
+  constants/    Routes, filters, messages, and UI constants.
+  assets/       Logos, reference images, documents, video, and static data assets.
 ```
 
-### 2. Adatok Lekérése
+The codebase follows a feature-oriented structure. Route components in `src/pages` should stay thin where practical, with domain behavior living under `src/features`.
 
-```typescript
-import { api } from '@/lib/api';
-import { useState, useEffect } from 'react';
+## Routing And Roles
 
-function CompanyList() {
-  const [companies, setCompanies] = useState([]);
+Routes are defined in [src/App.tsx](./src/App.tsx). Protected route access is handled by [src/features/auth/components/ProtectedRoute.tsx](./src/features/auth/components/ProtectedRoute.tsx).
 
-  useEffect(() => {
-    const loadCompanies = async () => {
-      const data = await api.companies.list();
-      setCompanies(data);
-    };
-    loadCompanies();
-  }, []);
+### Public Routes
 
-  return <div>{/* Render companies */}</div>;
-}
+- `/` - home and public landing entry.
+- `/positions` - public position listing.
+- `/gallery` - public gallery.
+- `/help` - public help page.
+- `/companies/:id` - public company profile.
+
+### Auth Routes
+
+- `/register` - student registration.
+- `/register-company-partner` - company partner registration with admin.
+- `/forgot-password` - password reset request.
+- `/reset-password` - password reset form.
+
+There is no standalone `/login` route wired in `App.tsx`; login is currently exposed through the public UI.
+
+### Student Routes
+
+Allowed role: `STUDENT`.
+
+- `/student`
+- `/student/news`
+- `/student/partnerships`
+- `/student/guide`
+
+These currently route through `StudentDashboardPage`, with tab/section behavior handled inside that page.
+
+### HR / Company Routes
+
+Allowed role: `COMPANY_ADMIN`.
+
+- `/hr`
+- `/hr/job-postings`
+- `/hr/applications`
+- `/hr/students`
+- `/hr/partnerships`
+- `/hr/employees`
+- `/hr/company-profile`
+- `/hr/news`
+- `/hr/profile`
+- `/hr/guide`
+
+Most HR sections route through `HrDashboardPage`; the guide page uses `HrGuidePage`.
+
+### Admin Routes
+
+Allowed role: `SYSTEM_ADMIN`.
+
+- `/admin`
+- `/admin/users`
+- `/admin/partnerships`
+- `/admin/companies`
+- `/admin/positions`
+- `/admin/tags`
+- `/admin/settings`
+- `/admin/news`
+- `/admin/notifications`
+- `/admin/guide`
+- `/admin/gallery`
+- `/admin/email-templates`
+
+### University Routes
+
+Allowed role: `UNIVERSITY_USER`.
+
+- `/university`
+- `/university/students`
+- `/university/partnerships`
+- `/university/news`
+- `/university/profile`
+- `/university/guide`
+
+Dashboard-like routes currently reuse `UniversityDashboardPage`; the guide page uses `UniversityGuidePage`.
+
+### Teacher Routes
+
+Allowed role: `TEACHER`.
+
+- `/teacher` - placeholder.
+- `/teacher/students` - placeholder.
+- `/teacher/companies` - placeholder.
+- `/teacher/stats` - placeholder.
+- `/teacher/guide` - implemented guide page.
+
+Teacher routes are not fully implemented and should not be presented as complete.
+
+### Mentor Routes
+
+Allowed role: `MENTOR`.
+
+- `/mentor` - placeholder.
+- `/mentor/partnerships` - mentor partnerships page.
+- `/mentor/messages` - placeholder.
+- `/mentor/progress` - placeholder.
+- `/mentor/reviews` - placeholder.
+- `/mentor/profile` - placeholder.
+- `/mentor/guide` - implemented guide page.
+
+Mentor routes are partially implemented and should not be presented as complete.
+
+## API Architecture
+
+Backend/API reference: [backendreadme.md](./backendreadme.md).
+
+- [src/lib/api-client.ts](./src/lib/api-client.ts) is the low-level native `fetch` wrapper.
+- [src/lib/api.ts](./src/lib/api.ts) exports the central `api` object used by much of the app.
+- Feature-specific services exist where a feature owns more detailed API behavior, for example:
+  - [src/features/companies/services/companyApi.ts](./src/features/companies/services/companyApi.ts)
+  - [src/features/students/services/studentsApi.ts](./src/features/students/services/studentsApi.ts)
+  - [src/features/gallery/services/galleryApi.ts](./src/features/gallery/services/galleryApi.ts)
+  - [src/features/guide/services/materialsApi.ts](./src/features/guide/services/materialsApi.ts)
+  - [src/features/stats/services/statsApi.ts](./src/features/stats/services/statsApi.ts)
+- [src/lib/auth-token.ts](./src/lib/auth-token.ts) centralizes token access.
+- API calls are automatically prefixed with `VITE_API_URL` or the local default.
+- Bearer tokens are attached from local storage when present.
+- JSON responses using `{ success: true, data }` are unwrapped by the client.
+- Paginated wrappers with `data` and `pagination` are also normalized to the `data` array.
+
+Do not add API calls by guessing endpoint names. Check `backendreadme.md`, Swagger/backend implementation, or existing frontend services first. If an endpoint is missing, leave the UI disabled/hidden or document the gap.
+
+## Auth Flows
+
+### Login
+
+Login calls `POST /api/auth/login` through `api.login`. On success, [AuthContext](./src/features/auth/context/AuthContext.tsx) stores:
+
+- `token`
+- `user`
+- `role`
+
+These are stored in `localStorage`, then exposed through the auth context.
+
+### Role-Based Navigation And Redirects
+
+- `ProtectedRoute` blocks protected pages when no authenticated user is available.
+- Unauthorized users are redirected to `/`.
+- Role-specific dashboard/news links are configured in [src/config/navigation.ts](./src/config/navigation.ts).
+- Some navigation entries point to routes that are currently placeholders, especially Teacher, Mentor, and HR news links.
+
+### Student Registration
+
+Student registration uses `/register` and submits through `api.registerStudent`, which maps to `POST /api/auth/register`.
+
+`LEVELEZŐ` study mode is disabled in the UI as "hamarosan"; do not document it as an active registration option.
+
+### Company Registration
+
+Company partner registration uses `/register-company-partner` and submits through company registration API paths already present in the frontend, including `/api/companies/with-admin`.
+
+### Forgot Password
+
+`/forgot-password` validates the email client-side and calls:
+
+```text
+POST /api/auth/request-password-reset
 ```
 
-### 3. Új Komponens Létrehozása
+The UI displays a generic success state if the request succeeds.
 
-```typescript
-// src/components/ui/Badge.tsx
-import { cn } from '@/utils/cn';
+### Reset Password
 
-interface BadgeProps {
-  children: React.ReactNode;
-  variant?: 'default' | 'success' | 'warning';
-}
+`/reset-password` reads the reset token from one of these query parameters:
 
-export function Badge({ children, variant = 'default' }: BadgeProps) {
-  return (
-    <span className={cn(
-      "px-2 py-1 rounded-full text-sm",
-      variant === 'default' && "bg-gray-100 text-gray-800",
-      variant === 'success' && "bg-green-100 text-green-800",
-      variant === 'warning' && "bg-yellow-100 text-yellow-800"
-    )}>
-      {children}
-    </span>
-  );
-}
+- `token`
+- `code`
+- `resetToken`
+
+It validates the new password and calls:
+
+```text
+POST /api/auth/reset-password
 ```
 
-## 📚 További Dokumentáció
+Password reset depends on backend email/token infrastructure. Confirm the target environment has email/reset delivery configured before client acceptance testing.
 
-Részletes dokumentációt találsz a `docs/` mappában:
+## Global Search
 
-- [Frontend Struktúra](./docs/FRONTEND_STRUKTURA.md) - Részletes projekt struktúra és architektúra
-- [Fejlesztői Segédlet](./docs/FEJLESZTOI_SEGEDLET.md) - Workflow-k, statisztikák, diagramok
-- [Workflow Vizualizáció](./docs/WORKFLOW_VIZUALIZACIO.html) - Interaktív architektúra diagramok
+The frontend currently calls:
 
-## 🔗 Kapcsolódó Projektek
+```text
+GET /api/search?q=<query>
+```
 
-- **Backend API**: [dual-kepzes-backend](https://github.com/DrozsdikAdam/dual-kepzes-backend)
-- **API Dokumentáció**: [Swagger UI](https://dual-kepzes-backend.onrender.com/api-docs)
+Behavior:
 
-## 📝 Licensz
+- Minimum query length is 2 characters.
+- Search requests are debounced.
+- Expected result groups are positions, companies, and news.
+- Empty state shows either static navigation shortcuts or no results, depending on which search implementation is used.
+- Errors are shown as a friendly search failure message and results are cleared.
 
-Ez a projekt a Neumann János Egyetem Duális Képzési Központja számára készült.
+There are two search implementations in the codebase:
 
----
+- [src/features/search/components/GlobalSearch.tsx](./src/features/search/components/GlobalSearch.tsx) is used by the navbar.
+- [src/components/shared/GlobalSearch.tsx](./src/components/shared/GlobalSearch.tsx) is still mounted at the app level through `App.tsx`.
 
-**Utolsó frissítés**: 2026.01.28  
-**Verzió**: 1.0.0  
-**Fejlesztők**: Duális Képzés Fejlesztői Csapat
+Consolidating these is post-handoff technical debt unless a product decision requires both behaviors.
+
+## UI, Styling, And Maps
+
+- Tailwind CSS is the styling foundation.
+- `tailwind.config.js` uses `darkMode: "class"`.
+- `useTheme` applies `light` or `dark` classes to the document root and can follow the system preference.
+- Preserve `dark:` variants when editing UI.
+- Shared UI lives under `src/components/ui` and `src/components/shared`.
+- Toasts are handled through `useToast` and `ToastContainer`.
+- Modal and loading patterns include shared modal, image modal, skeletons, and page loaders.
+- Icons are primarily Lucide React.
+
+Maps use Leaflet and React Leaflet. Marker assets are stored in [public/leaflet](./public/leaflet). Map-related components and helpers include:
+
+- landing company maps
+- positions map
+- application location map
+- geocoding hooks
+- city coordinate utilities
+
+## Known Intentional Placeholders And Caveats
+
+- Teacher dashboard routes are mostly placeholders; only the guide page is implemented.
+- Mentor routes are partial; partnerships and guide exist, while several sections are placeholders.
+- Gallery seed images use `https://picsum.photos/...` until real NJE/client media assets are supplied.
+- `LEVELEZŐ` study mode is disabled as "hamarosan".
+- The export utility still uses generic `any` in `src/utils/export.ts`.
+- `console.error` and `console.warn` are present in parts of the app for real error handling and should not be removed blindly.
+- Lint backlog may remain, especially React hooks/compiler-related findings.
+- AGENTS.md contains rules and guardrails for AI coding agents working on this repository.
+- Some route constants in `src/constants/routes.ts` do not exactly match the routes currently wired in `App.tsx`; use `App.tsx` as the practical routing source until constants are reconciled.
+
+## Quality Status
+
+Current verification expectation:
+
+```bash
+npm run build
+npm run lint
+```
+
+For this handoff, treat build and lint status as time-sensitive. Record the command, date, and output whenever verification is run. Do not claim a clean build from stale documentation.
+
+Do not fix unrelated lint backlog as part of documentation-only handoff work.
+
+## Handoff Checklist
+
+1. Install dependencies with `npm install`.
+2. Configure `.env` with the correct `VITE_API_URL`.
+3. Start the frontend with `npm run dev`.
+4. Confirm the backend is running and matches `backendreadme.md`.
+5. Test login with each available role.
+6. Test student registration.
+7. Test company registration.
+8. Test forgot-password and reset-password flows with the target backend email/token setup.
+9. Test global search with at least 2 characters.
+10. Test role dashboards: student, HR/company, admin, university, teacher, mentor.
+11. Verify which Teacher/Mentor routes are placeholders with the client.
+12. Run `npm run build`.
+13. Run `npm run lint` when lint backlog review is in scope.
+14. Review gallery media expectations and replace `picsum.photos` seed images when real assets are available.
+15. Review this caveat list with the client before calling the project production-ready.
+
+## Post-Handoff Technical Debt
+
+- Work through the React hooks/compiler lint backlog.
+- Replace generic `any` in export utilities with safer generic constraints.
+- Consolidate duplicate GlobalSearch implementations if one shared behavior is desired.
+- Replace gallery seed images with approved real media assets.
+- Implement the unfinished Teacher pages.
+- Complete or explicitly descope unfinished Mentor pages.
+- Improve backend endpoint documentation if `backendreadme.md` is incomplete for frontend needs.
+- Reconcile `src/constants/routes.ts` with `App.tsx`.
+- Keep `AGENTS.md` aligned with the current handoff rules and repository documentation.
+- Confirm production deployment configuration and final backend URL.
+
+## Related Documentation
+
+Some docs in this repository may be older than this README. Verify them against the current codebase and handoff notes before relying on them.
+
+- [backendreadme.md](./backendreadme.md) - backend/API reference for this handoff.
+- [docs/01-architecture.md](./docs/01-architecture.md) - frontend architecture notes.
+- [docs/02-getting-started.md](./docs/02-getting-started.md) - setup notes, may need review against this README.
+- [docs/04-api-and-data-flow.md](./docs/04-api-and-data-flow.md) - API/data-flow notes.
+- [docs/06-deployment.md](./docs/06-deployment.md) - deployment notes, verify before production use.
+
+## Ownership
+
+This project is for the Neumann János University Dual Training Center.
+Created by: Takács Milán
