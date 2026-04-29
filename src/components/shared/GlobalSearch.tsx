@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { Search, X, Clock, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../utils/cn";
+import { api } from "../../lib/api";
+import type { Position, Company, NewsItem } from "../../lib/api";
 
 interface SearchResult {
   id: string | number;
@@ -25,10 +27,10 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  // Load recent searches from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
     if (stored) {
@@ -40,14 +42,12 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
     }
   }, []);
 
-  // Focus input when modal opens
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen]);
 
-  // Save search to recent searches
   const saveRecentSearch = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) return;
 
@@ -61,18 +61,67 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
     });
   }, []);
 
-  // Debounced search
   useEffect(() => {
-    if (!query.trim()) {
+    const trimmed = query.trim();
+
+    if (!trimmed) {
       setResults([]);
       setIsSearching(false);
+      setSearchError(null);
+      return;
+    }
+
+    if (trimmed.length < 2) {
+      setResults([]);
+      setIsSearching(false);
+      setSearchError(null);
       return;
     }
 
     setIsSearching(true);
-    const timer = setTimeout(() => {
-      setResults([]);
-      setIsSearching(false);
+    setSearchError(null);
+
+    const timer = setTimeout(async () => {
+      try {
+        const data = await api.search(trimmed);
+
+        const positionResults: SearchResult[] = (data.positions ?? []).map(
+          (p: Position) => ({
+            id: p.id,
+            type: "position" as const,
+            title: p.title,
+            subtitle: p.company?.name ?? "Ismeretlen cég",
+            url: `/positions?id=${p.id}`,
+          }),
+        );
+
+        const companyResults: SearchResult[] = (data.companies ?? []).map(
+          (c: Company) => ({
+            id: c.id,
+            type: "company" as const,
+            title: c.name,
+            subtitle: c.website ?? "Cég profilja",
+            url: `/companies/${c.id}`,
+          }),
+        );
+
+        const newsResults: SearchResult[] = (data.news ?? []).map(
+          (n: NewsItem) => ({
+            id: n.id,
+            type: "news" as const,
+            title: n.title,
+            subtitle: "Hír",
+            url: `/news/${n.id}`,
+          }),
+        );
+
+        setResults([...positionResults, ...companyResults, ...newsResults]);
+      } catch {
+        setSearchError("A keresés nem sikerült. Próbáld újra később.");
+        setResults([]);
+      } finally {
+        setIsSearching(false);
+      }
     }, 300);
 
     return () => clearTimeout(timer);
@@ -85,7 +134,6 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
     setQuery("");
   };
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -147,11 +195,11 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] pointer-events-none">
         <div
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 pointer-events-auto animate-scale-in"
+          className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 pointer-events-auto animate-scale-in"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Search Input */}
-          <div className="flex items-center gap-3 p-4 border-b border-slate-200">
+          <div className="flex items-center gap-3 p-4 border-b border-slate-200 dark:border-slate-700">
             <Search className="h-5 w-5 text-slate-400" />
             <input
               ref={inputRef}
@@ -159,17 +207,17 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Keresés pozíciók, cégek, hírek között..."
-              className="flex-1 outline-none text-lg"
+              className="flex-1 outline-none text-lg bg-transparent text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
             {query && (
               <button
                 onClick={() => setQuery("")}
-                className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
               >
                 <X className="h-4 w-4 text-slate-400" />
               </button>
             )}
-            <kbd className="hidden sm:block px-2 py-1 text-xs font-semibold text-slate-500 bg-slate-100 rounded">
+            <kbd className="hidden sm:block px-2 py-1 text-xs font-semibold text-slate-500 bg-slate-100 dark:bg-slate-800 rounded">
               ESC
             </kbd>
           </div>
@@ -177,7 +225,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
           {/* Results */}
           <div className="max-h-[60vh] overflow-y-auto">
             {isSearching && (
-              <div className="p-8 text-center text-slate-500">
+              <div className="p-8 text-center text-slate-500 dark:text-slate-400">
                 <div className="animate-spin h-6 w-6 border-2 border-dkk-blue border-t-transparent rounded-full mx-auto" />
                 <p className="mt-2 text-sm">Keresés...</p>
               </div>
@@ -193,18 +241,24 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                   <button
                     key={index}
                     onClick={() => handleRecentSearch(search)}
-                    className="w-full text-left px-3 py-2 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-2"
                   >
                     <TrendingUp className="h-4 w-4 text-slate-400" />
-                    <span className="text-slate-700">{search}</span>
+                    <span className="text-slate-700 dark:text-slate-300">{search}</span>
                   </button>
                 ))}
               </div>
             )}
 
-            {!isSearching && query && results.length === 0 && (
-              <div className="p-8 text-center text-slate-500">
-                <p>A keresés jelenleg fejlesztés alatt áll.</p>
+            {!isSearching && searchError && (
+              <div className="p-8 text-center text-red-500 dark:text-red-400">
+                <p>{searchError}</p>
+              </div>
+            )}
+
+            {!isSearching && !searchError && query && results.length === 0 && (
+              <div className="p-8 text-center text-slate-500 dark:text-slate-400">
+                <p>Nincs találat.</p>
               </div>
             )}
 
@@ -217,17 +271,17 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                     className={cn(
                       "w-full text-left px-4 py-3 rounded-lg transition-colors flex items-center gap-3",
                       index === selectedIndex
-                        ? "bg-blue-50 border border-blue-200"
-                        : "hover:bg-slate-50",
+                        ? "bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30"
+                        : "hover:bg-slate-50 dark:hover:bg-slate-800",
                     )}
                   >
                     <span className="text-2xl">{typeIcons[result.type]}</span>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-slate-900 truncate">
+                      <div className="font-medium text-slate-900 dark:text-slate-100 truncate">
                         {result.title}
                       </div>
                       {result.subtitle && (
-                        <div className="text-sm text-slate-500 truncate">
+                        <div className="text-sm text-slate-500 dark:text-slate-400 truncate">
                           {result.subtitle}
                         </div>
                       )}
@@ -242,20 +296,20 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
           </div>
 
           {/* Footer */}
-          <div className="p-3 border-t border-slate-200 bg-slate-50 rounded-b-2xl">
-            <div className="flex items-center justify-between text-xs text-slate-500">
+          <div className="p-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-b-2xl">
+            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded">
+                  <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded">
                     ↑
                   </kbd>
-                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded">
+                  <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded">
                     ↓
                   </kbd>
                   navigálás
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded">
+                  <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded">
                     ↵
                   </kbd>
                   kiválasztás

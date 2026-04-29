@@ -21,6 +21,7 @@ interface SearchModalProps {
   setQuery: (q: string) => void;
   results: SearchResult[];
   loading: boolean;
+  error?: string | null;
 }
 
 export function SearchModal({
@@ -30,6 +31,7 @@ export function SearchModal({
   setQuery,
   results,
   loading,
+  error,
 }: SearchModalProps) {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -109,10 +111,18 @@ export function SearchModal({
 
       {/* Results List */}
       <div className="flex-1 p-2 space-y-1 bg-white dark:bg-slate-900 transition-colors">
-        {results.length === 0 && !loading && (
+        {error && !loading && (
+          <div className="py-12 text-center text-red-500 dark:text-red-400 transition-colors">
+            <p>{error}</p>
+          </div>
+        )}
+
+        {!error && results.length === 0 && !loading && (
           <div className="py-12 text-center text-gray-500 dark:text-gray-400 transition-colors">
-            {query ? (
-              <p>Nincs találat erre: "{query}"</p>
+            {query && query.trim().length >= 2 ? (
+              <p>Nincs találat.</p>
+            ) : query && query.trim().length < 2 ? (
+              <p>Legalább 2 karaktert írj be a kereséshez.</p>
             ) : (
               <p>Írj be valamit a kereséshez...</p>
             )}

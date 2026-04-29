@@ -483,3 +483,10 @@ export interface PaginatedResponse<T> {
     totalPages: number;
   };
 }
+
+// ============= Search Types =============
+export interface SearchApiResponse {
+  positions?: Position[];
+  companies?: Company[];
+  news?: NewsItem[];
+}

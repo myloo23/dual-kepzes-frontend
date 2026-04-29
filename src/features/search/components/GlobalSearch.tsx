@@ -7,7 +7,7 @@ interface GlobalSearchProps {
 }
 
 export function GlobalSearch({ variant = "default" }: GlobalSearchProps) {
-  const { query, setQuery, results, loading, open, setOpen } =
+  const { query, setQuery, results, loading, error, open, setOpen } =
     useGlobalSearch();
 
   return (
@@ -40,6 +40,7 @@ export function GlobalSearch({ variant = "default" }: GlobalSearchProps) {
         setQuery={setQuery}
         results={results}
         loading={loading}
+        error={error}
       />
     </>
   );

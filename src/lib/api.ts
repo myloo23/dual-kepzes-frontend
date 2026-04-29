@@ -32,6 +32,7 @@ import type {
   SystemAdminRegisterPayload,
   RequestPasswordResetPayload,
   ResetPasswordPayload,
+  SearchApiResponse,
 } from "../types/api.types";
 import type {
   NotificationCreatePayload,
@@ -80,6 +81,10 @@ const PATHS = {
 
 // ============= API Object =============
 export const api = {
+  // ============= Search =============
+  search: (q: string) =>
+    apiGet<SearchApiResponse>("/api/search", { q }),
+
   // ============= Auth =============
   login: (email: string, password: string) =>
     apiPost<LoginResponse>("/api/auth/login", { email, password }),
@@ -506,6 +511,7 @@ export type {
   CompanyAdminRegisterPayload,
   RequestPasswordResetPayload,
   ResetPasswordPayload,
+  SearchApiResponse,
 } from "../types/api.types";
 export type {
   NotificationCreatePayload,
