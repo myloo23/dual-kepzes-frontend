@@ -36,6 +36,8 @@ export function SearchModal({
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const clampedSelectedIndex =
+    results.length > 0 ? Math.min(selectedIndex, results.length - 1) : -1;
 
   // Focus input when open
   useEffect(() => {
@@ -44,24 +46,26 @@ export function SearchModal({
     }
   }, [isOpen]);
 
-  // Reset selection when results change
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [results]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
       onClose();
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev + 1) % results.length);
+      if (results.length > 0) {
+        setSelectedIndex((prev) => (prev + 1) % results.length);
+      }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev - 1 + results.length) % results.length);
+      if (results.length > 0) {
+        setSelectedIndex(
+          (prev) => (prev - 1 + results.length) % results.length,
+        );
+      }
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (results[selectedIndex]) {
-        handleSelect(results[selectedIndex]);
+      if (clampedSelectedIndex >= 0 && results[clampedSelectedIndex]) {
+        handleSelect(results[clampedSelectedIndex]);
       }
     }
   };
@@ -130,7 +134,7 @@ export function SearchModal({
         )}
 
         {results.map((result, index) => {
-          const isSelected = index === selectedIndex;
+          const isSelected = index === clampedSelectedIndex;
           return (
             <button
               key={result.id}

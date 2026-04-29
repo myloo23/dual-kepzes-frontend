@@ -14,7 +14,6 @@ export function ReferentDashboardStats() {
 
   useEffect(() => {
     if (companies.length === 0) {
-      setCompanyProfiles({});
       return;
     }
 

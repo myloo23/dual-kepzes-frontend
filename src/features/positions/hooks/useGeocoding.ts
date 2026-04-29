@@ -71,11 +71,10 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
   >([]);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const hasPositions = positions.length > 0;
 
   useEffect(() => {
-    if (positions.length === 0) {
-      setPositionsWithCoords([]);
-      setLoading(false);
+    if (!hasPositions) {
       return;
     }
 
@@ -234,7 +233,11 @@ export function useGeocoding(positions: Position[]): UseGeocodingResult {
     };
 
     geocodePositions();
-  }, [positions]);
+  }, [hasPositions, positions]);
 
-  return { positionsWithCoords, loading, progress };
+  return {
+    positionsWithCoords: hasPositions ? positionsWithCoords : [],
+    loading: hasPositions ? loading : false,
+    progress: hasPositions ? progress : { current: 0, total: 0 },
+  };
 }
