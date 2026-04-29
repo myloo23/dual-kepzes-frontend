@@ -1,2 +1,5 @@
-- Teacher és Mentor dashboardok jelenleg placeholder route-ok, mert ezek még nem részei a kész role-scope-nak.
-- A galériában ideiglenes picsum.photos seed képek vannak, ezek intézményi fotókra cserélhetők.
+- Teacher/Mentor route-ok részben placeholder állapotúak.
+- Galéria jelenleg 12 picsum.photos seed képet használ, ezek később intézményi fotókra cserélendők.
+- LEVELEZŐ képzési mód szándékosan disabled / "hamarosan".
+- Lintben 12 warning maradt, de 0 error.
+- A docs/ mappa egyes régebbi fájljai csak referenciaanyagok; README.md, backendreadme.md, package.json és src/App.tsx az elsődleges forrás.
