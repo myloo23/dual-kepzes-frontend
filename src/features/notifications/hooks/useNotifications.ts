@@ -37,7 +37,7 @@ export function useNotifications(): UseNotificationsReturn {
       setError(null);
       const res = await api.notifications.listActive();
       setActive(Array.isArray(res) ? res : []);
-    } catch (err) {
+    } catch {
       // Silently fail if notifications API is not available
       setActive([]);
       setError(null);
@@ -52,7 +52,7 @@ export function useNotifications(): UseNotificationsReturn {
       setError(null);
       const res = await api.notifications.listArchived();
       setArchived(Array.isArray(res) ? res : []);
-    } catch (err) {
+    } catch {
       // Silently fail if notifications API is not available
       setArchived([]);
       setError(null);
@@ -72,7 +72,7 @@ export function useNotifications(): UseNotificationsReturn {
               ?.unreadNotificationsCount ??
             0);
       setUnreadCount(count);
-    } catch (err) {
+    } catch {
       // Silently fail - notifications might not be implemented on backend
       // Don't log to console to avoid cluttering production logs
       setUnreadCount(0);

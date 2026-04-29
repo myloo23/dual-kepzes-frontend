@@ -179,12 +179,12 @@ export default function AdminPositionsPage() {
       // User asked for "upper parts e.g. name or id", so simple fields are priority.
       return item.isActive ? "1" : "0";
     }
-    // @ts-ignore
+    // @ts-expect-error - dynamic key access
     return item[key] ?? "";
   };
 
   const sortedItems = useMemo(() => {
-    let sortableItems = [...positions.items];
+    const sortableItems = [...positions.items];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
         const aValue = getSortValue(a, sortConfig.key);

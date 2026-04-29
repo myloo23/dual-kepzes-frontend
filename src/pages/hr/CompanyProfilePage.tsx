@@ -128,7 +128,7 @@ export default function CompanyProfilePage() {
         description: extractedDescription,
         website: normalizedWebsite,
       }));
-    } catch (_err) {
+    } catch {
       setAutoFillError(
         "Nem sikerült automatikusan beolvasni a leírást. Ellenőrizd az URL-t, vagy töltsd ki kézzel.",
       );

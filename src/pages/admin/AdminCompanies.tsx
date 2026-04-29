@@ -143,12 +143,12 @@ export default function AdminCompaniesPage() {
   const currentItems = activeTab === "active" ? companies.items : pendingCompanies.items;
 
   const sortedItems = useMemo(() => {
-    let sortableItems = [...currentItems];
+    const sortableItems = [...currentItems];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
-        // @ts-ignore - dynamic sorting
+        // @ts-expect-error - dynamic sorting
         const aValue = a[sortConfig.key] ?? "";
-        // @ts-ignore - dynamic sorting
+        // @ts-expect-error - dynamic sorting
         const bValue = b[sortConfig.key] ?? "";
 
         if (aValue < bValue) {

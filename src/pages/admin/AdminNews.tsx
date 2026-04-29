@@ -169,12 +169,12 @@ export default function AdminNews() {
   // ... (keep logic above)
 
   const rows = useMemo(() => {
-    let sortableItems = [...(items ?? [])];
+    const sortableItems = [...(items ?? [])];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
-        // @ts-ignore
+        // @ts-expect-error - dynamic key access
         const aValue = a[sortConfig.key] ?? "";
-        // @ts-ignore
+        // @ts-expect-error - dynamic key access
         const bValue = b[sortConfig.key] ?? "";
 
         if (aValue < bValue) {

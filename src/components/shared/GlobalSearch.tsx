@@ -78,6 +78,13 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
     return () => clearTimeout(timer);
   }, [query]);
 
+  const handleSelectResult = (result: SearchResult) => {
+    saveRecentSearch(query);
+    navigate(result.url);
+    onClose();
+    setQuery("");
+  };
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -110,13 +117,6 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, results, selectedIndex, onClose]);
-
-  const handleSelectResult = (result: SearchResult) => {
-    saveRecentSearch(query);
-    navigate(result.url);
-    onClose();
-    setQuery("");
-  };
 
   const handleRecentSearch = (searchQuery: string) => {
     setQuery(searchQuery);

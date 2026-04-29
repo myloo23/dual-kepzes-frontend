@@ -171,7 +171,7 @@ export default function AdminUsersPage() {
   };
 
   const sortedItems = useMemo(() => {
-    let sortableItems = [...userManagement.items];
+    const sortableItems = [...userManagement.items];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
         const aValue = getSortValue(a, sortConfig.key);
