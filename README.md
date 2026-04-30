@@ -55,6 +55,14 @@ Create a local `.env` file:
 VITE_API_URL=http://localhost:3000
 ```
 
+Production builds use the committed `.env.production` file by default:
+
+```env
+VITE_API_URL=https://dual-kepzes-backend.onrender.com
+```
+
+On Vercel, set the same `VITE_API_URL` value in Project Settings if the backend URL changes. Vite bakes `VITE_*` variables into the built JavaScript bundle, so changing this value requires a new deployment.
+
 Start the dev server:
 
 ```bash
