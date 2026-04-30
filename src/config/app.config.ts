@@ -2,9 +2,19 @@
  * Application configuration
  */
 
+function getRequiredApiBaseUrl(): string {
+  const apiBaseUrl = import.meta.env.VITE_API_URL?.trim();
+
+  if (!apiBaseUrl) {
+    throw new Error("Missing required environment variable: VITE_API_URL");
+  }
+
+  return apiBaseUrl.replace(/\/+$/, "");
+}
+
 // ============= API Configuration =============
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+  BASE_URL: getRequiredApiBaseUrl(),
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000, // 1 second

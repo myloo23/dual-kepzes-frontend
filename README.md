@@ -85,7 +85,7 @@ Only one project-specific `VITE_*` variable is currently used by source code:
 
 | Variable       | Required    | Default                 | Purpose                                                                              |
 | -------------- | ----------- | ----------------------- | ------------------------------------------------------------------------------------ |
-| `VITE_API_URL` | Recommended | `http://localhost:3000` | Backend API base URL used by `src/config/app.config.ts` and `src/lib/api-client.ts`. |
+| `VITE_API_URL` | Required | none | Backend API base URL used by `src/config/app.config.ts` and `src/lib/api-client.ts`. |
 
 Vite built-ins such as `import.meta.env.DEV`, `import.meta.env.PROD`, and `import.meta.env.MODE` are also used for app configuration flags.
 
@@ -235,7 +235,7 @@ Backend/API reference: [backendreadme.md](./backendreadme.md).
   - [src/features/guide/services/materialsApi.ts](./src/features/guide/services/materialsApi.ts)
   - [src/features/stats/services/statsApi.ts](./src/features/stats/services/statsApi.ts)
 - [src/lib/auth-token.ts](./src/lib/auth-token.ts) centralizes token access.
-- API calls are automatically prefixed with `VITE_API_URL` or the local default.
+- API calls are automatically prefixed with `VITE_API_URL`; the app fails fast if it is missing.
 - Bearer tokens are attached from local storage when present.
 - JSON responses using `{ success: true, data }` are unwrapped by the client.
 - Paginated wrappers with `data` and `pagination` are also normalized to the `data` array.
