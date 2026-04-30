@@ -1,7 +1,6 @@
-import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { api, type CompanyAdminProfile } from "../../../lib/api";
 import { useAuth } from "../../../features/auth";
-import PasswordInput from "../../../components/shared/PasswordInput";
 
 interface CompanyProfileEditorProps {
   companyAdmin: CompanyAdminProfile | null;
@@ -22,12 +21,6 @@ export default function CompanyProfileEditor({
     phoneNumber: companyAdmin?.phoneNumber ?? "",
   });
 
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(
     null,
   );
@@ -45,14 +38,11 @@ export default function CompanyProfileEditor({
   }, [companyAdmin]);
 
   const [savingPersonal, setSavingPersonal] = useState(false);
-  const [savingPassword, setSavingPassword] = useState(false);
   const [savingAvatar, setSavingAvatar] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const [avatarSuccess, setAvatarSuccess] = useState<string | null>(null);
 
@@ -87,42 +77,6 @@ export default function CompanyProfileEditor({
       setError(message);
     } finally {
       setSavingPersonal(false);
-    }
-  };
-
-  const handlePasswordChange = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setPasswordError(null);
-    setPasswordSuccess(null);
-
-    if (!passwordForm.currentPassword.trim()) {
-      setPasswordError("A jelenlegi jelszo megadasa kotelezo.");
-      return;
-    }
-
-    if (passwordForm.newPassword.length < 12) {
-      setPasswordError("Az uj jelszo minimum 12 karakter legyen.");
-      return;
-    }
-
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPasswordError("A ket uj jelszo nem egyezik.");
-      return;
-    }
-
-    setSavingPassword(true);
-    try {
-      // Backend endpoint currently not exposed in the API client.
-      setPasswordSuccess(
-        "A jelszomodositas felulete elkeszult. Bekoteshez backend endpoint szukseges.",
-      );
-      setPasswordForm({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-    } finally {
-      setSavingPassword(false);
     }
   };
 
@@ -282,60 +236,10 @@ export default function CompanyProfileEditor({
         <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 transition-colors">
           Jelszo modositasa
         </h2>
-        {passwordError && (
-          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400 transition-colors">
-            {passwordError}
-          </div>
-        )}
-        {passwordSuccess && (
-          <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 p-3 text-sm text-emerald-700 dark:text-emerald-400 transition-colors">
-            {passwordSuccess}
-          </div>
-        )}
-        <form onSubmit={handlePasswordChange} className="space-y-4">
-          <PasswordInput
-            label="Jelenlegi jelszo"
-            value={passwordForm.currentPassword}
-            onChange={(event) =>
-              setPasswordForm((prev) => ({
-                ...prev,
-                currentPassword: event.target.value,
-              }))
-            }
-            placeholder="Add meg a jelenlegi jelszavad"
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <PasswordInput
-              label="Uj jelszo"
-              value={passwordForm.newPassword}
-              onChange={(event) =>
-                setPasswordForm((prev) => ({
-                  ...prev,
-                  newPassword: event.target.value,
-                }))
-              }
-              placeholder="Minimum 12 karakter"
-            />
-            <PasswordInput
-              label="Uj jelszo megerositese"
-              value={passwordForm.confirmPassword}
-              onChange={(event) =>
-                setPasswordForm((prev) => ({
-                  ...prev,
-                  confirmPassword: event.target.value,
-                }))
-              }
-              placeholder="Uj jelszo megerositese"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={savingPassword}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
-          >
-            {savingPassword ? "Mentes..." : "Jelszo frissitese"}
-          </button>
-        </form>
+        <div className="rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/20 p-4 text-sm text-amber-800 dark:text-amber-300 transition-colors">
+          A jelszomodositas jelenleg nem erheto el, mert nincs dokumentalt
+          backend vegpont a ceges profil jelszavanak modositasara.
+        </div>
       </section>
 
       <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 transition-colors">

@@ -3,11 +3,11 @@ import { Search, X, Clock, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { api } from "../../lib/api";
-import type { Position, Company, NewsItem } from "../../lib/api";
+import type { Position, Company } from "../../lib/api";
 
 interface SearchResult {
   id: string | number;
-  type: "position" | "company" | "news";
+  type: "position" | "company";
   title: string;
   subtitle?: string;
   url: string;
@@ -105,17 +105,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
           }),
         );
 
-        const newsResults: SearchResult[] = (data.news ?? []).map(
-          (n: NewsItem) => ({
-            id: n.id,
-            type: "news" as const,
-            title: n.title,
-            subtitle: "Hír",
-            url: `/news/${n.id}`,
-          }),
-        );
-
-        setResults([...positionResults, ...companyResults, ...newsResults]);
+        setResults([...positionResults, ...companyResults]);
       } catch {
         setSearchError("A keresés nem sikerült. Próbáld újra később.");
         setResults([]);
@@ -175,13 +165,11 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
   const typeIcons = {
     position: "💼",
     company: "🏢",
-    news: "📰",
   };
 
   const typeLabels = {
     position: "Pozíció",
     company: "Cég",
-    news: "Hír",
   };
 
   return (

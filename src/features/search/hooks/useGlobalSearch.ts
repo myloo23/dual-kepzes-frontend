@@ -5,6 +5,13 @@ import type { Position, Company, NewsItem } from "../../../lib/api";
 import { useAuth } from "../../../features/auth";
 import type { SearchResult } from "../types";
 
+const VALID_NEWS_LIST_ROUTES = new Set([
+  "/admin/news",
+  "/student/news",
+  "/hr/news",
+  "/university/news",
+]);
+
 export function useGlobalSearch() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -14,6 +21,8 @@ export function useGlobalSearch() {
 
   const { dashboard: dashboardLink, news: newsLink } = useNavigation();
   const { isAuthenticated } = useAuth();
+  const validNewsLink =
+    newsLink && VALID_NEWS_LIST_ROUTES.has(newsLink) ? newsLink : null;
 
   const staticPages: SearchResult[] = useMemo(() => {
     const pages: SearchResult[] = [
@@ -60,18 +69,18 @@ export function useGlobalSearch() {
       });
     }
 
-    if (newsLink) {
+    if (validNewsLink) {
       pages.push({
         id: "news",
         type: "page",
         title: "Hírek",
-        link: newsLink,
+        link: validNewsLink,
         subtitle: "Aktuális hírek és információk",
       });
     }
 
     return pages;
-  }, [dashboardLink, newsLink, isAuthenticated]);
+  }, [dashboardLink, validNewsLink, isAuthenticated]);
 
   useEffect(() => {
     if (!open) {
@@ -119,15 +128,15 @@ export function useGlobalSearch() {
           }),
         );
 
-        const newsResults: SearchResult[] = (data.news ?? []).map(
-          (n: NewsItem) => ({
-            id: `news-${n.id}`,
-            type: "news" as const,
-            title: n.title,
-            subtitle: "Hír",
-            link: newsLink ? `${newsLink}/${n.id}` : `/news/${n.id}`,
-          }),
-        );
+        const newsResults: SearchResult[] = validNewsLink
+          ? (data.news ?? []).map((n: NewsItem) => ({
+              id: `news-${n.id}`,
+              type: "news" as const,
+              title: n.title,
+              subtitle: "Hír",
+              link: validNewsLink,
+            }))
+          : [];
 
         setResults([...positionResults, ...companyResults, ...newsResults]);
       } catch {
@@ -139,7 +148,7 @@ export function useGlobalSearch() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [query, open, staticPages, newsLink]);
+  }, [query, open, staticPages, validNewsLink]);
 
   return {
     query,

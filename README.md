@@ -13,7 +13,7 @@ The project is in client-preview / handoff state, not a fully finished productio
 - Gallery seed images still use `picsum.photos` until real institutional media assets are provided.
 - `LEVELEZO` / `LEVELEZŐ` study mode is intentionally disabled in student registration and shown as "hamarosan".
 - Build status must be verified during handoff with `npm run build`; do not assume a clean build unless it has just been run.
-- Lint debt may remain, including React hooks/compiler categories, explicit generic `any` in export utilities, and `console.error` / `console.warn` used for real error handling.
+- Lint debt may remain, including 12 known warnings across React hooks/compiler categories and `console.error` / `console.warn` used for real error handling.
 
 ## Tech Stack
 
@@ -345,9 +345,8 @@ Maps use Leaflet and React Leaflet. Marker assets are stored in [public/leaflet]
 - Mentor routes are partial; partnerships and guide exist, while several sections are placeholders.
 - Gallery seed images use `https://picsum.photos/...` until real NJE/client media assets are supplied.
 - `LEVELEZŐ` study mode is disabled as "hamarosan".
-- The export utility still uses generic `any` in `src/utils/export.ts`.
 - `console.error` and `console.warn` are present in parts of the app for real error handling and should not be removed blindly.
-- Lint backlog may remain, especially React hooks/compiler-related findings.
+- Lint backlog may remain, including 12 known warnings, especially React hooks/compiler-related findings.
 - AGENTS.md contains rules and guardrails for AI coding agents working on this repository.
 - Some route constants in `src/constants/routes.ts` do not exactly match the routes currently wired in `App.tsx`; use `App.tsx` as the practical routing source until constants are reconciled.
 
@@ -385,7 +384,6 @@ Do not fix unrelated lint backlog as part of documentation-only handoff work.
 ## Post-Handoff Technical Debt
 
 - Work through the React hooks/compiler lint backlog.
-- Replace generic `any` in export utilities with safer generic constraints.
 - Consolidate duplicate GlobalSearch implementations if one shared behavior is desired.
 - Replace gallery seed images with approved real media assets.
 - Implement the unfinished Teacher pages.
