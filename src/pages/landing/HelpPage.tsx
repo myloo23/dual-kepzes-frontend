@@ -1,4 +1,9 @@
-﻿import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import dashboardImg from "../../assets/help/dashboard.png";
+import dualisallapotImg from "../../assets/help/dualisallapot.png";
+import profileImg from "../../assets/help/profile.png";
+import validacioshibaImg from "../../assets/help/validacioshiba2.png";
 
 type TutorialStep = {
   title: string;
@@ -9,6 +14,7 @@ type TutorialImageBlock = {
   title: string;
   caption: string;
   hint: string;
+  src?: string;
 };
 
 type TutorialSection = {
@@ -29,15 +35,16 @@ const tutorialSections: TutorialSection[] = [
     intro:
       "Ez a fejezet bemutatja, hogyan induljon a felhasználó a bejelentkezéstől a releváns munkaterületig.",
     textBlocks: [
-      "A belépés után a rendszer szerepkör alapján irányítja a felhasználót a megfelelő nézetre (hallgató, vállalati, egyetemi vagy admin felület).",
-      "Ebben a blokkban érdemes röviden tisztázni, hogy hol találhatók a legfontosabb menüpontok, és mi a kezdőoldal célja.",
+      "A bejelentkezést követően a rendszer a jogosultságaidnak megfelelően irányít a megfelelő kezdőoldalra (például a Diák felületre).",
+      "Az irányítópulton azonnal láthatod az aktuális teendőidet, a leadási határidőket, valamint gyors elérést biztosítunk a profilodhoz és a jelentkezéseidhez.",
     ],
     imageBlocks: [
       {
-        title: "Kezdő dashboard képernyőkép",
+        title: "Kezdő dashboard",
         caption:
-          "Adj ide egy teljes szélességű képet az első belépés utáni dashboardról.",
-        hint: "Ajánlott arány: 16:9, minimum 1440x810 px.",
+          "A sikeres bejelentkezés után a diák felület irányítópultjára érkezel. Itt áttekintheted a legfontosabb műveleteket és információkat.",
+        hint: "Kattints a képre a nagyításhoz",
+        src: dashboardImg,
       },
     ],
     steps: [
@@ -62,21 +69,23 @@ const tutorialSections: TutorialSection[] = [
     intro:
       "Példa lépések, amelyek végigvezetnek egy gyakori feladaton elejétől a befejezésig.",
     textBlocks: [
-      "A szakasz célja, hogy üzleti oldalról is érthető legyen a folyamat: milyen bemenet kell, mi történik közben, és mi a várt eredmény.",
-      "A későbbi bővítéshez minden új folyamatot külön alfejezetként célszerű felvenni azonos sablon szerint.",
+      "A rendszerben a legfontosabb folyamatok egyszerűen nyomon követhetőek. Egy új jelentkezés leadásakor például csak ki kell töltened az űrlapot, majd elmenteni.",
+      "Minden mentés után a rendszer visszajelzést ad, a listanézetekben pedig azonnal láthatod a jelentkezéseid aktuális állapotát, ami biztosítja a folyamatos átláthatóságot.",
     ],
     imageBlocks: [
       {
-        title: "Űrlap kitöltési példa",
+        title: "Saját profil kitöltése",
         caption:
-          "Mutasd be képpel, mely mezők kötelezők és hol látható a visszajelzés mentés után.",
-        hint: "Ajánlott arány: 4:3, minimum 1200x900 px.",
+          "A profilodnál megadhatod a személyes és tanulmányi adataidat, amelyeket a munkáltatók is látni fognak.",
+        hint: "Kattints a képre a nagyításhoz",
+        src: profileImg,
       },
       {
-        title: "Állapotjelzés / státusz nézet",
+        title: "Duális helyem státuszai",
         caption:
-          "Helyezz el státuszlistát bemutató képet, hogy a felhasználó értse az állapotváltozásokat.",
-        hint: "Ajánlott arány: 16:10, minimum 1280x800 px.",
+          "A 'Duális helyem' menüpontban követheted nyomon a jelentkezéseid és partnereid aktuális állapotát (pl. Aktív, Elfogadva).",
+        hint: "Kattints a képre a nagyításhoz",
+        src: dualisallapotImg,
       },
     ],
     steps: [
@@ -101,15 +110,16 @@ const tutorialSections: TutorialSection[] = [
     intro:
       "Szerkezet, amelyben gyakori kérdéseket és gyors megoldási lépéseket lehet publikálni.",
     textBlocks: [
-      "A GYIK blokkokat rövid kérdés-válasz formában érdemes kezelni. Minden kérdéshez egyértelmű cím és 2-4 mondatos válasz ajánlott.",
-      "Hibakezelésnél célszerű a jelenség, lehetséges ok és megoldási lépés hármas szerkezetét követni.",
+      "Ha hibát tapasztalsz (például sikertelen mentés vagy érvénytelen adat), a rendszer piros hibaüzenetekkel jelzi a probléma pontos helyét.",
+      "Ilyen esetekben ellenőrizd, hogy minden kötelező mezőt kitöltöttél-e, illetve megfelelő formátumban adtad-e meg az adatokat (például telefonszám vagy email cím).",
     ],
     imageBlocks: [
       {
-        title: "Hibaüzenet képernyőkép",
+        title: "Validációs hiba megjelenése",
         caption:
-          "Ide kerülhet egy tipikus hibaüzenet képe kiemelt magyarázattal.",
-        hint: "Ajánlott arány: 3:2, minimum 1200x800 px.",
+          "Ha egy űrlap mentésekor hibás vagy hiányzó adatot talált a rendszer, egy jól látható piros hibaüzenet figyelmeztet a probléma helyére.",
+        hint: "Kattints a képre a nagyításhoz",
+        src: validacioshibaImg,
       },
     ],
     steps: [
@@ -136,6 +146,8 @@ const quickLinks = [
 ];
 
 export default function HelpPage() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-10 lg:py-14">
@@ -144,12 +156,10 @@ export default function HelpPage() {
             Súgóközpont
           </p>
           <h1 className="mt-4 text-3xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-            Tutorial és súgó tartalom oldalszerkezete
+            Útmutató a Duális Képzési Rendszerhez
           </h1>
           <p className="mt-4 max-w-3xl text-sm lg:text-base leading-relaxed text-slate-600 dark:text-slate-300">
-            Az alábbi oldalstruktúra kifejezetten úgy készült, hogy később gyorsan bővíthető legyen:
-            minden fejezet külön blokkban jelenik meg, és külön tartalmaz szöveges részt,
-            képes tartalmat, valamint lépésről lépésre útmutatót.
+            Üdvözlünk a Súgóközpontban! Itt minden fontos információt és lépésről lépésre szóló útmutatót megtalálsz, amely segít a rendszer gördülékeny használatában, a jelentkezések leadásától kezdve az állapotok nyomon követéséig.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -239,9 +249,18 @@ export default function HelpPage() {
                         key={`${section.id}-image-${imageIndex}`}
                         className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/40 p-4"
                       >
-                        <div className="flex min-h-[140px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-500 dark:text-slate-300 text-xs font-medium tracking-wide uppercase">
-                          Kép helye
-                        </div>
+                        {imageBlock.src ? (
+                          <div
+                            className="overflow-hidden rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer transition-transform duration-200 hover:scale-[1.02] hover:shadow-md"
+                            onClick={() => setSelectedImage(imageBlock.src!)}
+                          >
+                            <img src={imageBlock.src} alt={imageBlock.title} className="w-full h-auto object-cover" />
+                          </div>
+                        ) : (
+                          <div className="flex min-h-[140px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-500 dark:text-slate-300 text-xs font-medium tracking-wide uppercase">
+                            Kép helye
+                          </div>
+                        )}
                         <figcaption className="mt-3 space-y-1">
                           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{imageBlock.title}</p>
                           <p className="text-sm text-slate-600 dark:text-slate-300">{imageBlock.caption}</p>
@@ -293,6 +312,30 @@ export default function HelpPage() {
           </div>
         </section>
       </div>
+
+      {/* Kép Nagyító Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-slate-900/90 backdrop-blur-sm transition-opacity duration-300"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative w-full max-w-6xl flex items-center justify-center">
+            <button
+              className="absolute -top-12 right-0 text-white/70 hover:text-white transition-colors bg-black/20 hover:bg-black/40 rounded-full p-2"
+              onClick={() => setSelectedImage(null)}
+              aria-label="Nagyító bezárása"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <img
+              src={selectedImage}
+              alt="Nagyított nézet"
+              className="w-auto h-auto max-w-full max-h-[85vh] rounded-lg shadow-2xl ring-1 ring-white/10"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
