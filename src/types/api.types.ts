@@ -231,59 +231,35 @@ export interface RegisterResponse {
   role?: UserRole;
 }
 
-export type StudentRegisterPayload =
-  | {
-      email: string;
-      password: string;
-      isEmailEnabled: boolean;
-      fullName: string;
-      phoneNumber: string;
-      role: "STUDENT";
-      mothersName: string;
-      dateOfBirth: string;
-      location: {
-        country: string;
-        zipCode: number;
-        city: string;
-        address: string;
-      };
-      // High School Specific
-      isInHighSchool: true;
-      highSchool: string;
-      graduationYear: number; // e.g. 2026
-      studyMode: StudyMode; // e.g. "NAPPALI"
-      firstChoiceId: string; // UUID from majors list
-      secondChoiceId: string; // UUID from majors list
-      hasLanguageCert: boolean; // e.g. false
-      language?: string;
-      languageLevel?: string;
-    }
-  | {
-      email: string;
-      password: string;
-      isEmailEnabled: boolean;
-      fullName: string;
-      phoneNumber: string;
-      role: "STUDENT";
-      mothersName: string;
-      dateOfBirth: string;
-      location: {
-        country: string;
-        zipCode: number;
-        city: string;
-        address: string;
-      };
-      // University Specific
-      isInHighSchool: false;
-      highSchool: string; // Still required by backend/schema? Kept for consistency if needed, else normalized.
-      neptunCode: string;
-      majorId: string; // UUID
-      studyMode: StudyMode;
-      graduationYear: number;
-      hasLanguageCert: boolean;
-      language?: string;
-      languageLevel?: string;
-    };
+export interface StudentRegisterPayload {
+  email: string;
+  password: string;
+  fullName: string;
+  phoneNumber: string;
+  isEmailEnabled?: boolean;
+  role: "STUDENT";
+  mothersName: string;
+  dateOfBirth: string; // YYYY-MM-DD
+  location?: {
+    country?: string;
+    zipCode?: number;
+    city?: string;
+    address?: string;
+  };
+  highSchool: string;
+  highSchoolLocation: string;
+  neptunCode?: string;
+  majorId?: string;
+  studyMode: StudyMode;
+  graduationYear: number;
+  isInHighSchool: boolean;
+  firstChoiceId?: string;
+  secondChoiceId?: string;
+  hasLanguageCert: boolean;
+  language?: string;
+  languageLevel?: string;
+  motivationLetter?: string;
+}
 
 export interface SystemAdminRegisterPayload {
   email: string;

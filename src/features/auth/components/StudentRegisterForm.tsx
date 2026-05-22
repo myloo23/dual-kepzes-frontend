@@ -70,35 +70,90 @@ export default function StudentRegisterForm() {
     const passwordError = validatePassword(password, 12);
     if (passwordError) return setError(passwordError);
 
-    const requiredFields = [
-      { value: fullName, name: "Teljes név" },
-      { value: phoneNumber, name: "Telefonszám" },
-      { value: mothersName, name: "Anyja neve" },
-      { value: country, name: "Ország" },
-      { value: zipCode, name: "Irányítószám" },
-      { value: city, name: "Település" },
-      { value: streetAddress, name: "Utca/házszám" },
-      { value: streetAddress, name: "Utca/házszám" },
-    ];
-
-    if (studentType === "HIGHSCHOOL") {
-      requiredFields.push(
-        { value: highSchool, name: "Középiskola" },
-        { value: highSchoolCity, name: "Középiskola városa" },
+    // Stricter password regex match to align with backend
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[#?!@$%^&*-]).{12,64}$/;
+    if (!passwordRegex.test(password)) {
+      return setError(
+        "A jelszónak legalább 12 karakter hosszúnak kell lennie, és tartalmaznia kell kis- és nagybetűt, számot és speciális karaktert."
       );
     }
 
-    for (const field of requiredFields) {
-      const err = validateRequired(field.value, field.name);
-      if (err) return setError(err);
+    if (!fullName.trim().includes(" ")) {
+      return setError("A teljes névnek legalább egy szóközt kell tartalmaznia.");
+    }
+
+    if (!/^\+?[0-9]{7,15}$/.test(phoneNumber.trim())) {
+      return setError("Érvénytelen telefonszám formátum.");
+    }
+
+    if (!mothersName.trim().includes(" ")) {
+      return setError("Az anyja nevének legalább egy szóközt kell tartalmaznia.");
     }
 
     if (!birthDate) return setError("Születési dátum megadása kötelező.");
 
-    const yearError = validateYear(graduationYear, "Érettségi éve");
-    if (yearError) return setError(yearError);
+    const birth = new Date(birthDate);
+    const minBirth = new Date("1900-01-01");
+    const today = new Date();
+    const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
+    if (birth < minBirth) {
+      return setError("Túl öreg!");
+    }
+    if (birth > eighteenYearsAgo) {
+      return setError("Túl fiatal! 18 éven aluliak nem regisztrálhatnak.");
+    }
+
+    // Lakcím validation (only if any address info is filled, since it is optional)
+    const isLocationEntered =
+      country.trim() !== "" ||
+      zipCode.trim() !== "" ||
+      city.trim() !== "" ||
+      streetAddress.trim() !== "";
+
+    if (isLocationEntered) {
+      if (zipCode.trim() !== "") {
+        const zipNum = Number(zipCode.trim());
+        if (isNaN(zipNum) || zipNum < 1000 || zipNum > 9999) {
+          return setError("Az irányítószámnak 1000 és 9999 között kell lennie.");
+        }
+      }
+      if (streetAddress.trim() !== "") {
+        if (!streetAddress.trim().includes(" ")) {
+          return setError("A címnek legalább egy szóközt kell tartalmaznia.");
+        }
+      }
+    }
+
+    // Középiskola fields are required in all cases based on studentBaseSchema
+    if (!highSchool.trim()) {
+      return setError("Középiskola megadása kötelező.");
+    }
+    if (!highSchoolCity.trim()) {
+      return setError("A középiskola helyszíne kötelező.");
+    }
+
+    const gradYear = Number(graduationYear);
+    const maxYear = new Date().getFullYear() + 1;
+    if (isNaN(gradYear) || gradYear < 2000 || gradYear > maxYear) {
+      return setError(`Érvénytelen érettségi év (2000 és ${maxYear} között).`);
+    }
+
+    if (hasLanguageCert) {
+      if (!language) return setError("Nyelv megadása kötelező, ha van nyelvvizsga.");
+      if (!languageLevel) return setError("Nyelvvizsga szint megadása kötelező.");
+    }
 
     let payload: StudentRegisterPayload;
+
+    const locationObj = isLocationEntered
+      ? {
+        country: country.trim() || undefined,
+        zipCode: zipCode.trim() ? Number(zipCode.trim()) : undefined,
+        city: city.trim() || undefined,
+        address: streetAddress.trim() || undefined,
+      }
+      : undefined;
 
     const commonData = {
       email: email.trim(),
@@ -109,80 +164,52 @@ export default function StudentRegisterForm() {
       role: "STUDENT" as const,
       mothersName: mothersName.trim(),
       dateOfBirth: birthDate,
-      location: {
-        country: country.trim(),
-        zipCode: Number(zipCode.trim()),
-        city: city.trim(),
-        address: streetAddress.trim(),
-      },
+      location: locationObj,
+      highSchool: highSchool.trim(),
+      highSchoolLocation: highSchoolCity.trim(),
+      studyMode,
+      graduationYear: gradYear,
+      hasLanguageCert,
+      ...(hasLanguageCert ? { language, languageLevel } : {}),
     };
 
     if (studentType === "HIGHSCHOOL") {
-      if (!firstChoiceId)
-        return setError("Első helyen megjelölt szak kiválasztása kötelező.");
-      if (secondChoiceId && firstChoiceId === secondChoiceId)
+      if (!firstChoiceId) {
+        return setError("Első választás kötelező középiskolások számára.");
+      }
+      if (!secondChoiceId) {
+        return setError("Második választás kötelező középiskolások számára.");
+      }
+      if (firstChoiceId === secondChoiceId) {
         return setError("A két megjelölt szak nem lehet ugyanaz.");
-
-      // Ensure secondChoiceId is provided if strict requirement, but implementation plan said 2 choices.
-      // Assuming second choice is optional unless specified otherwise?
-      // User request JSON had both. I will make second choice optional in UI but recommended?
-      // Wait, prompt JSON had both key-values. I will enforce both if logically sound, but better to allow unticked?
-      // The user JSON example has "secondChoiceId": "..." so I'll assume it's expected.
-      // Second choice is now optional based on user request "a második maradhat üresen"
-      // if (!secondChoiceId)
-      //   return setError("Második helyen megjelölt szak kiválasztása kötelező.");
-
-      if (hasLanguageCert) {
-        if (!language) return setError("Nyelv kiválasztása kötelező.");
-        if (!languageLevel)
-          return setError("Nyelvi szint kiválasztása kötelező.");
       }
 
       payload = {
         ...commonData,
         isInHighSchool: true,
-        highSchool: `${highSchool.trim()}, ${highSchoolCity.trim()}`,
-        graduationYear: Number(graduationYear),
-        studyMode,
         firstChoiceId,
         secondChoiceId,
-        hasLanguageCert: !!hasLanguageCert,
-        ...(hasLanguageCert ? { language, languageLevel } : {}),
       };
     } else {
       // UNIVERSITY
-      if (!neptunCode) return setError("Neptun kód megadása kötelező.");
-
-      const neptunErr = validateNeptunOptional(neptunCode);
-      if (neptunErr) return setError(neptunErr);
-
-      const neptunNormal = normalizeNeptun(neptunCode);
-
-      if (!majorId) return setError("Szak kiválasztása kötelező.");
-
-      if (hasLanguageCert) {
-        if (!language) return setError("Nyelv kiválasztása kötelező.");
-        if (!languageLevel)
-          return setError("Nyelvi szint kiválasztása kötelező.");
+      const neptunNormal = neptunCode.trim() ? normalizeNeptun(neptunCode) : undefined;
+      if (neptunNormal && neptunNormal.length !== 6) {
+        return setError("A neptun kód pontosan 6 karakter hosszú.");
       }
 
       payload = {
         ...commonData,
         isInHighSchool: false,
-        highSchool: highSchool.trim(),
         neptunCode: neptunNormal,
-        majorId,
-        studyMode,
-        graduationYear: Number(graduationYear),
-        hasLanguageCert: hasLanguageCert,
-        ...(hasLanguageCert ? { language, languageLevel } : {}),
+        majorId: majorId || undefined,
       };
     }
 
-    if (!gdprAccepted)
+    if (!gdprAccepted) {
       return setError(
-        "A regisztrációhoz el kell fogadni az adatkezelési tájékoztatót.",
+        "A regisztrációhoz el kell fogadni az adatkezelési tájékoztatót."
       );
+    }
 
     setLoading(true);
     try {
@@ -316,7 +343,8 @@ export default function StudentRegisterForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
-                Ország *
+                Ország
+                <span className="text-slate-400 font-normal ml-1">(Opcionális)</span>
               </label>
               <input
                 value={country}
@@ -327,7 +355,8 @@ export default function StudentRegisterForm() {
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
-                Irányítószám *
+                Irányítószám
+                <span className="text-slate-400 font-normal ml-1">(Opcionális)</span>
               </label>
               <input
                 value={zipCode}
@@ -339,7 +368,8 @@ export default function StudentRegisterForm() {
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
-                Település *
+                Település
+                <span className="text-slate-400 font-normal ml-1">(Opcionális)</span>
               </label>
               <input
                 value={city}
@@ -351,7 +381,8 @@ export default function StudentRegisterForm() {
 
             <div className="space-y-1 md:col-span-2">
               <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
-                Utca, házszám *
+                Utca, házszám
+                <span className="text-slate-400 font-normal ml-1">(Opcionális)</span>
               </label>
               <input
                 value={streetAddress}
@@ -564,10 +595,7 @@ export default function StudentRegisterForm() {
 
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
-                      Helyszín 2. választás (Szak)
-                      <span className="text-slate-400 font-normal ml-1">
-                        (Opcionális)
-                      </span>
+                      Helyszín 2. választás (Szak) *
                     </label>
                     <select
                       value={secondChoiceId}
@@ -578,7 +606,7 @@ export default function StudentRegisterForm() {
                       <option value="">
                         {majorsLoading
                           ? "Betöltés..."
-                          : "Válassz szakot (nem kötelező)..."}
+                          : "Válassz szakot..."}
                       </option>
                       {majors.map((m) => (
                         <option
