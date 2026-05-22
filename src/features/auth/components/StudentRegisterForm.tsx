@@ -6,10 +6,7 @@ import PasswordInput from "../../../components/shared/PasswordInput";
 import {
   isValidEmail,
   normalizeNeptun,
-  validateNeptunOptional,
   validatePassword,
-  validateRequired,
-  validateYear,
 } from "../../../utils/validation-utils";
 import { LANGUAGES, LANGUAGE_LEVELS } from "../constants";
 import { useMajors } from "../../majors";
