@@ -19,6 +19,8 @@ import {
 } from "../../utils/validation-utils";
 import { LANGUAGES, LANGUAGE_LEVELS } from "../../features/auth/constants";
 import { useMajors } from "../../features/majors";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/shared/ToastContainer";
 
 type StudentProfilePayload = Partial<StudentProfile> & {
   profile?: Partial<StudentProfile>;
@@ -358,6 +360,7 @@ function buildProfilePayload(form: StudentFormState) {
 export default function StudentDashboardPage() {
   const location = useLocation();
   const { user, logout: authLogout } = useAuth();
+  const toast = useToast();
   const { majors, loading: majorsLoading } = useMajors();
   const [profile, setProfile] = useState<Partial<StudentProfile> | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<GuideCourse | null>(
@@ -690,6 +693,7 @@ export default function StudentDashboardPage() {
     setProfileSuccess(null);
     try {
       await api.requestPasswordReset({ email });
+      toast.showSuccess("E-mail elküldve! A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
       setProfileSuccess("A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
     } catch (err) {
       setProfileError(err instanceof Error ? err.message : "Sikertelen jelszó-módosítási kérelem.");
@@ -1666,6 +1670,7 @@ export default function StudentDashboardPage() {
           </main>
         </div>
       </div>
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { api, type CompanyAdminProfile } from "../../../lib/api";
 import { useAuth } from "../../../features/auth";
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/shared/ToastContainer";
 
 interface CompanyProfileEditorProps {
   companyAdmin: CompanyAdminProfile | null;
@@ -12,6 +14,7 @@ export default function CompanyProfileEditor({
   onUpdate,
 }: CompanyProfileEditorProps) {
   const { logout: authLogout } = useAuth();
+  const toast = useToast();
 
   const [personalForm, setPersonalForm] = useState<
     Pick<CompanyAdminProfile, "fullName" | "email" | "phoneNumber">
@@ -158,6 +161,7 @@ export default function CompanyProfileEditor({
     setSuccess(null);
     try {
       await api.requestPasswordReset({ email });
+      toast.showSuccess("E-mail elküldve! A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
       setSuccess("A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sikertelen jelszó-módosítási kérelem.");
@@ -346,6 +350,7 @@ export default function CompanyProfileEditor({
           {deleting ? "Torles..." : "Profil torlese"}
         </button>
       </div>
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
     </div>
   );
 }

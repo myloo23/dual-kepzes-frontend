@@ -1,6 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { api } from "../../lib/api";
 import { studentsApi } from "../../features/students/services/studentsApi";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/shared/ToastContainer";
 import type {
   SystemAdminProfile,
   CompanyAdminProfile,
@@ -16,6 +18,7 @@ type AdminProfileState =
 
 export default function AdminSettings() {
   const [me, setMe] = useState<AdminProfileState | null>(null);
+  const toast = useToast();
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",
@@ -108,6 +111,7 @@ export default function AdminSettings() {
     setMsg(null);
     try {
       await api.requestPasswordReset({ email });
+      toast.showSuccess("E-mail elküldve! A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
       setMsg("A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
     } catch (err) {
       setErr(err instanceof Error ? err.message : "Sikertelen jelszó-módosítási kérelem.");
@@ -228,6 +232,7 @@ export default function AdminSettings() {
           </form>
         )}
       </section>
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
     </div>
   );
 }

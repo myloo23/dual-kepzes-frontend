@@ -13,10 +13,13 @@ import UniversityPartnershipsTable, {
   type SortConfig,
 } from "../../features/partnerships/components/UniversityPartnershipsTable";
 import { ReferentDashboardStats } from "../../features/stats/components/ReferentDashboardStats";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/shared/ToastContainer";
 
 export default function UniversityDashboardPage() {
   const location = useLocation();
   const { user, logout: authLogout } = useAuth();
+  const toast = useToast();
 
   const [profileForm, setProfileForm] = useState<
     Partial<UniversityUserProfile>
@@ -391,6 +394,7 @@ export default function UniversityDashboardPage() {
     setProfileSuccess(null);
     try {
       await api.requestPasswordReset({ email });
+      toast.showSuccess("E-mail elküldve! A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
       setProfileSuccess("A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
     } catch (err) {
       setProfileError(err instanceof Error ? err.message : "Sikertelen jelszó-módosítási kérelem.");
@@ -694,6 +698,7 @@ export default function UniversityDashboardPage() {
           )}
         </div>
       )}
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
     </div>
   );
 }
