@@ -40,6 +40,7 @@ export default function CompanyProfileEditor({
   const [savingPersonal, setSavingPersonal] = useState(false);
   const [savingAvatar, setSavingAvatar] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [resettingPassword, setResettingPassword] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -146,6 +147,25 @@ export default function CompanyProfileEditor({
     }
   };
 
+  const handleRequestPasswordReset = async () => {
+    const email = personalForm.email || companyAdmin?.email;
+    if (!email) {
+      setError("Nem található e-mail cím a jelszó visszaállításhoz.");
+      return;
+    }
+    setResettingPassword(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      await api.requestPasswordReset({ email });
+      setSuccess("A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sikertelen jelszó-módosítási kérelem.");
+    } finally {
+      setResettingPassword(false);
+    }
+  };
+
   const initials =
     personalForm.fullName
       ?.split(" ")
@@ -234,12 +254,19 @@ export default function CompanyProfileEditor({
 
       <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 transition-colors">
         <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 transition-colors">
-          Jelszo modositasa
+          Jelszó módosítása
         </h2>
-        <div className="rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/20 p-4 text-sm text-amber-800 dark:text-amber-300 transition-colors">
-          A jelszomodositas jelenleg nem erheto el, mert nincs dokumentalt
-          backend vegpont a ceges profil jelszavanak modositasara.
-        </div>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Kattints az alábbi gombra a jelszó módosításához. Küldünk egy jelszó-visszaállítási linket a profilhoz tartozó e-mail címre ({personalForm.email || companyAdmin?.email}).
+        </p>
+        <button
+          type="button"
+          onClick={handleRequestPasswordReset}
+          disabled={resettingPassword}
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
+        >
+          {resettingPassword ? "Kérelem küldése..." : "Jelszó módosítása"}
+        </button>
       </section>
 
       <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 transition-colors">

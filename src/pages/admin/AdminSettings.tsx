@@ -22,6 +22,7 @@ export default function AdminSettings() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [resettingPassword, setResettingPassword] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -93,6 +94,25 @@ export default function AdminSettings() {
       setErr(e instanceof Error ? e.message : "Módosítás sikertelen.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRequestPasswordReset = async () => {
+    const email = me?.email;
+    if (!email) {
+      setErr("Nem található e-mail cím a jelszó visszaállításhoz.");
+      return;
+    }
+    setResettingPassword(true);
+    setErr(null);
+    setMsg(null);
+    try {
+      await api.requestPasswordReset({ email });
+      setMsg("A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
+    } catch (err) {
+      setErr(err instanceof Error ? err.message : "Sikertelen jelszó-módosítási kérelem.");
+    } finally {
+      setResettingPassword(false);
     }
   };
 
@@ -178,13 +198,21 @@ export default function AdminSettings() {
               />
             </div>
 
-            <div className="pt-4 flex gap-3">
+            <div className="pt-4 flex flex-wrap gap-3">
               <button
                 type="submit"
                 disabled={loading}
                 className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
               >
                 Mentés
+              </button>
+              <button
+                type="button"
+                onClick={handleRequestPasswordReset}
+                disabled={loading || resettingPassword}
+                className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 disabled:opacity-60 transition-colors"
+              >
+                {resettingPassword ? "Küldés..." : "Jelszó módosítása"}
               </button>
               {/* 
                     <button

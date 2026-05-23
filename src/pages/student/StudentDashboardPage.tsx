@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ApplicationsList from "../../features/applications/components/ApplicationsList";
 import StudentPartnershipsList from "../../features/partnerships/components/StudentPartnershipsList";
@@ -369,6 +369,7 @@ export default function StudentDashboardPage() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileDeleting, setProfileDeleting] = useState(false);
+  const [profileResettingPassword, setProfileResettingPassword] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
 
@@ -675,6 +676,25 @@ export default function StudentDashboardPage() {
       setProfileError(message);
     } finally {
       setProfileDeleting(false);
+    }
+  };
+
+  const handleRequestPasswordReset = async () => {
+    const email = profileForm.email || profile?.email;
+    if (!email) {
+      setProfileError("Nem található e-mail cím a jelszó visszaállításhoz.");
+      return;
+    }
+    setProfileResettingPassword(true);
+    setProfileError(null);
+    setProfileSuccess(null);
+    try {
+      await api.requestPasswordReset({ email });
+      setProfileSuccess("A jelszó visszaállító linket elküldtük a megadott e-mail címre.");
+    } catch (err) {
+      setProfileError(err instanceof Error ? err.message : "Sikertelen jelszó-módosítási kérelem.");
+    } finally {
+      setProfileResettingPassword(false);
     }
   };
 
@@ -1564,6 +1584,14 @@ export default function StudentDashboardPage() {
                         className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
                       >
                         {profileSaving ? "Mentés..." : "Mentés"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRequestPasswordReset}
+                        disabled={profileResettingPassword}
+                        className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 disabled:opacity-60 transition-colors"
+                      >
+                        {profileResettingPassword ? "Küldés..." : "Jelszó módosítása"}
                       </button>
                       <button
                         onClick={handleProfileDelete}
