@@ -287,7 +287,10 @@ function buildProfileForm(
     city: loc.city ?? "",
     streetAddress: loc.address ?? "",
     highSchool: data.highSchool ?? "",
-    graduationYear: data.graduationYear ?? "",
+    graduationYear:
+      data.graduationYear && data.graduationYear !== 0
+        ? data.graduationYear
+        : new Date().getFullYear(),
     neptunCode: data.neptunCode ?? "",
     currentMajor: data.currentMajor ?? "",
     studyMode: data.studyMode ?? "NAPPALI",
@@ -1237,7 +1240,7 @@ export default function StudentDashboardPage() {
                     </label>
                     <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
                       <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors">
-                        Születési dátum
+                        Hallgató születési dátuma
                       </span>
                       <input
                         type="date"
@@ -1562,16 +1565,16 @@ export default function StudentDashboardPage() {
                     {/* Motivation Letter */}
                     <label className="space-y-1 text-sm text-slate-700 dark:text-slate-300 md:col-span-2 block mt-6 transition-colors">
                       <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 block mb-2 transition-colors">
-                        Motivációs levél (max 500 karakter)
+                        Motivációs levél (max 1000 karakter)
                         <span className="ml-2 font-normal text-slate-400 dark:text-slate-500">
-                          {profileForm.motivationLetter?.length || 0}/500
+                          {profileForm.motivationLetter?.length || 0}/1000
                         </span>
                       </span>
                       <textarea
                         name="motivationLetter"
                         value={profileForm.motivationLetter ?? ""}
                         onChange={(e) => {
-                          if (e.target.value.length <= 500) {
+                          if (e.target.value.length <= 1000) {
                             handleProfileChange(e);
                           }
                         }}

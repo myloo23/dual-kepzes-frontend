@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { GraduationCap, Briefcase, Building2, ChevronRight } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { useAuth } from "@/features/auth";
 
 export default function RegistrationPromo() {
+  const { isAuthenticated } = useAuth();
   const cards = [
     {
       title: "Középiskolásoknak",
@@ -103,15 +105,27 @@ export default function RegistrationPromo() {
                 </p>
               </div>
 
-              <Link
-                to={card.href}
-                className="inline-flex w-full items-center justify-between rounded-2xl bg-white dark:bg-slate-900 px-5 py-4 text-[15px] font-semibold text-nje-anthracite dark:text-slate-100 shadow-sm border border-nje-anthracite/10 dark:border-slate-800 transition-all duration-200 hover:bg-nje-pearl dark:hover:bg-slate-800 group-hover:border-nje-anthracite/20 dark:group-hover:border-slate-700"
-              >
-                <span>{card.ctaText}</span>
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-nje-pearl dark:bg-slate-800 group-hover:bg-nje-anthracite/10 dark:group-hover:bg-slate-700 transition-colors">
-                  <ChevronRight className="h-4 w-4 text-nje-anthracite/60 dark:text-slate-400" />
-                </span>
-              </Link>
+              {isAuthenticated ? (
+                <div
+                  className="inline-flex w-full items-center justify-between rounded-2xl bg-slate-100 dark:bg-slate-800/40 px-5 py-4 text-[15px] font-semibold text-slate-400 dark:text-slate-500 shadow-sm border border-slate-200 dark:border-slate-800/50 cursor-not-allowed opacity-60"
+                  title="Már be vagy jelentkezve"
+                >
+                  <span>{card.ctaText}</span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/50 dark:bg-slate-800/50">
+                    <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-600" />
+                  </span>
+                </div>
+              ) : (
+                <Link
+                  to={card.href}
+                  className="inline-flex w-full items-center justify-between rounded-2xl bg-white dark:bg-slate-900 px-5 py-4 text-[15px] font-semibold text-nje-anthracite dark:text-slate-100 shadow-sm border border-nje-anthracite/10 dark:border-slate-800 transition-all duration-200 hover:bg-nje-pearl dark:hover:bg-slate-800 group-hover:border-nje-anthracite/20 dark:group-hover:border-slate-700"
+                >
+                  <span>{card.ctaText}</span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-nje-pearl dark:bg-slate-800 group-hover:bg-nje-anthracite/10 dark:group-hover:bg-slate-700 transition-colors">
+                    <ChevronRight className="h-4 w-4 text-nje-anthracite/60 dark:text-slate-400" />
+                  </span>
+                </Link>
+              )}
             </div>
           ))}
         </div>

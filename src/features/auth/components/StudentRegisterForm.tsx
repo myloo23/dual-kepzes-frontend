@@ -31,7 +31,9 @@ export default function StudentRegisterForm() {
   const [streetAddress, setStreetAddress] = useState("");
   const [highSchool, setHighSchool] = useState("");
   const [highSchoolCity, setHighSchoolCity] = useState("");
-  const [graduationYear, setGraduationYear] = useState<number | "">("");
+  const [graduationYear, setGraduationYear] = useState<number | "">(
+    new Date().getFullYear(),
+  );
 
   // University specific
   const [neptunCode, setNeptunCode] = useState("");
@@ -319,7 +321,7 @@ export default function StudentRegisterForm() {
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
-                Születési dátum *
+                Hallgató születési dátuma *
               </label>
               <input
                 type="date"

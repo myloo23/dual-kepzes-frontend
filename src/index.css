@@ -5,7 +5,7 @@
 /* ── NJE Brand Base ───────────────────────────────────────────── */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
   /* NJE Design tokens */
   --nje-jaffa:      #F7941D;
@@ -13,6 +13,10 @@
   --nje-cyan:       #00AEEF;
   --nje-anthracite: #3C3C3B;
   --nje-pearl:      #F0EDE6;
+}
+
+.dark {
+  color-scheme: dark;
 }
 
 html {
