@@ -374,11 +374,8 @@ export const UNIVERSITY_FAQ_SECTIONS: FaqSection[] = [
       },
     ],
   },
-];
-
-export const TEACHER_FAQ_SECTIONS: FaqSection[] = [
   {
-    title: "Oktatói feladatok és tervek",
+    title: "Oktatói feladatok és segédletek",
     items: [
       {
         question: "Mi az oktató (egyetemi felügyelő) szerepe a duális rendszerben?",
@@ -402,3 +399,5 @@ export const TEACHER_FAQ_SECTIONS: FaqSection[] = [
     ],
   },
 ];
+
+export const TEACHER_FAQ_SECTIONS = UNIVERSITY_FAQ_SECTIONS;

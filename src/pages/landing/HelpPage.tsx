@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   BookOpen,
-  Users,
   GraduationCap,
   Building2,
   UserCheck,
@@ -22,7 +21,6 @@ import {
   HR_FAQ_SECTIONS,
   MENTOR_FAQ_SECTIONS,
   UNIVERSITY_FAQ_SECTIONS,
-  TEACHER_FAQ_SECTIONS,
   ADMIN_FAQ_SECTIONS
 } from "../../data/faqData";
 
@@ -96,19 +94,11 @@ export default function HelpPage() {
     },
     {
       id: "university",
-      name: "Egyetem",
+      name: "Egyetem / Oktató",
       icon: BookOpen,
       color: "from-purple-500 to-pink-600",
-      description: "A duális partnerségek ellenőrzése, egyetemi felelős kijelölése (aktiválás), képzések lezárása és megszakítása.",
+      description: "A duális partnerségek koordinációja, egyetemi felelős kijelölése (aktiválás), képzések felügyelete, lezárása és oktatási segédletek elérése.",
       faq: UNIVERSITY_FAQ_SECTIONS,
-    },
-    {
-      id: "teacher",
-      name: "Oktató",
-      icon: Users,
-      color: "from-sky-500 to-cyan-600",
-      description: "Módszertani oktatási segédletek elérése. A felület jövőbeli fejlesztésével a hozzárendelt hallgatók szakmai haladásának követése.",
-      faq: TEACHER_FAQ_SECTIONS,
     },
     {
       id: "admin",
