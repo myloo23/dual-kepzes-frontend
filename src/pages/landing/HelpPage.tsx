@@ -1,14 +1,30 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  BookOpen,
+  Users,
+  GraduationCap,
+  Building2,
+  UserCheck,
+  Settings,
+  ArrowRight,
+  ShieldCheck,
+  Clock,
+  HelpCircle,
+  Image as ImageIcon
+} from "lucide-react";
 import dashboardImg from "../../assets/help/dashboard.png";
 import dualisallapotImg from "../../assets/help/dualisallapot.png";
 import profileImg from "../../assets/help/profile.png";
 import validacioshibaImg from "../../assets/help/validacioshiba2.png";
-
-type TutorialStep = {
-  title: string;
-  description: string;
-};
+import {
+  STUDENT_FAQ_SECTIONS,
+  HR_FAQ_SECTIONS,
+  MENTOR_FAQ_SECTIONS,
+  UNIVERSITY_FAQ_SECTIONS,
+  TEACHER_FAQ_SECTIONS,
+  ADMIN_FAQ_SECTIONS
+} from "../../data/faqData";
 
 type TutorialImageBlock = {
   title: string;
@@ -17,303 +33,439 @@ type TutorialImageBlock = {
   src?: string;
 };
 
-type TutorialSection = {
-  id: string;
-  badge: string;
-  title: string;
-  intro: string;
-  textBlocks: string[];
-  imageBlocks: TutorialImageBlock[];
-  steps: TutorialStep[];
-};
-
-const tutorialSections: TutorialSection[] = [
+const visualGuides: TutorialImageBlock[] = [
   {
-    id: "elso-lepesek",
-    badge: "Alapok",
-    title: "Első lépések a felületen",
-    intro:
-      "Ez a fejezet bemutatja, hogyan induljon a felhasználó a bejelentkezéstől a releváns munkaterületig.",
-    textBlocks: [
-      "A bejelentkezést követően a rendszer a jogosultságaidnak megfelelően irányít a megfelelő kezdőoldalra (például a Diák felületre).",
-      "Az irányítópulton azonnal láthatod az aktuális teendőidet, a leadási határidőket, valamint gyors elérést biztosítunk a profilodhoz és a jelentkezéseidhez.",
-    ],
-    imageBlocks: [
-      {
-        title: "Kezdő dashboard",
-        caption:
-          "A sikeres bejelentkezés után a diák felület irányítópultjára érkezel. Itt áttekintheted a legfontosabb műveleteket és információkat.",
-        hint: "Kattints a képre a nagyításhoz",
-        src: dashboardImg,
-      },
-    ],
-    steps: [
-      {
-        title: "Bejelentkezés",
-        description: "Nyisd meg a bejelentkező oldalt, majd add meg a fiókadatokat.",
-      },
-      {
-        title: "Szerepkör ellenőrzése",
-        description: "A rendszer a jogosultságod alapján automatikusan a megfelelő felületre visz.",
-      },
-      {
-        title: "Kezdő navigáció",
-        description: "Ellenőrizd a felső navigációt és nyisd meg az elsődleges munkaterületet.",
-      },
-    ],
+    title: "Kezdő dashboard",
+    caption:
+      "A sikeres bejelentkezés után a diák felület irányítópultjára érkezel. Itt áttekintheted a legfontosabb műveleteket, híreket és információkat.",
+    hint: "Kattints a képre a nagyításhoz",
+    src: dashboardImg,
   },
   {
-    id: "folyamatok",
-    badge: "Munkafolyamat",
-    title: "Tipikus felhasználói folyamat",
-    intro:
-      "Példa lépések, amelyek végigvezetnek egy gyakori feladaton elejétől a befejezésig.",
-    textBlocks: [
-      "A rendszerben a legfontosabb folyamatok egyszerűen nyomon követhetőek. Egy új jelentkezés leadásakor például csak ki kell töltened az űrlapot, majd elmenteni.",
-      "Minden mentés után a rendszer visszajelzést ad, a listanézetekben pedig azonnal láthatod a jelentkezéseid aktuális állapotát, ami biztosítja a folyamatos átláthatóságot.",
-    ],
-    imageBlocks: [
-      {
-        title: "Saját profil kitöltése",
-        caption:
-          "A profilodnál megadhatod a személyes és tanulmányi adataidat, amelyeket a munkáltatók is látni fognak.",
-        hint: "Kattints a képre a nagyításhoz",
-        src: profileImg,
-      },
-      {
-        title: "Duális helyem státuszai",
-        caption:
-          "A 'Duális helyem' menüpontban követheted nyomon a jelentkezéseid és partnereid aktuális állapotát (pl. Aktív, Elfogadva).",
-        hint: "Kattints a képre a nagyításhoz",
-        src: dualisallapotImg,
-      },
-    ],
-    steps: [
-      {
-        title: "Új elem létrehozása",
-        description: "Nyisd meg a megfelelő modult és kattints az új rekord létrehozására.",
-      },
-      {
-        title: "Adatok mentése",
-        description: "Töltsd ki az űrlapot, majd mentsd el. A rendszer visszajelzést ad a sikeres műveletről.",
-      },
-      {
-        title: "Ellenőrzés és követés",
-        description: "A lista nézetben ellenőrizd a rekordot és kövesd a státuszát.",
-      },
-    ],
+    title: "Saját profil kitöltése",
+    caption:
+      "A profilodnál megadhatod a személyes és tanulmányi adataidat, nyelvtudásodat, amelyet a jóváhagyott munkáltatók is látni fognak.",
+    hint: "Kattints a képre a nagyításhoz",
+    src: profileImg,
   },
   {
-    id: "gyik-hibakereses",
-    badge: "Támogatás",
-    title: "GYIK és hibaelhárítás",
-    intro:
-      "Szerkezet, amelyben gyakori kérdéseket és gyors megoldási lépéseket lehet publikálni.",
-    textBlocks: [
-      "Ha hibát tapasztalsz (például sikertelen mentés vagy érvénytelen adat), a rendszer piros hibaüzenetekkel jelzi a probléma pontos helyét.",
-      "Ilyen esetekben ellenőrizd, hogy minden kötelező mezőt kitöltöttél-e, illetve megfelelő formátumban adtad-e meg az adatokat (például telefonszám vagy email cím).",
-    ],
-    imageBlocks: [
-      {
-        title: "Validációs hiba megjelenése",
-        caption:
-          "Ha egy űrlap mentésekor hibás vagy hiányzó adatot talált a rendszer, egy jól látható piros hibaüzenet figyelmeztet a probléma helyére.",
-        hint: "Kattints a képre a nagyításhoz",
-        src: validacioshibaImg,
-      },
-    ],
-    steps: [
-      {
-        title: "Jelenség azonosítása",
-        description: "Rögzítsd pontosan, melyik képernyőn és milyen műveletnél jelentkezett a hiba.",
-      },
-      {
-        title: "Gyors ellenőrzés",
-        description: "Ellenőrizd a jogosultságot, hálózati kapcsolatot és a kötelező mezőket.",
-      },
-      {
-        title: "Továbblépés support felé",
-        description: "Ha a hiba ismétlődik, küldj képernyőképet és rövid leírást az ügyfélszolgálatnak.",
-      },
-    ],
+    title: "Duális helyem státuszai",
+    caption:
+      "A 'Duális helyem' menüpontban követheted nyomon a jelentkezéseid és partnereid aktuális állapotát (pl. Aktív, Mentorra vár).",
+    hint: "Kattints a képre a nagyításhoz",
+    src: dualisallapotImg,
   },
-];
-
-const quickLinks = [
-  { label: "Kezdőlap", to: "/" },
-  { label: "Állásajánlatok", to: "/positions" },
-  { label: "Galéria", to: "/gallery" },
+  {
+    title: "Validációs hiba megjelenése",
+    caption:
+      "Ha egy űrlap mentésekor hibás vagy hiányzó adatot talált a rendszer, egy jól látható piros hibaüzenet figyelmeztet a probléma helyére.",
+    hint: "Kattints a képre a nagyításhoz",
+    src: validacioshibaImg,
+  },
 ];
 
 export default function HelpPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [activeFaqRole, setActiveFaqRole] = useState<string>("student");
+  const [activeMainTab, setActiveMainTab] = useState<"overview" | "faq" | "visual">("overview");
+
+  const ROLES_INFO = [
+    {
+      id: "student",
+      name: "Hallgató",
+      icon: GraduationCap,
+      color: "from-blue-500 to-indigo-600",
+      description: "Duális állások böngészése és térképes keresése, önéletrajz közvetlen elküldése, profilépítés és az egyetemi átállás kezelése.",
+      faq: STUDENT_FAQ_SECTIONS,
+    },
+    {
+      id: "company",
+      name: "Cégadmin",
+      icon: Building2,
+      color: "from-emerald-500 to-teal-600",
+      description: "Céges profil és telephelyek karbantartása, állások hirdetése, beérkező jelentkezések elbírálása, és mentorok kijelölése.",
+      faq: HR_FAQ_SECTIONS,
+    },
+    {
+      id: "mentor",
+      name: "Mentor",
+      icon: UserCheck,
+      color: "from-amber-500 to-orange-600",
+      description: "A hozzárendelt hallgatók szakmai fejlődésének kísérése, a cég aktív pozícióinak követése és szakmai segédletek elérése.",
+      faq: MENTOR_FAQ_SECTIONS,
+    },
+    {
+      id: "university",
+      name: "Egyetem",
+      icon: BookOpen,
+      color: "from-purple-500 to-pink-600",
+      description: "A duális partnerségek ellenőrzése, egyetemi felelős kijelölése (aktiválás), képzések lezárása és megszakítása.",
+      faq: UNIVERSITY_FAQ_SECTIONS,
+    },
+    {
+      id: "teacher",
+      name: "Oktató",
+      icon: Users,
+      color: "from-sky-500 to-cyan-600",
+      description: "Módszertani oktatási segédletek elérése. A felület jövőbeli fejlesztésével a hozzárendelt hallgatók szakmai haladásának követése.",
+      faq: TEACHER_FAQ_SECTIONS,
+    },
+    {
+      id: "admin",
+      name: "Rendszergazda",
+      icon: Settings,
+      color: "from-rose-500 to-red-600",
+      description: "A teljes platform felügyelete, cégek regisztrációjának jóváhagyása, szakok kezelése, hírek publikálása és audit napló követése.",
+      faq: ADMIN_FAQ_SECTIONS,
+    },
+  ];
+
+  const currentRoleFaq = ROLES_INFO.find((r) => r.id === activeFaqRole) || ROLES_INFO[0];
 
   return (
-    <div className="bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-10 lg:py-14">
-        <section className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/80 shadow-sm p-6 lg:p-10 transition-colors">
-          <p className="inline-flex items-center rounded-full bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-            Súgóközpont
-          </p>
-          <h1 className="mt-4 text-3xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-            Útmutató a Duális Képzési Rendszerhez
-          </h1>
-          <p className="mt-4 max-w-3xl text-sm lg:text-base leading-relaxed text-slate-600 dark:text-slate-300">
-            Üdvözlünk a Súgóközpontban! Itt minden fontos információt és lépésről lépésre szóló útmutatót megtalálsz, amely segít a rendszer gördülékeny használatában, a jelentkezések leadásától kezdve az állapotok nyomon követéséig.
-          </p>
+    <div className="bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 transition-colors duration-300 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 p-4">
-              <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Szekciók</p>
-              <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                {tutorialSections.length}
-              </p>
-            </div>
-            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 p-4">
-              <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Lépések</p>
-              <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                {tutorialSections.reduce((sum, section) => sum + section.steps.length, 0)}
-              </p>
-            </div>
-            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 p-4">
-              <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Képes blokkok</p>
-              <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                {tutorialSections.reduce((sum, section) => sum + section.imageBlocks.length, 0)}
-              </p>
+        {/* HERO SECTION */}
+        <section className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/80 shadow-md p-8 lg:p-12 transition-colors">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 dark:bg-blue-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-400/10 dark:bg-emerald-500/5 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
+
+          <div className="relative">
+            <span className="inline-flex items-center rounded-full bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider">
+              Súgóközpont & Folyamatleírás
+            </span>
+            <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight">
+              Neumann János Egyetem <br />
+              <span className="bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">
+                Duális Képzési Rendszer Súgó
+              </span>
+            </h1>
+            <p className="mt-4 max-w-3xl text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300">
+              Üdvözlünk az NJE Duális Képzési Rendszer súgófelületén! Ez az oldal segít megérteni a rendszer működését, a különböző felhasználói szerepkörök jogosultságait és a duális szerződések létrejöttének lépéseit.
+            </p>
+
+            {/* MAIN NAVIGATION TABS */}
+            <div className="mt-8 flex flex-wrap gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+              <button
+                onClick={() => setActiveMainTab("overview")}
+                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${activeMainTab === "overview"
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-950 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+              >
+                Rendszer & Folyamatok
+              </button>
+              <button
+                onClick={() => setActiveMainTab("faq")}
+                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${activeMainTab === "faq"
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-950 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+              >
+                GYIK (Szerepkörök szerint)
+              </button>
+              <button
+                onClick={() => setActiveMainTab("visual")}
+                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${activeMainTab === "visual"
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-950 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+              >
+                Képes Segédlet
+              </button>
             </div>
           </div>
         </section>
 
-        <div className="mt-8 lg:mt-10 grid gap-6 lg:grid-cols-[280px_1fr]">
-          <aside className="lg:sticky lg:top-24 h-max rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
-              Tartalomjegyzék
-            </h2>
-            <nav className="mt-4 space-y-2">
-              {tutorialSections.map((section, index) => (
-                <a
-                  key={section.id}
-                  href={`#${section.id}`}
-                  className="block rounded-lg px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-slate-100 dark:hover:bg-slate-800"
-                >
-                  {index + 1}. {section.title}
-                </a>
-              ))}
-            </nav>
-          </aside>
+        {/* TAB CONTENT: OVERVIEW & PROCESSES */}
+        {activeMainTab === "overview" && (
+          <div className="mt-8 space-y-10 animate-in fade-in duration-300">
 
-          <section className="space-y-6">
-            {tutorialSections.map((section, sectionIndex) => (
-              <article
-                id={section.id}
-                key={section.id}
-                className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-5 lg:p-7 scroll-mt-24"
-              >
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="inline-flex rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide">
-                    {section.badge}
-                  </span>
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                    Fejezet {sectionIndex + 1}
-                  </span>
-                </div>
+            {/* ROLE CARDS */}
+            <section className="space-y-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-slate-950 dark:text-slate-50">
+                Szerepkörök és Jogkörök
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                A rendszer szerepkör-alapú hozzáférés-vezérléssel rendelkezik. Az alábbi kártyák bemutatják az egyes szerepkörök céljait.
+              </p>
 
-                <h3 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                  {section.title}
-                </h3>
-                <p className="mt-2 text-sm lg:text-base text-slate-600 dark:text-slate-300">
-                  {section.intro}
-                </p>
-
-                <div className="mt-5 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
-                      Szöveges blokkok
-                    </h4>
-                    {section.textBlocks.map((text, textIndex) => (
-                      <div
-                        key={`${section.id}-text-${textIndex}`}
-                        className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4"
-                      >
-                        <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">{text}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
-                      Képes blokkok
-                    </h4>
-                    {section.imageBlocks.map((imageBlock, imageIndex) => (
-                      <figure
-                        key={`${section.id}-image-${imageIndex}`}
-                        className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/40 p-4"
-                      >
-                        {imageBlock.src ? (
-                          <div
-                            className="overflow-hidden rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer transition-transform duration-200 hover:scale-[1.02] hover:shadow-md"
-                            onClick={() => setSelectedImage(imageBlock.src!)}
-                          >
-                            <img src={imageBlock.src} alt={imageBlock.title} className="w-full h-auto object-cover" />
-                          </div>
-                        ) : (
-                          <div className="flex min-h-[140px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-500 dark:text-slate-300 text-xs font-medium tracking-wide uppercase">
-                            Kép helye
-                          </div>
-                        )}
-                        <figcaption className="mt-3 space-y-1">
-                          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{imageBlock.title}</p>
-                          <p className="text-sm text-slate-600 dark:text-slate-300">{imageBlock.caption}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{imageBlock.hint}</p>
-                        </figcaption>
-                      </figure>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-6">
-                  <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
-                    Lépésről lépésre
-                  </h4>
-                  <ol className="mt-3 space-y-3">
-                    {section.steps.map((step, stepIndex) => (
-                      <li
-                        key={`${section.id}-step-${stepIndex}`}
-                        className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4"
-                      >
-                        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                          {stepIndex + 1}. {step.title}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {ROLES_INFO.map((role) => {
+                  const IconComp = role.icon;
+                  return (
+                    <div
+                      key={role.id}
+                      className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${role.color} flex items-center justify-center text-white mb-4 shadow-sm`}>
+                          <IconComp className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                          {role.name}
+                        </h3>
+                        <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                          {role.description}
                         </p>
-                        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{step.description}</p>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              </article>
-            ))}
-          </section>
-        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setActiveFaqRole(role.id);
+                          setActiveMainTab("faq");
+                        }}
+                        className="mt-4 inline-flex items-center text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline gap-1"
+                      >
+                        GYIK megtekintése <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
 
-        <section className="mt-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 lg:p-7">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Gyors hivatkozások</h2>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Ezek a linkek közvetlenül a legfontosabb publikus oldalakra visznek.
+            {/* PROCESS TIMELINE */}
+            <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+                A Duális Képzési Megállapodás Folyamata
+              </h2>
+
+              <div className="relative border-l-2 border-slate-100 dark:border-slate-800 ml-4 md:ml-6 space-y-8">
+
+                {/* Step 1 */}
+                <div className="relative pl-8 md:pl-10">
+                  <div className="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 border-2 border-blue-600 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm">
+                    1
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-slate-100">Jelentkezés és GDPR direct file-dispatch</h3>
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                      A hallgató jelentkezik a pozícióra. A jelentkezés során feltöltött önéletrajz és motivációs levél **adatvédelmi okokból soha nem kerül mentésre a szerver adatbázisában**. A rendszer a fájlokat közvetlenül a memóriában dolgozza fel, és titkosított e-mail csatolmányként továbbítja a cég kapcsolattartójának.
+                    </p>
+                    <span className="mt-2 inline-flex items-center gap-1 rounded bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-600 dark:bg-slate-800/50 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> GDPR kompatibilis közvetlen e-mail átvitel
+                    </span>
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="relative pl-8 md:pl-10">
+                  <div className="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 border-2 border-blue-600 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm">
+                    2
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-slate-100">Céges elbírálás és Partnerkapcsolat létrejötte</h3>
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                      A cégadminisztrátor elbírálja a hallgatót. Amennyiben a cég az <strong>Elfogadás</strong> mellett dönt, a rendszer automatikusan létrehozza a <strong>Duális Partnerkapcsolati (DualPartnership)</strong> rekordot. A partnerség kezdeti állapota: <span className="font-semibold text-amber-600">PENDING_MENTOR</span> (Mentorra vár).
+                    </p>
+                    <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                      * Megjegyzés: Ha a hallgatónak már van egy másik aktív vagy függőben lévő partnersége, a rendszer a párhuzamos elfogadást ütközés miatt blokkolja.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="relative pl-8 md:pl-10">
+                  <div className="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 border-2 border-blue-600 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm">
+                    3
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-slate-100">Céges mentor kijelölése</h3>
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                      A cégadminisztrátor a regisztrált céges munkavállalók közül kijelöli a hallgató szakmai mentorát. A hozzárendelés pillanatában a partnerség állapota továbbhalad a következő fázisba: <span className="font-semibold text-indigo-600">PENDING_UNIVERSITY</span> (Egyetemre vár).
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 4 */}
+                <div className="relative pl-8 md:pl-10">
+                  <div className="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 border-2 border-emerald-500 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+                    4
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-slate-100">Egyetemi jóváhagyás (Aktiválás)</h3>
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                      Az egyetemi kapcsolattartó referens megvizsgálja a partnerséget, és hozzárendeli a rendszerben az egyetemi felelőst (supervisort). Ezzel a partnerség állapota <span className="font-semibold text-emerald-600">ACTIVE</span> (Aktív) lesz. A hallgató profilja automatikusan lekerül a munkakeresők nyilvános listájáról.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Status State Diagram */}
+              <div className="mt-8 bg-slate-50 dark:bg-slate-950/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5" /> Partnerség állapot-átmenetek (State Diagram)
+                </h4>
+                <div className="flex flex-wrap items-center justify-start gap-2 text-xs md:text-sm font-semibold">
+                  <span className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700">Létrejön</span>
+                  <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
+                  <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-900/50">PENDING_MENTOR</span>
+                  <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
+                  <span className="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-900/50">PENDING_UNIVERSITY</span>
+                  <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
+                  <span className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-900/50">ACTIVE (Szerződött)</span>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        )}
+
+        {/* TAB CONTENT: FAQ SECTION */}
+        {activeMainTab === "faq" && (
+          <div className="mt-8 grid gap-6 lg:grid-cols-[280px_1fr] animate-in fade-in duration-300">
+
+            {/* Left sidebar for FAQ role selection */}
+            <aside className="h-max rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm space-y-1">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 px-3 mb-2 flex items-center gap-1">
+                <HelpCircle className="w-4 h-4" /> Szerepkör szűrés
+              </h2>
+              {ROLES_INFO.map((r) => {
+                const IconComp = r.icon;
+                const isSelected = activeFaqRole === r.id;
+                return (
+                  <button
+                    key={r.id}
+                    onClick={() => setActiveFaqRole(r.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-all text-left ${isSelected
+                        ? "bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-100 dark:border-blue-900/40"
+                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent"
+                      }`}
+                  >
+                    <IconComp className="w-4 h-4 shrink-0" />
+                    {r.name}
+                  </button>
+                );
+              })}
+            </aside>
+
+            {/* FAQ List */}
+            <section className="space-y-6">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${currentRoleFaq.color} flex items-center justify-center text-white`}>
+                    <currentRoleFaq.icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                      {currentRoleFaq.name} GYIK
+                    </h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Gyakori kérdések kifejezetten {currentRoleFaq.name.toLowerCase()} szerepkörre szabva.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 space-y-4">
+                  {currentRoleFaq.faq.map((section) => (
+                    <div
+                      key={section.title}
+                      className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-4"
+                    >
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3 border-b border-slate-200 dark:border-slate-800 pb-1">
+                        {section.title}
+                      </h3>
+                      <div className="space-y-2">
+                        {section.items.map((item) => (
+                          <details
+                            key={item.question}
+                            className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3"
+                          >
+                            <summary className="cursor-pointer list-none font-medium text-sm text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                              <span>{item.question}</span>
+                              <span className="text-xs text-slate-400 dark:text-slate-500 font-bold ml-2">▼</span>
+                            </summary>
+                            <div className="mt-3 space-y-2 text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                              {item.answer.map((paragraph, index) => (
+                                <p key={index}>{paragraph}</p>
+                              ))}
+                            </div>
+                          </details>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+          </div>
+        )}
+
+        {/* TAB CONTENT: VISUAL WALKTHROUGH */}
+        {activeMainTab === "visual" && (
+          <div className="mt-8 animate-in fade-in duration-300 space-y-6">
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2">
+                <ImageIcon className="w-6 h-6 text-blue-600" /> Képes Rendszerútmutató
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
+                Az alábbi képek segítségével lépésről lépésre láthatod a legfontosabb felületek felépítését és működését.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {visualGuides.map((guide, idx) => (
+                  <figure
+                    key={idx}
+                    className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-4 flex flex-col justify-between"
+                  >
+                    {guide.src ? (
+                      <div
+                        className="overflow-hidden rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer transition-transform duration-200 hover:scale-[1.01] hover:shadow-md"
+                        onClick={() => setSelectedImage(guide.src!)}
+                      >
+                        <img src={guide.src} alt={guide.title} className="w-full h-auto object-cover max-h-56" />
+                      </div>
+                    ) : (
+                      <div className="flex min-h-[140px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-500 dark:text-slate-300 text-xs font-medium tracking-wide uppercase">
+                        Kép helye
+                      </div>
+                    )}
+                    <figcaption className="mt-4 space-y-1">
+                      <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{guide.title}</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">{guide.caption}</p>
+                      <p className="text-[10px] text-blue-600 dark:text-blue-400">{guide.hint}</p>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* QUICK NAVIGATION LINKS */}
+        <section className="mt-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 shadow-sm transition-colors">
+          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Gyors hivatkozások</h3>
+          <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+            Közvetlen elérést biztosító gombok a legfontosabb nyilvános felületekre:
           </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            {quickLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700"
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link
+              to="/"
+              className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              Kezdőlap
+            </Link>
+            <Link
+              to="/positions"
+              className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              Állásajánlatok
+            </Link>
+            <Link
+              to="/gallery"
+              className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              Galéria
+            </Link>
           </div>
         </section>
+
       </div>
 
-      {/* Kép Nagyító Modal */}
+      {/* IMAGE ZOOM MODAL */}
       {selectedImage && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-slate-900/90 backdrop-blur-sm transition-opacity duration-300"
@@ -330,7 +482,7 @@ export default function HelpPage() {
             <img
               src={selectedImage}
               alt="Nagyított nézet"
-              className="w-auto h-auto max-w-full max-h-[85vh] rounded-lg shadow-2xl ring-1 ring-white/10"
+              className="w-auto h-auto max-w-full max-h-[80vh] rounded-lg shadow-2xl ring-1 ring-white/10"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
