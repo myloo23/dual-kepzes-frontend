@@ -12,10 +12,8 @@ import {
   Clock,
   Image as ImageIcon
 } from "lucide-react";
-import dashboardImg from "../../assets/help/dashboard.png";
 import dualisallapotImg from "../../assets/help/dualisallapot.png";
 import profileImg from "../../assets/help/profile.png";
-import validacioshibaImg from "../../assets/help/validacioshiba2.png";
 import {
   STUDENT_FAQ_SECTIONS,
   HR_FAQ_SECTIONS,
@@ -24,43 +22,127 @@ import {
   ADMIN_FAQ_SECTIONS
 } from "../../data/faqData";
 
-type TutorialImageBlock = {
+type GuideItem = {
   title: string;
-  caption: string;
-  hint: string;
-  src?: string;
+  description: string;
+  imageSrc?: string;
+  imagePlaceholder?: string;
 };
 
-const visualGuides: TutorialImageBlock[] = [
-  {
-    title: "Kezdő dashboard",
-    caption:
-      "A sikeres bejelentkezés után a diák felület irányítópultjára érkezel. Itt áttekintheted a legfontosabb műveleteket, híreket és információkat.",
-    hint: "Kattints a képre a nagyításhoz",
-    src: dashboardImg,
+const GUIDES_BY_ROLE: Record<string, { intro: string; items: GuideItem[] }> = {
+  student: {
+    intro: "Útmutató a sikeres duális jelentkezéshez. Rendszerünk végigkísér a profilod létrehozásától egészen a partneri szerződésig.",
+    items: [
+      {
+        title: "1. Profilépítés és digitális névjegykártya",
+        description: "Hozd létre a profilod percek alatt! Töltsd ki a tanulmányi adataidat, és írj egy figyelemfelkeltő, rövid motivációs bemutatkozást. A rendszer adatminimalizálásra törekszik, így felesleges papírmunka és fájlfeltöltés helyett csak a legfontosabb, a cégek számára releváns információkra koncentrálunk.",
+        imageSrc: profileImg,
+        imagePlaceholder: "Képernyőkép a profil szerkesztő felületről",
+      },
+      {
+        title: "2. Térképes álláskeresés és gyors jelentkezés",
+        description: "Böngéssz a nyitott duális pozíciók között listás vagy interaktív térképes nézetben. Találd meg a hozzád legközelebb eső vagy szakmailag legizgalmasabb lehetőségeket, és egyetlen kattintással add le a jelentkezésedet a választott vállalatokhoz.",
+        imagePlaceholder: "Rövid GIF a térképes kereső használatáról és a jelentkezésről",
+      },
+      {
+        title: "3. Státuszkövetés és valós idejű visszajelzések",
+        description: "A személyes Irányítópultodon (Dashboard) folyamatosan nyomon követheted a jelentkezéseid aktuális állapotát. Legyen szó a beküldött jelentkezésről, a cég válaszáról vagy a sikeres felvételről (Duális helyem), itt minden értesítést és közelgő határidőt egy helyen láthatsz.",
+        imageSrc: dualisallapotImg,
+        imagePlaceholder: "Képernyőkép a hallgatói státuszokról és a dashboardról",
+      },
+      {
+        title: "4. Oktatási segédanyag",
+        description: "Dedikált e-learning anyagokkal és szakmai útmutatókkal is segíti az egyetem a szakmai fejlődésedet.",
+        imagePlaceholder: "Képernyőkép az oktatási segédanyagokról",
+      }
+    ]
   },
-  {
-    title: "Saját profil kitöltése",
-    caption:
-      "A profilodnál megadhatod a személyes és tanulmányi adataidat, nyelvtudásodat, amelyet a jóváhagyott munkáltatók is látni fognak.",
-    hint: "Kattints a képre a nagyításhoz",
-    src: profileImg,
+  company: {
+    intro: "Hatékony tehetségmenedzsment és adminisztráció. A felületen a duális toborzási folyamatot és a már felvett hallgatók menedzselését egyetlen, átlátható keretrendszerben végezheti.",
+    items: [
+      {
+        title: "1. Cégprofil kialakítása és célzott hirdetések",
+        description: "Tartsa naprakészen vállalata adatait és telephelyeit. Az új, specifikus egyetemi szakokra szabott duális pozíciókat néhány kattintással meghirdetheti, amelyek azonnal láthatóvá válnak a platformot aktívan használó hallgatók számára.",
+        imagePlaceholder: "Képernyőkép az új álláshirdetés űrlapjáról",
+      },
+      {
+        title: "2. Jelentkezések elbírálása és proaktív keresés",
+        description: "A beérkező jelentkezéseket egyetlen felületen tudja átnézni és elbírálni (elfogadás, elutasítás, interjúra hívás). Emellett a \"Duális helyet keresők\" adatbázisában (Tehetségtár) aktívan böngészhet a motivált hallgatók között, és közvetlenül fel is veheti velük a kapcsolatot.",
+        imagePlaceholder: "GIF a jelentkezők státuszának módosításáról",
+      },
+      {
+        title: "3. Mentorok kijelölése és szerződéskötés",
+        description: "Ha egy hallgatót sikeresen kiválasztottak, a rendszerben közvetlenül hozzárendelheti a diákhoz a felelős vállalati mentort a regisztrált munkatársak közül. Ezzel a lépéssel kerül a partnerség az egyetemhez hivatalos jóváhagyásra.",
+        imagePlaceholder: "Képernyőkép a mentor hozzárendelés legördülő menüjéről",
+      },
+      {
+        title: "4. Támogató oktatási segédletek",
+        description: "A toborzáson túl a rendszer dedikált e-learning anyagokkal és szakmai útmutatókkal is segíti a vállalatot a duális képzés gördülékeny lebonyolításában.",
+        imagePlaceholder: "Képernyőkép az Oktatási segédletek menüpontról",
+      }
+    ]
   },
-  {
-    title: "Duális helyem státuszai",
-    caption:
-      "A 'Duális helyem' menüpontban követheted nyomon a jelentkezéseid és partnereid aktuális állapotát (pl. Aktív, Mentorra vár).",
-    hint: "Kattints a képre a nagyításhoz",
-    src: dualisallapotImg,
+  mentor: {
+    intro: "Szakmai támogatás és hallgatói nyomon követés. Mentorként az Ön feladata a hallgatók gyakorlati fejlődésének irányítása, melyhez a platform letisztult hátteret biztosít.",
+    items: [
+      {
+        title: "1. A saját hallgatók fókuszált követése",
+        description: "Egy különálló felületen kísérheti figyelemmel a közvetlenül Önhöz rendelt duális hallgatók profilját, előrehaladását és a képzésükhöz kapcsolódó legfontosabb mérföldköveket.",
+        imagePlaceholder: "Képernyőkép a mentor saját hallgatói listájáról",
+      },
+      {
+        title: "2. Vállalati toborzási áttekintés",
+        description: "Rálátást kap a cég által aktuálisan hirdetett egyéb nyitott duális pozíciókra is, így mindig képben lehet a vállalat szakmai utánpótlási irányaival.",
+        imagePlaceholder: "Képernyőkép a belső álláslistáról",
+      },
+      {
+        title: "3. Mentorálási tudástár elérése",
+        description: "A sikeres szakmai iránymutatás érdekében a felületen olyan dedikált, digitális oktatási anyagokat érhet el (pl. \"A mentor fogalma és szerepe\"), amelyek praktikus segítséget nyújtanak a napi szintű mentorálásban.",
+        imagePlaceholder: "Képernyőkép az oktatási anyagok felületéről",
+      }
+    ]
   },
-  {
-    title: "Validációs hiba megjelenése",
-    caption:
-      "Ha egy űrlap mentésekor hibás vagy hiányzó adatot talált a rendszer, egy jól látható piros hibaüzenet figyelmeztet a probléma helyére.",
-    hint: "Kattints a képre a nagyításhoz",
-    src: validacioshibaImg,
+  university: {
+    intro: "Központi felügyelet és kontrolling. Ez a modul a duális partnerségek egyetemi szintű jóváhagyását és a képzés szakmai, adminisztratív hátterét biztosítja.",
+    items: [
+      {
+        title: "1. Partnerségek jóváhagyása és aktiválása",
+        description: "Amikor egy vállalat és egy hallgató megegyezik (és a cég a mentort is kijelölte), az egyetemi referensek feladata a folyamat rendszerbeli hitelesítése. Itt történik az együttműködés végső jóváhagyása és az egyetemi felelős (supervisor) hozzárendelése.",
+        imagePlaceholder: "GIF az aktiválás/jóváhagyás folyamatáról",
+      },
+      {
+        title: "2. Képzési felügyelet és statisztikák",
+        description: "Az egyetemi munkatársak egy központi irányítópulton követhetik a képzések előrehaladását, a hallgatói státuszokat, valamint átfogó rendszerstatisztikákat és konverziós trendeket elemezhetnek.",
+        imagePlaceholder: "Képernyőkép az adminisztrátori statisztikai dashboardról",
+      },
+      {
+        title: "3. Kommunikáció és belső dokumentáció",
+        description: "A platform lehetővé teszi a célzott rendszerüzenetek, fontos határidők és hírek (pl. félév végi értékelések) publikálását a hallgatók és a vállalatok felé. Emellett ezen a felületen érhetők el az egyetemi referensek és oktatók számára fenntartott specifikus módszertani anyagok is.",
+        imagePlaceholder: "Képernyőkép a Hírek publikálási felületéről",
+      }
+    ]
   },
-];
+  admin: {
+    intro: "Központi felügyelet és kontrolling. Rendszergazdaként a teljes platform felügyeletét, a cégek jóváhagyását és a rendszerszintű beállításokat kezelheti ezen a felületen.",
+    items: [
+      {
+        title: "1. Partnerségek jóváhagyása és aktiválása",
+        description: "Amikor egy vállalat és egy hallgató megegyezik (és a cég a mentort is kijelölte), az egyetemi referensek feladata a folyamat rendszerbeli hitelesítése. Itt történik az együttműködés végső jóváhagyása és az egyetemi felelős (supervisor) hozzárendelése.",
+        imagePlaceholder: "GIF az aktiválás/jóváhagyás folyamatáról",
+      },
+      {
+        title: "2. Képzési felügyelet és statisztikák",
+        description: "Az egyetemi munkatársak egy központi irányítópulton követhetik a képzések előrehaladását, a hallgatói státuszokat, valamint átfogó rendszerstatisztikákat és konverziós trendeket elemezhetnek.",
+        imagePlaceholder: "Képernyőkép az adminisztrátori statisztikai dashboardról",
+      },
+      {
+        title: "3. Kommunikáció és belső dokumentáció",
+        description: "A platform lehetővé teszi a célzott rendszerüzenetek, fontos határidők és hírek (pl. félév végi értékelések) publikálását a hallgatók és a vállalatok felé. Emellett ezen a felületen érhetők el az egyetemi referensek és oktatók számára fenntartott specifikus módszertani anyagok is.",
+        imagePlaceholder: "Képernyőkép a Hírek publikálási felületéről",
+      }
+    ]
+  }
+};
 
 export default function HelpPage() {
   const { user, isAuthenticated } = useAuth();
@@ -127,6 +209,7 @@ export default function HelpPage() {
 
   const visibleRoles = ROLES_INFO.filter((r) => r.id === allowedRoleId);
   const activeRoleInfo = visibleRoles[0] || ROLES_INFO[0];
+  const activeGuideInfo = GUIDES_BY_ROLE[allowedRoleId];
 
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 transition-colors duration-300 min-h-screen">
@@ -217,7 +300,7 @@ export default function HelpPage() {
                 <div>
                   <h3 className="font-bold text-slate-900 dark:text-slate-100">Egyetemi jóváhagyás (Aktiválás)</h3>
                   <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Az egyetemi kapcsolattartó referens megvizsgálja a partnerséget, és hozzárendeli a rendszerben az egyetemi felelőst (supervisort). Ezzel a partnerség állapota <span className="font-semibold text-emerald-600">ACTIVE</span> (Aktív) lesz. A hallgató profilja automatikusan lekerül a munkakeresők nyilvános listájáról.
+                    Az egyetemi kapcsolattartó referens megvizsgálja a partnerséget, és hozzárendeli a rendszerben az egyetemi felelőst (supervisor). Ezzel a partnerség állapota <span className="font-semibold text-emerald-600">ACTIVE</span> (Aktív) lesz. A hallgató profilja automatikusan lekerül a munkakeresők nyilvános listájáról.
                   </p>
                 </div>
               </div>
@@ -232,11 +315,11 @@ export default function HelpPage() {
               <div className="flex flex-wrap items-center justify-start gap-2 text-xs md:text-sm font-semibold">
                 <span className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700">Létrejön</span>
                 <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-900/50">Mentor kijelölésére vár</span>
+                <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:amber-300 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-900/50">Mentor kijelölésére vár</span>
                 <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-900/50">Egyetemi jóváhagyásra vár</span>
+                <span className="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:indigo-300 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-900/50">Egyetemi jóváhagyásra vár</span>
                 <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-900/50">Aktív (Szerződött)</span>
+                <span className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:emerald-300 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-900/50">Aktív (Szerződött)</span>
               </div>
             </div>
           </section>
@@ -292,38 +375,44 @@ export default function HelpPage() {
           </section>
 
           {/* Képes Rendszerútmutató */}
-          {allowedRoleId === "student" && (
+          {activeGuideInfo && (
             <section className="space-y-6">
               <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2">
-                  <ImageIcon className="w-6 h-6 text-blue-600" /> Képes Rendszerútmutató
+                  <ImageIcon className="w-6 h-6 text-blue-600" /> Képes Rendszerútmutató ({activeRoleInfo.name})
                 </h2>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-                  Az alábbi képek segítségével lépésről lépésre láthatod a legfontosabb felületek felépítését és működését.
+                  {activeGuideInfo.intro}
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {visualGuides.map((guide, idx) => (
+                  {activeGuideInfo.items.map((guide, idx) => (
                     <figure
                       key={idx}
                       className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-4 flex flex-col justify-between"
                     >
-                      {guide.src ? (
+                      {guide.imageSrc ? (
                         <div
                           className="overflow-hidden rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer transition-transform duration-200 hover:scale-[1.01] hover:shadow-md"
-                          onClick={() => setSelectedImage(guide.src!)}
+                          onClick={() => setSelectedImage(guide.imageSrc!)}
                         >
-                          <img src={guide.src} alt={guide.title} className="w-full h-auto object-cover max-h-56" />
+                          <img src={guide.imageSrc} alt={guide.title} className="w-full h-auto object-cover max-h-56" />
                         </div>
                       ) : (
-                        <div className="flex min-h-[140px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-500 dark:text-slate-300 text-xs font-medium tracking-wide uppercase">
-                          Kép helye
+                        <div className="flex flex-col min-h-[160px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800/40 dark:to-slate-700/40 text-slate-500 dark:text-slate-400 text-xs font-medium p-4 border border-dashed border-slate-300 dark:border-slate-700 text-center">
+                          <ImageIcon className="w-8 h-8 mb-2 text-slate-400 dark:text-slate-600 animate-pulse" />
+                          <span className="font-semibold text-slate-700 dark:text-slate-300 mb-1">Illusztráció / Képernyőkép helye</span>
+                          <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal max-w-[280px]">
+                            {guide.imagePlaceholder}
+                          </span>
                         </div>
                       )}
                       <figcaption className="mt-4 space-y-1">
                         <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{guide.title}</p>
-                        <p className="text-xs text-slate-600 dark:text-slate-400">{guide.caption}</p>
-                        <p className="text-[10px] text-blue-600 dark:text-blue-400">{guide.hint}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{guide.description}</p>
+                        {guide.imageSrc && (
+                          <p className="text-[10px] text-blue-600 dark:text-blue-400 mt-1">Kattints a képre a nagyításhoz</p>
+                        )}
                       </figcaption>
                     </figure>
                   ))}
