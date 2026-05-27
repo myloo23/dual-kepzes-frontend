@@ -292,43 +292,45 @@ export default function HelpPage() {
           </section>
 
           {/* Képes Rendszerútmutató */}
-          <section className="space-y-6">
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2">
-                <ImageIcon className="w-6 h-6 text-blue-600" /> Képes Rendszerútmutató
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-                Az alábbi képek segítségével lépésről lépésre láthatod a legfontosabb felületek felépítését és működését.
-              </p>
+          {allowedRoleId === "student" && (
+            <section className="space-y-6">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2">
+                  <ImageIcon className="w-6 h-6 text-blue-600" /> Képes Rendszerútmutató
+                </h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
+                  Az alábbi képek segítségével lépésről lépésre láthatod a legfontosabb felületek felépítését és működését.
+                </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {visualGuides.map((guide, idx) => (
-                  <figure
-                    key={idx}
-                    className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-4 flex flex-col justify-between"
-                  >
-                    {guide.src ? (
-                      <div
-                        className="overflow-hidden rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer transition-transform duration-200 hover:scale-[1.01] hover:shadow-md"
-                        onClick={() => setSelectedImage(guide.src!)}
-                      >
-                        <img src={guide.src} alt={guide.title} className="w-full h-auto object-cover max-h-56" />
-                      </div>
-                    ) : (
-                      <div className="flex min-h-[140px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-500 dark:text-slate-300 text-xs font-medium tracking-wide uppercase">
-                        Kép helye
-                      </div>
-                    )}
-                    <figcaption className="mt-4 space-y-1">
-                      <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{guide.title}</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">{guide.caption}</p>
-                      <p className="text-[10px] text-blue-600 dark:text-blue-400">{guide.hint}</p>
-                    </figcaption>
-                  </figure>
-                ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {visualGuides.map((guide, idx) => (
+                    <figure
+                      key={idx}
+                      className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-4 flex flex-col justify-between"
+                    >
+                      {guide.src ? (
+                        <div
+                          className="overflow-hidden rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer transition-transform duration-200 hover:scale-[1.01] hover:shadow-md"
+                          onClick={() => setSelectedImage(guide.src!)}
+                        >
+                          <img src={guide.src} alt={guide.title} className="w-full h-auto object-cover max-h-56" />
+                        </div>
+                      ) : (
+                        <div className="flex min-h-[140px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-500 dark:text-slate-300 text-xs font-medium tracking-wide uppercase">
+                          Kép helye
+                        </div>
+                      )}
+                      <figcaption className="mt-4 space-y-1">
+                        <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{guide.title}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">{guide.caption}</p>
+                        <p className="text-[10px] text-blue-600 dark:text-blue-400">{guide.hint}</p>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* QUICK NAVIGATION LINKS */}
           <section className="mt-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 shadow-sm transition-colors">
