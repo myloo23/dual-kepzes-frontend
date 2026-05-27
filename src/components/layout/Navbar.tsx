@@ -322,22 +322,20 @@ export default function Navbar() {
                   <div className="p-1.5 flex gap-1 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                     <button
                       type="button"
-                      className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
-                        notificationsTab === "active"
+                      className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${notificationsTab === "active"
                           ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-50 shadow-sm"
                           : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/30 dark:hover:bg-slate-700/30"
-                      }`}
+                        }`}
                       onClick={() => setNotificationsTab("active")}
                     >
                       Aktív
                     </button>
                     <button
                       type="button"
-                      className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
-                        notificationsTab === "archived"
+                      className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${notificationsTab === "archived"
                           ? "bg-white text-slate-900 shadow-sm"
                           : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/30"
-                      }`}
+                        }`}
                       onClick={() => setNotificationsTab("archived")}
                     >
                       Archivált
@@ -380,9 +378,8 @@ export default function Navbar() {
                       return (
                         <div
                           key={item.id}
-                          className={`group relative border-b border-slate-50 dark:border-slate-800/50 p-4 transition-colors last:border-b-0 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 ${
-                            isUnread ? "bg-nje-jaffa/5 dark:bg-nje-jaffa/5" : ""
-                          }`}
+                          className={`group relative border-b border-slate-50 dark:border-slate-800/50 p-4 transition-colors last:border-b-0 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 ${isUnread ? "bg-nje-jaffa/5 dark:bg-nje-jaffa/5" : ""
+                            }`}
                         >
                           <button
                             type="button"
@@ -519,19 +516,16 @@ export default function Navbar() {
           >
             <div className="space-y-1.5">
               <span
-                className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${
-                  mobileOpen ? "translate-y-[8px] rotate-45" : ""
-                }`}
+                className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "translate-y-[8px] rotate-45" : ""
+                  }`}
               />
               <span
-                className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${
-                  mobileOpen ? "opacity-0" : "opacity-100"
-                }`}
+                className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "opacity-0" : "opacity-100"
+                  }`}
               />
               <span
-                className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${
-                  mobileOpen ? "-translate-y-[8px] -rotate-45" : ""
-                }`}
+                className={`block h-0.5 w-6 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "-translate-y-[8px] -rotate-45" : ""
+                  }`}
               />
             </div>
           </button>

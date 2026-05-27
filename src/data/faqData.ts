@@ -69,7 +69,7 @@ export const ADMIN_FAQ_SECTIONS: FaqSection[] = [
       {
         question: "Hogyan működik az új cégregisztrációk jóváhagyása?",
         answer: [
-          "A nyilvános regisztrációs felületen beküldött cégregisztrációk alapértelmezetten függőben lévő (PENDING) státuszba kerülnek, és ezek a felhasználók nem tudnak bejelentkezni.",
+          "A nyilvános regisztrációs felületen beküldött cégregisztrációk alapértelmezetten elbírálás alatt álló (függőben lévő) státuszba kerülnek, és ezek a felhasználók nem tudnak bejelentkezni.",
           "Az adminisztrátornak a 'Függőben lévő cégek' fül alatt kell ellenőriznie az adószámot és a kapcsolattartót, majd a 'Jóváhagyás' gombra kattintva aktiválhatja a céget.",
         ],
       },
@@ -124,7 +124,7 @@ export const HR_FAQ_SECTIONS: FaqSection[] = [
         question: "Miért kapok bejelentkezési hibát közvetlenül regisztráció után?",
         answer: [
           "Az új vállalati regisztrációkat a Neumann János Egyetem adminisztrátorainak manuálisan kell jóváhagyniuk és aktiválniuk az adatok hitelessége miatt.",
-          "Amíg a jóváhagyás nem történik meg (a cég státusza PENDING), a rendszer elutasítja a bejelentkezési kísérleteket. A jóváhagyásról e-mailes értesítést fog kapni.",
+          "Amíg a jóváhagyás nem történik meg (a cég státusza függőben van / elbírálás alatt áll), a rendszer elutasítja a bejelentkezési kísérleteket. A jóváhagyásról e-mailes értesítést fog kapni.",
         ],
       },
     ],
@@ -195,7 +195,7 @@ export const HR_FAQ_SECTIONS: FaqSection[] = [
         question: "Hogyan tudok a hallgatóhoz vállalati mentort rendelni?",
         answer: [
           "A hallgató neve melletti + Mentor gombbal választható ki a mentor a regisztrált munkatársak közül. A hozzárendelés véglegesíthető.",
-          "A partnerség státusza ekkor PENDING_UNIVERSITY (Egyetemre vár) állapotba lép, és továbbkerül az egyetemi referens elé jóváhagyásra.",
+          "A partnerség státusza ekkor az egyetemi jóváhagyásra váró szakaszba lép, és továbbkerül az egyetemi referens elé jóváhagyásra.",
         ],
       },
       {
@@ -273,10 +273,10 @@ export const STUDENT_FAQ_SECTIONS: FaqSection[] = [
         question: "Milyen fázisokon megy keresztül a duális megállapodásom?",
         answer: [
           "A duális kapcsolat az alábbi státuszokon halad végig:",
-          "1. Mentorra vár (PENDING_MENTOR): A cég elfogadta a jelentkezésedet, de még nem jelölte ki a céges mentorodat.",
-          "2. Egyetemre vár (PENDING_UNIVERSITY): A cég kijelölte a mentorodat, most az egyetemi referensen a sor, hogy jóváhagyja és kijelölje az egyetemi felelősödet.",
-          "3. Aktív (ACTIVE): Az egyetemi jóváhagyás megtörtént, a duális jogviszonyod éles és dolgozol a cégnél.",
-          "4. Lezárt (FINISHED) vagy Megszakított (TERMINATED): A félév/képzés sikeresen befejeződött, vagy valamilyen okból idő előtt megszakadt.",
+          "1. Mentor kijelölésére vár: A cég elfogadta a jelentkezésedet, de még nem jelölte ki a szakmai mentorodat.",
+          "2. Egyetemi jóváhagyásra vár: A cég kijelölte a mentorodat, most az egyetemi referensen a sor, hogy jóváhagyja a partnerséget és kijelölje az egyetemi felelősödet.",
+          "3. Aktív: Az egyetemi jóváhagyás megtörtént, a duális jogviszonyod éles és dolgozol a cégnél.",
+          "4. Lezárt vagy Megszakított: A félév/képzés sikeresen befejeződött, vagy valamilyen okból idő előtt megszakadt.",
         ],
       },
       {
@@ -322,8 +322,8 @@ export const MENTOR_FAQ_SECTIONS: FaqSection[] = [
       {
         question: "Mi a teendőm a hozzárendelés után?",
         answer: [
-          "A hozzárendelés után a partnerség 'PENDING_UNIVERSITY' státuszba kerül. Vegye fel a kapcsolatot a hallgatóval, egyeztesse a szakmai feladatokat.",
-          "Amint az egyetemi referens is kijelöli az egyetemi felügyelőt, a partnerség ACTIVE státuszba lép, és megkezdődhet a hivatalos képzés.",
+          "A hozzárendelés után a partnerség egyetemi jóváhagyásra váró státuszba kerül. Vegye fel a kapcsolatot a hallgatóval, egyeztesse a szakmai feladatokat.",
+          "Amint az egyetemi referens is kijelöli az egyetemi felügyelőt, a partnerség aktív státuszba lép, és megkezdődhet a hivatalos képzés.",
         ],
       },
       {
@@ -361,8 +361,8 @@ export const UNIVERSITY_FAQ_SECTIONS: FaqSection[] = [
       {
         question: "Hogyan és mikor kell jóváhagynom egy partnerséget?",
         answer: [
-          "Amikor a cégadminisztrátor elfogad egy jelentkezést és kijelöli a céges mentort, a partnerség státusza PENDING_UNIVERSITY (Egyetemre vár) lesz. Ekkor jelenik meg az Ön jóváhagyási listájában.",
-          "A partnerség jóváhagyásához ki kell jelölnie az egyetemi felelős oktatót a rendszerben. A rögzítés után a státusz automatikusan ACTIVE (Aktív) lesz, a hallgató profilja pedig inaktívvá válik a toborzási keresőben.",
+          "Amikor a cégadminisztrátor elfogad egy jelentkezést és kijelöli a céges mentort, a partnerség státusza egyetemi jóváhagyásra váró lesz. Ekkor jelenik meg az Ön jóváhagyási listájában.",
+          "A partnerség jóváhagyásához ki kell jelölnie az egyetemi felelős oktatót a rendszerben. A rögzítés után a státusz automatikusan aktívvá válik, a hallgató profilja pedig lekerül a nyilvános toborzási keresőből.",
         ],
       },
       {

@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useCompanyApplications } from "../hooks/useCompanyApplications";
 import { CompanyApplicationCard } from "./CompanyApplicationCard";
 import { Modal } from "../../../components/ui/Modal";
 
 export default function CompanyApplicationList() {
+  const [acceptConfirmId, setAcceptConfirmId] = useState<string | null>(null);
   const {
     applications,
     filteredApplications,
@@ -28,6 +30,14 @@ export default function CompanyApplicationList() {
     clearFilters,
     getDisplayApplication,
   } = useCompanyApplications();
+
+  const handleDecisionClick = (id: string, status: "ACCEPTED" | "REJECTED") => {
+    if (status === "ACCEPTED") {
+      setAcceptConfirmId(id);
+    } else {
+      void handleApplicationDecision(id, status);
+    }
+  };
 
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm space-y-4 transition-colors">
@@ -61,54 +71,49 @@ export default function CompanyApplicationList() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setStatusFilter("ALL")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                statusFilter === "ALL"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === "ALL"
+                ? "bg-blue-600 text-white"
+                : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
+                }`}
             >
               Összes ({applications.length})
             </button>
             <button
               onClick={() => setStatusFilter("SUBMITTED")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                statusFilter === "SUBMITTED"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === "SUBMITTED"
+                ? "bg-blue-600 text-white"
+                : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
+                }`}
             >
               📤 Beküldve (
               {applications.filter((a) => a.status === "SUBMITTED").length})
             </button>
             <button
               onClick={() => setStatusFilter("ACCEPTED")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                statusFilter === "ACCEPTED"
-                  ? "bg-green-600 text-white"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === "ACCEPTED"
+                ? "bg-green-600 text-white"
+                : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
+                }`}
             >
               ✅ Elfogadva (
               {applications.filter((a) => a.status === "ACCEPTED").length})
             </button>
             <button
               onClick={() => setStatusFilter("REJECTED")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                statusFilter === "REJECTED"
-                  ? "bg-red-600 text-white"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === "REJECTED"
+                ? "bg-red-600 text-white"
+                : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
+                }`}
             >
               ❌ Elutasítva (
               {applications.filter((a) => a.status === "REJECTED").length})
             </button>
             <button
               onClick={() => setStatusFilter("NO_RESPONSE")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                statusFilter === "NO_RESPONSE"
-                  ? "bg-gray-600 text-white"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === "NO_RESPONSE"
+                ? "bg-gray-600 text-white"
+                : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
+                }`}
             >
               ⏳ Nincs válasz (
               {applications.filter((a) => a.status === "NO_RESPONSE").length})
@@ -209,7 +214,7 @@ export default function CompanyApplicationList() {
             isActionLoading={actionId === String(app.id)}
             isDeleting={deletingId === String(app.id)}
             onToggleExpand={toggleExpand}
-            onDecision={handleApplicationDecision}
+            onDecision={handleDecisionClick}
             onDeleteClick={handleDeleteClick}
           />
         ))}
@@ -263,6 +268,44 @@ export default function CompanyApplicationList() {
             </>
           );
         })()}
+      </Modal>
+
+      {/* Accept Confirmation Dialog */}
+      <Modal
+        isOpen={!!acceptConfirmId}
+        onClose={() => setAcceptConfirmId(null)}
+        title="Jelentkezés elfogadása"
+        size="sm"
+      >
+        <div className="text-center mb-6">
+          <div className="text-5xl mb-3">🤝</div>
+          <p className="text-sm text-slate-700 dark:text-slate-300 font-medium mb-4 leading-relaxed transition-colors">
+            Kérjük, hogy a jelentkezést csak a duális képzési szerződés sikeres megkötése, valamint a jelentkezővel és az egyetemmel történő egyeztetés után fogadja el.
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            Biztosan el szeretné fogadni a jelentkezést?
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => setAcceptConfirmId(null)}
+            className="flex-1 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+          >
+            Mégse
+          </button>
+          <button
+            onClick={() => {
+              if (acceptConfirmId) {
+                void handleApplicationDecision(acceptConfirmId, "ACCEPTED");
+                setAcceptConfirmId(null);
+              }
+            }}
+            className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors"
+          >
+            Elfogadás
+          </button>
+        </div>
       </Modal>
     </div>
   );

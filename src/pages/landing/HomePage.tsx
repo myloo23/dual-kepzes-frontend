@@ -77,11 +77,11 @@ function HomePage() {
 
   const userInfo = user
     ? {
-        name: user.email || "Felhasználó",
-        role: user.role,
-        dashboardPath:
-          ROLE_NAVIGATION_PATHS[user.role as UserRole]?.dashboard || "/",
-      }
+      name: user.email || "Felhasználó",
+      role: user.role,
+      dashboardPath:
+        ROLE_NAVIGATION_PATHS[user.role as UserRole]?.dashboard || "/",
+    }
     : null;
 
   return (
@@ -383,7 +383,7 @@ function HomePage() {
               forduljon az egyetem duális képzési koordinátorához.
             </p>
             <a
-              href="mailto:dualis@nje.hu"
+              href="mailto:sari.bence@nje.hu"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-nje-jaffa to-nje-amethyst px-6 py-3 text-white font-bold shadow-jaffa hover:opacity-90 transition"
             >
               Kapcsolatfelvétel
