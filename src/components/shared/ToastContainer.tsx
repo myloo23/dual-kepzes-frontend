@@ -61,7 +61,7 @@ function ToastItem({ toast, onClose }: ToastProps) {
       <Icon
         className={cn("h-5 w-5 flex-shrink-0 mt-0.5", iconStyles[toast.type])}
       />
-      <p className="flex-1 text-sm font-medium">{toast.message}</p>
+      <p className="flex-1 text-sm font-medium whitespace-pre-line">{toast.message}</p>
       <button
         onClick={() => onClose(toast.id)}
         className="flex-shrink-0 hover:opacity-70 transition-opacity"

@@ -66,25 +66,40 @@ async function apiRequest<T>(
   if (!res.ok) {
     const body = data as ApiErrorBody;
 
-    // Handle new error format: error.message
-    let msg = "";
-
-    if (
-      body?.error &&
-      typeof body.error === "object" &&
-      "message" in body.error
-    ) {
-      msg = body.error.message || "";
-    } else if (typeof body?.error === "string") {
-      msg = body.error;
+    // Check if there are detailed validation issues
+    let validationMsgs: string[] = [];
+    if (body?.error && typeof body.error === "object") {
+      const details = (body.error as any).details;
+      if (details) {
+        if (Array.isArray(details)) {
+          validationMsgs = details.map((d: any) => d.message).filter(Boolean);
+        } else if (details.issues && Array.isArray(details.issues)) {
+          validationMsgs = details.issues.map((i: any) => i.message).filter(Boolean);
+        }
+      }
+    } else if (Array.isArray(body?.errors)) {
+      validationMsgs = body.errors.map((e: any) => e.message).filter(Boolean);
     }
 
-    // Fallbacks
-    if (!msg) {
-      msg =
-        body?.message ||
-        (Array.isArray(body?.errors) && body.errors[0]?.message) ||
-        `HTTP ${res.status} hiba`;
+    let msg = "";
+    if (validationMsgs.length > 0) {
+      msg = `Validációs hiba:\n` + validationMsgs.map((m) => `• ${m}`).join("\n");
+    } else {
+      if (
+        body?.error &&
+        typeof body.error === "object" &&
+        "message" in body.error
+      ) {
+        msg = body.error.message || "";
+      } else if (typeof body?.error === "string") {
+        msg = body.error;
+      }
+
+      if (!msg) {
+        msg =
+          body?.message ||
+          `HTTP ${res.status} hiba`;
+      }
     }
 
     throw new Error(msg);
