@@ -315,11 +315,11 @@ export default function HelpPage() {
               <div className="flex flex-wrap items-center justify-start gap-2 text-xs md:text-sm font-semibold">
                 <span className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700">Létrejön</span>
                 <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:amber-300 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-900/50">Mentor kijelölésére vár</span>
+                <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-900/50">Mentor kijelölésére vár</span>
                 <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:indigo-300 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-900/50">Egyetemi jóváhagyásra vár</span>
+                <span className="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-900/50">Egyetemi jóváhagyásra vár</span>
                 <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:emerald-300 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-900/50">Aktív (Szerződött)</span>
+                <span className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-900/50">Aktív (Szerződött)</span>
               </div>
             </div>
           </section>
