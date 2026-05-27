@@ -10,7 +10,6 @@ import {
   ArrowRight,
   ShieldCheck,
   Clock,
-  HelpCircle,
   Image as ImageIcon
 } from "lucide-react";
 import dashboardImg from "../../assets/help/dashboard.png";
