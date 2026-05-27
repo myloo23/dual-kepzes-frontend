@@ -324,6 +324,53 @@ export default function HelpPage() {
             </div>
           </section>
 
+          {/* Képes Rendszerútmutató */}
+          {activeGuideInfo && (
+            <section className="space-y-6">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2">
+                  <ImageIcon className="w-6 h-6 text-blue-600" /> Képes Rendszerútmutató ({activeRoleInfo.name})
+                </h2>
+                <p className="text-base text-slate-600 dark:text-slate-400 mb-6">
+                  {activeGuideInfo.intro}
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {activeGuideInfo.items.map((guide, idx) => (
+                    <figure
+                      key={idx}
+                      className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-4 flex flex-col justify-between"
+                    >
+                      {guide.imageSrc ? (
+                        <div
+                          className="overflow-hidden rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer transition-transform duration-200 hover:scale-[1.01] hover:shadow-md"
+                          onClick={() => setSelectedImage(guide.imageSrc!)}
+                        >
+                          <img src={guide.imageSrc} alt={guide.title} className="w-full h-auto object-cover max-h-56" />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col min-h-[160px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800/40 dark:to-slate-700/40 text-slate-500 dark:text-slate-400 text-xs font-medium p-4 border border-dashed border-slate-300 dark:border-slate-700 text-center">
+                          <ImageIcon className="w-8 h-8 mb-2 text-slate-400 dark:text-slate-600 animate-pulse" />
+                          <span className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Illusztráció / Képernyőkép helye</span>
+                          <span className="text-xs text-slate-500 dark:text-slate-400 leading-normal max-w-[280px]">
+                            {guide.imagePlaceholder}
+                          </span>
+                        </div>
+                      )}
+                      <figcaption className="mt-4 space-y-1">
+                        <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{guide.title}</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{guide.description}</p>
+                        {guide.imageSrc && (
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Kattints a képre a nagyításhoz</p>
+                        )}
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* FAQ List */}
           <section className="space-y-6">
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
@@ -373,53 +420,6 @@ export default function HelpPage() {
               </div>
             </div>
           </section>
-
-          {/* Képes Rendszerútmutató */}
-          {activeGuideInfo && (
-            <section className="space-y-6">
-              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2">
-                  <ImageIcon className="w-6 h-6 text-blue-600" /> Képes Rendszerútmutató ({activeRoleInfo.name})
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-                  {activeGuideInfo.intro}
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {activeGuideInfo.items.map((guide, idx) => (
-                    <figure
-                      key={idx}
-                      className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-4 flex flex-col justify-between"
-                    >
-                      {guide.imageSrc ? (
-                        <div
-                          className="overflow-hidden rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer transition-transform duration-200 hover:scale-[1.01] hover:shadow-md"
-                          onClick={() => setSelectedImage(guide.imageSrc!)}
-                        >
-                          <img src={guide.imageSrc} alt={guide.title} className="w-full h-auto object-cover max-h-56" />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col min-h-[160px] items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800/40 dark:to-slate-700/40 text-slate-500 dark:text-slate-400 text-xs font-medium p-4 border border-dashed border-slate-300 dark:border-slate-700 text-center">
-                          <ImageIcon className="w-8 h-8 mb-2 text-slate-400 dark:text-slate-600 animate-pulse" />
-                          <span className="font-semibold text-slate-700 dark:text-slate-300 mb-1">Illusztráció / Képernyőkép helye</span>
-                          <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal max-w-[280px]">
-                            {guide.imagePlaceholder}
-                          </span>
-                        </div>
-                      )}
-                      <figcaption className="mt-4 space-y-1">
-                        <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{guide.title}</p>
-                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{guide.description}</p>
-                        {guide.imageSrc && (
-                          <p className="text-[10px] text-blue-600 dark:text-blue-400 mt-1">Kattints a képre a nagyításhoz</p>
-                        )}
-                      </figcaption>
-                    </figure>
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* QUICK NAVIGATION LINKS */}
           <section className="mt-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 shadow-sm transition-colors">
