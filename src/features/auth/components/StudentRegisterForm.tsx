@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../lib/api";
 import type { StudentRegisterPayload } from "../../../lib/api";
@@ -43,6 +43,84 @@ export default function StudentRegisterForm() {
   const [firstChoiceId, setFirstChoiceId] = useState("");
   const [secondChoiceId, setSecondChoiceId] = useState("");
 
+  // Uni major selection states
+  const [uniMajorName, setUniMajorName] = useState("");
+  const [uniMajorLang, setUniMajorLang] = useState("magyar");
+
+  // High school choices states
+  const [choice1MajorName, setChoice1MajorName] = useState("");
+  const [choice1MajorLang, setChoice1MajorLang] = useState("magyar");
+  const [choice2MajorName, setChoice2MajorName] = useState("");
+  const [choice2MajorLang, setChoice2MajorLang] = useState("magyar");
+
+  // Helper to extract unique names and languages
+  const uniqueMajorNames = Array.from(new Set(majors.map((m) => m.name)));
+
+  const getLanguagesForMajor = (name: string) => {
+    return majors.filter((m) => m.name === name).map((m) => m.language).filter(Boolean) as string[];
+  };
+
+  // Sync uni major ID
+  useEffect(() => {
+    if (!uniMajorName) {
+      setMajorId("");
+      return;
+    }
+    const found = majors.find(
+      (m) => m.name === uniMajorName && m.language === uniMajorLang
+    );
+    setMajorId(found ? String(found.id) : "");
+  }, [uniMajorName, uniMajorLang, majors]);
+
+  // Sync choice 1 ID
+  useEffect(() => {
+    if (!choice1MajorName) {
+      setFirstChoiceId("");
+      return;
+    }
+    const found = majors.find(
+      (m) => m.name === choice1MajorName && m.language === choice1MajorLang
+    );
+    setFirstChoiceId(found ? String(found.id) : "");
+  }, [choice1MajorName, choice1MajorLang, majors]);
+
+  // Sync choice 2 ID
+  useEffect(() => {
+    if (!choice2MajorName) {
+      setSecondChoiceId("");
+      return;
+    }
+    const found = majors.find(
+      (m) => m.name === choice2MajorName && m.language === choice2MajorLang
+    );
+    setSecondChoiceId(found ? String(found.id) : "");
+  }, [choice2MajorName, choice2MajorLang, majors]);
+
+  // Sync languages if not available for selected name
+  useEffect(() => {
+    if (!uniMajorName) return;
+    const availableLangs = getLanguagesForMajor(uniMajorName);
+    if (availableLangs.length > 0 && !availableLangs.includes(uniMajorLang)) {
+      setUniMajorLang(availableLangs[0]);
+    }
+  }, [uniMajorName, majors]);
+
+  useEffect(() => {
+    if (!choice1MajorName) return;
+    const availableLangs = getLanguagesForMajor(choice1MajorName);
+    if (availableLangs.length > 0 && !availableLangs.includes(choice1MajorLang)) {
+      setChoice1MajorLang(availableLangs[0]);
+    }
+  }, [choice1MajorName, majors]);
+
+  useEffect(() => {
+    if (!choice2MajorName) return;
+    const availableLangs = getLanguagesForMajor(choice2MajorName);
+    if (availableLangs.length > 0 && !availableLangs.includes(choice2MajorLang)) {
+      setChoice2MajorLang(availableLangs[0]);
+    }
+  }, [choice2MajorName, majors]);
+
   const [studyMode, setStudyMode] = useState<"NAPPALI" | "LEVELEZŐ">("NAPPALI");
   const [hasLanguageCert, setHasLanguageCert] = useState(false);
 
@@ -70,7 +148,7 @@ export default function StudentRegisterForm() {
     if (passwordError) return setError(passwordError);
 
     // Stricter password regex match to align with backend
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[#?!@$%^&*-]).{12,64}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[#?!@$%^&*.-]).{12,64}$/;
     if (!passwordRegex.test(password)) {
       return setError(
         "A jelszónak legalább 12 karakter hosszúnak kell lennie, és tartalmaznia kell kis- és nagybetűt, számot és speciális karaktert."
@@ -522,18 +600,35 @@ export default function StudentRegisterForm() {
                       Szak megnevezése *
                     </label>
                     <select
-                      value={majorId}
-                      onChange={(e) => setMajorId(e.target.value)}
+                      value={uniMajorName}
+                      onChange={(e) => setUniMajorName(e.target.value)}
                       disabled={majorsLoading}
                       className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 dark:disabled:bg-slate-800 transition-colors"
                     >
                       <option value="">
                         {majorsLoading ? "Betöltés..." : "Válassz szakot..."}
                       </option>
-                      {majors.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name}
-                          {m.language ? ` (${m.language})` : ""}
+                      {uniqueMajorNames.map((name) => (
+                        <option key={name} value={name}>
+                          {name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+                      Képzés nyelve *
+                    </label>
+                    <select
+                      value={uniMajorLang}
+                      onChange={(e) => setUniMajorLang(e.target.value)}
+                      disabled={!uniMajorName || majorsLoading}
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 dark:disabled:bg-slate-800 transition-colors"
+                    >
+                      {getLanguagesForMajor(uniMajorName).map((lang) => (
+                        <option key={lang} value={lang}>
+                          {lang}
                         </option>
                       ))}
                     </select>
@@ -575,18 +670,35 @@ export default function StudentRegisterForm() {
                       Helyszín 1. választás (Szak) *
                     </label>
                     <select
-                      value={firstChoiceId}
-                      onChange={(e) => setFirstChoiceId(e.target.value)}
+                      value={choice1MajorName}
+                      onChange={(e) => setChoice1MajorName(e.target.value)}
                       disabled={majorsLoading}
                       className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 dark:disabled:bg-slate-800 transition-colors"
                     >
                       <option value="">
                         {majorsLoading ? "Betöltés..." : "Válassz szakot..."}
                       </option>
-                      {majors.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name}
-                          {m.language ? ` (${m.language})` : ""}
+                      {uniqueMajorNames.map((name) => (
+                        <option key={name} value={name}>
+                          {name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+                      1. választás nyelve *
+                    </label>
+                    <select
+                      value={choice1MajorLang}
+                      onChange={(e) => setChoice1MajorLang(e.target.value)}
+                      disabled={!choice1MajorName || majorsLoading}
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 dark:disabled:bg-slate-800 transition-colors"
+                    >
+                      {getLanguagesForMajor(choice1MajorName).map((lang) => (
+                        <option key={lang} value={lang}>
+                          {lang}
                         </option>
                       ))}
                     </select>
@@ -597,24 +709,43 @@ export default function StudentRegisterForm() {
                       Helyszín 2. választás (Szak) *
                     </label>
                     <select
-                      value={secondChoiceId}
-                      onChange={(e) => setSecondChoiceId(e.target.value)}
+                      value={choice2MajorName}
+                      onChange={(e) => setChoice2MajorName(e.target.value)}
                       disabled={majorsLoading}
                       className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 dark:disabled:bg-slate-800 transition-colors"
                     >
                       <option value="">
-                        {majorsLoading
-                          ? "Betöltés..."
-                          : "Válassz szakot..."}
+                        {majorsLoading ? "Betöltés..." : "Válassz szakot..."}
                       </option>
-                      {majors.map((m) => (
+                      {uniqueMajorNames.map((name) => (
                         <option
-                          key={m.id}
-                          value={m.id}
-                          disabled={m.id === firstChoiceId}
+                          key={name}
+                          value={name}
+                          disabled={name === choice1MajorName && getLanguagesForMajor(name).length === 1}
                         >
-                          {m.name}
-                          {m.language ? ` (${m.language})` : ""}
+                          {name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+                      2. választás nyelve *
+                    </label>
+                    <select
+                      value={choice2MajorLang}
+                      onChange={(e) => setChoice2MajorLang(e.target.value)}
+                      disabled={!choice2MajorName || majorsLoading}
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 dark:disabled:bg-slate-800 transition-colors"
+                    >
+                      {getLanguagesForMajor(choice2MajorName).map((lang) => (
+                        <option
+                          key={lang}
+                          value={lang}
+                          disabled={choice2MajorName === choice1MajorName && lang === choice1MajorLang}
+                        >
+                          {lang}
                         </option>
                       ))}
                     </select>
