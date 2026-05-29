@@ -185,7 +185,10 @@ export default function AdminUserModal({
   };
 
   const handleSaveMajors = async () => {
-    if (!initialData?.id) return;
+    if (!initialData?.id) {
+      setIsMajorsModalOpen(false);
+      return;
+    }
 
     setAssignmentSaveLoading(true);
     setAssignmentError(null);
@@ -207,7 +210,10 @@ export default function AdminUserModal({
   };
 
   const handleSaveCompanies = async () => {
-    if (!initialData?.id) return;
+    if (!initialData?.id) {
+      setIsCompaniesModalOpen(false);
+      return;
+    }
 
     setAssignmentSaveLoading(true);
     setAssignmentError(null);
@@ -263,6 +269,10 @@ export default function AdminUserModal({
         if (type === "COMPANY_ADMIN") {
           payload.companyId = formData.companyId;
           payload.jobTitle = formData.jobTitle;
+        }
+        if (type === "UNIVERSITY_USER") {
+          payload.majorIds = Array.from(selectedMajorIds);
+          payload.companyIds = Array.from(selectedCompanyIds);
         }
       }
 
@@ -393,7 +403,7 @@ export default function AdminUserModal({
             </>
           )}
 
-          {isEditing && type === "UNIVERSITY_USER" && (
+          {type === "UNIVERSITY_USER" && (
             <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30 p-4 space-y-4 transition-colors">
               <div className="flex items-start justify-between gap-3">
                 <div>

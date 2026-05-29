@@ -284,7 +284,9 @@ export interface CreateUserPayload {
   password?: string;
   companyId?: string;
   jobTitle?: string;
-  [key: string]: string | undefined;
+  majorIds?: string[];
+  companyIds?: string[];
+  [key: string]: any;
 }
 
 export interface CompanyRegisterPayload {

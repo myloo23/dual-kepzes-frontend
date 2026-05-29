@@ -239,10 +239,27 @@ export function useUserManagement(
     async (data: CreateUserPayload): Promise<boolean> => {
       try {
         setLoading(true);
+        let createdUserId = "";
+
         if (activeTab === "COMPANY_ADMIN") {
           await api.registerCompanyAdmin(data);
         } else if (activeTab === "UNIVERSITY_USER") {
-          await api.registerGeneric({ ...data, role: "UNIVERSITY_USER" });
+          const { majorIds, companyIds, ...payload } = data as any;
+          const registerRes = await api.registerGeneric({ ...payload, role: "UNIVERSITY_USER" });
+          createdUserId = String(registerRes.userId || "");
+
+          if (createdUserId) {
+            const promises: Promise<any>[] = [];
+            if (Array.isArray(majorIds) && majorIds.length > 0) {
+              promises.push(api.universityUsers.assignMajors(createdUserId, majorIds));
+            }
+            if (Array.isArray(companyIds) && companyIds.length > 0) {
+              promises.push(api.universityUsers.assignCompanies(createdUserId, companyIds));
+            }
+            if (promises.length > 0) {
+              await Promise.all(promises);
+            }
+          }
         } else {
           setError("Ezen a fülön nem lehet új felhasználót létrehozni.");
           return false;

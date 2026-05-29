@@ -15,6 +15,8 @@ import UniversityPartnershipsTable, {
 import { ReferentDashboardStats } from "../../features/stats/components/ReferentDashboardStats";
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/shared/ToastContainer";
+import { Modal } from "../../components/ui/Modal";
+import { companyApi } from "../../features/companies/services/companyApi";
 
 export default function UniversityDashboardPage() {
   const location = useLocation();
@@ -49,6 +51,29 @@ export default function UniversityDashboardPage() {
   const [assignedCompanies, setAssignedCompanies] = useState<Array<Pick<Company, "id" | "name"> | { id?: string | number; name?: string }>>([]);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
   const [assignmentsError, setAssignmentsError] = useState<string | null>(null);
+
+  // States for self-assignment profile page
+  const [allMajors, setAllMajors] = useState<Major[]>([]);
+  const [allCompanies, setCompanies] = useState<Company[]>([]);
+  const [selectedMajorIds, setSelectedMajorIds] = useState<Set<string>>(new Set());
+  const [selectedCompanyIds, setSelectedCompanyIds] = useState<Set<string>>(new Set());
+  const [isMajorsModalOpen, setIsMajorsModalOpen] = useState(false);
+  const [isCompaniesModalOpen, setIsCompaniesModalOpen] = useState(false);
+
+  const toggleSelection = (
+    id: string,
+    setter: React.Dispatch<React.SetStateAction<Set<string>>>
+  ) => {
+    setter((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: "student",
@@ -140,6 +165,44 @@ export default function UniversityDashboardPage() {
         email: data.email ?? "",
         department: data.department ?? "",
       });
+
+      // Load selections for self-assignment
+      const [majorsList, companiesList, assignmentsRes] = await Promise.all([
+        api.majors.list({ page: 1, limit: 1000 }),
+        companyApi.list({ page: 1, limit: 1000 }),
+        api.universityUsers.me.assignments()
+      ]);
+
+      const majorsData = Array.isArray((majorsList as any).data) 
+        ? (majorsList as any).data 
+        : Array.isArray(majorsList) 
+          ? majorsList 
+          : [];
+
+      setAllMajors([...majorsData].sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")));
+      setCompanies([...companiesList].sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")));
+
+      const assignmentsPayload = assignmentsRes && typeof assignmentsRes === "object" && "data" in assignmentsRes
+        ? (assignmentsRes as any).data
+        : assignmentsRes;
+
+      const getIds = (source: any, key: string): string[] => {
+        if (!source || typeof source !== "object") return [];
+        const val = source[key];
+        if (!Array.isArray(val)) return [];
+        return val.map((item: any) => String(item.id || item)).filter(Boolean);
+      };
+
+      const currentMajorIds = getIds(assignmentsPayload, "majors").length > 0
+        ? getIds(assignmentsPayload, "majors")
+        : getIds(assignmentsPayload, "managedMajors");
+
+      const currentCompanyIds = getIds(assignmentsPayload, "companies").length > 0
+        ? getIds(assignmentsPayload, "companies")
+        : getIds(assignmentsPayload, "managedCompanies");
+
+      setSelectedMajorIds(new Set(currentMajorIds));
+      setSelectedCompanyIds(new Set(currentCompanyIds));
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Hiba a profil betoltese kozben.";
@@ -353,7 +416,16 @@ export default function UniversityDashboardPage() {
         email: updated.email ?? "",
         department: updated.department ?? "",
       });
-      setProfileSuccess("Profil frissitve.");
+
+      // Save self-assignments
+      if (user?.id) {
+        await Promise.all([
+          api.universityUsers.assignMajors(user.id, Array.from(selectedMajorIds)),
+          api.universityUsers.assignCompanies(user.id, Array.from(selectedCompanyIds))
+        ]);
+      }
+
+      setProfileSuccess("Profil és hozzárendelések sikeresen frissítve.");
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Hiba a mentes soran.";
@@ -664,9 +736,54 @@ export default function UniversityDashboardPage() {
                   name="department"
                   value={profileForm.department ?? ""}
                   onChange={handleProfileChange}
-                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-955 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </label>
+
+              {/* Self-Assignments Section */}
+              <div className="md:col-span-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30 p-4 space-y-4 transition-colors">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200 transition-colors">
+                      Saját szakok
+                    </p>
+                    <p className="text-xs text-slate-555 dark:text-slate-450 transition-colors">
+                      {selectedMajorIds.size} kivalasztott szak
+                      {allMajors.filter(m => selectedMajorIds.has(String(m.id))).length > 0
+                        ? ` (${allMajors.filter(m => selectedMajorIds.has(String(m.id))).map(m => m.name).slice(0, 3).join(", ")}${selectedMajorIds.size > 3 ? ", ..." : ""})`
+                        : ""}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsMajorsModalOpen(true)}
+                    className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    Szakok szerkesztése
+                  </button>
+                </div>
+
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200 transition-colors">
+                      Saját cégek
+                    </p>
+                    <p className="text-xs text-slate-555 dark:text-slate-450 transition-colors">
+                      {selectedCompanyIds.size} kivalasztott ceg
+                      {allCompanies.filter(c => selectedCompanyIds.has(String(c.id))).length > 0
+                        ? ` (${allCompanies.filter(c => selectedCompanyIds.has(String(c.id))).map(c => c.name).slice(0, 3).join(", ")}${selectedCompanyIds.size > 3 ? ", ..." : ""})`
+                        : ""}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsCompaniesModalOpen(true)}
+                    className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    Cégek szerkesztése
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -698,6 +815,101 @@ export default function UniversityDashboardPage() {
           )}
         </div>
       )}
+
+      {/* Majors Assignment Modal */}
+      <Modal
+        isOpen={isMajorsModalOpen}
+        onClose={() => setIsMajorsModalOpen(false)}
+        title="Szakok hozzárendelése"
+        size="2xl"
+      >
+        <div className="space-y-4">
+          <div className="max-h-[50vh] overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 transition-colors">
+            {allMajors.length === 0 ? (
+              <div className="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                Nincs elérhető szak.
+              </div>
+            ) : (
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+                {allMajors.map((major) => {
+                  const id = String(major.id);
+                  return (
+                    <li key={id} className="px-4 py-2">
+                      <label className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300 cursor-pointer transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={selectedMajorIds.has(id)}
+                          onChange={() => toggleSelection(id, setSelectedMajorIds)}
+                          className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span>{major.name}</span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setIsMajorsModalOpen(false)}
+              className="rounded-lg bg-blue-600 text-white px-4 py-2 text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+            >
+              Kész
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Companies Assignment Modal */}
+      <Modal
+        isOpen={isCompaniesModalOpen}
+        onClose={() => setIsCompaniesModalOpen(false)}
+        title="Cégek hozzárendelése"
+        size="2xl"
+      >
+        <div className="space-y-4">
+          <div className="max-h-[50vh] overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 transition-colors">
+            {allCompanies.length === 0 ? (
+              <div className="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                Nincs elérhető cég.
+              </div>
+            ) : (
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+                {allCompanies.map((company) => {
+                  const id = String(company.id);
+                  return (
+                    <li key={id} className="px-4 py-2">
+                      <label className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300 cursor-pointer transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={selectedCompanyIds.has(id)}
+                          onChange={() => toggleSelection(id, setSelectedCompanyIds)}
+                          className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span>{company.name}</span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setIsCompaniesModalOpen(false)}
+              className="rounded-lg bg-blue-600 text-white px-4 py-2 text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+            >
+              Kész
+            </button>
+          </div>
+        </div>
+      </Modal>
+
       <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
     </div>
   );
