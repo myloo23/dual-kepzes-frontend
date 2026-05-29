@@ -468,10 +468,12 @@ export const api = {
         `${PATHS.employees}/mentors/${ensureId(companyId, "companyId")}`,
         params,
       ),
+    myStudents: () =>
+      apiGet<Partnership[]>("/api/employees/me/students"),
     me: {
       get: () => apiGet<EmployeeProfile>(`${PATHS.employees}/me`),
       update: (body: Partial<EmployeeProfile>) =>
-        apiPut<EmployeeProfile>(`${PATHS.employees}/me`, body),
+        apiPatch<EmployeeProfile>(`${PATHS.employees}/me`, body),
     },
   },
 };

@@ -14,6 +14,15 @@ import {
 } from "lucide-react";
 import dualisallapotImg from "../../assets/help/dualisallapot.png";
 import profileImg from "../../assets/help/profile.png";
+import dashboardImg from "../../assets/help/dashboard.png";
+import jelentkezesallapotImg from "../../assets/help/jelentkezesallapot.png";
+import adminOktatasImg from "../../assets/help/admin_oktatas_segedlet.png";
+import cegprofilImg from "../../assets/help/cegprofil.png";
+import diakSegedanyagImg from "../../assets/help/diak_segedanyag.png";
+import mentorOktatasImg from "../../assets/help/mentor_oktatas.png";
+import mentorSajathallgatokImg from "../../assets/help/mentor_sajat_hallgatok.png";
+import statisztikaDashboardImg from "../../assets/help/statisztika_dashboard.png";
+import uniuserNewsImg from "../../assets/help/uniuser_news.png";
 import {
   STUDENT_FAQ_SECTIONS,
   HR_FAQ_SECTIONS,
@@ -42,6 +51,7 @@ const GUIDES_BY_ROLE: Record<string, { intro: string; items: GuideItem[] }> = {
       {
         title: "2. Térképes álláskeresés és gyors jelentkezés",
         description: "Böngéssz a nyitott duális pozíciók között listás vagy interaktív térképes nézetben. Találd meg a hozzád legközelebb eső vagy szakmailag legizgalmasabb lehetőségeket, és egyetlen kattintással add le a jelentkezésedet a választott vállalatokhoz.",
+        imageSrc: dashboardImg,
         imagePlaceholder: "Rövid GIF a térképes kereső használatáról és a jelentkezésről",
       },
       {
@@ -53,6 +63,7 @@ const GUIDES_BY_ROLE: Record<string, { intro: string; items: GuideItem[] }> = {
       {
         title: "4. Oktatási segédanyag",
         description: "Dedikált e-learning anyagokkal és szakmai útmutatókkal is segíti az egyetem a szakmai fejlődésedet.",
+        imageSrc: diakSegedanyagImg,
         imagePlaceholder: "Képernyőkép az oktatási segédanyagokról",
       }
     ]
@@ -63,11 +74,13 @@ const GUIDES_BY_ROLE: Record<string, { intro: string; items: GuideItem[] }> = {
       {
         title: "1. Cégprofil kialakítása és célzott hirdetések",
         description: "Tartsa naprakészen vállalata adatait és telephelyeit. Az új, specifikus egyetemi szakokra szabott duális pozíciókat néhány kattintással meghirdetheti, amelyek azonnal láthatóvá válnak a platformot aktívan használó hallgatók számára.",
+        imageSrc: cegprofilImg,
         imagePlaceholder: "Képernyőkép az új álláshirdetés űrlapjáról",
       },
       {
         title: "2. Jelentkezések elbírálása és proaktív keresés",
         description: "A beérkező jelentkezéseket egyetlen felületen tudja átnézni és elbírálni (elfogadás, elutasítás, interjúra hívás). Emellett a \"Duális helyet keresők\" adatbázisában (Tehetségtár) aktívan böngészhet a motivált hallgatók között, és közvetlenül fel is veheti velük a kapcsolatot.",
+        imageSrc: jelentkezesallapotImg,
         imagePlaceholder: "GIF a jelentkezők státuszának módosításáról",
       },
       {
@@ -78,6 +91,7 @@ const GUIDES_BY_ROLE: Record<string, { intro: string; items: GuideItem[] }> = {
       {
         title: "4. Támogató oktatási segédletek",
         description: "A toborzáson túl a rendszer dedikált e-learning anyagokkal és szakmai útmutatókkal is segíti a vállalatot a duális képzés gördülékeny lebonyolításában.",
+        imageSrc: adminOktatasImg,
         imagePlaceholder: "Képernyőkép az Oktatási segédletek menüpontról",
       }
     ]
@@ -88,6 +102,7 @@ const GUIDES_BY_ROLE: Record<string, { intro: string; items: GuideItem[] }> = {
       {
         title: "1. A saját hallgatók fókuszált követése",
         description: "Egy különálló felületen kísérheti figyelemmel a közvetlenül Önhöz rendelt duális hallgatók profilját, előrehaladását és a képzésükhöz kapcsolódó legfontosabb mérföldköveket.",
+        imageSrc: mentorSajathallgatokImg,
         imagePlaceholder: "Képernyőkép a mentor saját hallgatói listájáról",
       },
       {
@@ -98,6 +113,7 @@ const GUIDES_BY_ROLE: Record<string, { intro: string; items: GuideItem[] }> = {
       {
         title: "3. Mentorálási tudástár elérése",
         description: "A sikeres szakmai iránymutatás érdekében a felületen olyan dedikált, digitális oktatási anyagokat érhet el (pl. \"A mentor fogalma és szerepe\"), amelyek praktikus segítséget nyújtanak a napi szintű mentorálásban.",
+        imageSrc: mentorOktatasImg,
         imagePlaceholder: "Képernyőkép az oktatási anyagok felületéről",
       }
     ]
@@ -113,11 +129,13 @@ const GUIDES_BY_ROLE: Record<string, { intro: string; items: GuideItem[] }> = {
       {
         title: "2. Képzési felügyelet és statisztikák",
         description: "Az egyetemi munkatársak egy központi irányítópulton követhetik a képzések előrehaladását, a hallgatói státuszokat, valamint átfogó rendszerstatisztikákat és konverziós trendeket elemezhetnek.",
+        imageSrc: statisztikaDashboardImg,
         imagePlaceholder: "Képernyőkép az adminisztrátori statisztikai dashboardról",
       },
       {
         title: "3. Kommunikáció és belső dokumentáció",
         description: "A platform lehetővé teszi a célzott rendszerüzenetek, fontos határidők és hírek (pl. félév végi értékelések) publikálását a hallgatók és a vállalatok felé. Emellett ezen a felületen érhetők el az egyetemi referensek és oktatók számára fenntartott specifikus módszertani anyagok is.",
+        imageSrc: uniuserNewsImg,
         imagePlaceholder: "Képernyőkép a Hírek publikálási felületéről",
       }
     ]
@@ -133,11 +151,13 @@ const GUIDES_BY_ROLE: Record<string, { intro: string; items: GuideItem[] }> = {
       {
         title: "2. Képzési felügyelet és statisztikák",
         description: "Az egyetemi munkatársak egy központi irányítópulton követhetik a képzések előrehaladását, a hallgatói státuszokat, valamint átfogó rendszerstatisztikákat és konverziós trendeket elemezhetnek.",
+        imageSrc: statisztikaDashboardImg,
         imagePlaceholder: "Képernyőkép az adminisztrátori statisztikai dashboardról",
       },
       {
         title: "3. Kommunikáció és belső dokumentáció",
         description: "A platform lehetővé teszi a célzott rendszerüzenetek, fontos határidők és hírek (pl. félév végi értékelések) publikálását a hallgatók és a vállalatok felé. Emellett ezen a felületen érhetők el az egyetemi referensek és oktatók számára fenntartott specifikus módszertani anyagok is.",
+        imageSrc: uniuserNewsImg,
         imagePlaceholder: "Képernyőkép a Hírek publikálási felületéről",
       }
     ]

@@ -151,9 +151,11 @@ export interface EmployeeProfile {
     id: Id;
     fullName: string;
     email: string;
+    phoneNumber?: string;
     role: string;
   };
   companyId?: Id; // Keep for now if used elsewhere, or investigate more if this also changes
+  jobTitle?: string;
   fullName?: string | null;
   email?: string | null;
   role?: string | null;

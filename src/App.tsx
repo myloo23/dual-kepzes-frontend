@@ -93,6 +93,18 @@ const MentorPartnerships = lazyRetry(
 const MentorGuidePage = lazyRetry(
   () => import("./pages/mentor/MentorGuidePage"),
 );
+const MentorDashboardPage = lazyRetry(
+  () => import("./pages/mentor/MentorDashboardPage"),
+);
+const MentorProfilePage = lazyRetry(
+  () => import("./pages/mentor/MentorProfilePage"),
+);
+const MentorPositionsPage = lazyRetry(
+  () => import("./pages/mentor/MentorPositionsPage"),
+);
+const MentorStatsPage = lazyRetry(
+  () => import("./pages/mentor/MentorStatsPage"),
+);
 const TeacherGuidePage = lazyRetry(
   () => import("./pages/teacher/TeacherGuidePage"),
 );
@@ -241,24 +253,21 @@ function App() {
               >
                 <Route
                   index
-                  element={<PlaceholderPage title="Mentori kezdőlap" />}
+                  element={<MentorDashboardPage />}
                 />
                 <Route path="partnerships" element={<MentorPartnerships />} />
                 <Route
-                  path="messages"
-                  element={<PlaceholderPage title="Üzenetek" />}
+                  path="positions"
+                  element={<MentorPositionsPage />}
                 />
                 <Route
-                  path="progress"
-                  element={<PlaceholderPage title="Haladási napló" />}
+                  path="stats"
+                  element={<MentorStatsPage />}
                 />
-                <Route
-                  path="reviews"
-                  element={<PlaceholderPage title="Hallgatók értékelése" />}
-                />
+                <Route path="news" element={<StudentNewsPage />} />
                 <Route
                   path="profile"
-                  element={<PlaceholderPage title="Profil" />}
+                  element={<MentorProfilePage />}
                 />
                 <Route path="guide" element={<MentorGuidePage />} />
               </Route>
