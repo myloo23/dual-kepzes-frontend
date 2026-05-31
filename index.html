@@ -1,79 +1,170 @@
 <!doctype html>
 <html lang="hu">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary SEO -->
-    <title>NJE Duális Képzés | Állásajánlatok és Szakmai Gyakorlatok</title>
-    <meta
-      name="description"
-      content="Az NJE duális képzési platformja – találd meg a legjobb szakmai gyakorlati és duális álláslehetőségeket cégekkel együttműködve. Középiskolások, egyetemi hallgatók és vállalatok számára egyaránt."
-    />
-    <meta
-      name="keywords"
-      content="NJE, duális képzés, duális hallgató, szakmai gyakorlat, állásajánlat, ösztöndíjas állás, Neumann János Egyetem, felsőoktatás, vállalati együttműködés, szakképzés, pályakezdő, duális partner"
-    />
-    <meta name="robots" content="index, follow" />
-    <meta name="author" content="Neumann János Egyetem" />
-    <link rel="canonical" href="https://dual.nje.hu/" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Open Graph (social sharing) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://dual.nje.hu/" />
-    <meta property="og:site_name" content="NJE Duális Képzés" />
-    <meta
-      property="og:title"
-      content="NJE Duális Képzés | Állásajánlatok és Szakmai Gyakorlatok"
-    />
-    <meta
-      property="og:description"
-      content="Az NJE duális képzési platformja – találd meg a legjobb szakmai gyakorlati és duális álláslehetőségeket cégekkel együttműködve."
-    />
-    <meta property="og:image" content="https://dual.nje.hu/nje_logo3.png" />
-    <meta property="og:locale" content="hu_HU" />
+  <!-- Primary SEO -->
+  <title>NJE Duális Képzés | Állásajánlatok és Szakmai Gyakorlatok</title>
+  <meta name="description"
+    content="NJE duális képzési platform. Találd meg a legjobb szakmai gyakorlatokat és álláslehetőségeket, vagy toborozz tehetséges hallgatókat partnerként!" />
+  <meta name="keywords"
+    content="NJE, duális képzés, duális hallgató, szakmai gyakorlat, állásajánlat, ösztöndíjas állás, Neumann János Egyetem, felsőoktatás, vállalati együttműködés, szakképzés, pályakezdő, duális partner" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Neumann János Egyetem" />
+  <link rel="canonical" href="https://dual.nje.hu/" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="NJE Duális Képzés | Állásajánlatok és Szakmai Gyakorlatok"
-    />
-    <meta
-      name="twitter:description"
-      content="Az NJE duális képzési platformja – találd meg a legjobb szakmai gyakorlati és duális álláslehetőségeket cégekkel együttműködve."
-    />
-    <meta name="twitter:image" content="https://dual.nje.hu/nje_logo3.png" />
+  <!-- Open Graph (social sharing) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://dual.nje.hu/" />
+  <meta property="og:site_name" content="NJE Duális Képzés" />
+  <meta property="og:title" content="NJE Duális Képzés | Állásajánlatok és Szakmai Gyakorlatok" />
+  <meta property="og:description"
+    content="NJE duális képzési platform. Találd meg a legjobb szakmai gyakorlatokat és álláslehetőségeket, vagy toborozz tehetséges hallgatókat partnerként!" />
+  <meta property="og:image" content="https://dual.nje.hu/nje_logo3.png" />
+  <meta property="og:locale" content="hu_HU" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NJE Duális Képzés | Állásajánlatok és Szakmai Gyakorlatok" />
+  <meta name="twitter:description"
+    content="NJE duális képzési platform. Találd meg a legjobb szakmai gyakorlatokat és álláslehetőségeket, vagy toborozz tehetséges hallgatókat partnerként!" />
+  <meta name="twitter:image" content="https://dual.nje.hu/nje_logo3.png" />
 
-    <!-- Fonts: Titillium Web (NJE brandbook) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,400;0,600;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
-    <script>
-      (function () {
-        try {
-          var localTheme = localStorage.getItem("theme");
-          var isDark =
-            localTheme === "dark" ||
-            (!localTheme &&
-              window.matchMedia("(prefers-color-scheme: dark)").matches);
-          if (isDark) {
-            document.documentElement.classList.add("dark");
-          } else {
-            document.documentElement.classList.remove("dark");
-          }
-        } catch (e) {}
-      })();
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="/favicon.webp" />
+  <link rel="apple-touch-icon" href="/favicon.webp" />
+
+  <!-- Fonts: Titillium Web (NJE brandbook) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var localTheme = localStorage.getItem("theme");
+        var isDark =
+          localTheme === "dark" ||
+          (!localTheme &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (isDark) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      } catch (e) { }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root">
+    <style>
+      .loader-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #f8fafc;
+        transition: background-color 0.3s;
+        font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        z-index: 9999;
+      }
+
+      html.dark .loader-container {
+        background-color: #020617;
+      }
+
+      .loader-logo-wrapper {
+        position: relative;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .loader-logo {
+        width: 80px;
+        height: auto;
+        animation: logo-pulse 2s infinite ease-in-out;
+      }
+
+      .loader-spinner {
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #F7941D;
+        border-right-color: #662D91;
+        border-bottom-color: #00AEEF;
+        animation: spin 1.5s linear infinite;
+      }
+
+      .loader-text {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #3C3C3B;
+        letter-spacing: 0.05em;
+        animation: text-pulse 1.5s infinite ease-in-out;
+      }
+
+      html.dark .loader-text {
+        color: #f1f5f9;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes logo-pulse {
+
+        0%,
+        100% {
+          transform: scale(0.95);
+          opacity: 0.8;
+        }
+
+        50% {
+          transform: scale(1.05);
+          opacity: 1;
+        }
+      }
+
+      @keyframes text-pulse {
+
+        0%,
+        100% {
+          opacity: 0.6;
+        }
+
+        50% {
+          opacity: 1;
+        }
+      }
+    </style>
+    <div class="loader-container">
+      <div class="loader-logo-wrapper">
+        <div class="loader-spinner"></div>
+        <img class="loader-logo" src="/favicon.webp" alt="NJE Logo" />
+      </div>
+      <div class="loader-text">NJE Duális Képzés betöltése...</div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>
