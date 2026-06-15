@@ -111,7 +111,14 @@ export const CompanyRegistrationForm = () => {
     setIsLoading(true);
 
     try {
-      await api.registerCompany(formData);
+      const payload: CompanyRegisterPayload = {
+        ...formData,
+        company: {
+          ...formData.company,
+          contactEmail: formData.admin.email,
+        },
+      };
+      await api.registerCompany(payload);
 
       showSuccess(
         "Sikeres regisztráció! Hamarosan felvesszük Önökkel a kapcsolatot.",
@@ -240,10 +247,8 @@ export const CompanyRegistrationForm = () => {
                   value={formData.admin.email}
                   onChange={(e) => {
                     updateAdmin("email", e.target.value);
-                    // Auto-fill company contact email if empty
-                    if (!formData.company.contactEmail) {
-                      updateCompany("contactEmail", e.target.value);
-                    }
+                    // Keep company contact email in sync
+                    updateCompany("contactEmail", e.target.value);
                   }}
                   className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                   placeholder="admin@ceg.hu"
