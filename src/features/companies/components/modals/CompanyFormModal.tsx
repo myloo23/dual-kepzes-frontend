@@ -57,13 +57,13 @@ export default function CompanyFormModal({
             initialData.locations && initialData.locations.length > 0
               ? initialData.locations
               : [
-                  {
-                    country: "Magyarország",
-                    zipCode: "",
-                    city: "",
-                    address: "",
-                  },
-                ],
+                {
+                  country: "Magyarország",
+                  zipCode: "",
+                  city: "",
+                  address: "",
+                },
+              ],
           contactName: initialData.contactName,
           contactEmail: initialData.contactEmail,
           description: initialData.description || "",
@@ -202,45 +202,45 @@ export default function CompanyFormModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* General Info */}
           <div className="md:col-span-2 space-y-1">
-            <label className="text-xs font-medium text-slate-700">
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
               Cég neve *
             </label>
             <input
               name="name"
               value={formData.name}
               onChange={handleFormChange}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
               placeholder="Hivatalos cégnév"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
               Adószám *
             </label>
             <input
               name="taxId"
               value={formData.taxId}
               onChange={handleFormChange}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
               placeholder="xxxxxxxx-x-xx"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
               Weboldal
             </label>
             <input
               name="website"
               value={formData.website || ""}
               onChange={handleFormChange}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
               placeholder="https://example.com"
             />
           </div>
 
-          <div className="md:col-span-2 space-y-3 pt-2 border-t border-slate-100">
+          <div className="md:col-span-2 space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800 transition-colors">
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -252,7 +252,7 @@ export default function CompanyFormModal({
               />
               <label
                 htmlFor="hasOwnApplication"
-                className="text-sm font-medium text-slate-700 cursor-pointer select-none"
+                className="text-sm font-medium text-slate-700 dark:text-slate-350 cursor-pointer select-none transition-colors"
               >
                 Saját jelentkezési felület használata
               </label>
@@ -270,7 +270,7 @@ export default function CompanyFormModal({
                     value={formData.externalApplicationUrl}
                     onChange={handleFormChange}
                     placeholder="https://cegnev.hu/karrier"
-                    className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
+                    className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                   />
                 </div>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-100 dark:border-blue-800/50 transition-colors">
@@ -283,8 +283,8 @@ export default function CompanyFormModal({
 
           {/* Locations */}
           <div className="md:col-span-2 space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-2">
-              <h3 className="text-sm font-semibold text-slate-800">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2 mb-2 transition-colors">
+              <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 transition-colors">
                 Címek, telephelyek ({formData.locations.length})
               </h3>
               <button
@@ -312,7 +312,7 @@ export default function CompanyFormModal({
             {formData.locations.map((loc, index) => (
               <div
                 key={index}
-                className="bg-slate-50 p-3 rounded-xl border border-slate-200 relative group"
+                className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800 relative group transition-colors"
               >
                 {formData.locations.length > 1 && (
                   <button
@@ -338,7 +338,7 @@ export default function CompanyFormModal({
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
                   <div className="md:col-span-2 space-y-1">
-                    <label className="text-xs font-medium text-slate-500">
+                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
                       Ország
                     </label>
                     <input
@@ -346,11 +346,11 @@ export default function CompanyFormModal({
                       onChange={(e) =>
                         handleLocationChange(index, "country", e.target.value)
                       }
-                      className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                     />
                   </div>
                   <div className="md:col-span-1 space-y-1">
-                    <label className="text-xs font-medium text-slate-500">
+                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
                       Irányítószám *
                     </label>
                     <input
@@ -358,11 +358,11 @@ export default function CompanyFormModal({
                       onChange={(e) =>
                         handleLocationChange(index, "zipCode", e.target.value)
                       }
-                      className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                     />
                   </div>
                   <div className="md:col-span-1 space-y-1">
-                    <label className="text-xs font-medium text-slate-500">
+                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
                       Város *
                     </label>
                     <input
@@ -370,11 +370,11 @@ export default function CompanyFormModal({
                       onChange={(e) =>
                         handleLocationChange(index, "city", e.target.value)
                       }
-                      className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                     />
                   </div>
                   <div className="md:col-span-2 space-y-1">
-                    <label className="text-xs font-medium text-slate-500">
+                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
                       Cím (utca, hsz) *
                     </label>
                     <input
@@ -382,7 +382,7 @@ export default function CompanyFormModal({
                       onChange={(e) =>
                         handleLocationChange(index, "address", e.target.value)
                       }
-                      className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -391,23 +391,23 @@ export default function CompanyFormModal({
           </div>
 
           {/* Contact */}
-          <div className="md:col-span-2 border-t border-slate-100 pt-2 mt-2">
-            <h3 className="text-sm font-semibold text-slate-800 mb-2">
+          <div className="md:col-span-2 border-t border-slate-100 dark:border-slate-800 pt-2 mt-2 transition-colors">
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2 transition-colors">
               Kapcsolattartó
             </h3>
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Név *</label>
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-350 transition-colors">Név *</label>
             <input
               name="contactName"
               value={formData.contactName}
               onChange={handleFormChange}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-350 transition-colors">
               E-mail *
             </label>
             <input
@@ -415,13 +415,13 @@ export default function CompanyFormModal({
               name="contactEmail"
               value={formData.contactEmail}
               onChange={handleFormChange}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
             />
           </div>
 
           {/* Description */}
           <div className="md:col-span-2 space-y-1 mt-2">
-            <label className="text-xs font-medium text-slate-700">
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-350 transition-colors">
               Leírás / Bemutatkozás
             </label>
             <textarea
@@ -429,25 +429,25 @@ export default function CompanyFormModal({
               value={formData.description || ""}
               onChange={handleFormChange}
               rows={4}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
               placeholder="Rövid leírás a cégről..."
             />
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800 transition-colors">
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            className="rounded-xl border border-slate-300 dark:border-slate-750 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-60 transition-colors"
           >
             Mégse
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
           >
             {loading
               ? "Mentés..."
