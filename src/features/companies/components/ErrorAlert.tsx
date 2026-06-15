@@ -9,7 +9,7 @@ export default function ErrorAlert({ message, onDismiss }: ErrorAlertProps) {
 
   return (
     <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg flex items-center justify-between">
-      <span>{message}</span>
+      <span className="whitespace-pre-line">{message}</span>
       {onDismiss && (
         <button
           onClick={onDismiss}

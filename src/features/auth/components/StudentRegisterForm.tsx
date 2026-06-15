@@ -337,6 +337,7 @@ export default function StudentRegisterForm() {
             <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              showRequirements={true}
             />
 
             <div className="space-y-1">

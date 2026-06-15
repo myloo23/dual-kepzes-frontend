@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/useToast";
 import Button from "@/components/ui/Button";
 import { ArrowRight, Building2, User, MapPin } from "lucide-react";
 import { cn } from "@/utils/cn";
+import PasswordInput from "../../../components/shared/PasswordInput";
 
 const INITIAL_LOCATION: Location = {
   country: "Magyarország",
@@ -19,6 +20,7 @@ export const CompanyRegistrationForm = () => {
   const { showError, showSuccess } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<1 | 2>(1); // 1: User Info, 2: Company Info
+  const [error, setError] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState<CompanyRegisterPayload>({
@@ -97,11 +99,12 @@ export const CompanyRegistrationForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
     if (!gdprAccepted) {
-      showError(
-        "A regisztrációhoz el kell fogadni az Adatkezelési Tájékoztatót.",
-      );
+      const msg = "A regisztrációhoz el kell fogadni az Adatkezelési Tájékoztatót.";
+      setError(msg);
+      showError(msg);
       return;
     }
 
@@ -115,13 +118,14 @@ export const CompanyRegistrationForm = () => {
       );
 
       navigate("/");
-    } catch (error: unknown) {
-      console.error("Registration error:", error);
+    } catch (err: unknown) {
+      console.error("Registration error:", err);
       const isApiError = (e: unknown): e is { data?: { message?: string }; message?: string } =>
         typeof e === "object" && e !== null;
-      const msg = isApiError(error)
-        ? (error.data?.message ?? error.message ?? "Hiba történt a regisztráció során.")
+      const msg = isApiError(err)
+        ? (err.data?.message ?? err.message ?? "Hiba történt a regisztráció során.")
         : "Hiba történt a regisztráció során.";
+      setError(msg);
       showError(`Regisztráció sikertelen: ${msg}`);
     } finally {
       setIsLoading(false);
@@ -184,6 +188,12 @@ export const CompanyRegistrationForm = () => {
         </div>
       </div>
 
+      {error && (
+        <div className="mb-6 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400 whitespace-pre-line">
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* STEP 1: ADMIN USER INFO */}
         {step === 1 && (
@@ -240,19 +250,11 @@ export const CompanyRegistrationForm = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
-                  Jelszó *
-                </label>
-                <input
-                  required
-                  type="password"
-                  value={formData.admin.password}
-                  onChange={(e) => updateAdmin("password", e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
-                  placeholder="Legalább 8 karakter"
-                />
-              </div>
+              <PasswordInput
+                value={formData.admin.password}
+                onChange={(e) => updateAdmin("password", e.target.value)}
+                showRequirements={true}
+              />
 
               <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
@@ -276,9 +278,12 @@ export const CompanyRegistrationForm = () => {
                   const { fullName, email, password, jobTitle } =
                     formData.admin;
                   if (fullName && email && password && jobTitle) {
+                    setError(null);
                     setStep(2);
                   } else {
-                    showError("Kérjük töltsön ki minden kötelező mezőt!");
+                    const msg = "Kérjük töltsön ki minden kötelező mezőt!";
+                    setError(msg);
+                    showError(msg);
                   }
                 }}
                 className="group"
@@ -326,9 +331,10 @@ export const CompanyRegistrationForm = () => {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
-                    Weboldal
+                    Weboldal *
                   </label>
                   <input
+                    required
                     type="url"
                     value={formData.company.website || ""}
                     onChange={(e) => updateCompany("website", e.target.value)}

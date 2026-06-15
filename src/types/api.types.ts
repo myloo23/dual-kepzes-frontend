@@ -34,6 +34,7 @@ export interface Company {
   website?: string | null;
   hasOwnApplication?: boolean;
   externalApplicationUrl?: string | null;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 // ============= Tag Types =============

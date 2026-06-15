@@ -237,7 +237,7 @@ export default function AdminCompaniesPage() {
                 : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
             }`}
           >
-            Jóváhagyásra váró
+            Jóváhagyásra váró / Elutasított
             {pendingCompanies.items.length > 0 && (
               <span className="flex items-center justify-center min-w-5 h-5 px-1.5 text-[10px] font-bold text-white bg-amber-500 rounded-full">
                 {pendingCompanies.items.length}
@@ -253,7 +253,7 @@ export default function AdminCompaniesPage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <h2 className="text-base font-bold text-slate-800 dark:text-slate-200 transition-colors">
-              {activeTab === "active" ? "Összes cég" : "Jóváhagyásra váró cégek"}
+              {activeTab === "active" ? "Összes cég" : "Jóváhagyásra váró / Elutasított cégek"}
             </h2>
             {activeTab === "active" && (
               <Button onClick={handleCreateNew} variant="primary" size="xs">
@@ -310,7 +310,20 @@ export default function AdminCompaniesPage() {
                     {String(company.id).slice(0, 8)}...
                   </td>
                   <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
-                    {company.name}
+                    <div className="flex items-center gap-2">
+                      <span>{company.name}</span>
+                      {activeTab === "pending" && (
+                        company.status === "REJECTED" ? (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-red-100 text-red-850 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800">
+                            Elutasítva
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-850 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                            Függőben
+                          </span>
+                        )
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                     <div className="text-xs">{company.contactName}</div>
@@ -346,13 +359,15 @@ export default function AdminCompaniesPage() {
                           >
                             Jóváhagyás
                           </Button>
-                          <Button
-                            onClick={() => handleReject(company.id)}
-                            variant="danger"
-                            size="xs"
-                          >
-                            Elutasítás
-                          </Button>
+                          {company.status !== "REJECTED" && (
+                            <Button
+                              onClick={() => handleReject(company.id)}
+                              variant="danger"
+                              size="xs"
+                            >
+                              Elutasítás
+                            </Button>
+                          )}
                         </>
                       )}
                     </div>
