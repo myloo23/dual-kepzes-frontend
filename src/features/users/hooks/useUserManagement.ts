@@ -285,15 +285,17 @@ export function useUserManagement(
       data: Partial<CompanyAdminProfile | UniversityUserProfile>,
     ): Promise<boolean> => {
       try {
+        const { email, ...updateData } = data as any;
+
         if (activeTab === "COMPANY_ADMIN") {
           await api.companyAdmins.update(
             id,
-            data as Partial<CompanyAdminProfile>,
+            updateData,
           );
         } else if (activeTab === "UNIVERSITY_USER") {
           await api.universityUsers.update(
             id,
-            data as Partial<UniversityUserProfile>,
+            updateData,
           );
         } else if (activeTab === "INACTIVE_USER") {
           setError(ERROR_MESSAGES.INACTIVE_USER_EDIT);

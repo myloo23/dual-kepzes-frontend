@@ -388,13 +388,7 @@ export default function PositionsPage() {
       {applicationModal.data && (
         <ApplicationModal
           isOpen={applicationModal.isOpen}
-          position={{
-            id: String(applicationModal.data.id),
-            title: applicationModal.data.title || "Pozíció",
-            company: applicationModal.data.company,
-            city: applicationModal.data.location?.city,
-            address: applicationModal.data.location?.address,
-          }}
+          position={applicationModal.data}
           onClose={handleModalClose}
           onSubmit={handleSubmitApplication}
         />
