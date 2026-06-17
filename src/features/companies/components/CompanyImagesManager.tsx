@@ -22,7 +22,7 @@ export default function CompanyImagesManager({
       const data = await companyApi.companyImages.list(companyId);
       setImages(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Hiba a k�pek bet�lt�sekor.");
+      setError(err instanceof Error ? err.message : "Hiba a képek betöltésekor.");
     } finally {
       setLoading(false);
     }
@@ -37,7 +37,7 @@ export default function CompanyImagesManager({
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      setError("Csak k�pf�jl t�lthet� fel.");
+      setError("Csak képfájl tölthető fel.");
       return;
     }
 
@@ -50,7 +50,7 @@ export default function CompanyImagesManager({
       await companyApi.companyImages.upload(companyId, formData);
       await loadImages();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Hiba a k�p felt�lt�sekor.");
+      setError(err instanceof Error ? err.message : "Hiba a kép feltöltésekor.");
     } finally {
       setUploading(false);
       event.target.value = "";
@@ -58,7 +58,7 @@ export default function CompanyImagesManager({
   };
 
   const handleDelete = async (imageId: string) => {
-    const confirmed = window.confirm("Biztosan t�rl�d ezt a k�pet?");
+    const confirmed = window.confirm("Biztosan törlöd ezt a képet?");
     if (!confirmed) return;
 
     setDeletingId(imageId);
@@ -68,7 +68,7 @@ export default function CompanyImagesManager({
       await companyApi.companyImages.remove(companyId, imageId);
       setImages((prev) => prev.filter((image) => image.id !== imageId));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Hiba a k�p t�rl�sekor.");
+      setError(err instanceof Error ? err.message : "Hiba a kép törlésekor.");
     } finally {
       setDeletingId(null);
     }
@@ -78,10 +78,10 @@ export default function CompanyImagesManager({
     <section className="mt-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm transition-colors">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-          Ceges kepek
+          Céges képek
         </h2>
         <label className="inline-flex cursor-pointer items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 transition-colors">
-          {uploading ? "Feltoltes..." : "Uj kep feltoltese"}
+          {uploading ? "Feltöltés..." : "Új kép feltöltése"}
           <input
             type="file"
             accept="image/*"
@@ -99,10 +99,10 @@ export default function CompanyImagesManager({
       )}
 
       {loading ? (
-        <p className="text-sm text-slate-600 dark:text-slate-400">Betoltes...</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400">Betöltés...</p>
       ) : images.length === 0 ? (
         <p className="text-sm text-slate-600 dark:text-slate-400">
-          Meg nincs feltoltott ceges kep.
+          Még nincs feltöltött céges kép.
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -129,7 +129,7 @@ export default function CompanyImagesManager({
                   disabled={deletingId === image.id}
                   className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-60 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
                 >
-                  {deletingId === image.id ? "Torles..." : "Torles"}
+                  {deletingId === image.id ? "Törlés..." : "Törlés"}
                 </button>
               </div>
             </article>

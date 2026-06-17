@@ -36,9 +36,7 @@ export default function CompanyProfileDisplay({
             <dd className="mt-1 text-sm text-gray-900 dark:text-slate-100 space-y-1 transition-colors">
               {company.locations?.map((loc: Location, i: number) => (
                 <div key={i}>
-                  {[loc.zipCode, loc.city, loc.address]
-                    .filter(Boolean)
-                    .join(", ")}
+                  {[loc.zipCode, loc.city ? loc.city + "," : "", loc.address].filter(Boolean).join(" ")}
                 </div>
               )) || "-"}
             </dd>

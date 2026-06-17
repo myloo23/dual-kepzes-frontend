@@ -152,18 +152,20 @@ export default function PositionFormModal({
       setError("A munkavégzés helyének kiválasztása kötelező.");
       return;
     }
-    if (!formData.majorId.trim()) {
+    if (formData.type !== "REGULAR_WORK" && !formData.majorId.trim()) {
       setError("A szak kiválasztása kötelező.");
       return;
     }
 
     setLoading(true);
     try {
-      type PositionPayload = Omit<PositionFormData, "deadline"> & {
+      type PositionPayload = Omit<PositionFormData, "deadline" | "majorId"> & {
         deadline: string | null;
+        majorId?: string | null;
       };
       const payload: PositionPayload = {
         ...formData,
+        majorId: formData.majorId ? formData.majorId : null,
         deadline: formatDeadlineForApi(formData.deadline),
         tags: formData.tags
           .map((tag) => ({
@@ -369,18 +371,24 @@ export default function PositionFormModal({
           >
             <option value="DUAL">Duális állás</option>
             <option value="PROFESSIONAL_PRACTICE">Szakmai gyakorlat</option>
+            <option value="REGULAR_WORK">Rendes munka (Nyitott állás)</option>
           </select>
         </div>
 
         <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 transition-colors">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold text-slate-800 dark:text-slate-200 transition-colors">
-              Címkék
-            </label>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <label className="text-sm font-semibold text-slate-800 dark:text-slate-200 transition-colors">
+                Címkék
+              </label>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">
+                Adjon meg kulcsszavakat a pozícióhoz (pl. React, angol nyelv, B kategóriás jogosítvány), amelyek alapján a hallgatók könnyebben megtalálhatják azt.
+              </p>
+            </div>
             <button
               type="button"
               onClick={addTag}
-              className="rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className="rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex-shrink-0"
             >
               + Címke
             </button>
