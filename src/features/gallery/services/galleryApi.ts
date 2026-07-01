@@ -1,35 +1,15 @@
 import { apiDelete, apiGet, apiPost, apiPostFormData } from "@/lib/api-client";
-import { API_CONFIG } from "@/config/app.config";
+import { resolveApiAssetUrl } from "@/lib/media-url";
 import type { GalleryGroup } from "../types";
 
 const BASE = "/api/galleries";
-
-function resolveImageUrl(url: string): string {
-  if (!url) return url;
-
-  const trimmed = url.trim();
-  if (!trimmed) return trimmed;
-
-  if (
-    trimmed.startsWith("http://") ||
-    trimmed.startsWith("https://") ||
-    trimmed.startsWith("data:") ||
-    trimmed.startsWith("blob:")
-  ) {
-    return trimmed;
-  }
-
-  const base = API_CONFIG.BASE_URL.replace(/\/$/, "");
-  const path = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-  return `${base}${path}`;
-}
 
 function normalizeGroups(groups: GalleryGroup[]): GalleryGroup[] {
   return groups.map((group) => ({
     ...group,
     images: group.images.map((img) => ({
       ...img,
-      url: resolveImageUrl(img.url),
+      url: resolveApiAssetUrl(img.url) ?? img.url,
     })),
   }));
 }
