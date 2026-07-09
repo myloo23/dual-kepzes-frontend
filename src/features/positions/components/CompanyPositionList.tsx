@@ -139,7 +139,7 @@ export default function CompanyPositionList({
                     ? "Duális"
                     : position.type === "PROFESSIONAL_PRACTICE"
                       ? "Szakmai gyakorlat"
-                      : "Rendes állás"}
+                      : "Főállás"}
                 </span>
               </div>
             </div>

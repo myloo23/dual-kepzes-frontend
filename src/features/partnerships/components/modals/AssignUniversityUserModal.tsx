@@ -56,9 +56,9 @@ export default function AssignUniversityUserModal({
     e.preventDefault();
     if (!partnership || !selectedUserId) return;
 
-    if (partnership.status !== "PENDING_UNIVERSITY") {
+    if (partnership.status !== "PENDING_UNIVERSITY" && partnership.status !== "PENDING_MENTOR") {
       setError(
-        "A hozzárendelés csak PENDING_UNIVERSITY státuszban engedélyezett. Előbb mentor hozzárendelés szükséges.",
+        "A hozzárendelés csak folyamatban lévő partnerkapcsolatoknál engedélyezett.",
       );
       return;
     }

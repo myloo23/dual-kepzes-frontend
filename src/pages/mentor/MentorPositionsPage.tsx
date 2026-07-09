@@ -81,7 +81,7 @@ export default function MentorPositionsPage() {
       default:
         return (
           <span className="inline-flex items-center rounded-full bg-slate-50 dark:bg-slate-800 px-2.5 py-0.5 text-xs font-semibold text-slate-650 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-            Normál munka
+            Főállás
           </span>
         );
     }
@@ -136,7 +136,7 @@ export default function MentorPositionsPage() {
             <option value="ALL">Összes típus</option>
             <option value="DUAL">Duális képzés</option>
             <option value="PROFESSIONAL_PRACTICE">Szakmai gyakorlat</option>
-            <option value="REGULAR_WORK">Normál munka</option>
+            <option value="REGULAR_WORK">Főállás</option>
           </select>
         </div>
       </section>

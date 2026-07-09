@@ -201,21 +201,28 @@ export default function UniversityPartnershipsTable({
                     )}
 
                     {onAssignSelf &&
-                      partnership.status === "PENDING_UNIVERSITY" &&
+                      (partnership.status === "PENDING_UNIVERSITY" || partnership.status === "PENDING_MENTOR") &&
                       !partnership.uniEmployee &&
                       currentUniversityUserId && (
-                        <button
-                          onClick={() => onAssignSelf(partnership.id)}
-                          disabled={
-                            assigningPartnershipId === String(partnership.id)
-                          }
-                          className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 transition-colors disabled:opacity-60 disabled:no-underline"
-                          title="A partnerkapcsolat hozzarendelese sajat magadhoz"
-                        >
-                          {assigningPartnershipId === String(partnership.id)
-                            ? "Mentes..."
-                            : "Magamhoz rendelem"}
-                        </button>
+                        <div className="flex flex-col gap-0.5 items-start">
+                          <button
+                            onClick={() => onAssignSelf(partnership.id)}
+                            disabled={
+                              assigningPartnershipId === String(partnership.id)
+                            }
+                            className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 transition-colors disabled:opacity-60 disabled:no-underline text-left"
+                            title="A partnerkapcsolat hozzarendelese sajat magadhoz"
+                          >
+                            {assigningPartnershipId === String(partnership.id)
+                              ? "Mentes..."
+                              : "Magamhoz rendelem"}
+                          </button>
+                          {partnership.status === "PENDING_MENTOR" && (
+                            <span className="text-[10px] text-amber-600 dark:text-amber-500 italic">
+                              Céges mentor hiányzik
+                            </span>
+                          )}
+                        </div>
                       )}
                   </div>
                 </td>

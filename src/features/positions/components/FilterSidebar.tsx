@@ -266,7 +266,7 @@ export default function FilterSidebar({
             active={positionType === "REGULAR_WORK"}
             onClick={() => setPositionType("REGULAR_WORK")}
           >
-            Rendes munka
+            Főállás
           </ChipButton>
         </div>
       </div>

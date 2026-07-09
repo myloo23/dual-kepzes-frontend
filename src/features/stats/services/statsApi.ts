@@ -6,7 +6,7 @@ import type {
   PositionStats,
   TrendStats,
 } from "../types";
-import type { ReferentOverviewResponse } from "@/types/api.types";
+import type { ReferentOverviewResponse, ReferentsCompaniesStatsResponse } from "@/types/api.types";
 
 const BASE_URL = "/api/stats";
 
@@ -25,4 +25,7 @@ export const statsApi = {
   
   getReferentOverview: () => 
     apiGet<ReferentOverviewResponse>(`${BASE_URL}/university/referent-overview`),
+
+  getAllReferentsCompanies: () =>
+    apiGet<ReferentsCompaniesStatsResponse>(`${BASE_URL}/university/all-referents-companies`),
 };

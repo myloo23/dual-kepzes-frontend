@@ -11,9 +11,10 @@ interface AdminUserFormData {
   email?: string;
   isActive?: boolean;
   password?: string;
+  phoneNumber?: string;
   companyId?: string;
   jobTitle?: string;
-  user?: { fullName?: string; email?: string };
+  user?: { fullName?: string; email?: string; phoneNumber?: string };
   majors?: unknown[];
   managedMajors?: unknown[];
   referentMajors?: unknown[];
@@ -86,7 +87,10 @@ export default function AdminUserModal({
 
   useEffect(() => {
     if (isOpen && initialData) {
-      setFormData({ ...initialData });
+      setFormData({
+        ...initialData,
+        phoneNumber: initialData.phoneNumber || (initialData as any).user?.phoneNumber || "",
+      });
       setSelectedMajorIds(
         new Set(
           extractAssignedIds(initialData, [
@@ -262,6 +266,7 @@ export default function AdminUserModal({
         fullName:
           formData.fullName || formData.name || formData.user?.fullName || "",
         email: formData.email || formData.user?.email || "",
+        phoneNumber: formData.phoneNumber || "",
       };
 
       if (!initialData?.id) {
@@ -339,6 +344,22 @@ export default function AdminUserModal({
               value={formData.email || formData.user?.email || ""}
               onChange={(e) => handleChange("email", e.target.value)}
               className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:text-slate-500 dark:disabled:text-slate-400 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
+              Telefonszám *
+            </label>
+            <input
+              type="tel"
+              required
+              value={formData.phoneNumber || ""}
+              onChange={(e) => handleChange("phoneNumber", e.target.value)}
+              placeholder="+36201234567"
+              pattern="^\+?[0-9]{7,15}$"
+              title="Kérjük, adjon meg egy érvényes telefonszámot (pl. +36201234567 vagy 06201234567, 7-15 számjegy)."
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
             />
           </div>
 

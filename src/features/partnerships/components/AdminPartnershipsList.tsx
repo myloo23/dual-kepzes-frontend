@@ -184,23 +184,23 @@ export default function AdminPartnershipsList({
                         </span>
                       )}
 
-                      {partnership.status === "PENDING_UNIVERSITY" ? (
-                        <button
-                          onClick={() => handleOpenAssign(partnership)}
-                          title="Egyetemi referens ellenőrzése vagy módosítása"
-                          className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 transition-colors"
-                        >
-                          {partnership.uniEmployee
-                            ? "Ellenőrzés / módosítás"
-                            : "+ Hozzárendelés"}
-                        </button>
-                      ) : partnership.status === "PENDING_MENTOR" ? (
-                        <span
-                          title="A cégnek először mentort kell hozzárendelnie ehhez a partnerséghez."
-                          className="text-xs italic text-amber-600 dark:text-amber-500 cursor-help"
-                        >
-                          Mentor szükséges
-                        </span>
+                      {partnership.status === "PENDING_UNIVERSITY" || partnership.status === "PENDING_MENTOR" ? (
+                        <div className="flex flex-col gap-0.5">
+                          <button
+                            onClick={() => handleOpenAssign(partnership)}
+                            title="Egyetemi referens ellenőrzése vagy módosítása"
+                            className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline shrink-0 text-left transition-colors"
+                          >
+                            {partnership.uniEmployee
+                              ? "Ellenőrzés / módosítás"
+                              : "+ Hozzárendelés"}
+                          </button>
+                          {partnership.status === "PENDING_MENTOR" && (
+                            <span className="text-[10px] text-amber-600 dark:text-amber-500 italic">
+                              Céges mentor hiányzik
+                            </span>
+                          )}
+                        </div>
                       ) : null}
                     </div>
                   </td>

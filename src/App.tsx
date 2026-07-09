@@ -116,6 +116,9 @@ const UniversityDashboardPage = lazyRetry(
 const UniversityGuidePage = lazyRetry(
   () => import("./pages/university/UniversityGuidePage"),
 );
+const ReferentsCompaniesPage = lazyRetry(
+  () => import("@/pages/university/ReferentsCompaniesPage"),
+);
 const AdminGuidePage = lazyRetry(() => import("./pages/admin/AdminGuidePage"));
 const ForgotPasswordPage = lazyRetry(
   () => import("./pages/auth/ForgotPasswordPage"),
@@ -303,10 +306,8 @@ function App() {
               >
                 <Route index element={<UniversityDashboardPage />} />
                 <Route path="students" element={<UniversityDashboardPage />} />
-                <Route
-                  path="partnerships"
-                  element={<UniversityDashboardPage />}
-                />
+                <Route path="partnerships" element={<UniversityDashboardPage />} />
+                <Route path="referents-companies" element={<ReferentsCompaniesPage />} />
                 <Route path="news" element={<StudentNewsPage />} />
                 <Route path="profile" element={<UniversityDashboardPage />} />
                 <Route path="guide" element={<UniversityGuidePage />} />

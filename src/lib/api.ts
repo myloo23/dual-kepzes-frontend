@@ -24,6 +24,7 @@ import type {
   StudentApplicationsResponse,
   StudentApplicationStats,
   ReferentOverviewResponse,
+  ReferentsCompaniesStatsResponse,
   UniversityUserAssignmentsResponse,
   Major,
   Partnership,
@@ -115,6 +116,7 @@ export const api = {
     get: () => apiGet<StatsResponse>(PATHS.stats),
     getCompanyMe: () => apiGet<CompanyStatsResponse>(`${PATHS.stats}/company/me`),
     getReferentOverview: () => apiGet<ReferentOverviewResponse>(`${PATHS.stats}/university/referent-overview`),
+    getAllReferentsCompanies: () => apiGet<ReferentsCompaniesStatsResponse>(`${PATHS.stats}/university/all-referents-companies`),
   },
 
   // ============= Majors =============
@@ -503,6 +505,7 @@ export type {
   CompanyStatsResponse,
   ReferentCompanyStat,
   ReferentOverviewResponse,
+  ReferentsCompaniesStatsResponse,
   UniversityUserAssignmentsResponse,
   Location,
   Tag,

@@ -77,7 +77,7 @@ export const POSITION_TYPE_CONFIG: Record<
     mapStroke: "#047857",
   },
   REGULAR_WORK: {
-    label: "Rendes munka",
+    label: "Főállás",
     badgeClass:
       "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300",
     mapColor: "#6B7280",

@@ -336,7 +336,7 @@ export default function AdminPositionsPage() {
                           ? "Duális"
                           : position.type === "PROFESSIONAL_PRACTICE"
                             ? "Szakmai gyak."
-                            : "Rendes állás"}
+                            : "Főállás"}
                       </span>
                     </div>
                   </td>

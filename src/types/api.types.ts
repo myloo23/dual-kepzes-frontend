@@ -419,6 +419,26 @@ export interface ReferentOverviewResponse {
   companies: ReferentCompanyStat[];
 }
 
+export interface ReferentsCompaniesStatsResponse {
+  totalCompaniesCount: number;
+  activeCompaniesCount: number;
+  referents: Array<{
+    id: string;
+    fullName: string;
+    email: string;
+    companies: Array<{
+      id: string;
+      name: string;
+      description: string | null;
+      website: string | null;
+      logoUrl: string | null;
+      isActive: boolean;
+      activePositionsCount: number;
+      activePartnershipsCount: number;
+    }>;
+  }>;
+}
+
 // ============= Partnership Types =============
 export type PartnershipStatus =
   | "PENDING_MENTOR"

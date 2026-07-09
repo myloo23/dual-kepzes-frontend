@@ -5,6 +5,7 @@ export default function UniversityLayout() {
     { to: "/university", label: "Dashboard", end: true },
     { to: "/university/students", label: "Hallgatók" },
     { to: "/university/partnerships", label: "Partnerkapcsolatok" },
+    { to: "/university/referents-companies", label: "Referensek cégei" },
     { to: "/university/news", label: "Hírek" },
     { to: "/university/profile", label: "Saját profil" },
     {

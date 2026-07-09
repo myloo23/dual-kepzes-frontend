@@ -371,7 +371,7 @@ export default function PositionFormModal({
           >
             <option value="DUAL">Duális állás</option>
             <option value="PROFESSIONAL_PRACTICE">Szakmai gyakorlat</option>
-            <option value="REGULAR_WORK">Rendes munka (Nyitott állás)</option>
+            <option value="REGULAR_WORK">Főállás (Nyitott állás)</option>
           </select>
         </div>
 

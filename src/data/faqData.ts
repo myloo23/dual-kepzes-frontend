@@ -140,10 +140,10 @@ export const HR_FAQ_SECTIONS: FaqSection[] = [
         ],
       },
       {
-        question: "Csak duális pozíciókat hirdethetek, vagy normál állásokat is?",
+        question: "Csak duális pozíciókat hirdethetek, vagy főállásokat is?",
         answer: [
           "A rendszer mindkettőt támogatja.",
-          "A Pozíció típusa opcióval dönthető el, hogy Duális képzés, Szakmai gyakorlat vagy Normál munkahelyként jelenjen meg a hirdetés.",
+          "A Pozíció típusa opcióval dönthető el, hogy Duális képzés, Szakmai gyakorlat vagy Főállásként jelenjen meg a hirdetés.",
         ],
       },
     ],

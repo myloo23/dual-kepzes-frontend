@@ -218,7 +218,7 @@ export default function PositionsMap({
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full" style={{ background: POSITION_TYPE_CONFIG.REGULAR_WORK.mapColor }}></div>
-          <span className="text-slate-600 dark:text-slate-400 transition-colors">Rendes munka</span>
+          <span className="text-slate-600 dark:text-slate-400 transition-colors">Főállás</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-slate-600 dark:text-slate-400 transition-colors">
