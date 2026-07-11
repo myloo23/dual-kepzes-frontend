@@ -6,11 +6,15 @@ export function resolveApiAssetUrl(url?: string | null): string | null {
   const trimmed = url.trim();
   if (!trimmed) return null;
 
-  // Handle local uploads by ensuring they point to the correct base URL
-  if (trimmed.includes("/uploads/")) {
-    const parts = trimmed.split("/uploads/");
+  // Handle local uploads by ensuring they point to the correct base URL (forcing /api/uploads)
+  const pathKey = trimmed.includes("/api/uploads/") ? "/api/uploads/" : "/uploads/";
+  if (trimmed.includes(pathKey)) {
+    const parts = trimmed.split(pathKey);
+    let base = API_CONFIG.BASE_URL.replace(/\/$/, "");
+    if (!base.endsWith("/api")) {
+      base = `${base}/api`;
+    }
     const relativePath = `uploads/${parts[parts.length - 1]}`;
-    const base = API_CONFIG.BASE_URL.replace(/\/$/, "");
     return `${base}/${relativePath}`;
   }
 
