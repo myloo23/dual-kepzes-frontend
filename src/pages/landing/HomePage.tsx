@@ -379,7 +379,7 @@ function HomePage() {
               Kérdése van?
             </h2>
             <p className="text-lg text-nje-anthracite/60 dark:text-slate-400">
-              A rendszer egyetemi pilot projekt részeként készül. Kérdés esetén
+              A rendszer az EFOP-3.4.4-16-2017-00018 azonosítószámú projekt részeként készült. Kérdés esetén
               forduljon az egyetem duális képzési koordinátorához.
             </p>
             <a
