@@ -8,7 +8,7 @@ interface GrantBannerProps {
 export default function GrantBanner({ className = "", variant = "topbar" }: GrantBannerProps) {
   if (variant === "topbar") {
     return (
-      <div className={`w-full bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between px-3 sm:px-6 py-1 ${className}`}>
+      <div className={`w-full bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between pl-3 sm:pl-6 pr-14 sm:pr-16 py-1 ${className}`}>
         <div className="flex items-center gap-3">
           <a
             href="https://www.palyazat.gov.hu"
@@ -23,11 +23,6 @@ export default function GrantBanner({ className = "", variant = "topbar" }: Gran
               className="h-[44px] sm:h-[54px] max-h-[64px] w-auto object-contain"
             />
           </a>
-        </div>
-        <div className="hidden sm:flex items-center gap-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-          <span>Hivatalos Kedvezményezetti Infóblokk</span>
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-nje-jaffa"></span>
-          <span>Széchenyi Terv Plusz</span>
         </div>
       </div>
     );

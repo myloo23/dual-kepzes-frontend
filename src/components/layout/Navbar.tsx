@@ -258,6 +258,20 @@ export default function Navbar() {
 
           <GlobalSearch variant="icon" />
 
+          {/* Theme Toggle Button */}
+          <button
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
+            aria-label="Téma váltása"
+            title={isDark ? "Világos téma" : "Sötét téma"}
+          >
+            {isDark ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </button>
+
 
           {isLoggedIn && (
             <button
@@ -327,8 +341,8 @@ export default function Navbar() {
                     <button
                       type="button"
                       className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${notificationsTab === "active"
-                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-50 shadow-sm"
-                          : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/30 dark:hover:bg-slate-700/30"
+                        ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-50 shadow-sm"
+                        : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/30 dark:hover:bg-slate-700/30"
                         }`}
                       onClick={() => setNotificationsTab("active")}
                     >
@@ -337,8 +351,8 @@ export default function Navbar() {
                     <button
                       type="button"
                       className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${notificationsTab === "archived"
-                          ? "bg-white text-slate-900 shadow-sm"
-                          : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/30"
+                        ? "bg-white text-slate-900 shadow-sm"
+                        : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/30"
                         }`}
                       onClick={() => setNotificationsTab("archived")}
                     >
@@ -593,21 +607,6 @@ export default function Navbar() {
           </div>
         </nav>
       )}
-
-      {/* Theme Toggle at the very edge of the screen */}
-      <div className="absolute top-0 right-0 h-16 flex items-center pr-2 sm:pr-4 z-[1150]">
-        <button
-          onClick={() => setTheme(isDark ? "light" : "dark")}
-          className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-50 transition-all duration-200 focus:outline-none"
-          aria-label="Téma váltása"
-        >
-          {isDark ? (
-            <Sun className="h-5 w-5" />
-          ) : (
-            <Moon className="h-5 w-5" />
-          )}
-        </button>
-      </div>
     </header>
   );
 }
