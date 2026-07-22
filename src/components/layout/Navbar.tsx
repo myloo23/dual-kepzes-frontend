@@ -9,6 +9,7 @@ import type { NotificationItem } from "../../lib/api";
 import njeLogoImageLight from "../../assets/logos/nje_logos/nje_logo2.webp";
 import njeLogoImageDark from "../../assets/logos/nje_logos/nje_logo3.webp";
 import { GlobalSearch } from "../../features/search";
+import GrantBanner from "./GrantBanner";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -185,6 +186,9 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-[1100] bg-white dark:bg-slate-950 transition-colors duration-300">
+      {/* Széchenyi Terv Plusz / RRF Grant Banner (Arculati Kézikönyv 5.10 - Top Left, Max Height 64px) */}
+      <GrantBanner variant="topbar" />
+
       {/* Brand gradient top accent strip */}
       <div className="h-[3px] w-full bg-gradient-to-r from-nje-jaffa via-nje-amethyst to-nje-cyan" />
 

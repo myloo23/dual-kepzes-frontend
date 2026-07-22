@@ -1,5 +1,6 @@
 import dkkLogoImage from "../../assets/logos/dkk_logos/logo.webp";
 import njeLogoImage from "../../assets/logos/nje_logos/nje_logo3.webp";
+import GrantBanner from "./GrantBanner";
 
 export default function Footer() {
   return (
@@ -35,7 +36,8 @@ export default function Footer() {
         </div>
 
         {/* Project Identifier / Funding Block */}
-        <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center justify-center gap-2">
+        <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center justify-center gap-4">
+          <GrantBanner variant="footer" />
           <p className="text-center text-[11px] text-white/40 max-w-3xl leading-relaxed">
             A platform az <span className="font-semibold text-white/60">EFOP-3.4.4-16-2017-00018</span> azonosítószámú, 
             <span className="italic"> „A természettudományos ismeretek megszerzését segítő komplex rendszer fejlesztése a Neumann János Egyetemen”</span> pályázat keretében valósult meg, annak támogatásával készült.
