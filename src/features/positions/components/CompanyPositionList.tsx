@@ -57,6 +57,21 @@ export default function CompanyPositionList({
     setIsModalOpen(true);
   };
 
+  const handleDelete = async (id: string | number) => {
+    if (!window.confirm("Biztosan törölni szeretné ezt a pozíciót?")) return;
+    try {
+      await api.positions.remove(id);
+      await loadPositions();
+    } catch (err) {
+      console.error("Failed to delete position", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Nem sikerült törölni a pozíciót.",
+      );
+    }
+  };
+
   const handleSave = async (data: Omit<Position, "id">) => {
     try {
       if (editingPosition) {
@@ -143,12 +158,20 @@ export default function CompanyPositionList({
                 </span>
               </div>
             </div>
-            <button
-              onClick={() => handleEdit(position)}
-              className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-            >
-              Szerkesztés
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => handleEdit(position)}
+                className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+              >
+                Szerkesztés
+              </button>
+              <button
+                onClick={() => handleDelete(position.id)}
+                className="text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
+              >
+                Törlés
+              </button>
+            </div>
           </div>
         ))}
       </div>
