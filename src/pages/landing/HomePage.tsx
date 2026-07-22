@@ -378,9 +378,8 @@ function HomePage() {
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-nje-anthracite dark:text-slate-50">
               Kérdése van?
             </h2>
-            <p className="text-lg text-nje-anthracite/60 dark:text-slate-400">
-              A rendszer az EFOP-3.4.4-16-2017-00018 azonosítószámú projekt részeként készült. Kérdés esetén
-              forduljon az egyetem duális képzési koordinátorához.
+            <p className="text-base sm:text-lg text-nje-anthracite/70 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
+              Készült az <span className="font-semibold text-nje-anthracite dark:text-slate-100">RRF-2.1.2-21-2022-00039</span> azonosítószámú, <span className="italic">„Átfogó digitális infrastruktúra-, készség- és a nemzetköziesítés fejlesztése a Neumann János Egyetemen”</span> című projekt keretében. Kérdés esetén forduljon az egyetem duális képzési koordinátorához.
             </p>
             <a
               href="mailto:sari.bence@nje.hu"

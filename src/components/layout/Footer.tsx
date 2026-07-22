@@ -38,9 +38,9 @@ export default function Footer() {
         {/* Project Identifier / Funding Block */}
         <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center justify-center gap-4">
           <GrantBanner variant="footer" />
-          <p className="text-center text-[11px] text-white/40 max-w-3xl leading-relaxed">
-            A platform az <span className="font-semibold text-white/60">EFOP-3.4.4-16-2017-00018</span> azonosítószámú, 
-            <span className="italic"> „A természettudományos ismeretek megszerzését segítő komplex rendszer fejlesztése a Neumann János Egyetemen”</span> pályázat keretében valósult meg, annak támogatásával készült.
+          <p className="text-center text-[11px] text-white/50 max-w-3xl leading-relaxed">
+            Készült az <span className="font-semibold text-white/70">RRF-2.1.2-21-2022-00039</span> azonosítószámú,
+            <span className="italic"> „Átfogó digitális infrastruktúra-, készség- és a nemzetköziesítés fejlesztése a Neumann János Egyetemen”</span> című projekt keretében.
           </p>
         </div>
       </div>

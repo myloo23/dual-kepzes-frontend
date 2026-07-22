@@ -38,17 +38,33 @@ async function apiRequest<T>(
   path: string,
   init: RequestInit,
   token?: string,
+  retriesLeft = 2,
 ): Promise<T> {
   const jwt = token !== undefined ? token : auth.getToken();
 
-  const res = await fetch(`${API_URL}${path}`, {
-    ...init,
-    cache: "no-store",
-    headers: {
-      ...(init.headers || {}),
-      ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      ...init,
+      cache: "no-store",
+      headers: {
+        ...(init.headers || {}),
+        ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),
+      },
+    });
+  } catch (networkErr) {
+    if (retriesLeft > 0) {
+      await new Promise((r) => setTimeout(r, 1500));
+      return apiRequest<T>(path, init, token, retriesLeft - 1);
+    }
+    throw networkErr;
+  }
+
+  // If status is 502, 503, or 504 (gateway/backend cold-start or temporary restart issue), retry automatically
+  if ([502, 503, 504].includes(res.status) && retriesLeft > 0) {
+    await new Promise((r) => setTimeout(r, 1500));
+    return apiRequest<T>(path, init, token, retriesLeft - 1);
+  }
 
   const contentType = res.headers.get("content-type") || "";
   let data: unknown = null;
